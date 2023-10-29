@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import Login from './AuthNavigator';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeNavigator from './HomeNavigator';
 import AskClient from './AskClient';
+import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
-  const isLoggedIn = false;
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  console.log('isLoggedIn:', isLoggedIn);
 
   return (
     <NavigationContainer>

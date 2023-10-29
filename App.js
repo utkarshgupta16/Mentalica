@@ -1,5 +1,6 @@
 import React from 'react';
 import reactotron from 'reactotron-react-native';
+import {Provider} from 'react-redux';
 
 // import {SafeAreaView, StyleSheet} from 'react-native';
 
@@ -7,6 +8,7 @@ import reactotron from 'reactotron-react-native';
 import MainNavigator from './src/navigation/MainNavigator';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import Colors from './src/customs/Colors';
+import store from './src/redux/store';
 
 const App = () => {
   if (__DEV__) {
@@ -23,10 +25,10 @@ const App = () => {
   }
 
   return (
-    <>
+    <Provider store={store}>
       <SafeAreaView style={styles.safeAreaViewStyle} />
       <MainNavigator style={styles.mainNavigator} />
-    </>
+    </Provider>
   );
 };
 

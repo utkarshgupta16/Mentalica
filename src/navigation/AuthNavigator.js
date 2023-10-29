@@ -4,10 +4,16 @@ import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import CustomHeader from '../customs/CustomHeader';
+import {useDispatch} from 'react-redux';
+import {login} from '../redux/AuthSlice';
 
 const LoginScreen = ({navigation}) => {
   const [rememberMe, setRememberMe] = useState(false);
-  console.log('rememberMe:', rememberMe);
+  const dispatch = useDispatch();
+
+  const loginHandler = () => {
+    dispatch(login());
+  };
   return (
     <>
       <CustomHeader
@@ -38,7 +44,7 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.rememberMeText}>Remember Me</Text>
           </View>
         </View>
-        <Button title="Login" />
+        <Button title="Login" onPress={loginHandler} />
       </View>
     </>
   );
