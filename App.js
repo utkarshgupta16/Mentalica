@@ -7,7 +7,6 @@ import {Provider} from 'react-redux';
 // import {Colors} from 'react-native/Libraries/NewAppScreen';
 import MainNavigator from './src/navigation/MainNavigator';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import Colors from './src/customs/Colors';
 import store from './src/redux/store';
 
 const App = () => {

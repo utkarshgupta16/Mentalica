@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Pressable} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
-import CustomHeader from '../customs/CustomHeader';
+import CustomHeader from '../customs/Header';
 import {useDispatch} from 'react-redux';
 import {login} from '../redux/AuthSlice';
 
@@ -14,6 +14,11 @@ const LoginScreen = ({navigation}) => {
   const loginHandler = () => {
     dispatch(login());
   };
+
+  const signUpClickHandler = () => {
+    navigation.navigate('SignUp');
+  };
+
   return (
     <>
       <CustomHeader
@@ -33,15 +38,18 @@ const LoginScreen = ({navigation}) => {
             placeholder="Password"
             secureTextEntry={true}
           />
-          <View style={styles.checkboxContainer}>
-            <CheckBox
-              disabled={false}
-              value={rememberMe}
-              onValueChange={newValue => setRememberMe(newValue)}
-              style={styles.checkBox}
-              boxType="square"
-            />
-            <Text style={styles.rememberMeText}>Remember Me</Text>
+          <View style={styles.checkBoxSignUpContainer}>
+            <View style={styles.checkboxContainer}>
+              <CheckBox
+                disabled={false}
+                value={rememberMe}
+                onValueChange={newValue => setRememberMe(newValue)}
+                style={styles.checkBox}
+                boxType="square"
+              />
+              <Text style={styles.rememberMeText}>Remember Me</Text>
+            </View>
+            <Button title="Sign Up" onPress={signUpClickHandler} />
           </View>
         </View>
         <Button title="Login" onPress={loginHandler} />
@@ -82,6 +90,11 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     paddingLeft: 10,
   },
+  checkBoxSignUpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -92,6 +105,10 @@ const styles = StyleSheet.create({
   },
   rememberMeText: {
     fontSize: 16,
+  },
+  signUpContainer: {},
+  signUpText: {
+    fontSize: 18,
   },
 });
 

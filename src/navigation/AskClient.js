@@ -3,8 +3,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import Colors from '../customs/Colors';
 import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
+import {useDispatch} from 'react-redux';
+import {loginClient} from '../redux/AuthSlice';
+import {MENTOR, PATIENT} from '../utils/Strings';
 
 const AskClient = ({navigation}) => {
+  const dispatch = useDispatch();
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [error, setError] = useState(null);
@@ -14,6 +18,8 @@ const AskClient = ({navigation}) => {
       setError('Please Select your type.');
       return;
     }
+    const selectedType = selectedPatient ? PATIENT : MENTOR;
+    dispatch(loginClient(selectedType));
     navigation.navigate('MainRoute');
   };
 

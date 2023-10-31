@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import Login from './AuthNavigator';
+import Login from './Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeNavigator from './HomeNavigator';
 import AskClient from './AskClient';
 import {useSelector} from 'react-redux';
+import SignUp from './SignUp';
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-  console.log('isLoggedIn:', isLoggedIn);
 
   return (
     <NavigationContainer>
@@ -23,6 +23,11 @@ const MainNavigator = () => {
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : Login}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

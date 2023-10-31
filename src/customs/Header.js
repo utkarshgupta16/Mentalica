@@ -7,9 +7,11 @@ import backArrow from '../icons/backArrowS.png';
 const CustomHeader = ({showBackArrow, title, navigation}) => {
   return (
     <View style={styles.mainContainer}>
-      <Pressable onPress={navigation.goBack}>
-        <Image source={backArrow} style={styles.backArrowIcon} />
-      </Pressable>
+      {showBackArrow ? (
+        <Pressable onPress={navigation.goBack}>
+          <Image source={backArrow} style={styles.backArrowIcon} />
+        </Pressable>
+      ) : null}
       <Text style={styles.titleText}>{title}</Text>
     </View>
   );
