@@ -28,7 +28,6 @@ const AskClient = ({navigation}) => {
       <Text style={styles.typeText}>Select your type:</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.patient}>
-          <Text style={styles.chooseText}>I am a Patient</Text>
           <CheckBox
             disabled={false}
             value={selectedPatient}
@@ -40,9 +39,9 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
+          <Text style={styles.chooseText}>I am a Patient</Text>
         </View>
         <View style={styles.mentor}>
-          <Text style={styles.chooseText}>I am a Therapist/Mentor</Text>
           <CheckBox
             disabled={false}
             value={selectedMentor}
@@ -54,6 +53,7 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
+          <Text style={styles.chooseText}>I am a Therapist/Mentor</Text>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     color: Colors.dune,
-    marginRight: 10,
   },
   typeText: {
     fontWeight: '700',
@@ -91,7 +90,9 @@ const styles = StyleSheet.create({
     color: Colors.dune,
     marginBottom: 64,
   },
-  checkBox: {},
+  checkBox: {
+    marginRight: 10,
+  },
   mentor: {
     flexDirection: 'row',
     alignItems: 'center',

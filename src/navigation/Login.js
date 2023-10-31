@@ -49,10 +49,17 @@ const LoginScreen = ({navigation}) => {
               />
               <Text style={styles.rememberMeText}>Remember Me</Text>
             </View>
-            <Button title="Sign Up" onPress={signUpClickHandler} />
+            <Button title="Login" onPress={loginHandler} />
           </View>
         </View>
-        <Button title="Login" onPress={loginHandler} />
+        <View style={styles.buttonContainerView}>
+          <Pressable
+            style={styles.signUpContainer}
+            title="Sign Up"
+            onPress={signUpClickHandler}>
+            <Text style={styles.signUpText}> Sign Up</Text>
+          </Pressable>
+        </View>
       </View>
     </>
   );
@@ -106,9 +113,18 @@ const styles = StyleSheet.create({
   rememberMeText: {
     fontSize: 16,
   },
-  signUpContainer: {},
+  buttonContainerView: {
+    justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  signUpContainer: {
+    marginTop: 14,
+  },
   signUpText: {
     fontSize: 18,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+    color: Colors.primaryDarkBlue,
   },
 });
 
