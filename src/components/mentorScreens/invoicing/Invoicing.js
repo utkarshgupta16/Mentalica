@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     flexDirection: 'row',
-    marginTop: hp(5),
+    marginTop: hp(2),
   },
   headingText: {
     fontSize: 21,

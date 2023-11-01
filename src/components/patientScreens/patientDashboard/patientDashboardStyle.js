@@ -9,8 +9,7 @@ const screenBackgroundColor = '#F5F7F8';
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
-    marginTop: hp(3),
-    backgroundColor: screenBackgroundColor,
+    backgroundColor: 'white',
   },
   helloText: {
     fontSize: 21,
@@ -24,10 +23,6 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: wp(2),
   },
-  tabText: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   tabs: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -39,6 +34,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     marginTop: hp(3),
     borderRadius: 6,
+    paddingBottom: hp(3),
   },
   headingText: {
     fontWeight: 'bold',
@@ -46,16 +42,17 @@ export const styles = StyleSheet.create({
   nextAppointmentCont: {
     marginTop: hp(2),
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   leftCont: {
-    width: wp(25),
+    width: wp(30),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
     backgroundColor: '#DFDFDE',
     borderBottomLeftRadius: 5,
   },
   rightCont: {
-    width: wp(57),
+    width: wp(50),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
     backgroundColor: '#EFB7B7',
@@ -72,7 +69,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   recommendedArticlesCont: {
-    height: hp(50),
+    height: hp(45),
     marginTop: hp(1),
   },
 });

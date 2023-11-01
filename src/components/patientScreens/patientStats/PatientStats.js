@@ -2,6 +2,7 @@ import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
 import React from 'react';
 import {styles} from './PatientStatsStyle';
 
+
 const PatientStats = () => {
   return (
     <View style={styles.container}>

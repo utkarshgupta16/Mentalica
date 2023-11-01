@@ -1,20 +1,34 @@
 import {StyleSheet} from 'react-native';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from '../../../utils/Responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5F7F8',
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: wp(5),
+    // marginTop: hp(3),
+  },
+  helloText: {
+    fontSize: 21,
+    fontWeight: 'bold',
+    marginBottom: hp(1),
+    marginLeft: wp(2),
   },
   titleText: {
     fontSize: 21,
     fontWeight: 'bold',
     marginHorizontal: 20,
-    marginTop: 40,
+    marginLeft: wp(2),
+    marginBottom: hp(1),
   },
   dateText: {
-    marginBottom: 20,
+    marginBottom: hp(3),
     fontSize: 15,
     fontWeight: 'bold',
-    marginHorizontal: 20,
+    marginLeft: wp(2),
   },
   newEntryBtn: {
     borderColor: 'gray',
@@ -27,11 +41,11 @@ export const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   listContainer: {
-    marginHorizontal: 15,
+    marginHorizontal: wp(2),
     marginVertical: 15,
     borderRadius: 6,
-    padding: 15,
-    height: '75%',
+    paddingHorizontal: wp(5),
+    // height: '75%',
     backgroundColor: '#EEEDED',
   },
 });

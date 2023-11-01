@@ -1,10 +1,13 @@
 import React from 'react';
 import reactotron from 'reactotron-react-native';
+import {Provider} from 'react-redux';
 
-import {SafeAreaView, StyleSheet} from 'react-native';
+// import {SafeAreaView, StyleSheet} from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+// import {Colors} from 'react-native/Libraries/NewAppScreen';
 import MainNavigator from './src/navigation/MainNavigator';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import store from './src/redux/store';
 
 const App = () => {
   if (__DEV__) {
@@ -21,10 +24,10 @@ const App = () => {
   }
 
   return (
-    <>
+    <Provider store={store}>
       <SafeAreaView style={styles.safeAreaViewStyle} />
-      <MainNavigator />
-    </>
+      <MainNavigator style={styles.mainNavigator} />
+    </Provider>
   );
 };
 
@@ -33,6 +36,5 @@ export default App;
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
     flex: 0,
-    backgroundColor: Colors.whitishBlue,
   },
 });

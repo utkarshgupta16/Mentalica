@@ -14,11 +14,14 @@ export const styles = StyleSheet.create({
   helloText: {
     fontSize: 21,
     fontWeight: 'bold',
-    marginBottom: 15,
-
-    marginTop: 20,
+    marginBottom: hp(2),
+    marginTop: hp(2),
   },
-  dateText: {marginBottom: 20, fontSize: 15, fontWeight: 'bold'},
+  dateText: {
+    marginBottom: hp(3),
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
   tabText: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -26,8 +29,8 @@ export const styles = StyleSheet.create({
   appointmentCont: {
     flexDirection: 'row',
     backgroundColor: '#EEEDED',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1),
     borderRadius: 6,
   },
   bookedPointmentRow: {
@@ -36,7 +39,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   bookedPointmentSlot: {
-    paddingHorizontal: 20,
+    paddingHorizontal: wp(6),
     paddingVertical: hp(3),
     width: wp(60),
     marginLeft: wp(4),

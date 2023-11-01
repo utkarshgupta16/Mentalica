@@ -1,73 +1,49 @@
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Image, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {styles} from './patientDashboardStyle';
+import PatientDashboardTabs from '../../PatientDashboardTabs';
+import {ALL, APPOINMENTS, ARTICLES, SAVED} from '../../../utils/Strings';
 
 const PatientDashboard = () => {
-  const [selectedTab, setSelectedTab] = useState({tabStr: 'All'});
+  const [selectedTab, setSelectedTab] = useState({tabStr: ALL});
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>Hello Andre,</Text>
       <Text style={styles.dateText}>4th April overview</Text>
       {/* Tabs */}
       <View style={styles.tabs}>
-        <Pressable
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          title={ALL}
+          tab={ALL}
           onPress={() => {
-            setSelectedTab({tabStr: 'All'});
-          }}>
-          <View
-            style={{
-              backgroundColor: selectedTab.tabStr == 'All' ? '#DDE6ED' : null,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 50,
-            }}>
-            <Text style={styles.tabText}>All</Text>
-          </View>
-        </Pressable>
-        <Pressable
+            setSelectedTab({tabStr: ALL});
+          }}
+        />
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          title={APPOINMENTS}
+          tab={APPOINMENTS}
           onPress={() => {
-            setSelectedTab({tabStr: 'Appointments'});
-          }}>
-          <View
-            style={{
-              backgroundColor:
-                selectedTab.tabStr == 'Appointments' ? '#DDE6ED' : null,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 50,
-            }}>
-            <Text style={styles.tabText}>Appointments</Text>
-          </View>
-        </Pressable>
-        <Pressable
+            setSelectedTab({tabStr: APPOINMENTS});
+          }}
+        />
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          title={ARTICLES}
+          tab={ARTICLES}
           onPress={() => {
-            setSelectedTab({tabStr: 'Articles'});
-          }}>
-          <View
-            style={{
-              backgroundColor:
-                selectedTab.tabStr == 'Articles' ? '#DDE6ED' : null,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 50,
-            }}>
-            <Text style={styles.tabText}>Articles</Text>
-          </View>
-        </Pressable>
-        <Pressable
+            setSelectedTab({tabStr: ARTICLES});
+          }}
+        />
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          tab={SAVED}
+          title={SAVED}
           onPress={() => {
-            setSelectedTab({tabStr: 'Saved'});
-          }}>
-          <View
-            style={{
-              backgroundColor: selectedTab.tabStr == 'Saved' ? '#DDE6ED' : null,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 50,
-            }}>
-            <Text style={styles.tabText}>Saved</Text>
-          </View>
-        </Pressable>
+            setSelectedTab({tabStr: SAVED});
+          }}
+        />
       </View>
       {/*  Next Appointments */}
       {selectedTab.tabStr == 'All' ? (
@@ -102,7 +78,7 @@ const PatientDashboard = () => {
           </View>
         </View>
       ) : null}
-      {selectedTab.tabStr == 'Appointments' ? (
+      {selectedTab.tabStr == APPOINMENTS ? (
         <Text
           style={{
             textAlign: 'center',
@@ -111,7 +87,7 @@ const PatientDashboard = () => {
           No data found
         </Text>
       ) : null}
-      {selectedTab.tabStr == 'Articles' ? (
+      {selectedTab.tabStr == ARTICLES ? (
         <Text
           style={{
             textAlign: 'center',
@@ -120,7 +96,7 @@ const PatientDashboard = () => {
           No data found
         </Text>
       ) : null}
-      {selectedTab.tabStr == 'Saved' ? (
+      {selectedTab.tabStr == SAVED ? (
         <Text
           style={{
             textAlign: 'center',

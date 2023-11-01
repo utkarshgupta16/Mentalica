@@ -48,17 +48,21 @@ const MentorDashboard = () => {
         <Text style={{fontWeight: '600', paddingBottom: 10}}>
           {item.date.format('ddd')}
         </Text>
-        <Text
+        <View
           style={{
-            fontWeight: '500',
+            borderRadius: 20,
             backgroundColor: item.id === isSelectDate ? 'gray' : null,
             paddingHorizontal: wp(1.9),
             paddingVertical: hp(1),
-            borderRadius: 50,
-            color: item.id === isSelectDate ? 'white' : null,
           }}>
-          {item.date.format('DD')}
-        </Text>
+          <Text
+            style={{
+              fontWeight: '500',
+              color: item.id === isSelectDate ? 'white' : null,
+            }}>
+            {item.date.format('DD')}
+          </Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -66,10 +70,13 @@ const MentorDashboard = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>Hello Raquel,</Text>
-      <Text style={styles.dateText}>
-        {selectDate && selectDate.format('DD')}{' '}
-        {selectDate && selectDate.format('MMM')} {selectDate ? 'overview' : ''}
-      </Text>
+      {selectDate ? (
+        <Text style={styles.dateText}>
+          {selectDate && selectDate.format('DD')}{' '}
+          {selectDate && selectDate.format('MMM')}{' '}
+          {selectDate ? 'overview' : ''}
+        </Text>
+      ) : null}
 
       <View>
         <FlatList
