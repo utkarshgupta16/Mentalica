@@ -7,15 +7,11 @@ import Profile from './home/Profile';
 import {useSelector} from 'react-redux';
 import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import UserIcon from '../icons/user.svg';
 // import {MaterialIcons} from '@expo/vector-icons';
-import {
-  HOME,
-  INVOICING,
-  MENTOR,
-  MESSAGES,
-  PROFILE,
-  STATS,
-} from '../utils/Strings';
+import {MENTOR} from '../utils/strings';
+import {HOME, INVOICING, MESSAGES, PROFILE, STATS} from '../utils/route';
+import Colors from '../customs/Colors';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +19,11 @@ const HomeNavigator = () => {
   const {loginFrom} = useSelector(state => state.auth);
 
   return (
-    <Tab.Navigator initialRouteName={HOME}>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: Colors.accentColor,
+      }}
+      initialRouteName={HOME}>
       <Tab.Screen
         name={HOME}
         component={Home}
@@ -38,8 +38,22 @@ const HomeNavigator = () => {
       ) : (
         <Tab.Screen name={STATS} component={Stats} />
       )}
-      <Tab.Screen name={MESSAGES} component={Messages} />
-      <Tab.Screen name={PROFILE} component={Profile} />
+      <Tab.Screen
+        name={MESSAGES}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name="message" size={size} color={color} />
+          ),
+        }}
+        component={Messages}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({color, size}) => <UserIcon size={size} color={color} />,
+        }}
+        name={PROFILE}
+        component={Profile}
+      />
     </Tab.Navigator>
   );
 };
