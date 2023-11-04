@@ -6,6 +6,7 @@ import Profile from './home/Profile';
 import {useSelector} from 'react-redux';
 import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import UserIcon from '../icons/user.svg';
 // import {MaterialIcons} from '@expo/vector-icons';
 import {
   HOME,
@@ -24,7 +25,11 @@ const HomeNavigator = () => {
   const {loginFrom} = useSelector(state => state.auth);
 
   return (
-    <Tab.Navigator initialRouteName={HOME}>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: Colors.accentColor,
+      }}
+      initialRouteName={HOME}>
       <Tab.Screen
         name={HOME}
         component={Home}
@@ -60,23 +65,19 @@ const HomeNavigator = () => {
       )}
       <Tab.Screen
         name={MESSAGES}
-        component={Messages}
         options={{
-          headerShown: false,
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="home" size={size} color={color} />
+            <MaterialIcons name="message" size={size} color={color} />
           ),
         }}
+        component={Messages}
       />
       <Tab.Screen
+        options={{
+          tabBarIcon: ({color, size}) => <UserIcon size={size} color={color} />,
+        }}
         name={PROFILE}
         component={Profile}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="home" size={size} color={color} />
-          ),
-        }}
       />
     </Tab.Navigator>
   );

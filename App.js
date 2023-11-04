@@ -9,6 +9,15 @@ import MainNavigator from './src/navigation/MainNavigator';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import store from './src/redux/store';
 
+// Amplify.configure({
+//   Auth: {
+//     identityPoolId: 'ap-south-1:9e7c1da8-aa71-4aeb-9ef2-fc4f33011561  ',
+//     region: 'ap-south-1',
+//     userPoolId: 'ap-south-1_jJotJ6a8q',
+//     userPoolWebClientId: '38f1s3300nblraet06642nuvrh',
+//   },
+// });
+
 const App = () => {
   if (__DEV__) {
     const yeOldeConsoleLog = console.log;

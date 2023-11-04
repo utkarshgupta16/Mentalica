@@ -2,10 +2,13 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Colors from '../customs/Colors';
 
-const Button = ({title, onPress}) => {
+const Button = ({title, onPress, disabled = false}) => {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.pressable} onPress={onPress}>
+      <Pressable
+        disabled={disabled}
+        style={[styles.pressable, disabled && styles.lessOpacity]}
+        onPress={onPress}>
         <Text style={styles.buttonText} numberOfLines={1}>
           {title}
         </Text>
@@ -27,6 +30,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: Colors.primaryBlue,
     borderRadius: 4,
+  },
+  lessOpacity: {
+    opacity: 0.6,
   },
   buttonText: {
     fontWeight: '700',

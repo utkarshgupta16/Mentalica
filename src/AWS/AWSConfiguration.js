@@ -1,25 +1,6 @@
 import {Amplify, Auth} from 'aws-amplify';
 import AWS from 'aws-sdk';
 
-const getAllUsers = async () => {
-  let allUsers = [];
-  let params = {
-    UserPoolId: 'ap-south-1_jJotJ6a8q',
-    // AttributesToGet: ["username"]
-  };
-
-  AWS.config.update({
-    region: 'ap-south-1',
-    accessKeyId: 'AKIAWTMURBWR573E7BH2',
-    secretAccessKey: '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',
-  });
-
-  const cognito = new AWS.CognitoIdentityServiceProvider();
-  const rawUsers = await cognito.listUsers(params).promise();
-  allUsers = allUsers.concat(rawUsers.Users);
-
-  return allUsers;
-};
 
 const configureAws = () => {
   console.log('hello ->configuring aws');
@@ -99,6 +80,3 @@ const attributes = [
   {Name: 'custom:phoneNumber', Value: '1234567890'},
   {Name: 'email', Value: 'Jambhulkar.roshan@thinksys.com'},
 ];
-
-let jsonObject = {};
-for (var i = 0; i < attributes.length - 1; i++) {}

@@ -1,5 +1,12 @@
 import React from 'react';
-import {Text, View, StyleSheet, ScrollView, Pressable} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  // Image,
+} from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
@@ -36,7 +43,12 @@ const Profile = () => {
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
-          <View style={styles.imageContainer}></View>
+          <View style={styles.imageContainer}>
+            {/* <Image
+              source={require('../../icons/IMG_0046.jpg')}
+              style={styles.image}
+            /> */}
+          </View>
           <View style={styles.details}>
             <Text style={styles.nameText}>Utkarsh Gupta</Text>
             <Text style={styles.emailText}>Ugupta178@gmail.com</Text>
@@ -94,6 +106,11 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 8,
     marginRight: 16,
+    overflow: 'hidden',
+  },
+  image: {
+    width: 56,
+    height: 56,
   },
   details: {
     justifyContent: 'space-between',
