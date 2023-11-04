@@ -8,6 +8,7 @@ import {MENTOR} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 // import ArrowRight from '../../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {signOut} from '../../AWS/AWSConfiguration';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const Profile = () => {
   ];
 
   const logoutPressHandler = () => {
+    signOut();
     dispatch(logout());
   };
 

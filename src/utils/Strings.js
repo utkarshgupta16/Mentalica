@@ -9,3 +9,4 @@ export const ALL = 'All';
 export const APPOINMENTS = 'Appoinments';
 export const ARTICLES = 'Articles';
 export const SAVED = 'Saved';
+export const MENTORS_LIST = 'MentorsList';

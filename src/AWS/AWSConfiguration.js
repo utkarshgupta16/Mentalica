@@ -1,4 +1,25 @@
 import {Amplify, Auth} from 'aws-amplify';
+import AWS from 'aws-sdk';
+
+const getAllUsers = async () => {
+  let allUsers = [];
+  let params = {
+    UserPoolId: 'ap-south-1_jJotJ6a8q',
+    // AttributesToGet: ["username"]
+  };
+
+  AWS.config.update({
+    region: 'ap-south-1',
+    accessKeyId: 'AKIAWTMURBWR573E7BH2',
+    secretAccessKey: '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',
+  });
+
+  const cognito = new AWS.CognitoIdentityServiceProvider();
+  const rawUsers = await cognito.listUsers(params).promise();
+  allUsers = allUsers.concat(rawUsers.Users);
+
+  return allUsers;
+};
 
 const configureAws = () => {
   console.log('hello ->configuring aws');
@@ -29,21 +50,14 @@ async function confirmSignUp() {
   }
 }
 
-const signIn = async () => {
+const signIn = async (email, password) => {
   try {
-    // const user = await Auth.signIn('gauravatlive@gmail.com', 'Password@123');
-    // const user = await Auth.signIn(
-    //   'roshanjambhulkar@gmail.com',
-    //   'Password@123',
-    // );
-    const user = await Auth.signIn(
-      'gupta.utkarsh@thinksys.com',
-      'Password@123',
-    );
+    const user = await Auth.signIn(email, password);
 
-    console.log('hello -> signing in result:', user);
+    console.log('Login succesfull -> signing in result:');
+    return user;
   } catch (error) {
-    console.log('hello ->error signing in', error);
+    console.log('Login error ->error signing in', error);
   }
 };
 
@@ -55,10 +69,36 @@ const signUp = async () => {
       username: 'jambhulkar.roshan@thinksys.com',
       password: 'Password@123',
     });
-    console.log(user);
   } catch (error) {
     console.log('error signing up:', error);
   }
 };
 
-export {configureAws, confirmSignUp, signIn, signUp};
+async function signOut() {
+  try {
+    await Auth.signOut({global: true});
+    console.log('Successfully sign out: ');
+  } catch (error) {
+    console.log('error signing out: ', error);
+  }
+}
+
+//Amplify.Auth.userAttribute
+
+export {configureAws, confirmSignUp, signIn, signUp, signOut, getAllUsers};
+
+const attributes = [
+  {Name: 'custom:type', Value: 'Mentor'},
+  {Name: 'sub', Value: '21a5e85f-b32a-4a86-a474-ef5800ef12e2'},
+  {Name: 'email_verified', Value: 'true'},
+  {Name: 'custom:temporaryCity', Value: 'Singapore'},
+  {Name: 'custom:lastName', Value: 'Jambhuilkar'},
+  {Name: 'custom:city', Value: 'California'},
+  {Name: 'custom:expertise', Value: 'danger'},
+  {Name: 'custom:firstName', Value: 'roshan'},
+  {Name: 'custom:phoneNumber', Value: '1234567890'},
+  {Name: 'email', Value: 'Jambhulkar.roshan@thinksys.com'},
+];
+
+let jsonObject = {};
+for (var i = 0; i < attributes.length - 1; i++) {}

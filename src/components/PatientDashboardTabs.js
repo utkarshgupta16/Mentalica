@@ -12,7 +12,7 @@ export default function PatientDashboardTabs({
       <View
         style={{
           backgroundColor: selectedTab.tabStr == tab ? '#DDE6ED' : null,
-          paddingHorizontal: 10,
+          paddingHorizontal: 6,
           paddingVertical: 5,
           borderRadius: 50,
         }}>
@@ -25,6 +25,6 @@ export default function PatientDashboardTabs({
 const styles = StyleSheet.create({
   tabText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
   },
 });

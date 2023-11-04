@@ -5,6 +5,7 @@ import {
   FlatList,
   Pressable,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import moment from 'moment';
 import React, {useState} from 'react';
@@ -13,10 +14,12 @@ import {
   widthPercentageToDP as wp,
 } from '../../../utils/Responsive';
 import {styles} from './MentorDashboardStyle';
+import Modal from 'react-native-modal';
 
 const MentorDashboard = () => {
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -32,6 +35,10 @@ const MentorDashboard = () => {
   const handleItemPress = item => {
     setIsSelectDate(item.id === isSelectDate ? null : item.id);
     setSelectDate(item.date === isSelectDate ? null : item.date);
+  };
+
+  const handleCreateOppointment = () => {
+    setModalVisible(true);
   };
 
   const renderCalenderItem = ({item}) => (
@@ -69,7 +76,25 @@ const MentorDashboard = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Raquel,</Text>
+      <Modal
+        onBackdropPress={() => {
+          setModalVisible(false);
+        }}
+        isVisible={modalVisible}>
+        <View style={styles.modalView}>
+          <TextInput style={styles.modalTextInput} placeholder="From time" />
+          <TextInput style={styles.modalTextInput} />
+          <TextInput style={styles.modalTextInput} />
+        </View>
+      </Modal>
+      <View style={styles.helloCont}>
+        <Text style={styles.helloText}>Hello Raquel,</Text>
+        <Pressable onPress={handleCreateOppointment}>
+          <View style={styles.createAppointmentBtn}>
+            <Text style={styles.AppontmentBtnText}>Create Appointment</Text>
+          </View>
+        </Pressable>
+      </View>
       {selectDate ? (
         <Text style={styles.dateText}>
           {selectDate && selectDate.format('DD')}{' '}
@@ -88,7 +113,7 @@ const MentorDashboard = () => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      <View style={{flex: 1, marginTop: 20}}>
+      <View style={{flex: 1, marginTop: 10}}>
         <View style={styles.appointmentCont}>
           {/* Left side with time slots */}
           <ScrollView showsVerticalScrollIndicator={false}>

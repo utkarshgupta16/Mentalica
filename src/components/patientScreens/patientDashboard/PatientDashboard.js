@@ -2,7 +2,14 @@ import {FlatList, Image, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
-import {ALL, APPOINMENTS, ARTICLES, SAVED} from '../../../utils/Strings';
+import {
+  ALL,
+  APPOINMENTS,
+  ARTICLES,
+  MENTORS_LIST,
+  SAVED,
+} from '../../../utils/Strings';
+import MentorsList from '../../mentorScreens/MentorsList';
 
 const PatientDashboard = () => {
   const [selectedTab, setSelectedTab] = useState({tabStr: ALL});
@@ -42,6 +49,14 @@ const PatientDashboard = () => {
           title={SAVED}
           onPress={() => {
             setSelectedTab({tabStr: SAVED});
+          }}
+        />
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          tab={MENTORS_LIST}
+          title={MENTORS_LIST}
+          onPress={() => {
+            setSelectedTab({tabStr: MENTORS_LIST});
           }}
         />
       </View>
@@ -105,6 +120,7 @@ const PatientDashboard = () => {
           No data found
         </Text>
       ) : null}
+      {selectedTab.tabStr == MENTORS_LIST ? <MentorsList /> : null}
     </View>
   );
 };
