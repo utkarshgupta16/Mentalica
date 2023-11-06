@@ -12,7 +12,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
-import {getAllUsers} from '../../AWS/AWSConfiguration';
 
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
@@ -23,39 +22,8 @@ const lightBlack = '#45474B';
 
 const MentorsList = () => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
-  const [allMentors, setAllMentors] = useState([]);
-
-  useEffect(() => {
-    const getAllDoctors = async function () {
-      try {
-        const users = await getAllUsers();
-        console.log('users', users);
-        setAllMentors(users);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getAllDoctors();
-  }, []);
-
-  for (let i = 0; i < allMentors.length - 1; i++) {
-    console.log('mentorsList ---> 1 --->, :', allMentors[i]);
-  }
-
-  //   console.log('mentorsList ---> 2 ---> , :', allMentors[0]);
-
-  const obj = {};
-  const arr = [];
-
-  for (let i = 0; i < allMentors.length - 1; i++) {
-    for (let j = 0; j < allMentors[i].Attributes.length - 1; j++) {
-      if (allMentors[i].Attributes[j].Name == 'custom:lastName') {
-        obj.lastName = allMentors[i].Attributes[j].Value;
-        obj.firstName = allMentors[i].Attributes[j].Value;
-      }
-    }
-    // console.log('objectList --->', obj);
-  }
+  // const [allMentors, setAllMentors] = useState([]);
+  const [modifiedData, setModifiedData] = useState([]);
 
   const renderItem = ({item}) => {
     return (
@@ -64,9 +32,18 @@ const MentorsList = () => {
           <View style={styles.imageAndNameCont}>
             <Image style={styles.profilePic} source={{uri: item.imageUrl}} />
             <View>
-              <Text style={styles.mentorNameTxt}>{item.name}</Text>
+              <Text style={styles.mentorNameTxt}>
+                Name:{' '}
+                {item.Attributes.find(attr => attr.Name === 'custom:firstName')
+                  .Value || ''}{' '}
+                {item.Attributes.find(attr => attr.Name === 'custom:lastName')
+                  .Value || ''}
+              </Text>
               <Text style={styles.experienceText}>
-                {item.experience}+ years of experience
+                {item?.Attributes?.find(
+                  attr => attr.Name === 'custom:experience',
+                )?.Value || ''}
+                + years of experience
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text>starts @</Text>
@@ -75,7 +52,9 @@ const MentorsList = () => {
             </View>
           </View>
           <View style={styles.expertiesCont}>
-            <Text style={styles.expertiesText}>Experties:</Text>
+            <Text style={styles.expertiesText}>
+              Experties:{item.experience}
+            </Text>
             <View>
               <FlatList
                 data={item.experties}
@@ -139,7 +118,7 @@ const MentorsList = () => {
     );
   };
 
-  const keyExtractor = item => item.id;
+  const keyExtractor = item => item.Username;
 
   const renderSlotsItem = ({item}) => {
     return (
@@ -167,10 +146,19 @@ const MentorsList = () => {
     );
   };
 
+  // const renderItem = ({item}) => (
+  //   <View>
+  //     <Text>Username: {item.Username}</Text>
+  //     <Text>custom:type: {item['custom:type']}</Text>
+  //     <Text>custom:expertise: {item['custom:expertise']}</Text>
+  //     {/* Add more Text components for other attributes as needed */}
+  //   </View>
+  // );
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={mentorsData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -376,3 +364,276 @@ const data = [
 ];
 
 const slots = ['1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8'];
+
+const mentorsData = [
+  {
+    Username: '183fa4d3-f545-466d-b935-8d30bf4e6eb1',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'danger',
+      },
+      {
+        Name: 'sub',
+        Value: '183fa4d3-f545-466d-b935-8d30bf4e6eb1',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'false',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'Wf',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Sfdjn',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: 'E',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Wfe',
+      },
+      {
+        Name: 'email',
+        Value: 'Tribhuwan6@gmail.com',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'Feed',
+      },
+    ],
+  },
+  {
+    Username: '21a5e85f-b32a-4a86-a474-ef5800ef12e2',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'sub',
+        Value: '21a5e85f-b32a-4a86-a474-ef5800ef12e2',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'true',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Singapore',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Jambhuilkar',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'California',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'danger',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'roshan',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: '1234567890',
+      },
+      {
+        Name: 'email',
+        Value: 'Jambhulkar.roshan@thinksys.com',
+      },
+    ],
+  },
+  {
+    Username: '2451a9aa-1afa-491c-a73a-f080615dbf8d',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'loneliness',
+      },
+      {
+        Name: 'sub',
+        Value: '2451a9aa-1afa-491c-a73a-f080615dbf8d',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'false',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'Fslkmfw',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Sfafx',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: 'Wef',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Few',
+      },
+      {
+        Name: 'email',
+        Value: 'tribhuwan5@gmail.com',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'Fe',
+      },
+    ],
+  },
+  {
+    Username: '44b4c32c-00f8-4187-b291-0dee38b03064',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'danger',
+      },
+      {
+        Name: 'sub',
+        Value: '44b4c32c-00f8-4187-b291-0dee38b03064',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'false',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'Tribhuwan',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Gurgaon',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: '9999999999',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Bhandari',
+      },
+      {
+        Name: 'email',
+        Value: 'Bhandari.tribhuwan@thinksys.com',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'Nainital',
+      },
+    ],
+  },
+  {
+    Username: '93ea068e-314e-4142-97dc-3295d9ca0830',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'loneliness',
+      },
+      {
+        Name: 'sub',
+        Value: '93ea068e-314e-4142-97dc-3295d9ca0830',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'false',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'Fslkmfw',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Sfafx',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: 'Wef',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Few',
+      },
+      {
+        Name: 'email',
+        Value: 'tribhuwan4@gmail.com',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'Fe',
+      },
+    ],
+  },
+  {
+    Username: 'ae77c3d0-f93e-4237-8900-11c04d430473',
+    Attributes: [
+      {
+        Name: 'custom:type',
+        Value: 'Mentor',
+      },
+      {
+        Name: 'custom:expertise',
+        Value: 'loneliness',
+      },
+      {
+        Name: 'sub',
+        Value: 'ae77c3d0-f93e-4237-8900-11c04d430473',
+      },
+      {
+        Name: 'email_verified',
+        Value: 'false',
+      },
+      {
+        Name: 'custom:firstName',
+        Value: 'Sf',
+      },
+      {
+        Name: 'custom:temporaryCity',
+        Value: 'Sf',
+      },
+      {
+        Name: 'custom:phoneNumber',
+        Value: 'F',
+      },
+      {
+        Name: 'custom:lastName',
+        Value: 'Fs',
+      },
+      {
+        Name: 'email',
+        Value: 'Tribhuwan7@gmail.com',
+      },
+      {
+        Name: 'custom:city',
+        Value: 'Sfs',
+      },
+    ],
+  },
+];

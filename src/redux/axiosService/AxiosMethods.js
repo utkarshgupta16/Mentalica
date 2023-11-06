@@ -65,4 +65,4 @@ const getMethod = ({url, method, string, token}) => {
   });
 };
 
-export default {postMethod, getMethod};
+export {postMethod, getMethod};

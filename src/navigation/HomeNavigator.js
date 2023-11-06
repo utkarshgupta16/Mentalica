@@ -18,6 +18,7 @@ import {
 } from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
+import Colors from '../customs/Colors';
 
 const Tab = createBottomTabNavigator();
 

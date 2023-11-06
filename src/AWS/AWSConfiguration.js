@@ -66,17 +66,5 @@ async function signOut() {
 
 //Amplify.Auth.userAttribute
 
-export {configureAws, confirmSignUp, signIn, signUp, signOut, getAllUsers};
+export {configureAws, confirmSignUp, signIn, signUp, signOut};
 
-const attributes = [
-  {Name: 'custom:type', Value: 'Mentor'},
-  {Name: 'sub', Value: '21a5e85f-b32a-4a86-a474-ef5800ef12e2'},
-  {Name: 'email_verified', Value: 'true'},
-  {Name: 'custom:temporaryCity', Value: 'Singapore'},
-  {Name: 'custom:lastName', Value: 'Jambhuilkar'},
-  {Name: 'custom:city', Value: 'California'},
-  {Name: 'custom:expertise', Value: 'danger'},
-  {Name: 'custom:firstName', Value: 'roshan'},
-  {Name: 'custom:phoneNumber', Value: '1234567890'},
-  {Name: 'email', Value: 'Jambhulkar.roshan@thinksys.com'},
-];
