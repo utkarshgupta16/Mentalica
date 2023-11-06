@@ -1,13 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Alert,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {Alert, StyleSheet, Text, TextInput, View} from 'react-native';
 import CustomHeader from '../../customs/Header';
 import Colors from '../../customs/Colors';
 import Button from '../../components/Button';
@@ -15,30 +7,16 @@ import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
 import {MENTOR} from '../../utils/strings';
-import Modal from 'react-native-modal';
+import EnterOtpModal from '../../customs/EnterOtpModal';
 
 const MentorSignUp = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(30);
 
   const [educationOpen, setEducationOpen] = useState(false);
   const [specialityOpen, setSpecialityOpen] = useState(false);
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const inputRefs = useRef([]);
-
-  const handleOtpChange = (text, index) => {
-    if (text.length === 1 && index < 5) {
-      inputRefs.current[index + 1].focus();
-    }
-    if (text.length === 0 && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-  };
+  const [otpError, setOtpError] = useState('');
 
   const [state, setState] = useState({
     firstname: '',
@@ -112,21 +90,24 @@ const MentorSignUp = ({navigation}) => {
 
       console.log('state:', state);
       const {username, password} = state;
+      const attributes = {
+        'custom:firstName': state.firstname,
+        'custom:lastName': state.lastname,
+        'custom:city': state.city,
+        'custom:phoneNumber': state.phoneNumber,
+        'custom:temporaryCity': state.temporaryCity,
+        'custom:expertise': state.speciality,
+        'custom:type': MENTOR,
+        'custom:fees': state.fees,
+        'custom:experience': state.experience,
+        'custom:language': state.language,
+      };
+      console.log('attributes:', attributes);
+
       const resp = await Auth.signUp({
         username,
         password,
-        attributes: {
-          'custom:firstName': state.firstname,
-          'custom:lastName': state.lastname,
-          'custom:city': state.city,
-          'custom:phoneNumber': state.phoneNumber,
-          'custom:temporaryCity': state.temporaryCity,
-          'custom:expertise': state.speciality,
-          'custom:type': MENTOR,
-          //   'custom:fees': state.fees,
-          //   'custom:experience': state.experience,
-          //   'custom:language': state.language,
-        },
+        attributes: attributes,
       });
       console.log('resp:', resp);
 
@@ -156,36 +137,18 @@ const MentorSignUp = ({navigation}) => {
     );
   };
 
-  const submitCodeHandler = async () => {
+  const submitCodeHandler = async enteredOtp => {
     try {
-      const enteredCode = otp.join('');
+      const enteredCode = enteredOtp.join('');
       const res = await Auth.confirmSignUp(state.username, enteredCode);
       console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
+      setOtpError(error);
       console.log('error confirming sign up', error);
     }
   };
-
-  useEffect(() => {
-    let secondsInterval;
-    if (showEnterCodeModal) {
-      secondsInterval = setInterval(() => {
-        if (secondsLeft > 0) {
-          setSecondsLeft(prevSecLeft => prevSecLeft - 1);
-        }
-      }, 1000);
-    }
-
-    if (!showEnterCodeModal) {
-      setSecondsLeft(30);
-      clearInterval(secondsInterval);
-    }
-    return () => {
-      clearInterval(secondsInterval);
-    };
-  }, [showEnterCodeModal, secondsLeft]);
 
   const validateInputs = () => {
     const {
@@ -219,8 +182,9 @@ const MentorSignUp = ({navigation}) => {
     return false;
   };
 
-  const resendCode = () => {
-    Auth.resendSignUp(state.username);
+  const resendCode = async () => {
+    const response = await Auth.resendSignUp(state.username);
+    console.log('response:', response);
   };
 
   return (
@@ -232,7 +196,7 @@ const MentorSignUp = ({navigation}) => {
       />
 
       {/* =================================MODAL START================================= */}
-      <Modal
+      {/* <Modal
         avoidKeyboard={false}
         onRequestClose={() => {
           setShowEnterCodeModal(false);
@@ -243,7 +207,8 @@ const MentorSignUp = ({navigation}) => {
         animationType="slide"
         transparent={true}
         closeOnClick={true}
-        isVisible={showEnterCodeModal}
+        isVisible={true}
+        // isVisible={showEnterCodeModal}
         onBackdropPress={() => {
           setShowEnterCodeModal(false);
         }}
@@ -268,6 +233,9 @@ const MentorSignUp = ({navigation}) => {
               />
             ))}
           </View>
+          {otpError.message && (
+            <Text style={styles.otpErrorText}>{otpError.message}</Text>
+          )}
           <Button title="Submit" onPress={submitCodeHandler} />
           <View style={styles.resendCodeContainer}>
             <Text style={styles.resendCodeAgainText}>Didn't get a code? </Text>
@@ -281,7 +249,15 @@ const MentorSignUp = ({navigation}) => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
+      <EnterOtpModal
+        state={state}
+        submitCodeHandler={submitCodeHandler}
+        resendCode={resendCode}
+        showEnterCodeModal={showEnterCodeModal}
+        setShowEnterCodeModal={setShowEnterCodeModal}
+        otpError={otpError}
+      />
       {/* =================================MODAL END================================= */}
 
       <View style={styles.mainContainer}>
@@ -385,6 +361,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginRight: 10,
     borderRadius: 8,
+  },
+  otpErrorText: {
+    color: Colors.red,
+    fontSize: 15,
   },
   resendCodeContainer: {
     marginTop: 24,
