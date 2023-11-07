@@ -8,7 +8,7 @@ const screenBackgroundColor = '#F5F7F8';
 
 export const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(2),
     backgroundColor: 'white',
     flex: 1,
   },

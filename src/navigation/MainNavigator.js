@@ -16,11 +16,13 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="AskClient"
-          component={AskClient}
-          options={{headerShown: false}}
-        />
+        {isLoggedIn ? null : (
+          <Stack.Screen
+            name="AskClient"
+            component={AskClient}
+            options={{headerShown: false}}
+          />
+        )}
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : Login}

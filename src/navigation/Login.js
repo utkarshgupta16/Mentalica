@@ -22,7 +22,9 @@ import {setAttributes} from '../redux/HomeSlice';
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
-  const [enteredEmail, setEnteredEmail] = useState('bhandari.tribhuwan@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'bhandari.tribhuwan@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
@@ -36,7 +38,7 @@ const LoginScreen = ({navigation}) => {
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const {attributes} = user;
       dispatch(setAttributes(attributes));
-      dispatch(login());
+      dispatch(login(enteredEmail));
     } catch (err) {
       setError(err);
       console.log('hello ->error signing in', err);

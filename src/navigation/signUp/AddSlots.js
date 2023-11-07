@@ -15,7 +15,7 @@ import {
   screenHeight,
   screenWidth,
   widthPercentageToDP as wp,
-} from '../../utils/responsive';
+} from '../../utils/Responsive';
 import Close from '../../icons/icon_close.svg';
 
 const AddSlot = ({close, state,addSlots, slots = [], setState}) => {

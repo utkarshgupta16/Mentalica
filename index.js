@@ -1,13 +1,12 @@
-/**
- * @format
- */
-
 import {Amplify} from 'aws-amplify';
-
 import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
-
+import {Provider} from 'react-redux';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {store} from './src/redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
+import {persistStore} from 'redux-persist';
 const config = {
   Auth: {
     identityPoolId: 'ap-south-1:9e7c1da8-aa71-4aeb-9ef2-fc4f33011561  ', // (required) - Amazon Cognito Identity Pool ID
@@ -18,5 +17,17 @@ const config = {
 };
 
 Amplify.configure(config);
+let persistor = persistStore(store);
+const AppConfig = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <App />
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
+  );
+};
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => AppConfig);

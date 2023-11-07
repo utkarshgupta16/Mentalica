@@ -10,6 +10,7 @@ import {
   SAVED,
 } from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
+import AppointmentList from './AppointmentList';
 
 const PatientDashboard = () => {
   const [selectedTab, setSelectedTab] = useState({tabStr: ALL});
@@ -93,15 +94,7 @@ const PatientDashboard = () => {
           </View>
         </View>
       ) : null}
-      {selectedTab.tabStr == APPOINMENTS ? (
-        <Text
-          style={{
-            textAlign: 'center',
-          }}>
-          {' '}
-          No data found
-        </Text>
-      ) : null}
+      {selectedTab.tabStr == APPOINMENTS ? <AppointmentList /> : null}
       {selectedTab.tabStr == ARTICLES ? (
         <Text
           style={{

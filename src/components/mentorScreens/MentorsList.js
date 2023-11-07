@@ -6,13 +6,20 @@ import {
   FlatList,
   TouchableOpacity,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
+  screenHeight,
+  screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
-
+import {useDispatch} from 'react-redux';
+import {getAllMentorList} from '../../redux/HomeSlice';
+import Close from '../../icons/icon_close.svg';
+import Modal from 'react-native-modal';
+import MentorDetails from './MentorDetails';
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
@@ -22,75 +29,70 @@ const lightBlack = '#45474B';
 
 const MentorsList = () => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
-  // const [allMentors, setAllMentors] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [allMentors, setAllMentors] = useState([]);
   const [modifiedData, setModifiedData] = useState([]);
+  const [selectedMentorData, setMentor] = useState({slots: []});
+  const [showDetails, setShowDetails] = useState(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const {payload} = await dispatch(getAllMentorList());
+        setAllMentors(payload.Items);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+      // console.log('getAllMentorList', payload.Items);
+    })();
+  }, []);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
+    console.log('setShowDetails', item);
     return (
-      <View style={styles.flatListContainer}>
+      <Pressable
+        key={index}
+        onPress={() => {
+          setMentor(item);
+          setShowDetails(!showDetails);
+        }}
+        style={styles.flatListContainer}>
         <View style={styles.cardContainer}>
           <View style={styles.imageAndNameCont}>
-            <Image style={styles.profilePic} source={{uri: item.imageUrl}} />
+            <Image
+              source={require('../../icons/doctor.jpg')}
+              style={styles.profilePic}
+            />
+            {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
             <View>
-              <Text style={styles.mentorNameTxt}>
-                Name:{' '}
-                {item.Attributes.find(attr => attr.Name === 'custom:firstName')
-                  .Value || ''}{' '}
-                {item.Attributes.find(attr => attr.Name === 'custom:lastName')
-                  .Value || ''}
+              <Text style={styles.mentorNameTxt} numberOfLines={1}>
+                {`${item?.firstName} ${item?.lastName}`}
               </Text>
               <Text style={styles.experienceText}>
-                {item?.Attributes?.find(
-                  attr => attr.Name === 'custom:experience',
-                )?.Value || ''}
-                + years of experience
+                {item?.experience}+ years of experience
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text>starts @</Text>
-                <Text style={styles.feesTxt}>₹{item.fees} for 50 mins</Text>
+                <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
               </View>
             </View>
           </View>
-          <View style={styles.expertiesCont}>
-            <Text style={styles.expertiesText}>
-              Experties:{item.experience}
+          <Text style={styles.expertiesText}>
+            Experties :{' '}
+            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
+              {item?.expertise}
             </Text>
-            <View>
-              <FlatList
-                data={item.experties}
-                renderItem={renderExpertiesItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                nestedScrollEnabled={true}
-              />
-            </View>
-          </View>
-
-          <View style={styles.languageCont}>
-            <Text style={styles.launguageText}>Speaks:</Text>
-            <View>
-              <FlatList
-                data={item.launguage}
-                renderItem={renderLaunguageItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-              />
-            </View>
-          </View>
-
-          <View style={styles.sessionCont}>
-            <Text style={styles.sessionText}>Speaks:</Text>
-            <View>
-              <FlatList
-                data={item.sessionMode}
-                renderItem={renderSessionModeItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-              />
-            </View>
-          </View>
+          </Text>
+          <Text style={styles.launguageText}>
+            Speaks :{' '}
+            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
+              {item?.language}
+            </Text>
+          </Text>
         </View>
-        <View style={styles.bookBtnCont}>
+        {/* <View style={styles.bookBtnCont}>
           {showAppointmentBtn ? (
             <Pressable onPress={() => setShowAppointmentBtn(false)}>
               <View style={styles.bookBtn}>
@@ -104,7 +106,7 @@ const MentorsList = () => {
               <Text style={{fontSize: 15}}>Available slots: </Text>
               <View style={styles.slotList}>
                 <FlatList
-                  data={slots}
+                  data={item?.slots}
                   renderItem={renderSlotsItem}
                   keyExtractor={key => key}
                   horizontal={true}
@@ -113,8 +115,8 @@ const MentorsList = () => {
               </View>
             </View>
           )}
-        </View>
-      </View>
+        </View> */}
+      </Pressable>
     );
   };
 
@@ -139,7 +141,7 @@ const MentorsList = () => {
             style={{
               color: 'white',
             }}>
-            {item}
+            {item?.startTime}
           </Text>
         </View>
       </TouchableOpacity>
@@ -158,11 +160,33 @@ const MentorsList = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={mentorsData}
+        data={allMentors}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
+      {showDetails ? (
+        <MentorDetails
+          showDetails={showDetails}
+          close={() => setShowDetails(false)}
+          selectedMentorData={selectedMentorData}
+        />
+      ) : null}
+      {isLoading ? (
+        <View
+          style={{
+            // backgroundColor: '#00000082',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            top: 0,
+            right: 0,
+          }}>
+          <ActivityIndicator color={'green'} size="large" />
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -255,6 +279,8 @@ const styles = StyleSheet.create({
   },
   expertiesText: {
     marginRight: 10,
+    fontWeight: '500',
+    fontSize: 15,
   },
   languageCont: {
     flexDirection: 'row',
@@ -262,6 +288,9 @@ const styles = StyleSheet.create({
   },
   launguageText: {
     marginRight: 10,
+    marginTop: 10,
+    fontWeight: '500',
+    fontSize: 15,
   },
   sessionCont: {
     flexDirection: 'row',

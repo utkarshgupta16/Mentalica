@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {endPoints} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {PATIENT} from '../utils/strings';
+import {PATIENT} from '../utils/Strings';
 // import { USER_NAME, PASSWORD } from '@env';
 
 export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
@@ -38,13 +38,15 @@ export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
 const initialState = {
   isLoggedIn: false,
   loginFrom: null,
+  email: '',
 };
 const Authslice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    login: state => {
+    login: (state, action) => {
       state.isLoggedIn = true;
+      state.email = action.payload;
     },
     logout: state => {
       state.isLoggedIn = false;
