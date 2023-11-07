@@ -17,10 +17,12 @@ import Modal from 'react-native-modal';
 // import {useSelector} from 'react-redux';
 import {Auth} from 'aws-amplify';
 import {PATIENT} from '../../utils/strings';
+import {singUpSlice} from '../../redux/AuthSlice';
+import {useDispatch} from 'react-redux';
 
 const PatientSignUp = ({navigation}) => {
   // const {loginFrom} = useSelector(state => state.auth);
-
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const [genderItems, setGenderItems] = useState([
@@ -38,19 +40,18 @@ const PatientSignUp = ({navigation}) => {
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
 
   const [state, setState] = useState({
-    firstname: '',
-    lastname: '',
-    age: '',
-    // age: null,
-    city: '',
-    gender: '',
-    phoneNumber: '',
-    username: 'Tribhuvan@gmail.com',
-    temporaryCity: '',
-    duty: '',
-    feel: '',
-    password: '',
-    confirmPassword: '',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    emailId: 'bhandari.tribhuwan@thinksys.com',
+    password: 'Password@123',
+    confirmPassword: 'Password@123',
+    city: 'city',
+    age: '15',
+    phoneNumber: '57575575656',
+    temporaryCity: 'temporaryCity',
+    gender: 'male',
+    duty: 'civilian',
+    feel: 'fear',
     type: PATIENT,
   });
 
@@ -95,27 +96,48 @@ const PatientSignUp = ({navigation}) => {
   const handleSignup = async () => {
     try {
       setIsLoading(true);
-      const {username, password} = state;
+      // const {emailId, password} = state;
+      // const resp = await Auth.signUp({
+      //   emailId,
+      //   password,
+      //   attributes: {
+      //     'custom:firstName': state.firstName,
+      //     'custom:lastName': state.lastName,
+      //     'custom:city': state.city,
+      //     'custom:duty': state.duty,
+      //     'custom:feel': state.feel,
+      //     'custom:phoneNumber': state.phoneNumber,
+      //     'custom:temporaryCity': state.temporaryCity,
+      //     'custom:type': PATIENT,
+      //     gender: state.gender,
+      //   },
+      //   // autoSignIn: {
+      //   //   // optional - enables auto sign in after user is confirmed
+      //   //   enabled: true,
+      //   // },
+      // });
+      const {password, confirmPassword, type, ...restData} = state;
+      // let expertiseUpdated = '';
+      // expertise &&
+      //   expertise.map((val, i) => {
+      //     if (i == 0) {
+      //       expertiseUpdated = expertiseUpdated + val;
+      //     } else {
+      //       expertiseUpdated = expertiseUpdated + ',' + val;
+      //     }
+      //   });
+
       const resp = await Auth.signUp({
-        username,
+        username: state.emailId,
         password,
         attributes: {
-          'custom:firstName': state.firstname,
-          'custom:lastName': state.lastname,
-          'custom:city': state.city,
-          'custom:duty': state.duty,
-          'custom:feel': state.feel,
-          'custom:phoneNumber': state.phoneNumber,
-          'custom:temporaryCity': state.temporaryCity,
           'custom:type': PATIENT,
-          gender: state.gender,
         },
-        // autoSignIn: {
-        //   // optional - enables auto sign in after user is confirmed
-        //   enabled: true,
-        // },
       });
 
+      const attRes = await dispatch(
+        singUpSlice({...restData, type: PATIENT}),
+      );
       console.log('resp:', resp);
       setShowEnterCodeModal(true);
     } catch (err) {
@@ -147,9 +169,9 @@ const PatientSignUp = ({navigation}) => {
     try {
       const enteredCode = otp.join('');
 
-      const res = await Auth.confirmSignUp(state.username, enteredCode);
+      const res = await Auth.confirmSignUp(state.emailId, enteredCode);
       console.log('res:', res);
-      navigation.goBack();
+      // navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
       console.log('error confirming sign up', error);
@@ -158,18 +180,18 @@ const PatientSignUp = ({navigation}) => {
   };
 
   const resendCode = () => {
-    Auth.resendSignUp(state.username);
+    Auth.resendSignUp(state.emailId);
   };
 
   const validateInputs = () => {
     const {
-      firstname,
-      lastname = '',
+      firstName,
+      lastName = '',
       age = '',
       city = '',
       gender = '',
       phoneNumber = '',
-      username = '',
+      emailId = '',
       temporaryCity = '',
       duty = '',
       feel = '',
@@ -178,10 +200,10 @@ const PatientSignUp = ({navigation}) => {
     } = state;
 
     if (
-      !firstname ||
-      !lastname ||
+      !firstName ||
+      !lastName ||
       !age ||
-      !username ||
+      !emailId ||
       !phoneNumber ||
       !city ||
       !temporaryCity ||
@@ -243,7 +265,7 @@ const PatientSignUp = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <Text style={styles.enterOTPText}>
-            Enter the 6-digit OTP sent to {state.username}
+            Enter the 6-digit OTP sent to {state.emailId}
           </Text>
 
           <View style={styles.otpContainer}>
@@ -275,12 +297,12 @@ const PatientSignUp = ({navigation}) => {
       </Modal>
       {/* =================================MODAL END================================= */}
       <View style={styles.container}>
-        {renderInput({placeholder: 'First Name', field: 'firstname'})}
-        {renderInput({placeholder: 'Last Name', field: 'lastname'})}
+        {renderInput({placeholder: 'First Name', field: 'firstName'})}
+        {renderInput({placeholder: 'Last Name', field: 'lastName'})}
         {renderInput({placeholder: 'Age', field: 'age'})}
         {renderInput({placeholder: 'City', field: 'city'})}
         {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-        {renderInput({placeholder: 'Email', field: 'username'})}
+        {renderInput({placeholder: 'Email', field: 'emailId'})}
         {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
 
         <DropDownPicker

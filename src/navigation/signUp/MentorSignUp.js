@@ -1,5 +1,14 @@
 import React, {useState} from 'react';
-import {Alert, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Alert,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import CustomHeader from '../../customs/Header';
 import Colors from '../../customs/Colors';
 import Button from '../../components/Button';
@@ -8,109 +17,93 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
 import {MENTOR} from '../../utils/strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-
+import {specialities, educationList} from '../../utils/default';
+import {useDispatch} from 'react-redux';
+import {singUpSlice} from '../../redux/AuthSlice';
+import AddSlotsComponent from './AddSlots';
 const MentorSignUp = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
 
   const [educationOpen, setEducationOpen] = useState(false);
   const [specialityOpen, setSpecialityOpen] = useState(false);
   const [otpError, setOtpError] = useState('');
-
+  const [showSlots, setShowSlots] = useState(false);
+  const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
+  const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstname: '',
-    lastname: '',
-    city: '',
+    firstName: 'Sonu',
+    lastName: 'Patel',
+    city: 'varanasi',
     // gender: '',
-    phoneNumber: '',
-    username: '',
-    temporaryCity: '',
-    password: '',
-    confirmPassword: '',
+    phoneNumber: '1234567890',
+    emailId: 'patel.sonu@thinksys.com',
+    temporaryCity: 'testing',
+    password: 'Password@123',
+    confirmPassword: 'Password@123',
     type: MENTOR,
-    education: '',
-    speciality: '',
-    fees: '',
-    experience: '',
-    language: 'Hebrew,English',
-    // speciality: [],
+    expertise: [],
+    fees: '500',
+    experience: '4',
+    language: 'english,hindi',
   });
 
   const handleInput = ({field, value}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
-
-  const [specialistItems, setSpecialistItems] = useState([
-    {label: 'Anxiety', value: 'anxiety'},
-    {label: 'Fear', value: 'fear'},
-    {label: 'Danger', value: 'danger'},
-    {label: 'Disappointment', value: 'disappointment'},
-    {label: 'Loneliness', value: 'loneliness'},
-    {label: 'Hate', value: 'hate'},
-    {label: 'Abandoned', value: 'abandoned'},
-    {label: 'Trauma', value: 'trauma'},
-    {label: 'Shocked', value: 'shocked'},
-    {label: 'Pain', value: 'pain'},
-    {label: 'Anger', value: 'anger'},
-    {label: 'Depressed', value: 'depressed'},
-    {label: 'Sadness', value: 'sadness'},
-  ]);
-
-  const [educationItems, setEducationItems] = useState([
-    {
-      label: "Associate's Degree",
-      value: 'associate degree',
-    },
-    {
-      label: "Bachelor's Degree",
-      value: 'bachelor degree',
-    },
-    {
-      label: "Master's Degree",
-      value: 'master degree',
-    },
-    {
-      label: 'Doctorate/Ph.D',
-      value: 'doctorate/ph.d',
-    },
-    {
-      label: 'Professional Degree',
-      value: 'professional degree',
-    },
-    {
-      label: 'Other',
-      value: 'other',
-    },
-  ]);
+  console.log('slots', slots);
+  const [specialistItems, setSpecialistItems] = useState(specialities);
+  const [educationItems, setEducationItems] = useState(educationList);
 
   const handleSignup = async () => {
     try {
       setIsLoading(true);
 
-      console.log('state:', state);
-      const {username, password} = state;
-      const attributes = {
-        'custom:firstName': state.firstname,
-        'custom:lastName': state.lastname,
-        'custom:city': state.city,
-        'custom:phoneNumber': state.phoneNumber,
-        'custom:temporaryCity': state.temporaryCity,
-        'custom:expertise': state.speciality,
-        'custom:type': MENTOR,
-        'custom:fees': state.fees,
-        'custom:experience': state.experience,
-        'custom:language': state.language,
-      };
-      console.log('attributes:', attributes);
+      // console.log('state:', state);
+      // const {emailId, password} = state;
+      // const attributes = {
+      //   'custom:firstName': state.firstName,
+      //   'custom:lastName': state.lastName,
+      //   'custom:city': state.city,
+      //   'custom:phoneNumber': state.phoneNumber,
+      //   'custom:temporaryCity': state.temporaryCity,
+      //   'custom:expertise': state.expertise,
+      //   'custom:type': MENTOR,
+      //   'custom:fees': state.fees,
+      //   'custom:experience': state.experience,
+      //   'custom:language': state.language,
+      // };
+      // console.log('attributes:', attributes);
+
+      // const resp = await Auth.signUp({
+      //   emailId,
+      //   password,
+      //   attributes: attributes,
+      // });
+      // console.log('resp:', resp);
+      const {password, confirmPassword, type,  ...restData} = state;
+      // let expertiseUpdated = '';
+      // expertise &&
+      //   expertise.map((val, i) => {
+      //     if (i == 0) {
+      //       expertiseUpdated = expertiseUpdated + val;
+      //     } else {
+      //       expertiseUpdated = expertiseUpdated + ',' + val;
+      //     }
+      //   });
 
       const resp = await Auth.signUp({
-        username,
+        username: state.emailId,
         password,
-        attributes: attributes,
+        attributes: {
+          'custom:type': 'Mentor',
+        },
       });
-      console.log('resp:', resp);
-
+     
+      const attRes = await dispatch(
+        singUpSlice({...restData, slots,type:MENTOR}),
+      );
       setShowEnterCodeModal(true);
     } catch (err) {
       Alert.alert('Error!', err, [
@@ -140,7 +133,7 @@ const MentorSignUp = ({navigation}) => {
   const submitCodeHandler = async enteredOtp => {
     try {
       const enteredCode = enteredOtp.join('');
-      const res = await Auth.confirmSignUp(state.username, enteredCode);
+      const res = await Auth.confirmSignUp(state.emailId, enteredCode);
       console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);
@@ -152,30 +145,31 @@ const MentorSignUp = ({navigation}) => {
 
   const validateInputs = () => {
     const {
-      firstname,
-      lastname = '',
+      firstName,
+      lastName = '',
       city = '',
       phoneNumber = '',
-      username = '',
+      emailId = '',
       temporaryCity = '',
       password = '',
       confirmPassword = '',
       education = '',
-      speciality = '',
+      expertise = '',
       //   fees = '',
     } = state;
 
     if (
-      !firstname ||
-      !lastname ||
-      !username ||
+      !firstName ||
+      !lastName ||
+      !emailId ||
       !phoneNumber ||
       !city ||
       !temporaryCity ||
       !password ||
       !confirmPassword ||
       !education ||
-      !speciality
+      !expertise ||
+      !slots.length
     ) {
       return true;
     }
@@ -183,18 +177,26 @@ const MentorSignUp = ({navigation}) => {
   };
 
   const resendCode = async () => {
-    const response = await Auth.resendSignUp(state.username);
+    const response = await Auth.resendSignUp(state.emailId);
     console.log('response:', response);
   };
 
   return (
-    <>
+    <SafeAreaView
+      style={{
+        backgroundColor: Colors.paleMintColor,
+        flex: 1,
+      }}>
       <CustomHeader
         title={'Sign Up'}
         showBackArrow={true}
         navigation={navigation}
       />
-
+      {/* <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{flex: 1, flexGrow: 1}}
+        nestedScrollEnabled
+        > */}
       {/* =================================MODAL START================================= */}
       {/* <Modal
         avoidKeyboard={false}
@@ -217,7 +219,7 @@ const MentorSignUp = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <Text style={styles.enterOTPText}>
-            Enter the 6-digit OTP sent to {state.username}
+            Enter the 6-digit OTP sent to {state.emailId}
           </Text>
 
           <View style={styles.otpContainer}>
@@ -261,11 +263,11 @@ const MentorSignUp = ({navigation}) => {
       {/* =================================MODAL END================================= */}
 
       <View style={styles.mainContainer}>
-        {renderInput({placeholder: 'First Name', field: 'firstname'})}
-        {renderInput({placeholder: 'Last Name', field: 'lastname'})}
+        {renderInput({placeholder: 'First Name', field: 'firstName'})}
+        {renderInput({placeholder: 'Last Name', field: 'lastName'})}
         {renderInput({placeholder: 'City', field: 'city'})}
         {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-        {renderInput({placeholder: 'Email', field: 'username'})}
+        {renderInput({placeholder: 'Email', field: 'emailId'})}
         {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
         {renderInput({
           placeholder: 'Password',
@@ -285,27 +287,27 @@ const MentorSignUp = ({navigation}) => {
           placeholder: 'Experience in Years',
           field: 'experience',
         })}
-
-        <DropDownPicker
-          zIndex={2000}
-          open={educationOpen}
-          setOpen={setEducationOpen}
-          value={state.education}
-          setValue={props => {
-            handleInput({field: 'education', value: props()});
-          }}
-          items={educationItems}
-          setItems={setEducationItems}
-          placeholder={'Select Education.'}
-          style={styles.dropdown}
-        />
+        {/* 
+          <DropDownPicker
+            zIndex={2000}
+            open={educationOpen}
+            setOpen={setEducationOpen}
+            value={state.education}
+            setValue={props => {
+              handleInput({field: 'education', value: props()});
+            }}
+            items={educationItems}
+            setItems={setEducationItems}
+            placeholder={'Select Education.'}
+            style={styles.dropdown}
+          /> */}
         <DropDownPicker
           zIndex={1000}
           open={specialityOpen}
           setOpen={setSpecialityOpen}
-          value={state.speciality}
+          value={state.expertise}
           setValue={props => {
-            handleInput({field: 'speciality', value: props()});
+            handleInput({field: 'expertise', value: props()});
           }}
           items={specialistItems}
           setItems={setSpecialistItems}
@@ -319,16 +321,32 @@ const MentorSignUp = ({navigation}) => {
               Password does not match.
             </Text>
           )}
-
+        <Pressable
+          style={{paddingVertical: 10}}
+          onPress={() => setShowSlots(!showSlots)}>
+          <Text style={{textDecorationStyle: 'solid', color: 'blue'}}>
+            Add Slots
+          </Text>
+        </Pressable>
         <Button
-          disabled={validateInputs()}
+          // disabled={validateInputs()}
           title="Sign Up"
           onPress={handleSignup}
           secureTextEntry={true}
         />
         {isLoading ? <Loader /> : null}
+        {showSlots ? (
+          <AddSlotsComponent
+            setState={setSlotState}
+            state={slotState}
+            addSlots={addSlots}
+            slots={slots}
+            close={() => setShowSlots(false)}
+          />
+        ) : null}
       </View>
-    </>
+      {/* </ScrollView> */}
+    </SafeAreaView>
   );
 };
 
