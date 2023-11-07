@@ -1,5 +1,5 @@
 // packages
-import { Dimensions, PixelRatio } from 'react-native';
+import {Dimensions, PixelRatio} from 'react-native';
 
 // Retrieve initial screen's width
 export let screenWidth = Dimensions.get('window').width;
@@ -13,9 +13,10 @@ export let screenHeight = Dimensions.get('window').height;
  *                               along with the percentage symbol (%).
  * @return {number}              The calculated dp depending on current device's screen width.
  */
-const widthPercentageToDP = (widthPercent) => {
+const widthPercentageToDP = widthPercent => {
   // Parse string percentage input and convert it to number.
-  const elemWidth = typeof widthPercent === 'number' ? widthPercent : parseFloat(widthPercent);
+  const elemWidth =
+    typeof widthPercent === 'number' ? widthPercent : parseFloat(widthPercent);
 
   // Use PixelRatio.roundToNearestPixel method in order to round the layout
   // size (dp) to the nearest one that correspons to an integer number of pixels.
@@ -28,9 +29,12 @@ const widthPercentageToDP = (widthPercent) => {
  *                                along with the percentage symbol (%).
  * @return {number}               The calculated dp depending on current device's screen height.
  */
-const heightPercentageToDP = (heightPercent) => {
+const heightPercentageToDP = heightPercent => {
   // Parse string percentage input and convert it to number.
-  const elemHeight = typeof heightPercent === 'number' ? heightPercent : parseFloat(heightPercent);
+  const elemHeight =
+    typeof heightPercent === 'number'
+      ? heightPercent
+      : parseFloat(heightPercent);
 
   // Use PixelRatio.roundToNearestPixel method in order to round the layout
   // size (dp) to the nearest one that correspons to an integer number of pixels.
@@ -46,8 +50,8 @@ const heightPercentageToDP = (heightPercent) => {
  * @param {object} that Screen's class component this variable. The function needs it to
  *                      invoke setState method and trigger screen rerender (this.setState()).
  */
-const listenOrientationChange = (that) => {
-  Dimensions.addEventListener('change', (newDimensions) => {
+const listenOrientationChange = that => {
+  Dimensions.addEventListener('change', newDimensions => {
     // Retrieve and save new dimensions
     screenWidth = newDimensions.window.width;
     screenHeight = newDimensions.window.height;
