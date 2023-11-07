@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import {MENTOR} from '../../utils/strings';
+import {MENTOR} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 
 const MentorSignUp = ({navigation}) => {
@@ -30,14 +30,19 @@ const MentorSignUp = ({navigation}) => {
     confirmPassword: '',
     type: MENTOR,
     education: '',
-    speciality: '',
+    speciality: [],
     fees: '',
     experience: '',
     language: 'Hebrew,English',
     // speciality: [],
   });
 
+  console.log('sppppp', state.speciality);
+
   const handleInput = ({field, value}) => {
+    console.log('field:', field, value);
+    const valueType = typeof value;
+    console.log('valueType:', valueType);
     setState(prevState => ({...prevState, [field]: value}));
   };
 
@@ -161,7 +166,7 @@ const MentorSignUp = ({navigation}) => {
       password = '',
       confirmPassword = '',
       education = '',
-      speciality = '',
+      speciality = [],
       //   fees = '',
     } = state;
 
@@ -175,7 +180,7 @@ const MentorSignUp = ({navigation}) => {
       !password ||
       !confirmPassword ||
       !education ||
-      !speciality
+      !speciality.length
     ) {
       return true;
     }
@@ -211,7 +216,7 @@ const MentorSignUp = ({navigation}) => {
         // isVisible={showEnterCodeModal}
         onBackdropPress={() => {
           setShowEnterCodeModal(false);
-        }}
+        }} 
         onBackButtonPress={() => {
           setShowEnterCodeModal(false);
         }}>
@@ -305,12 +310,18 @@ const MentorSignUp = ({navigation}) => {
           setOpen={setSpecialityOpen}
           value={state.speciality}
           setValue={props => {
-            handleInput({field: 'speciality', value: props()});
+            const val = [...state.speciality, ...props()];
+            console.log('val', val, state.speciality, props());
+            handleInput({
+              field: 'speciality',
+              value: [...state.speciality, ...props()],
+            });
           }}
           items={specialistItems}
           setItems={setSpecialistItems}
           placeholder={'Select Speciality.'}
           style={styles.dropdown}
+          multiple={true}
         />
         {state.password &&
           state.confirmPassword &&

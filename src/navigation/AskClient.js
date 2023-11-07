@@ -5,7 +5,7 @@ import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
 import {useDispatch} from 'react-redux';
 import {loginClient} from '../redux/AuthSlice';
-import {MENTOR, PATIENT} from '../utils/strings';
+import {MENTOR, PATIENT} from '../utils/Strings';
 
 const AskClient = ({navigation}) => {
   const dispatch = useDispatch();

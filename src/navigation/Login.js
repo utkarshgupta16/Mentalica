@@ -14,15 +14,18 @@ import Button from '../components/Button';
 import CustomHeader from '../customs/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../redux/AuthSlice';
-import {MENTOR} from '../utils/strings';
+import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
 import {Amplify, Auth} from 'aws-amplify';
+import {setAttributes} from '../redux/HomeSlice';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
-  const [enteredEmail, setEnteredEmail] = useState('');
-  const [enteredPassword, setEnteredPassword] = useState('');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'jambhulkar.roshan@thinksys.com',
+  );
+  const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
@@ -33,13 +36,12 @@ const LoginScreen = ({navigation}) => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       const user = await Auth.signIn(enteredEmail, enteredPassword);
-
-      console.log('user:', user);
+      const {attributes} = user;
+      dispatch(setAttributes(attributes));
       dispatch(login());
-      console.log('hello -> signing in result:', user);
-    } catch (error) {
-      setError(error);
-      console.log('hello ->error signing in', error);
+    } catch (err) {
+      setError(err);
+      console.log('hello ->error signing in', err);
     }
   };
 
@@ -66,8 +68,8 @@ const LoginScreen = ({navigation}) => {
       setShowEnterCodeModal(false);
       setEnteredEmail('');
       setError('');
-    } catch (error) {
-      console.log('error confirming sign uppp', error);
+    } catch (err) {
+      console.log('error confirming sign uppp', err);
       setShowEnterCodeModal(false);
     }
   };
@@ -122,7 +124,7 @@ const LoginScreen = ({navigation}) => {
           <TextInput
             onChangeText={handleEnteredEmail}
             style={styles.input}
-            placeholder="sign up with e-mail"
+            placeholder="E-mail"
             keyboardType="email-address"
             value={enteredEmail}
           />
@@ -191,10 +193,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
     paddingHorizontal: 16,
     backgroundColor: Colors.paleMintColor,
-    borderWidth: 1,
   },
   logo: {
     width: 120,
@@ -237,16 +237,21 @@ const styles = StyleSheet.create({
   },
   buttonContainerView: {
     justifyContent: 'center',
+
     // alignItems: 'center',
   },
   signUpContainer: {
     marginTop: 14,
   },
   signUpText: {
-    fontSize: 18,
-    textDecorationLine: 'underline',
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '500',
     color: Colors.primaryDarkBlue,
+    textDecorationLine: 'none',
+  },
+  warningMessage: {
+    color: 'tomato',
+    fontSize: 12,
   },
 });
 

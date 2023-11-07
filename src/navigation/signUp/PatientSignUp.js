@@ -16,7 +16,7 @@ import Loader from '../../customs/Loader';
 import Modal from 'react-native-modal';
 // import {useSelector} from 'react-redux';
 import {Auth} from 'aws-amplify';
-import {PATIENT} from '../../utils/strings';
+import {PATIENT} from '../../utils/Strings';
 
 const PatientSignUp = ({navigation}) => {
   // const {loginFrom} = useSelector(state => state.auth);
