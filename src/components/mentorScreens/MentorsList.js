@@ -6,12 +6,17 @@ import {
   FlatList,
   TouchableOpacity,
   Pressable,
+  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
+import {getMethod} from '../../redux/axiosService/AxiosMethods';
+import {Amplify, Auth} from 'aws-amplify';
+import Modal from 'react-native-modal';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
@@ -22,18 +27,36 @@ const lightBlack = '#45474B';
 
 const MentorsList = () => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
-  // const [allMentors, setAllMentors] = useState([]);
-  const [modifiedData, setModifiedData] = useState([]);
+  const [allMentors, setAllMentors] = useState([]);
+  const [modalVisible, setModalVisible] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const getMentorsList = await getMethod(
+          'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getMentorList',
+        );
+        setAllMentors(getMentorsList);
+      } catch (error) {
+        console.error('Error fetching mentors:', error);
+      }
+    })();
+  }, []);
 
   const renderItem = ({item}) => {
+    console.log(item);
     return (
       <View style={styles.flatListContainer}>
         <View style={styles.cardContainer}>
           <View style={styles.imageAndNameCont}>
-            <Image style={styles.profilePic} source={{uri: item.imageUrl}} />
+            <Image
+              style={styles.profilePic}
+              source={{
+                uri: 'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
+              }}
+            />
             <View>
               <Text style={styles.mentorNameTxt}>
-                Name:{' '}
                 {item.Attributes.find(attr => attr.Name === 'custom:firstName')
                   .Value || ''}{' '}
                 {item.Attributes.find(attr => attr.Name === 'custom:lastName')
@@ -47,13 +70,20 @@ const MentorsList = () => {
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text>starts @</Text>
-                <Text style={styles.feesTxt}>₹{item.fees} for 50 mins</Text>
+                <Text style={styles.feesTxt}>
+                  ₹
+                  {item?.Attributes?.find(attr => attr.Name === 'custom:fees')
+                    ?.Value || ''}{' '}
+                  for 50 mins
+                </Text>
               </View>
             </View>
           </View>
           <View style={styles.expertiesCont}>
             <Text style={styles.expertiesText}>
-              Experties:{item.experience}
+              Experties:{' '}
+              {item?.Attributes?.find(attr => attr.Name === 'custom:expertise')
+                ?.Value || ''}{' '}
             </Text>
             <View>
               <FlatList
@@ -69,24 +99,29 @@ const MentorsList = () => {
           <View style={styles.languageCont}>
             <Text style={styles.launguageText}>Speaks:</Text>
             <View>
-              <FlatList
+              {/* <FlatList
                 data={item.launguage}
                 renderItem={renderLaunguageItem}
                 showsHorizontalScrollIndicator={false}
                 horizontal={true}
-              />
+              /> */}
+              <Text>
+                {item?.Attributes?.find(attr => attr.Name === 'custom:language')
+                  ?.Value || ''}{' '}
+              </Text>
             </View>
           </View>
 
           <View style={styles.sessionCont}>
-            <Text style={styles.sessionText}>Speaks:</Text>
+            <Text style={styles.sessionText}>Session Mode:</Text>
             <View>
-              <FlatList
+              <Text style={{fontWeight: '600'}}>Video, Voice, Chat</Text>
+              {/* <FlatList
                 data={item.sessionMode}
                 renderItem={renderSessionModeItem}
                 showsHorizontalScrollIndicator={false}
                 horizontal={true}
-              />
+              /> */}
             </View>
           </View>
         </View>
@@ -94,9 +129,7 @@ const MentorsList = () => {
           {showAppointmentBtn ? (
             <Pressable onPress={() => setShowAppointmentBtn(false)}>
               <View style={styles.bookBtn}>
-                <Text style={styles.bookBtnText}>
-                  Show slots for appointment
-                </Text>
+                <Text style={styles.bookBtnText}>Select and book slot</Text>
               </View>
             </Pressable>
           ) : (
@@ -125,6 +158,7 @@ const MentorsList = () => {
       <TouchableOpacity
         onPress={() => {
           setShowAppointmentBtn(true);
+          setModalVisible(true);
         }}>
         <View
           style={{
@@ -146,19 +180,10 @@ const MentorsList = () => {
     );
   };
 
-  // const renderItem = ({item}) => (
-  //   <View>
-  //     <Text>Username: {item.Username}</Text>
-  //     <Text>custom:type: {item['custom:type']}</Text>
-  //     <Text>custom:expertise: {item['custom:expertise']}</Text>
-  //     {/* Add more Text components for other attributes as needed */}
-  //   </View>
-  // );
-
   return (
     <View style={styles.container}>
       <FlatList
-        data={mentorsData}
+        data={allMentors}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -237,6 +262,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: greenText,
     marginBottom: 10,
+    width: wp(50),
   },
   experienceText: {
     fontSize: 14,
@@ -252,6 +278,7 @@ const styles = StyleSheet.create({
   expertiesCont: {
     flexDirection: 'row',
     width: '75%',
+    marginBottom: hp(1),
   },
   expertiesText: {
     marginRight: 10,
@@ -259,6 +286,7 @@ const styles = StyleSheet.create({
   languageCont: {
     flexDirection: 'row',
     width: '78%',
+    marginBottom: hp(1),
   },
   launguageText: {
     marginRight: 10,
@@ -266,6 +294,7 @@ const styles = StyleSheet.create({
   sessionCont: {
     flexDirection: 'row',
     width: '78%',
+    marginBottom: hp(1),
   },
   sessionText: {
     marginRight: 10,
@@ -274,9 +303,11 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingVertical: 20,
     backgroundColor: lightGray,
+    alignItems: 'center',
   },
   bookBtn: {
     height: 40,
+    width: wp(50),
     paddingHorizontal: 17,
     paddingVertical: 5,
     justifyContent: 'center',
@@ -293,11 +324,13 @@ const styles = StyleSheet.create({
   },
   slotListCont: {
     flexDirection: 'row',
+
+    alignItems: 'center',
   },
   slotList: {
     marginLeft: 10,
-
     width: wp(50),
+    paddingTop: hp(1.5),
   },
 });
 
@@ -363,277 +396,6 @@ const data = [
   },
 ];
 
-const slots = ['1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8'];
+const slots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:30 '];
 
-const mentorsData = [
-  {
-    Username: '183fa4d3-f545-466d-b935-8d30bf4e6eb1',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'danger',
-      },
-      {
-        Name: 'sub',
-        Value: '183fa4d3-f545-466d-b935-8d30bf4e6eb1',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'false',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'Wf',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Sfdjn',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: 'E',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Wfe',
-      },
-      {
-        Name: 'email',
-        Value: 'Tribhuwan6@gmail.com',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'Feed',
-      },
-    ],
-  },
-  {
-    Username: '21a5e85f-b32a-4a86-a474-ef5800ef12e2',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'sub',
-        Value: '21a5e85f-b32a-4a86-a474-ef5800ef12e2',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'true',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Singapore',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Jambhuilkar',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'California',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'danger',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'roshan',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: '1234567890',
-      },
-      {
-        Name: 'email',
-        Value: 'Jambhulkar.roshan@thinksys.com',
-      },
-    ],
-  },
-  {
-    Username: '2451a9aa-1afa-491c-a73a-f080615dbf8d',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'loneliness',
-      },
-      {
-        Name: 'sub',
-        Value: '2451a9aa-1afa-491c-a73a-f080615dbf8d',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'false',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'Fslkmfw',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Sfafx',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: 'Wef',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Few',
-      },
-      {
-        Name: 'email',
-        Value: 'tribhuwan5@gmail.com',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'Fe',
-      },
-    ],
-  },
-  {
-    Username: '44b4c32c-00f8-4187-b291-0dee38b03064',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'danger',
-      },
-      {
-        Name: 'sub',
-        Value: '44b4c32c-00f8-4187-b291-0dee38b03064',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'false',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'Tribhuwan',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Gurgaon',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: '9999999999',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Bhandari',
-      },
-      {
-        Name: 'email',
-        Value: 'Bhandari.tribhuwan@thinksys.com',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'Nainital',
-      },
-    ],
-  },
-  {
-    Username: '93ea068e-314e-4142-97dc-3295d9ca0830',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'loneliness',
-      },
-      {
-        Name: 'sub',
-        Value: '93ea068e-314e-4142-97dc-3295d9ca0830',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'false',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'Fslkmfw',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Sfafx',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: 'Wef',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Few',
-      },
-      {
-        Name: 'email',
-        Value: 'tribhuwan4@gmail.com',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'Fe',
-      },
-    ],
-  },
-  {
-    Username: 'ae77c3d0-f93e-4237-8900-11c04d430473',
-    Attributes: [
-      {
-        Name: 'custom:type',
-        Value: 'Mentor',
-      },
-      {
-        Name: 'custom:expertise',
-        Value: 'loneliness',
-      },
-      {
-        Name: 'sub',
-        Value: 'ae77c3d0-f93e-4237-8900-11c04d430473',
-      },
-      {
-        Name: 'email_verified',
-        Value: 'false',
-      },
-      {
-        Name: 'custom:firstName',
-        Value: 'Sf',
-      },
-      {
-        Name: 'custom:temporaryCity',
-        Value: 'Sf',
-      },
-      {
-        Name: 'custom:phoneNumber',
-        Value: 'F',
-      },
-      {
-        Name: 'custom:lastName',
-        Value: 'Fs',
-      },
-      {
-        Name: 'email',
-        Value: 'Tribhuwan7@gmail.com',
-      },
-      {
-        Name: 'custom:city',
-        Value: 'Sfs',
-      },
-    ],
-  },
-];
+

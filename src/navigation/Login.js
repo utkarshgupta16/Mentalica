@@ -17,12 +17,13 @@ import {login} from '../redux/AuthSlice';
 import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
 import {Amplify, Auth} from 'aws-amplify';
+import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
   const [enteredEmail, setEnteredEmail] = useState(
-    'jambhulkar.roshan@thinksys.com',
+    'gupta.utkarsh@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -35,10 +36,8 @@ const LoginScreen = ({navigation}) => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       const user = await Auth.signIn(enteredEmail, enteredPassword);
-
-      console.log('user:', user);
       dispatch(login());
-      console.log('hello -> signing in result:', user);
+      console.log('hello -> signing in result:');
     } catch (error) {
       setError(error);
       console.log('hello ->error signing in', error);
@@ -76,11 +75,11 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <>
-      <CustomHeader
+      {/* <CustomHeader
         title="Login"
         navigation={navigation}
         showBackArrow={true}
-      />
+      /> */}
 
       <Modal
         avoidKeyboard={false}
