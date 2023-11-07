@@ -14,7 +14,9 @@ const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator 
+      // initialRouteName='MainRoute'
+      >
         <Stack.Screen
           name="AskClient"
           component={AskClient}

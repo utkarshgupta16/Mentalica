@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../customs/Colors';
 import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
 import {useDispatch} from 'react-redux';
 import {loginClient} from '../redux/AuthSlice';
 import {MENTOR, PATIENT} from '../utils/Strings';
+import {useTranslation} from 'react-i18next';
 
 const AskClient = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMentor, setSelectedMentor] = useState(null);
@@ -25,7 +27,31 @@ const AskClient = ({navigation}) => {
 
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.typeText}>Select your type:</Text>
+      <TouchableOpacity
+        onPress={() =>
+          i18n
+            .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+            .then(() => {
+              I18nManager.forceRTL(i18n.language === 'he');
+            })
+            .catch(err => {
+              console.log('something went wrong while applying RTL');
+            })
+        }>
+        <View style={{borderRadius: 8, padding: 8, backgroundColor: 'blue'}}>
+          <Text
+            style={{
+              color: 'white',
+              // margin: 9,
+
+              fontSize: 18,
+            }}>
+            {i18n.language === 'en' ? 'English' : 'Hebrew'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+      <Text style={styles.typeText}>{t('select_type')}</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.patient}>
           <CheckBox
@@ -39,7 +65,7 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
-          <Text style={styles.chooseText}>I am a Patient</Text>
+          <Text style={styles.chooseText}>{t('I_am_patient')}</Text>
         </View>
         <View style={styles.mentor}>
           <CheckBox
