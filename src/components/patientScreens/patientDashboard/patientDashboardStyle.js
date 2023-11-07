@@ -9,9 +9,9 @@ const screenBackgroundColor = '#F5F7F8';
 
 export const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(2),
     backgroundColor: 'white',
+    flex: 1,
   },
   helloText: {
     fontSize: 21,
@@ -29,16 +29,12 @@ export const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: wp(1),
+    paddingBottom: hp(2),
   },
   belowTabsContainer: {
     backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
-    marginTop: hp(3),
     borderRadius: 6,
-    paddingBottom: hp(3),
   },
   headingText: {
     fontWeight: 'bold',
@@ -75,8 +71,8 @@ export const styles = StyleSheet.create({
     color: Colors.black,
   },
   recommendedArticlesCont: {
-    height: hp(45),
     marginTop: hp(1),
+    height: hp(48),
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),

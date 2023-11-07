@@ -1,8 +1,5 @@
 import React, {useState} from 'react';
 import reactotron from 'reactotron-react-native';
-import {Provider} from 'react-redux';
-
-// import {SafeAreaView, StyleSheet} from 'react-native';
 
 const initialState = {
   isAudioEnabled: true,
@@ -17,10 +14,8 @@ const initialState = {
 
 export const AppContext = React.createContext(initialState);
 
-// import {Colors} from 'react-native/Libraries/NewAppScreen';
 import MainNavigator from './src/navigation/MainNavigator';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import store from './src/redux/store';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './src/utils/i18n';
 
@@ -39,16 +34,15 @@ const App = () => {
       });
     };
   }
-
   return (
-    <Provider store={store}>
-      <AppContext.Provider value={{props, setProps}}>
-        <I18nextProvider i18n={i18n}>
-          <SafeAreaView style={styles.safeAreaViewStyle} />
-          <MainNavigator style={styles.mainNavigator} />
-        </I18nextProvider>
-      </AppContext.Provider>
-    </Provider>
+    
+    <AppContext.Provider value={{props, setProps}}>
+      <I18nextProvider i18n={i18n}>
+        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <MainNavigator style={styles.mainNavigator} />
+      </I18nextProvider>
+    </AppContext.Provider>
+  
   );
 };
 

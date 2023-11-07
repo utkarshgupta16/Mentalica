@@ -1,4 +1,6 @@
 import {Amplify, Auth} from 'aws-amplify';
+import AWS from 'aws-sdk';
+
 
 const configureAws = () => {
   console.log('hello ->configuring aws');
@@ -29,21 +31,14 @@ async function confirmSignUp() {
   }
 }
 
-const signIn = async () => {
+const signIn = async (email, password) => {
   try {
-    // const user = await Auth.signIn('gauravatlive@gmail.com', 'Password@123');
-    // const user = await Auth.signIn(
-    //   'roshanjambhulkar@gmail.com',
-    //   'Password@123',
-    // );
-    const user = await Auth.signIn(
-      'gupta.utkarsh@thinksys.com',
-      'Password@123',
-    );
+    const user = await Auth.signIn(email, password);
 
-    console.log('hello -> signing in result:', user);
+    console.log('Login succesfull -> signing in result:');
+    return user;
   } catch (error) {
-    console.log('hello ->error signing in', error);
+    console.log('Login error ->error signing in', error);
   }
 };
 
@@ -55,10 +50,21 @@ const signUp = async () => {
       username: 'jambhulkar.roshan@thinksys.com',
       password: 'Password@123',
     });
-    console.log(user);
   } catch (error) {
     console.log('error signing up:', error);
   }
 };
 
-export {configureAws, confirmSignUp, signIn, signUp};
+async function signOut() {
+  try {
+    await Auth.signOut({global: true});
+    console.log('Successfully sign out: ');
+  } catch (error) {
+    console.log('error signing out: ', error);
+  }
+}
+
+//Amplify.Auth.userAttribute
+
+export {configureAws, confirmSignUp, signIn, signUp, signOut};
+

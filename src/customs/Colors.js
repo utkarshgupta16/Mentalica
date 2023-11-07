@@ -5,10 +5,11 @@ const Colors = {
   white: '#FFFFFF',
   primaryBlue: '#3B697E',
   dune: '#333333',
-  red: 'red',
+  red: '#FF0000',
   grayishBlue: '#747A86',
   palePink: '#E9DCD8',
   primaryDarkBlue: '#404655',
+  accentColor: '#6E77A2',
 };
 
 export default Colors;

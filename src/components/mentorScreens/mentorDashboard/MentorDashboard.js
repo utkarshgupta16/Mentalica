@@ -140,6 +140,7 @@ const MentorDashboard = ({navigation}) => {
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [appointmentList, setAppointmentList] = useState({});
   console.log('appointmentList------------------------------');

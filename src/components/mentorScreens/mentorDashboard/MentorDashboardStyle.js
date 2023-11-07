@@ -9,9 +9,23 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
-    backgroundColor: '#F5F7F8',
+    backgroundColor: 'white',
     marginHorizontal: 8,
   },
+  helloCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: hp(2),
+  },
+  createAppointmentBtn: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1.4),
+    borderRadius: 10,
+  },
+  AppontmentBtnText: {},
   helloText: {
     fontSize: 21,
     fontWeight: 'bold',
@@ -34,7 +48,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
-    paddingVertical: hp(1),
+    paddingTop: hp(1),
     borderRadius: 6,
   },
   bookedPointmentRow: {

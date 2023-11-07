@@ -1,3 +1,4 @@
+import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const postMethod = ({url, method, string, token}) => {
@@ -56,7 +57,7 @@ const getMethod = ({url, method, string, token}) => {
         if (err?.response) {
           statusCode = err?.response.status;
         }
-        if (statusCode == 401) {
+        if (statusCode === 401) {
           return Promise.reject(err?.response?.data?.message);
         } else {
           return Promise.reject(new Error(err));
@@ -65,4 +66,4 @@ const getMethod = ({url, method, string, token}) => {
   });
 };
 
-export default {postMethod, getMethod};
+export {postMethod, getMethod};

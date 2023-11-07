@@ -22,6 +22,7 @@ import {
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
+import AppoinmentsList from './AppointmentList';
 
 const url =
   'https://aefc-2401-4900-1c82-5450-b098-152c-8a6e-6483.ngrok-free.app';
@@ -279,6 +280,14 @@ const PatientDashboard = ({navigation}) => {
             setSelectedTab({tabStr: SAVED});
           }}
         />
+        <PatientDashboardTabs
+          selectedTab={selectedTab}
+          tab={MENTORS_LIST}
+          title={MENTORS_LIST}
+          onPress={() => {
+            setSelectedTab({tabStr: MENTORS_LIST});
+          }}
+        />
       </View>
       {/*  Next Appointments */}
       {selectedTab.tabStr == 'All' ? (
@@ -315,6 +324,7 @@ const PatientDashboard = ({navigation}) => {
       ) : null}
       {selectedTab.tabStr == APPOINMENTS ? (
         <View style={{width: '100%', height: '100%'}}>
+          {/* <AppoinmentsList /> */}
           <Agenda
             // selected="2022-12-01"
             scrollEnabled
@@ -439,6 +449,7 @@ const PatientDashboard = ({navigation}) => {
           No data found
         </Text>
       ) : null}
+      {selectedTab.tabStr == MENTORS_LIST ? <MentorsList /> : null}
     </View>
   );
 };

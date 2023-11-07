@@ -5,7 +5,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeNavigator from './HomeNavigator';
 import AskClient from './AskClient';
 import {useSelector} from 'react-redux';
-import SignUp from './SignUp';
+import PatientSignUp from './signUp/PatientSignUp';
+import MentorSignUp from './signUp/MentorSignUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,22 +15,27 @@ const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-      // initialRouteName='MainRoute'
-      >
-        <Stack.Screen
-          name="AskClient"
-          component={AskClient}
-          options={{headerShown: false}}
-        />
+      <Stack.Navigator>
+        {isLoggedIn ? null : (
+          <Stack.Screen
+            name="AskClient"
+            component={AskClient}
+            options={{headerShown: false}}
+          />
+        )}
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : Login}
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="SignUp"
-          component={SignUp}
+          name="PatientSignUp"
+          component={PatientSignUp}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="MentorSignUp"
+          component={MentorSignUp}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

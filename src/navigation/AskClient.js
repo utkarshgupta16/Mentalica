@@ -16,10 +16,6 @@ const AskClient = ({navigation}) => {
   const [error, setError] = useState(null);
 
   const onSubmitHandler = () => {
-    if (!selectedPatient && !selectedMentor) {
-      setError('Please Select your type.');
-      return;
-    }
     const selectedType = selectedPatient ? PATIENT : MENTOR;
     dispatch(loginClient(selectedType));
     navigation.navigate('MainRoute');
@@ -83,7 +79,11 @@ const AskClient = ({navigation}) => {
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
-      <Button onPress={onSubmitHandler} title="Submit" />
+      <Button
+        disabled={!selectedPatient && !selectedMentor}
+        onPress={onSubmitHandler}
+        title="Submit"
+      />
     </View>
   );
 };

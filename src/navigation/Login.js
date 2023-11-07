@@ -1,26 +1,77 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from 'react-native';
+import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import CustomHeader from '../customs/Header';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../redux/AuthSlice';
-import {configureAws, confirmSignUp, signIn} from '../AWS/AWSConfiguration';
+import {MENTOR} from '../utils/Strings';
+import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
+import {Amplify, Auth} from 'aws-amplify';
+import {setAttributes} from '../redux/HomeSlice';
 
 const LoginScreen = ({navigation}) => {
+  const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
+  const [enteredEmail, setEnteredEmail] = useState(
+    'bhandari.tribhuwan@thinksys.com',
+  );
+  const [enteredPassword, setEnteredPassword] = useState('Password@123');
+  const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
+  const [enteredCode, setEnteredCode] = useState('');
+  const [error, setError] = useState('');
+
   const dispatch = useDispatch();
 
-  const loginHandler = () => {
-    configureAws();
-    confirmSignUp();
-    signIn();
-    dispatch(login());
+  const loginHandler = async () => {
+    try {
+      // console.log('Auth', await Auth.currentAuthenticatedUser());
+      const user = await Auth.signIn(enteredEmail, enteredPassword);
+      const {attributes} = user;
+      dispatch(setAttributes(attributes));
+      dispatch(login(enteredEmail));
+    } catch (err) {
+      setError(err);
+      console.log('hello ->error signing in', err);
+    }
   };
 
   const signUpClickHandler = () => {
-    navigation.navigate('SignUp');
+    if (loginFrom === MENTOR) {
+      navigation.navigate(MENTOR_SIGN_UP);
+    } else {
+      navigation.navigate(PATIENT_SIGN_UP);
+    }
+  };
+
+  const handleEnteredEmail = email => {
+    setEnteredEmail(email);
+  };
+
+  const handleEnteredPassword = password => {
+    setEnteredPassword(password);
+  };
+
+  const submitCodeHandler = async () => {
+    try {
+      const res = await Auth.confirmSignUp(enteredEmail, enteredCode);
+      console.log('res:', res);
+      setShowEnterCodeModal(false);
+      setEnteredEmail('');
+      setError('');
+    } catch (err) {
+      console.log('error confirming sign uppp', err);
+      setShowEnterCodeModal(false);
+    }
   };
 
   return (
@@ -30,17 +81,59 @@ const LoginScreen = ({navigation}) => {
         navigation={navigation}
         showBackArrow={true}
       />
+
+      <Modal
+        avoidKeyboard={false}
+        onRequestClose={() => {
+          setShowEnterCodeModal(false);
+        }}
+        keyboardAvoidingBehavior={
+          Platform.OS === 'android' ? 'height' : 'padding'
+        }
+        animationType="slide"
+        transparent={true}
+        closeOnClick={true}
+        isVisible={showEnterCodeModal}
+        onBackdropPress={() => {
+          setShowEnterCodeModal(false);
+        }}
+        onBackButtonPress={() => {
+          setShowEnterCodeModal(false);
+        }}>
+        <View style={styles.modalContainer}>
+          <View style={styles.codeContainer}>
+            <Text>Enter Email:</Text>
+            <TextInput
+              onChangeText={text => setEnteredEmail(text)}
+              style={styles.modalTextInput}
+            />
+          </View>
+          <View style={styles.codeContainer}>
+            <Text>Enter Code:</Text>
+            <TextInput
+              onChangeText={text => setEnteredCode(text)}
+              style={styles.modalTextInput}
+            />
+          </View>
+          <Button title="Submit" onPress={submitCodeHandler} />
+        </View>
+      </Modal>
+
       <View style={styles.container}>
         <View style={styles.inputContainer}>
           <TextInput
+            onChangeText={handleEnteredEmail}
             style={styles.input}
-            placeholder="sign up with e-mail"
+            placeholder="E-mail"
             keyboardType="email-address"
+            value={enteredEmail}
           />
           <TextInput
+            onChangeText={handleEnteredPassword}
             style={styles.input}
             placeholder="Password"
             secureTextEntry={true}
+            value={enteredPassword}
           />
           <View style={styles.checkBoxSignUpContainer}>
             <View style={styles.checkboxContainer}>
@@ -53,7 +146,11 @@ const LoginScreen = ({navigation}) => {
               />
               <Text style={styles.rememberMeText}>Remember Me</Text>
             </View>
-            <Button title="Login" onPress={loginHandler} />
+            <Button
+              disabled={!enteredEmail.trim() || !enteredPassword.trim()}
+              title="Login"
+              onPress={loginHandler}
+            />
           </View>
         </View>
         <View style={styles.buttonContainerView}>
@@ -64,19 +161,40 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.signUpText}> Sign Up</Text>
           </Pressable>
         </View>
+        {error ? (
+          <View style={styles.buttonContainerView}>
+            <Pressable
+              style={styles.signUpContainer}
+              title="Enter Code"
+              onPress={() => {
+                setShowEnterCodeModal(true);
+              }}>
+              <Text style={styles.signUpText}>Confirm Verification Code</Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    backgroundColor: Colors.white,
+    paddingHorizontal: 10,
+    paddingVertical: 32,
+    borderRadius: 10,
+  },
+  codeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
     paddingHorizontal: 16,
     backgroundColor: Colors.paleMintColor,
-    borderWidth: 1,
   },
   logo: {
     width: 120,
@@ -119,16 +237,21 @@ const styles = StyleSheet.create({
   },
   buttonContainerView: {
     justifyContent: 'center',
+
     // alignItems: 'center',
   },
   signUpContainer: {
     marginTop: 14,
   },
   signUpText: {
-    fontSize: 18,
-    textDecorationLine: 'underline',
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '500',
     color: Colors.primaryDarkBlue,
+    textDecorationLine: 'none',
+  },
+  warningMessage: {
+    color: 'tomato',
+    fontSize: 12,
   },
 });
 
