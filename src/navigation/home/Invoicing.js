@@ -1,12 +1,7 @@
-import React from 'react';
-import {View, Text} from 'react-native';
+// import React from 'react';
 
-const Invoicing = () => {
-  return (
-    <View>
-      <Text>Invoicing</Text>
-    </View>
-  );
-};
+// const Invoicing = () => {
+//   return <Invoicing />;
+// };
 
-export default Invoicing;
+// export default Invoicing;

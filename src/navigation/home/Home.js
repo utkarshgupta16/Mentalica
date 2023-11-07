@@ -1,19 +1,15 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import Button from '../../components/Button';
-import {Amplify} from 'aws-amplify';
+import {useSelector} from 'react-redux';
+import {MENTOR} from '../../utils/Strings';
+import MentorDashboard from '../../components/mentorScreens/mentorDashboard/MentorDashboard';
+import PatientDashboard from '../../components/patientScreens/patientDashboard/PatientDashboard';
 
 const Home = () => {
+  const {loginFrom} = useSelector(state => state.auth);
   return (
-    <View>
-      <Text>Home</Text>
-      <Button
-        title="Delete Account"
-        onPress={async () => {
-          const res = await Amplify.Auth.deleteUser();
-          console.log('res:', res);
-        }}
-      />
+    <View style={{flex: 1}}>
+      {loginFrom === MENTOR ? <MentorDashboard /> : <PatientDashboard />}
     </View>
   );
 };

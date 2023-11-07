@@ -15,7 +15,7 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import {MENTOR} from '../../utils/strings';
+import {MENTOR} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, educationList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
@@ -49,7 +49,12 @@ const MentorSignUp = ({navigation}) => {
     language: 'english,hindi',
   });
 
+  console.log('sppppp', state.speciality);
+
   const handleInput = ({field, value}) => {
+    console.log('field:', field, value);
+    const valueType = typeof value;
+    console.log('valueType:', valueType);
     setState(prevState => ({...prevState, [field]: value}));
   };
   console.log('slots', slots);
@@ -82,7 +87,7 @@ const MentorSignUp = ({navigation}) => {
       //   attributes: attributes,
       // });
       // console.log('resp:', resp);
-      const {password, confirmPassword, type,  ...restData} = state;
+      const {password, confirmPassword, type, ...restData} = state;
       // let expertiseUpdated = '';
       // expertise &&
       //   expertise.map((val, i) => {
@@ -100,9 +105,9 @@ const MentorSignUp = ({navigation}) => {
           'custom:type': 'Mentor',
         },
       });
-     
+
       const attRes = await dispatch(
-        singUpSlice({...restData, slots,type:MENTOR}),
+        singUpSlice({...restData, slots, type: MENTOR}),
       );
       setShowEnterCodeModal(true);
     } catch (err) {
@@ -213,7 +218,7 @@ const MentorSignUp = ({navigation}) => {
         // isVisible={showEnterCodeModal}
         onBackdropPress={() => {
           setShowEnterCodeModal(false);
-        }}
+        }} 
         onBackButtonPress={() => {
           setShowEnterCodeModal(false);
         }}>
@@ -307,12 +312,18 @@ const MentorSignUp = ({navigation}) => {
           setOpen={setSpecialityOpen}
           value={state.expertise}
           setValue={props => {
-            handleInput({field: 'expertise', value: props()});
+            const val = [...state.expertise, ...props()];
+            console.log('val', val, state.expertise, props());
+            handleInput({
+              field: 'expertise',
+              value: [...state.speciexpertiseality, ...props()],
+            });
           }}
           items={specialistItems}
           setItems={setSpecialistItems}
           placeholder={'Select Speciality.'}
           style={styles.dropdown}
+          multiple={true}
         />
         {state.password &&
           state.confirmPassword &&
