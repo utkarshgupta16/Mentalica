@@ -145,75 +145,17 @@ const MentorDashboard = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const [appointmentList, setAppointmentList] = useState({});
-  console.log('appointmentList------------------------------');
-  console.log(appointmentList);
-
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
     const now = new Date();
     now.setHours(hours, minutes, 0, 0);
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const isoString = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
-    return isoString;
-  };
-
-  const getCombineDate = (timeStr, dateStr) => {
-    const dateString = dateStr;
-
-    // Time string in the format "hh:mm a" (12-hour format with AM/PM)
-    const timeString = timeStr;
-
-    // Split the time string into hours, minutes, and AM/PM
-    const [time, ampm] = timeString.split(' ');
-    const [hours, minutes] = time.split(':');
-
-    // Convert hours to 24-hour format
-    let hours24 = parseInt(hours, 10);
-    if (ampm === 'PM' && hours24 < 12) {
-      hours24 += 12;
-    } else if (ampm === 'AM' && hours24 === 12) {
-      hours24 = 0;
-    }
-
-    // Combine the date and time strings
-    const combinedString = `${dateString}T${hours24}:${minutes}:00`;
-
-    // Create a Date object using the combined string
-    return new Date(combinedString);
+    return now;
   };
 
   useEffect(() => {
     (async () => {
       let res = await dispatch(getScheduledAppointmentsSlice({email}));
       const appointments = res.payload;
-
-      console.log('-------------------appointments');
-      console.log('email--------------', email);
-      console.log(JSON.stringify(appointments));
-      // const appointments = [
-      //   {
-      //     startTime: '2023-11-03T16:50:00Z',
-      //     patientId: '3f409087-25b9-4772-9207-0ddeeaeb4c60',
-      //     endTime: '2023-11-03T17:40:00Z',
-      //     mentorId: 'c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
-      //     roomId: '5574617c-655b-4d7e-ab5a-256705b1a8a7',
-      //     unique_id:
-      //       '1698970580193_3f409087-25b9-4772-9207-0ddeeaeb4c60_c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
-      //     enable: true,
-      //   },
-      //   {
-      //     startTime: '2023-11-03T15:40:00Z',
-      //     patientId: '3f409087-25b9-4772-9207-0ddeeaeb4c60',
-      //     endTime: '2023-11-03T16:40:00Z',
-      //     mentorId: 'c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
-      //     roomId: '75876dcd-ec56-45a7-bea7-9b3460d96875',
-      //     unique_id:
-      //       '1698970563936_3f409087-25b9-4772-9207-0ddeeaeb4c60_c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
-      //     enable: true,
-      //   },
-      // ];
       const newDate = new Date();
       const formattedAppointments = {};
       appointments.forEach(appointment => {
@@ -234,8 +176,6 @@ const MentorDashboard = ({navigation}) => {
           // Other appointment data
         });
       });
-      console.log('-------------------formattedAppointments');
-      console.log(formattedAppointments);
       setAppointmentList(formattedAppointments);
     })();
 
@@ -287,7 +227,6 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const _checkPermissions = callback => {
-    console.log('ran-----------');
     const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
     const androidPermissions = [
       PERMISSIONS.ANDROID.CAMERA,
@@ -296,14 +235,12 @@ const MentorDashboard = ({navigation}) => {
     checkMultiple(
       Platform.OS === 'ios' ? iosPermissions : androidPermissions,
     ).then(statuses => {
-      console.log('insdie then');
       const [CAMERA, AUDIO] =
         Platform.OS === 'ios' ? iosPermissions : androidPermissions;
       if (
         statuses[CAMERA] === RESULTS.UNAVAILABLE ||
         statuses[AUDIO] === RESULTS.UNAVAILABLE
       ) {
-        console.log('inside if');
         Alert.alert(
           'Error',
           'Hardware to support video calls is not available',
@@ -312,18 +249,15 @@ const MentorDashboard = ({navigation}) => {
         statuses[CAMERA] === RESULTS.BLOCKED ||
         statuses[AUDIO] === RESULTS.BLOCKED
       ) {
-        console.log('inside selse if');
         Alert.alert(
           'Error',
           'Permission to access hardware was blocked, please grant manually',
         );
       } else {
-        console.log('inside selse');
         if (
           statuses[CAMERA] === RESULTS.DENIED &&
           statuses[AUDIO] === RESULTS.DENIED
         ) {
-          console.log('inside denied');
           requestMultiple(
             Platform.OS === 'ios' ? iosPermissions : androidPermissions,
           ).then(newStatuses => {
@@ -331,10 +265,8 @@ const MentorDashboard = ({navigation}) => {
               newStatuses[CAMERA] === RESULTS.GRANTED &&
               newStatuses[AUDIO] === RESULTS.GRANTED
             ) {
-              console.log('will run callback1');
               callback && callback();
             } else {
-              console.log('not will run callback');
               Alert.alert('Error', 'One of the permissions was not granted');
             }
           });
@@ -342,7 +274,6 @@ const MentorDashboard = ({navigation}) => {
           statuses[CAMERA] === RESULTS.DENIED ||
           statuses[AUDIO] === RESULTS.DENIED
         ) {
-          console.log('dined else if');
           request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
             result => {
               if (result === RESULTS.GRANTED) {
@@ -356,7 +287,6 @@ const MentorDashboard = ({navigation}) => {
           statuses[CAMERA] === RESULTS.GRANTED ||
           statuses[AUDIO] === RESULTS.GRANTED
         ) {
-          console.log('will run callback elllse if');
           callback && callback();
         }
       }
@@ -364,7 +294,6 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const videoCallAction = data => {
-    console.log('data rooomdid---------------------------', data);
     _checkPermissions(() => {
       axios
         .get(
@@ -372,20 +301,16 @@ const MentorDashboard = ({navigation}) => {
           `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.mentor_email_id}`,
         )
         .then(response => {
-          console.log('reM-------------------', response.data);
           const token = response.data.token ?? response.data;
-
           setProps({
             ...props,
             token,
             userName: data?.mentor_email_id , //data.mentorId,
             roomName: data?.roomId
           });
-
           navigation.navigate('AVChatScreen');
         })
         .catch(err => {
-          console.log('err----------------------', err);
         });
     });
   };

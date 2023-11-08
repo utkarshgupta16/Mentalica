@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   helloText: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: hp(1),
     marginLeft: wp(2),
