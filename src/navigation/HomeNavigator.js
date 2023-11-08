@@ -93,7 +93,7 @@ const HomeNavigator = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" size={35} color={color} />
+              <MaterialIcons name="analytics" size={26} color={color} />
             ),
           }}
         />

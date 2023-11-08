@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -16,17 +17,22 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../redux/AuthSlice';
 import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
-import {Amplify, Auth} from 'aws-amplify';
-import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import {Auth} from 'aws-amplify';
+import {setAttributes} from '../redux/HomeSlice';
+import Loader from '../customs/Loader';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
+  console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
+  // guptagaurav9566+1@gmail.com
+  // bhandari.tribhuwan@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState(
-    'jambhulkar.roshan@thinksys.com',
+    'bhandari.tribhuwan@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
 
@@ -71,19 +77,19 @@ const LoginScreen = ({navigation}) => {
       setShowEnterCodeModal(false);
       setEnteredEmail('');
       setError('');
-    } catch (error) {
-      console.log('error confirming sign uppp', error);
+    } catch (err) {
+      console.log('error confirming sign uppp', err);
       setShowEnterCodeModal(false);
     }
   };
 
   return (
     <>
-      {/* <CustomHeader
+      <CustomHeader
         title="Login"
         navigation={navigation}
         showBackArrow={true}
-      /> */}
+      />
 
       <Modal
         avoidKeyboard={false}
@@ -123,15 +129,8 @@ const LoginScreen = ({navigation}) => {
       </Modal>
 
       <View style={styles.container}>
+        {isLoading ? <Loader /> : null}
         <View style={styles.inputContainer}>
-          {/* {emailWarning && (
-            <Text style={styles.warningMessage}>*Please provide an email</Text>
-          )} */}
-          {/* {!validEmailWarning && (
-            <Text style={styles.warningMessage}>
-              *Please provide valid email
-            </Text>
-          )} */}
           <TextInput
             onChangeText={handleEnteredEmail}
             style={styles.input}
@@ -139,9 +138,6 @@ const LoginScreen = ({navigation}) => {
             keyboardType="email-address"
             value={enteredEmail}
           />
-          {/* {passwordWarning && (
-            <Text style={styles.warningMessage}>*Please put in a password</Text>
-          )} */}
           <TextInput
             onChangeText={handleEnteredPassword}
             style={styles.input}
@@ -168,6 +164,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         </View>
         <View style={styles.buttonContainerView}>
+          <Text style={styles.askSignup}>Don't have an account? Wanna </Text>
           <Pressable
             style={styles.signUpContainer}
             title="Sign Up"
@@ -208,7 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 16,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.paleMintColor,
   },
   logo: {
     width: 120,
@@ -250,18 +247,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainerView: {
+    // justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
     justifyContent: 'center',
-
-    // alignItems: 'center',
+  },
+  askSignup: {
+    fontSize: 14,
   },
   signUpContainer: {
-    marginTop: 14,
+    // marginTop: 14,
   },
   signUpText: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.primaryDarkBlue,
     textDecorationLine: 'none',
+    color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',

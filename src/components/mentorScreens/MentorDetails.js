@@ -68,6 +68,8 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
           backdropColor={'#00000029'}
           backdropOpacity={1}
           isVisible={true}
+          animationInTiming={700}
+          animationOutTiming={600}
           style={{
             flex: 1,
             alignSelf: 'flex-end',

@@ -15,6 +15,7 @@ export default function PatientDashboardTabs({
           paddingHorizontal: 6,
           paddingVertical: 5,
           borderRadius: 50,
+          // flex: 1
         }}>
         <Text style={styles.tabText}>{title}</Text>
       </View>

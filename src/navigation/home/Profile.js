@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -18,19 +18,19 @@ import {logout} from '../../redux/AuthSlice';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {signOut} from '../../AWS/AWSConfiguration';
 import {getProfileSlice} from '../../redux/HomeSlice';
+import {screenWidth} from '../../utils/Responsive';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const {loginFrom, email} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
   const {
     feel = '',
     email_id = '',
     firstName = '',
     lastName = '',
   } = (profileData.Items && profileData?.Items[0]) || {};
-
-  console.log('profileData', profileData);
 
   const DUMMY_ISSUES = feel
     ? feel?.split(',')
@@ -53,11 +53,22 @@ const Profile = () => {
 
   useEffect(() => {
     (async () => {
-      console.log('email', email);
-      const res = await dispatch(getProfileSlice({email, type: loginFrom}));
+      setLoading(true);
+      const currentUserInfo = await getCurrentUserInfo();
+      setLoading(false);
+      setCurrentUserInfo({str: currentUserInfo?.attributes['custom:type']});
     })();
   }, []);
-  console.log('loginFrom', loginFrom, email);
+
+  useEffect(() => {
+    (async () => {
+      const res = await dispatch(
+        getProfileSlice({email, type: currentUserInfo.str}),
+      );
+      console.log('res -----> ', res);
+    })();
+  }, []);
+
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
@@ -73,7 +84,9 @@ const Profile = () => {
             />
           </View>
           <View style={styles.details}>
-            <Text style={styles.nameText}>{firstName + ' ' + lastName}</Text>
+            <Text style={{...styles.nameText, width: screenWidth - 100}}>
+              {firstName + ' ' + lastName}
+            </Text>
             <Text style={styles.emailText}>{email_id}</Text>
           </View>
         </View>
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nameText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: Colors.dune,
   },

@@ -28,6 +28,31 @@ export const getAllMentorList = createAsyncThunk(
   },
 );
 
+export const getTwilloTokenSlice = createAsyncThunk(
+  'home/getTwilloTokenSlice',
+  async roomId => {
+    var config = {
+      method: 'get',
+      url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=testing`,
+      headers: {
+        // Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    try {
+      const {data, status} = (await axios(config)) || {};
+      if (status === 200) {
+        return Promise.resolve(data);
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
+  },
+);
+
 export const bookAppointmentSlice = createAsyncThunk(
   'home/bookAppointmentSlice',
   async bookData => {
@@ -91,8 +116,11 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email}) => {
+  async ({email, fieldName = 'mentorEmailId'}) => {
     // let token = await AsyncStorage.getItem('token');
+    console.log('getScheduledAppointmentsSlice==============', {
+      [fieldName]: email,
+    });
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
@@ -100,12 +128,12 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
         // Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      data: {patientEmailId: email},
+      data: {[fieldName]: email},
     };
     return axios(config)
       .then(async response => {
         const {data, status} = response;
-        console.log("patientEmailId",response)
+        console.log('patientEmailId', response);
         if (status === 200) {
           return Promise.resolve(data);
         } else {
@@ -118,7 +146,6 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
       });
   },
 );
-
 
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',

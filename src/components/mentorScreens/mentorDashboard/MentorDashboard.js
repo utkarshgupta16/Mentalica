@@ -90,11 +90,11 @@ const MentorDashboard = () => {
       </Modal>
       <View style={styles.helloCont}>
         <Text style={styles.helloText}>Hello Raquel,</Text>
-        <Pressable onPress={handleCreateOppointment}>
+        {/* <Pressable onPress={handleCreateOppointment}>
           <View style={styles.createAppointmentBtn}>
             <Text style={styles.AppontmentBtnText}>Create Appointment</Text>
           </View>
-        </Pressable>
+        </Pressable>  */}
       </View>
       {selectDate ? (
         <Text style={styles.dateText}>
@@ -148,7 +148,11 @@ const MentorDashboard = () => {
                   {
                     timeSlot == startTime.start && (
                       <View
-                        style={{borderWidth: 1, width: 100, height: 40}}></View>
+                        style={{
+                          borderWidth: 1,
+                          width: 100,
+                          height: 40,
+                        }}></View>
                     );
                   }
                 })}
