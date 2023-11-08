@@ -24,7 +24,6 @@ const configureAws = () => {
 
 async function confirmSignUp() {
   try {
-    // await Auth.confirmSignUp('gauravatlive@gmail.com', '084241');
     await Auth.confirmSignUp('jambhulkar.roshan@thinksys.com', '175596');
   } catch (error) {
     console.log('error confirming sign up', error);

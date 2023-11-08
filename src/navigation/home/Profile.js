@@ -1,34 +1,46 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Text,
   View,
   StyleSheet,
   ScrollView,
   Pressable,
-  // Image,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import {MENTOR} from '../../utils/Strings';
+import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 // import ArrowRight from '../../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {signOut} from '../../AWS/AWSConfiguration';
+import {getProfileSlice} from '../../redux/HomeSlice';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const {loginFrom} = useSelector(state => state.auth);
+  const {loginFrom, email} = useSelector(state => state.auth);
+  const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const {
+    feel = '',
+    email_id = '',
+    firstName = '',
+    lastName = '',
+  } = (profileData.Items && profileData?.Items[0]) || {};
 
-  const DUMMY_ISSUES = ['depression', 'anxiety', 'student life', 'loneliness'];
+  console.log('profileData', profileData);
+
+  const DUMMY_ISSUES = feel
+    ? feel?.split(',')
+    : ['depression', 'anxiety', 'student life', 'loneliness'];
   const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
   const paymentDetailsItemsPatient = [
     'Edit payment information',
     'Payment methods',
     'Payment history',
   ];
-
   const paymentDetailsItemsMentor = [
     'Edit fiscal information',
     'Banking information',
@@ -39,19 +51,30 @@ const Profile = () => {
     dispatch(logout());
   };
 
+  useEffect(() => {
+    (async () => {
+      console.log('email', email);
+      const res = await dispatch(getProfileSlice({email, type: loginFrom}));
+    })();
+  }, []);
+  console.log('loginFrom', loginFrom, email);
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
           <View style={styles.imageContainer}>
-            {/* <Image
-              source={require('../../icons/IMG_0046.jpg')}
+            <Image
+              source={
+                loginFrom == PATIENT
+                  ? require('../../icons/patient.jpg')
+                  : require('../../icons/doctor.jpg')
+              }
               style={styles.image}
-            /> */}
+            />
           </View>
           <View style={styles.details}>
-            <Text style={styles.nameText}>Utkarsh Gupta</Text>
-            <Text style={styles.emailText}>Ugupta178@gmail.com</Text>
+            <Text style={styles.nameText}>{firstName + ' ' + lastName}</Text>
+            <Text style={styles.emailText}>{email_id}</Text>
           </View>
         </View>
         <View style={styles.issuesContainer}>
@@ -86,6 +109,12 @@ const Profile = () => {
           <Text style={styles.logoutTitle}>Log out</Text>
         </Pressable>
       </View>
+      {isProfileLoading ? (
+        <View
+          style={{position: 'absolute', left: 0, bottom: 0, right: 0, top: 0}}>
+          <ActivityIndicator size={'large'} color="green" />
+        </View>
+      ) : null}
     </ScrollView>
   );
 };

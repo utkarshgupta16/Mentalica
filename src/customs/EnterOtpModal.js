@@ -17,6 +17,7 @@ const EnterOtpModal = ({
   resendCode,
   showEnterCodeModal,
   setShowEnterCodeModal,
+  otpError,
 }) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [secondsLeft, setSecondsLeft] = useState(30);
@@ -91,7 +92,10 @@ const EnterOtpModal = ({
             />
           ))}
         </View>
-        <Button title="Submit" onPress={submitCodeHandler} />
+        {otpError.message && (
+          <Text style={styles.otpErrorText}>{otpError.message}</Text>
+        )}
+        <Button title="Submit" onPress={submitCodeHandler.bind(null, otp)} />
         <View style={styles.resendCodeContainer}>
           <Text style={styles.resendCodeAgainText}>Didn't get a code? </Text>
           <View style={styles.resendMainContainer}>

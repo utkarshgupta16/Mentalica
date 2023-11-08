@@ -7,6 +7,8 @@ import {
   Platform,
   Alert,
   Pressable,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Colors from '../../customs/Colors';
@@ -17,10 +19,12 @@ import Modal from 'react-native-modal';
 // import {useSelector} from 'react-redux';
 import {Auth} from 'aws-amplify';
 import {PATIENT} from '../../utils/Strings';
+import {singUpSlice} from '../../redux/AuthSlice';
+import {useDispatch} from 'react-redux';
 
 const PatientSignUp = ({navigation}) => {
   // const {loginFrom} = useSelector(state => state.auth);
-
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const [genderItems, setGenderItems] = useState([
@@ -38,19 +42,18 @@ const PatientSignUp = ({navigation}) => {
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
 
   const [state, setState] = useState({
-    firstname: '',
-    lastname: '',
-    age: '',
-    // age: null,
-    city: '',
-    gender: '',
-    phoneNumber: '',
-    username: 'Tribhuvan@gmail.com',
-    temporaryCity: '',
-    duty: '',
-    feel: '',
-    password: '',
-    confirmPassword: '',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    emailId: 'bhandari.tribhuwan@thinksys.com',
+    password: 'Password@123',
+    confirmPassword: 'Password@123',
+    city: 'city',
+    age: '15',
+    phoneNumber: '57575575656',
+    temporaryCity: 'temporaryCity',
+    gender: 'male',
+    duty: 'civilian',
+    feel: 'fear',
     type: PATIENT,
   });
 
@@ -92,31 +95,19 @@ const PatientSignUp = ({navigation}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
 
+
   const handleSignup = async () => {
     try {
       setIsLoading(true);
-      const {username, password} = state;
+      const {password, confirmPassword, type, ...restData} = state;
       const resp = await Auth.signUp({
-        username,
+        username: state.emailId,
         password,
         attributes: {
-          'custom:firstName': state.firstname,
-          'custom:lastName': state.lastname,
-          'custom:city': state.city,
-          'custom:duty': state.duty,
-          'custom:feel': state.feel,
-          'custom:phoneNumber': state.phoneNumber,
-          'custom:temporaryCity': state.temporaryCity,
           'custom:type': PATIENT,
-          gender: state.gender,
         },
-        // autoSignIn: {
-        //   // optional - enables auto sign in after user is confirmed
-        //   enabled: true,
-        // },
       });
-
-      console.log('resp:', resp);
+      const attRes = await dispatch(singUpSlice({...restData, type: PATIENT}));
       setShowEnterCodeModal(true);
     } catch (err) {
       Alert.alert('Error!', err, [
@@ -147,9 +138,9 @@ const PatientSignUp = ({navigation}) => {
     try {
       const enteredCode = otp.join('');
 
-      const res = await Auth.confirmSignUp(state.username, enteredCode);
+      const res = await Auth.confirmSignUp(state.emailId, enteredCode);
       console.log('res:', res);
-      navigation.goBack();
+      // navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
       console.log('error confirming sign up', error);
@@ -158,18 +149,18 @@ const PatientSignUp = ({navigation}) => {
   };
 
   const resendCode = () => {
-    Auth.resendSignUp(state.username);
+    Auth.resendSignUp(state.emailId);
   };
 
   const validateInputs = () => {
     const {
-      firstname,
-      lastname = '',
+      firstName,
+      lastName = '',
       age = '',
       city = '',
       gender = '',
       phoneNumber = '',
-      username = '',
+      emailId = '',
       temporaryCity = '',
       duty = '',
       feel = '',
@@ -178,10 +169,10 @@ const PatientSignUp = ({navigation}) => {
     } = state;
 
     if (
-      !firstname ||
-      !lastname ||
+      !firstName ||
+      !lastName ||
       !age ||
-      !username ||
+      !emailId ||
       !phoneNumber ||
       !city ||
       !temporaryCity ||
@@ -215,7 +206,11 @@ const PatientSignUp = ({navigation}) => {
     };
   }, [showEnterCodeModal, secondsLeft]);
   return (
-    <>
+    <SafeAreaView
+      style={{
+        backgroundColor: Colors.paleMintColor,
+        flex: 1,
+      }}>
       <CustomHeader
         title={'Sign Up'}
         showBackArrow={true}
@@ -243,7 +238,7 @@ const PatientSignUp = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <Text style={styles.enterOTPText}>
-            Enter the 6-digit OTP sent to {state.username}
+            Enter the 6-digit OTP sent to {state.emailId}
           </Text>
 
           <View style={styles.otpContainer}>
@@ -274,83 +269,93 @@ const PatientSignUp = ({navigation}) => {
         </View>
       </Modal>
       {/* =================================MODAL END================================= */}
-      <View style={styles.container}>
-        {renderInput({placeholder: 'First Name', field: 'firstname'})}
-        {renderInput({placeholder: 'Last Name', field: 'lastname'})}
-        {renderInput({placeholder: 'Age', field: 'age'})}
-        {renderInput({placeholder: 'City', field: 'city'})}
-        {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-        {renderInput({placeholder: 'Email', field: 'username'})}
-        {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+      <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{flex: 1, flexGrow: 1}}
+        nestedScrollEnabled={true}>
+        <View style={styles.container}>
+          {renderInput({placeholder: 'First Name', field: 'firstName'})}
+          {renderInput({placeholder: 'Last Name', field: 'lastName'})}
+          {renderInput({placeholder: 'Age', field: 'age'})}
+          {renderInput({placeholder: 'City', field: 'city'})}
+          {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
+          {renderInput({placeholder: 'Email', field: 'emailId'})}
+          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
 
-        <DropDownPicker
-          zIndex={3000}
-          open={openGender}
-          setOpen={setOpenGender}
-          value={state.gender}
-          setValue={props => {
-            handleInput({field: 'gender', value: props()});
-          }}
-          items={genderItems}
-          setItems={setGenderItems}
-          placeholder={'Choose gender.'}
-          style={styles.dropdown}
-        />
-        <DropDownPicker
-          zIndex={2000}
-          open={openDuty}
-          setOpen={setOpenDuty}
-          value={state.duty}
-          setValue={props => {
-            handleInput({field: 'duty', value: props()});
-          }}
-          items={dutyItems}
-          setItems={setDutyItems}
-          placeholder={'Choose Profession.'}
-          style={styles.dropdown}
-        />
-
-        <DropDownPicker
-          zIndex={1000}
-          open={feelOpen}
-          setOpen={setFeelOpen}
-          value={state.feel}
-          setValue={props => {
-            handleInput({field: 'feel', value: props()});
-          }}
-          items={feelItems}
-          setItems={setFeelItems}
-          placeholder={'Choose How do you feel.'}
-          style={styles.dropdown}
-        />
-        {renderInput({
-          placeholder: 'Password',
-          field: 'password',
-          // secureTextEntry: true,
-        })}
-        {renderInput({
-          placeholder: 'Confirm Password',
-          field: 'confirmPassword',
-          // secureTextEntry: true,
-        })}
-        {state.password &&
-          state.confirmPassword &&
-          state.password !== state.confirmPassword && (
-            <Text style={styles.passwordNotMatchText}>
-              Password does not match.
-            </Text>
-          )}
-
-        <View style={styles.buttonContainer}>
-          <Button
-            disabled={validateInputs()}
-            title="Sign Up"
-            onPress={handleSignup}
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={3000}
+            open={openGender}
+            setOpen={setOpenGender}
+            value={state.gender}
+            setValue={props => {
+              handleInput({field: 'gender', value: props()});
+            }}
+            items={genderItems}
+            setItems={setGenderItems}
+            placeholder={'Choose gender.'}
+            style={styles.dropdown}
           />
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={2000}
+            open={openDuty}
+            setOpen={setOpenDuty}
+            value={state.duty}
+            setValue={props => {
+              handleInput({field: 'duty', value: props()});
+            }}
+            items={dutyItems}
+            setItems={setDutyItems}
+            placeholder={'Choose Profession.'}
+            style={styles.dropdown}
+          />
+
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={1000}
+            open={feelOpen}
+            setOpen={setFeelOpen}
+            value={state.feel}
+            setValue={props => {
+              handleInput({field: 'feel', value: props()});
+            }}
+            items={feelItems}
+            setItems={setFeelItems}
+            placeholder={'Choose How do you feel.'}
+            style={styles.dropdown}
+          />
+          {renderInput({
+            placeholder: 'Password',
+            field: 'password',
+            // secureTextEntry: true,
+          })}
+          {renderInput({
+            placeholder: 'Confirm Password',
+            field: 'confirmPassword',
+            // secureTextEntry: true,
+          })}
+          {state.password &&
+            state.confirmPassword &&
+            state.password !== state.confirmPassword && (
+              <Text style={styles.passwordNotMatchText}>
+                Password does not match.
+              </Text>
+            )}
         </View>
-        {isLoading ? <Loader /> : null}
+      </ScrollView>
+      <View style={styles.buttonContainer}>
+        <Button
+          disabled={validateInputs()}
+          title="Sign Up"
+          onPress={handleSignup}
+        />
       </View>
-    </>
+      {isLoading ? <Loader /> : null}
+    </SafeAreaView>
   );
 };
 
@@ -439,6 +444,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
+    paddingBottom:10
   },
   dropdown: {
     marginBottom: 10,

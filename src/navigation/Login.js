@@ -22,7 +22,9 @@ import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'jambhulkar.roshan@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
@@ -33,12 +35,16 @@ const LoginScreen = ({navigation}) => {
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
+      setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
-      dispatch(login());
-      console.log('hello -> signing in result:');
-    } catch (error) {
-      setError(error);
-      console.log('hello ->error signing in', error);
+      const {attributes} = user;
+      dispatch(setAttributes(attributes));
+      dispatch(login(enteredEmail));
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+      console.log('hello ->error signing in', err);
     }
   };
 

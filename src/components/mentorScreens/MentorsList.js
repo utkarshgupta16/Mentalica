@@ -6,19 +6,20 @@ import {
   FlatList,
   TouchableOpacity,
   Pressable,
-  TextInput,
   ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
+  screenHeight,
+  screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
-import {getMethod} from '../../redux/axiosService/AxiosMethods';
-import {Amplify, Auth} from 'aws-amplify';
+import {useDispatch} from 'react-redux';
+import {getAllMentorList} from '../../redux/HomeSlice';
+import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-
+import MentorDetails from './MentorDetails';
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
@@ -28,110 +29,100 @@ const lightBlack = '#45474B';
 
 const MentorsList = () => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [allMentors, setAllMentors] = useState([]);
-  const [modalVisible, setModalVisible] = useState(true);
-  const [loading, setLoading] = useState(false);
-
+  const [modifiedData, setModifiedData] = useState([]);
+  const [selectedMentorData, setMentor] = useState({slots: []});
+  const [showDetails, setShowDetails] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const getMentorsList = await getMethod(
-          'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getMentorList',
-        );
+        const {payload} = await dispatch(getAllMentorList());
+        console.log('setAllMentors', payload?.Items);
+        setAllMentors(payload.Items);
         setLoading(false);
-        setAllMentors(getMentorsList);
-      } catch (error) {
+      } catch (err) {
         setLoading(false);
-        console.error('Error fetching mentors:', error);
       }
+      // console.log('getAllMentorList', payload.Items);
     })();
   }, []);
 
-  const renderItem = ({item}) => {
-    console.log(item);
+  const renderExperties = ({data, label}) => {
     return (
-      <View style={styles.flatListContainer}>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={styles.expertiesText}>{`${label} :`}</Text>
+        {data && data.length ? (
+          <FlatList
+            data={data}
+            horizontal
+            renderItem={({item, index}) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    marginRight: 10,
+                    borderRadius: 13,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    backgroundColor: 'gray',
+                    marginBottom: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 14,
+                      fontWeight: '500',
+                      textAlign: 'center',
+                    }}>
+                    {item?.charAt(0).toUpperCase() + item?.slice(1)}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        ) : null}
+      </View>
+    );
+  };
+
+  const renderItem = ({item, index}) => {
+    const expertiseArr = item?.expertise?.split(',') || [];
+    const languageArr = item?.language?.split(',') || [];
+    return (
+      <Pressable
+        key={index}
+        onPress={() => {
+          setMentor(item);
+          setShowDetails(!showDetails);
+        }}
+        style={styles.flatListContainer}>
         <View style={styles.cardContainer}>
           <View style={styles.imageAndNameCont}>
             <Image
+              source={require('../../icons/doctor.jpg')}
               style={styles.profilePic}
-              source={{
-                uri: 'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
-              }}
             />
+            {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
             <View>
-              <Text style={styles.mentorNameTxt}>
-                {item?.Attributes?.find(
-                  attr => attr?.Name === 'custom:firstName',
-                )?.Value || ''}{' '}
-                {item?.Attributes?.find(attr => attr.Name === 'custom:lastName')
-                  ?.Value || ''}
+              <Text style={styles.mentorNameTxt} numberOfLines={1}>
+                {`${item?.firstName} ${item?.lastName}`}
               </Text>
               <Text style={styles.experienceText}>
-                {item?.Attributes?.find(
-                  attr => attr.Name === 'custom:experience',
-                )?.Value || ''}
-                + years of experience
+                {item?.experience}+ years of experience
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text>starts @</Text>
-                <Text style={styles.feesTxt}>
-                  ₹
-                  {item?.Attributes?.find(attr => attr.Name === 'custom:fees')
-                    ?.Value || ''}{' '}
-                  for 50 mins
-                </Text>
+                <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
               </View>
             </View>
           </View>
-          <View style={styles.expertiesCont}>
-            <Text style={styles.expertiesText}>
-              Experties:{' '}
-              {item?.Attributes?.find(attr => attr.Name === 'custom:expertise')
-                ?.Value || ''}{' '}
-            </Text>
-            <View>
-              <FlatList
-                data={item.experties}
-                renderItem={renderExpertiesItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                nestedScrollEnabled={true}
-              />
-            </View>
-          </View>
-
-          <View style={styles.languageCont}>
-            <Text style={styles.launguageText}>Speaks:</Text>
-            <View>
-              {/* <FlatList
-                data={item.launguage}
-                renderItem={renderLaunguageItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-              /> */}
-              <Text>
-                {item?.Attributes?.find(attr => attr.Name === 'custom:language')
-                  ?.Value || ''}{' '}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.sessionCont}>
-            <Text style={styles.sessionText}>Session Mode:</Text>
-            <View>
-              <Text style={{fontWeight: '600'}}>Video, Voice, Chat</Text>
-              {/* <FlatList
-                data={item.sessionMode}
-                renderItem={renderSessionModeItem}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-              /> */}
-            </View>
-          </View>
+          {renderExperties({data: expertiseArr, label: 'Experties'})}
+          {renderExperties({data: languageArr, label: 'Speaks'})}
         </View>
-        <View style={styles.bookBtnCont}>
+        {/* <View style={styles.bookBtnCont}>
           {showAppointmentBtn ? (
             <Pressable onPress={() => setShowAppointmentBtn(false)}>
               <View style={styles.bookBtn}>
@@ -143,7 +134,7 @@ const MentorsList = () => {
               <Text style={{fontSize: 15}}>Available slots: </Text>
               <View style={styles.slotList}>
                 <FlatList
-                  data={slots}
+                  data={item?.slots}
                   renderItem={renderSlotsItem}
                   keyExtractor={key => key}
                   horizontal={true}
@@ -152,12 +143,10 @@ const MentorsList = () => {
               </View>
             </View>
           )}
-        </View>
-      </View>
+        </View> */}
+      </Pressable>
     );
   };
-
-  const keyExtractor = item => item.Username;
 
   const renderSlotsItem = ({item}) => {
     return (
@@ -179,37 +168,58 @@ const MentorsList = () => {
             style={{
               color: 'white',
             }}>
-            {item}
+            {item?.startTime}
           </Text>
         </View>
       </TouchableOpacity>
     );
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          flex: 1,
-        }}>
-        <Text>
-          <ActivityIndicator size={'large'} color="#0000ff" />
-        </Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //         flex: 1,
+  //       }}>
+  //       <Text>
+  //         <ActivityIndicator size={'large'} color="#0000ff" />
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.container}>
       <FlatList
         data={allMentors}
-        extraData={allMentors}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
       />
+      {showDetails ? (
+        <MentorDetails
+          showDetails={showDetails}
+          close={() => setShowDetails(false)}
+          selectedMentorData={selectedMentorData}
+        />
+      ) : null}
+      {isLoading ? (
+        <View
+          style={{
+            // backgroundColor: '#00000082',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            top: 0,
+            right: 0,
+          }}>
+          <ActivityIndicator color={'green'} size="large" />
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -313,6 +323,9 @@ const styles = StyleSheet.create({
   },
   expertiesText: {
     marginRight: 10,
+    fontWeight: '500',
+    fontSize: 15,
+    color: 'black',
   },
   languageCont: {
     flexDirection: 'row',
@@ -321,6 +334,9 @@ const styles = StyleSheet.create({
   },
   launguageText: {
     marginRight: 10,
+    marginTop: 10,
+    fontWeight: '500',
+    fontSize: 15,
   },
   sessionCont: {
     flexDirection: 'row',
@@ -436,5 +452,3 @@ const data = [
 ];
 
 const slots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:30 '];
-
-

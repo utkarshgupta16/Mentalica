@@ -7,26 +7,23 @@ import AskClient from './AskClient';
 import {useSelector} from 'react-redux';
 import PatientSignUp from './signUp/PatientSignUp';
 import MentorSignUp from './signUp/MentorSignUp';
+import AuthNavigator from './AuthNavigator';
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-
+  console.log('isLoggedIn', isLoggedIn);
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen
-          name="AskClient"
-          component={AskClient}
-          options={{headerShown: false}}
-        /> */}
+
         <Stack.Screen
           name="MainRoute"
-          component={isLoggedIn ? HomeNavigator : Login}
+          component={isLoggedIn ? HomeNavigator : AuthNavigator}
           options={{headerShown: false}}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="PatientSignUp"
           component={PatientSignUp}
           options={{headerShown: false}}
@@ -35,7 +32,7 @@ const MainNavigator = () => {
           name="MentorSignUp"
           component={MentorSignUp}
           options={{headerShown: false}}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

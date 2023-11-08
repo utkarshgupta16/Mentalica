@@ -1,3 +1,4 @@
+import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const postMethod = ({url, method, string, token}) => {
@@ -64,7 +65,6 @@ const postMethod = ({url, method, string, token}) => {
 //       });
 //   });
 // };
-
 
 const getMethod = url => {
   return axios({
