@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {I18nManager, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../customs/Colors';
 import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 import {loginClient} from '../redux/AuthSlice';
 import {MENTOR, PATIENT} from '../utils/Strings';
 import {useTranslation} from 'react-i18next';
+import RNRestart from "react-native-restart";
 
 const AskClient = ({navigation}) => {
   const {t, i18n} = useTranslation();
@@ -29,9 +30,10 @@ const AskClient = ({navigation}) => {
             .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
             .then(() => {
               I18nManager.forceRTL(i18n.language === 'he');
+              RNRestart.Restart();
             })
             .catch(err => {
-              console.log('something went wrong while applying RTL');
+              console.log('something went wrong while applying RTL', err);
             })
         }>
         <View style={{borderRadius: 8, padding: 8, backgroundColor: 'blue'}}>
@@ -75,7 +77,7 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
-          <Text style={styles.chooseText}>I am a Therapist/Mentor</Text>
+          <Text style={styles.chooseText}>{t('I_am_mentor')}</Text>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
