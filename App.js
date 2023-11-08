@@ -16,8 +16,8 @@ const App = () => {
     };
   }
   return (
-    <SafeAreaView style={{flex:1}}>
-      <MainNavigator style={styles.mainNavigator} />
+    <SafeAreaView style={styles.safeAreaViewStyle}>
+      <MainNavigator />
     </SafeAreaView>
   );
 };
@@ -26,6 +26,6 @@ export default App;
 
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
-    flex: 0,
+    flex: 1,
   },
 });

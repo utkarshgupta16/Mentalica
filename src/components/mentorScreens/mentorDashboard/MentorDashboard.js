@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   FlatList,
@@ -15,7 +14,7 @@ import {
 } from '../../../utils/Responsive';
 import {styles} from './MentorDashboardStyle';
 import Modal from 'react-native-modal';
-import AppointmentList from '../../patientScreens/patientDashboard/AppointmentList';
+// import AppointmentList from '../../patientScreens/patientDashboard/AppointmentList';
 
 const MentorDashboard = () => {
   const [isSelectDate, setIsSelectDate] = useState(null);
@@ -38,9 +37,9 @@ const MentorDashboard = () => {
     setSelectDate(item.date === isSelectDate ? null : item.date);
   };
 
-  const handleCreateOppointment = () => {
-    setModalVisible(true);
-  };
+  // const handleCreateOppointment = () => {
+  //   setModalVisible(true);
+  // };
 
   const renderCalenderItem = ({item}) => (
     <Pressable
@@ -114,26 +113,20 @@ const MentorDashboard = () => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      <View style={{flex: 1, marginTop: 10}}>
+      <View style={styles.appointments}>
         <View style={styles.appointmentCont}>
           {/* Left side with time slots */}
           <ScrollView showsVerticalScrollIndicator={false}>
-            {timeSlots.map((timeSlot, index) => (
-              <View key={index} style={styles.bookedPointmentRow}>
+            {timeSlots.map((timeSlot, i) => (
+              <View key={i} style={styles.bookedPointmentRow}>
                 <Text>{timeSlot}</Text>
                 {bookedSlots.map((startTime, index) => {
                   return (
                     <View key={index}>
-                      {timeSlot == startTime.start ? (
+                      {timeSlot === startTime.start ? (
                         <View style={styles.bookedPointmentSlot}>
                           <View>
-                            <Text
-                              style={{
-                                fontWeight: '600',
-                                fontSize: 15,
-                                marginBottom: 10,
-                              }}
-                              key={index}>
+                            <Text style={styles.startTime} key={index}>
                               {startTime.name}
                             </Text>
                             <Text>Video call</Text>
@@ -144,13 +137,8 @@ const MentorDashboard = () => {
                     </View>
                   );
                 })}
-                {bookedSlots.map((startTime, index) => {
-                  {
-                    timeSlot == startTime.start && (
-                      <View
-                        style={{borderWidth: 1, width: 100, height: 40}}></View>
-                    );
-                  }
+                {bookedSlots.map(startTime => {
+                  timeSlot === startTime.start && <View style={styles.slot} />;
                 })}
                 {/* <View style={{borderWidth: 1, width: 100, height: 40}}></View> */}
               </View>

@@ -10,15 +10,17 @@ import {
   Pressable,
 } from 'react-native';
 import Modal from 'react-native-modal';
+
 import {
   heightPercentageToDP as hp,
   screenHeight,
   screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
+
 import Close from '../../icons/icon_close.svg';
 
-const AddSlot = ({close, state,addSlots, slots = [], setState}) => {
+const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
   const renderInput = ({field, placeholder}) => {
     return (
       <TextInput

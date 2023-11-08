@@ -21,9 +21,9 @@ import {Auth} from 'aws-amplify';
 import {PATIENT} from '../../utils/Strings';
 import {singUpSlice} from '../../redux/AuthSlice';
 import {useDispatch} from 'react-redux';
+import EnterOtpModal from '../../customs/EnterOtpModal';
 
 const PatientSignUp = ({navigation}) => {
-  // const {loginFrom} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [openGender, setOpenGender] = useState(false);
@@ -40,17 +40,18 @@ const PatientSignUp = ({navigation}) => {
     {label: 'Student', value: 'student'},
   ]);
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
+  const [otpError, setOtpError] = useState('');
 
   const [state, setState] = useState({
-    firstName: 'firstName',
-    lastName: 'lastName',
-    emailId: 'bhandari.tribhuwan@thinksys.com',
-    password: 'Password@123',
-    confirmPassword: 'Password@123',
-    city: 'city',
-    age: '15',
-    phoneNumber: '57575575656',
+    firstName: '',
+    lastName: '',
+    city: '',
     temporaryCity: 'temporaryCity',
+    phoneNumber: '57575575656',
+    emailId: '',
+    password: '',
+    confirmPassword: '',
+    age: '15',
     gender: 'male',
     duty: 'civilian',
     feel: 'fear',
@@ -74,7 +75,6 @@ const PatientSignUp = ({navigation}) => {
     {label: 'Sadness', value: 'sadnesss'},
   ]);
 
-  // CHTAGPT CODE START:
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
 
@@ -89,12 +89,10 @@ const PatientSignUp = ({navigation}) => {
     newOtp[index] = text;
     setOtp(newOtp);
   };
-  // CHTAGPT CODE END:
 
   const handleInput = ({field, value}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
-
 
   const handleSignup = async () => {
     try {
@@ -107,7 +105,9 @@ const PatientSignUp = ({navigation}) => {
           'custom:type': PATIENT,
         },
       });
+      console.log('resp:', resp);
       const attRes = await dispatch(singUpSlice({...restData, type: PATIENT}));
+      console.log('attRes:', attRes);
       setShowEnterCodeModal(true);
     } catch (err) {
       Alert.alert('Error!', err, [
@@ -143,8 +143,8 @@ const PatientSignUp = ({navigation}) => {
       // navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
+      setOtpError(error);
       console.log('error confirming sign up', error);
-      // setShowEnterCodeModal(false);
     }
   };
 
@@ -206,18 +206,22 @@ const PatientSignUp = ({navigation}) => {
     };
   }, [showEnterCodeModal, secondsLeft]);
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: Colors.paleMintColor,
-        flex: 1,
-      }}>
+    <SafeAreaView style={styles.mainContainer}>
       <CustomHeader
         title={'Sign Up'}
         showBackArrow={true}
         navigation={navigation}
       />
-      {/* =================================MODAL START================================= */}
-      <Modal
+
+      <EnterOtpModal
+        state={state}
+        submitCodeHandler={submitCodeHandler}
+        resendCode={resendCode}
+        showEnterCodeModal={showEnterCodeModal}
+        setShowEnterCodeModal={setShowEnterCodeModal}
+        otpError={otpError}
+      />
+      {/* <Modal
         avoidKeyboard={false}
         onRequestClose={() => {
           setShowEnterCodeModal(false);
@@ -267,11 +271,11 @@ const PatientSignUp = ({navigation}) => {
             </View>
           </View>
         </View>
-      </Modal>
-      {/* =================================MODAL END================================= */}
+      </Modal> */}
+
       <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{flex: 1, flexGrow: 1}}
+        style={styles.ScrollView}
+        contentContainerStyle={styles.contentContainerStyle}
         nestedScrollEnabled={true}>
         <View style={styles.container}>
           {renderInput({placeholder: 'First Name', field: 'firstName'})}
@@ -360,6 +364,10 @@ const PatientSignUp = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    backgroundColor: Colors.paleMintColor,
+    flex: 1,
+  },
   modalContainer: {
     backgroundColor: Colors.white,
     paddingHorizontal: 10,
@@ -426,6 +434,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.primaryDarkBlue,
   },
+  ScrollView: {
+    flex: 1,
+  },
+  contentContainerStyle: {
+    flex: 1,
+    flexGrow: 1,
+  },
   container: {
     padding: 16,
     backgroundColor: Colors.paleMintColor,
@@ -444,7 +459,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
-    paddingBottom:10
+    paddingBottom: 10,
   },
   dropdown: {
     marginBottom: 10,

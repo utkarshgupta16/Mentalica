@@ -17,28 +17,11 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* {isLoggedIn ? null : ( */}
-        {/* <Stack.Screen
-            name="AskClient"
-            component={AskClient}
-            options={{headerShown: false}}
-          /> */}
-        {/* )} */}
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : AuthNavigator}
           options={{headerShown: false}}
         />
-        {/* <Stack.Screen
-          name="PatientSignUp"
-          component={PatientSignUp}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="MentorSignUp"
-          component={MentorSignUp}
-          options={{headerShown: false}}
-        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

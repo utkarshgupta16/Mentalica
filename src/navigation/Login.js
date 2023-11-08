@@ -17,8 +17,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../redux/AuthSlice';
 import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
-import {Amplify, Auth} from 'aws-amplify';
+import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
+import Loader from '../customs/Loader';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
@@ -54,11 +55,12 @@ const LoginScreen = ({navigation}) => {
   };
 
   const signUpClickHandler = () => {
-    if (loginFrom === MENTOR) {
-      navigation.navigate(MENTOR_SIGN_UP);
-    } else {
-      navigation.navigate(PATIENT_SIGN_UP);
-    }
+    navigation.navigate(MENTOR_SIGN_UP);
+    // if (loginFrom === MENTOR) {
+    //   navigation.navigate(MENTOR_SIGN_UP);
+    // } else {
+    //   navigation.navigate(PATIENT_SIGN_UP);
+    // }
   };
 
   const handleEnteredEmail = email => {
@@ -128,21 +130,7 @@ const LoginScreen = ({navigation}) => {
       </Modal>
 
       <View style={styles.container}>
-        {isLoading ? (
-          <View
-            style={{
-              backgroundColor: '#00000082',
-              justifyContent: 'center',
-              alignItems: 'center',
-              position: 'absolute',
-              left: 0,
-              bottom: 0,
-              top: 0,
-              right: 0,
-            }}>
-            <ActivityIndicator color={'white'} size="large" />
-          </View>
-        ) : null}
+        {isLoading ? <Loader /> : null}
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={handleEnteredEmail}
@@ -177,6 +165,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         </View>
         <View style={styles.buttonContainerView}>
+          <Text style={styles.askSignup}>Don't have an account? Wanna </Text>
           <Pressable
             style={styles.signUpContainer}
             title="Sign Up"
@@ -259,18 +248,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainerView: {
+    // justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
     justifyContent: 'center',
-
-    // alignItems: 'center',
+  },
+  askSignup: {
+    fontSize: 14,
   },
   signUpContainer: {
-    marginTop: 14,
+    // marginTop: 14,
   },
   signUpText: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.primaryDarkBlue,
     textDecorationLine: 'none',
+    color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',

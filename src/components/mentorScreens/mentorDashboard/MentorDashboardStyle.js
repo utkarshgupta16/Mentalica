@@ -40,6 +40,10 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  appointments: {
+    flex: 1,
+    marginTop: 10,
+  },
   appointmentCont: {
     flexDirection: 'row',
     backgroundColor: '#EEEDED',
@@ -64,6 +68,16 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  startTime: {
+    fontWeight: '600',
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  slot: {
+    borderWidth: 1,
+    width: 100,
+    height: 40,
   },
   modalView: {
     height: hp(30),

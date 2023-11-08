@@ -40,6 +40,7 @@ const Profile = () => {
     'Payment methods',
     'Payment history',
   ];
+
   const paymentDetailsItemsMentor = [
     'Edit fiscal information',
     'Banking information',
@@ -54,9 +55,9 @@ const Profile = () => {
     (async () => {
       console.log('email', email);
       const res = await dispatch(getProfileSlice({email, type: loginFrom}));
-
+      console.log('res:', res);
     })();
-  }, []);
+  }, [dispatch, email, loginFrom]);
   console.log('loginFrom', profileData);
 
   return (
@@ -66,7 +67,7 @@ const Profile = () => {
           <View style={styles.imageContainer}>
             <Image
               source={
-                loginFrom == PATIENT
+                loginFrom === PATIENT
                   ? require('../../icons/patient.jpg')
                   : require('../../icons/doctor.jpg')
               }
@@ -74,9 +75,7 @@ const Profile = () => {
             />
           </View>
           <View style={styles.details}>
-            <Text
-              style={{...styles.nameText, width: screenWidth - 100}}
-              >
+            <Text style={{...styles.nameText, width: screenWidth - 100}}>
               {firstName + ' ' + lastName}
             </Text>
             <Text style={styles.emailText}>{email_id}</Text>

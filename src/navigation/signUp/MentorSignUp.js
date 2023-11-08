@@ -15,9 +15,9 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import {MENTOR} from '../../utils/Strings';
+import {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-import {specialities, educationList, languageList} from '../../utils/default';
+import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
@@ -28,25 +28,33 @@ const MentorSignUp = ({navigation}) => {
 
   const [languageOpen, setLanguageOpen] = useState(false);
   const [specialityOpen, setSpecialityOpen] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: 'Sonu',
-    lastName: 'Patel',
-    city: 'varanasi',
+    firstName: '',
+    lastName: '',
+    city: '',
+    temporaryCity: '',
+    phoneNumber: '',
+    emailId: '',
+    password: '',
+    confirmPassword: '',
     // gender: '',
-    phoneNumber: '1234567890',
-    emailId: 'patel.sonu@thinksys.com',
-    temporaryCity: 'testing',
-    password: 'Password@123',
-    confirmPassword: 'Password@123',
-    type: MENTOR,
-    expertise: [],
-    fees: '500',
-    experience: '4',
-    language: [],
+    // MENTOR:
+    // type: MENTOR,
+    // expertise: [],
+    // fees: '',
+    // experience: '',
+    // language: [],
+    // PATIENT:
+    // age: '15',
+    // gender: 'male',
+    // duty: 'civilian',
+    // feel: 'fear',
+    // type: PATIENT,
   });
 
   const handleInput = ({field, value}) => {
@@ -59,7 +67,7 @@ const MentorSignUp = ({navigation}) => {
     let expertiseUpdated = '';
     arrData &&
       arrData.map((val, i) => {
-        if (i == 0) {
+        if (i === 0) {
           expertiseUpdated = expertiseUpdated + val;
         } else {
           expertiseUpdated = expertiseUpdated + ',' + val;
@@ -200,11 +208,7 @@ const MentorSignUp = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: Colors.paleMintColor,
-        flex: 1,
-      }}>
+    <SafeAreaView style={styles.container}>
       <CustomHeader
         title={'Sign Up'}
         showBackArrow={true}
@@ -229,9 +233,9 @@ const MentorSignUp = ({navigation}) => {
           {renderInput({placeholder: 'First Name', field: 'firstName'})}
           {renderInput({placeholder: 'Last Name', field: 'lastName'})}
           {renderInput({placeholder: 'City', field: 'city'})}
+          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
           {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
           {renderInput({placeholder: 'Email', field: 'emailId'})}
-          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
           {renderInput({
             placeholder: 'Password',
             field: 'password',
@@ -242,20 +246,37 @@ const MentorSignUp = ({navigation}) => {
             field: 'confirmPassword',
             //   secureTextEntry: true,
           })}
-          {renderInput({
-            placeholder: 'Fees for 30 Mins',
-            field: 'fees',
-          })}
-          {renderInput({
-            placeholder: 'Experience in Years',
-            field: 'experience',
-          })}
+          {/* CHECK FOR THE TYPE: */}
 
           <DropDownPicker
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
-            zIndex={1000}
+            zIndex={3000}
+            open={typeOpen}
+            setOpen={setTypeOpen}
+            value={state?.expertise}
+            onSelectItem={val => {
+              let labels = val.map(i => i?.value);
+              handleInput({
+                field: 'expertise',
+                value: labels,
+              });
+            }}
+            items={specialistItems}
+            setItems={setSpecialistItems}
+            placeholder={'Select Speciality.'}
+            style={styles.dropdown}
+            multiple={true}
+          />
+
+          {/* CHECK FOR THE TYPE: */}
+
+          <DropDownPicker
+            nestedScrollEnabled={true}
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={2000}
             open={specialityOpen}
             setOpen={setSpecialityOpen}
             value={state?.expertise}
@@ -292,6 +313,15 @@ const MentorSignUp = ({navigation}) => {
             style={styles.dropdown}
             multiple={true}
           />
+          {renderInput({
+            placeholder: 'Fees for 30 Mins',
+            field: 'fees',
+          })}
+          {renderInput({
+            placeholder: 'Experience in Years',
+            field: 'experience',
+          })}
+
           {state.password &&
             state.confirmPassword &&
             state.password !== state.confirmPassword && (
@@ -347,6 +377,10 @@ const MentorSignUp = ({navigation}) => {
 export default MentorSignUp;
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.paleMintColor,
+    flex: 1,
+  },
   modalContainer: {
     backgroundColor: Colors.white,
     paddingHorizontal: 10,

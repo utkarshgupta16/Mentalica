@@ -1,3 +1,4 @@
+import React from 'react';
 import {Amplify} from 'aws-amplify';
 import {AppRegistry} from 'react-native';
 import App from './App';
