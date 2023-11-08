@@ -364,12 +364,12 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const videoCallAction = data => {
-    console.log('data rooomdid---------------------------', data.roomId);
+    console.log('data rooomdid---------------------------', data);
     _checkPermissions(() => {
       axios
         .get(
           // `${url}/getTwilloToken?roomId=${data.roomId}`,
-          `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data.roomId}&userName=${data.mentorId}`,
+          `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.mentor_email_id}`,
         )
         .then(response => {
           console.log('reM-------------------', response.data);
@@ -378,8 +378,8 @@ const MentorDashboard = ({navigation}) => {
           setProps({
             ...props,
             token,
-            userName: data.mentorId,
-            roomName: data.roomId,
+            userName: data?.mentor_email_id , //data.mentorId,
+            roomName: data?.roomId
           });
 
           navigation.navigate('AVChatScreen');
@@ -405,7 +405,8 @@ const MentorDashboard = ({navigation}) => {
             <Text style={{color: 'black'}}>No schedule</Text>
           </View>
         )}
-        renderItem={(item, isFirst) => {
+        renderItem={(item) => {
+console.log('item-----------------', item)
           return (
             <TouchableOpacity
               onPress={() => {
@@ -428,11 +429,11 @@ const MentorDashboard = ({navigation}) => {
                 {/* <View style={{alignSelf: 'flex-start'}}> */}
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
-                    {moment(item.start).format('LT')}
+                    {moment(item?.start).format('LT')}
                   </Text>
                   <Text style={[styles.timeText]}>-</Text>
                   <Text style={styles.timeText}>
-                    {moment(item.end).format('LT')}
+                    {moment(item?.end).format('LT')}
                   </Text>
                 </View>
                 {/* </View> */}
