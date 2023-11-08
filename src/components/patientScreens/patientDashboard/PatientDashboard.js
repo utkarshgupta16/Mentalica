@@ -22,7 +22,7 @@ import {
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
-import AppoinmentsList from './AppointmentList';
+// import AppoinmentsList from './AppointmentList';
 
 const url =
   'https://aefc-2401-4900-1c82-5450-b098-152c-8a6e-6483.ngrok-free.app';

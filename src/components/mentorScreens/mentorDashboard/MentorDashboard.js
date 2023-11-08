@@ -33,10 +33,11 @@ import {
   AgendaSchedule,
 } from 'react-native-calendars';
 import Timetable from 'react-native-calendar-timetable';
-import AppointmentList from './AppointmentList';
+// import AppointmentList from './AppointmentList';
 import EventCalendar from 'react-native-events-calendar';
 import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getScheduledAppointmentsSlice} from '../../../redux/HomeSlice';
 
 let {width} = Dimensions.get('window');
 
@@ -136,6 +137,7 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
+  const {email} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
@@ -146,58 +148,126 @@ const MentorDashboard = ({navigation}) => {
   console.log('appointmentList------------------------------');
   console.log(appointmentList);
 
+  const setDateTime = time => {
+    const [hours, minutes] = time.split(':');
+    const now = new Date();
+    now.setHours(hours, minutes, 0, 0);
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const isoString = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
+    return isoString;
+  };
+
+  const getCombineDate = (timeStr, dateStr) => {
+    const dateString = dateStr;
+
+    // Time string in the format "hh:mm a" (12-hour format with AM/PM)
+    const timeString = timeStr;
+
+    // Split the time string into hours, minutes, and AM/PM
+    const [time, ampm] = timeString.split(' ');
+    const [hours, minutes] = time.split(':');
+
+    // Convert hours to 24-hour format
+    let hours24 = parseInt(hours, 10);
+    if (ampm === 'PM' && hours24 < 12) {
+      hours24 += 12;
+    } else if (ampm === 'AM' && hours24 === 12) {
+      hours24 = 0;
+    }
+
+    // Combine the date and time strings
+    const combinedString = `${dateString}T${hours24}:${minutes}:00`;
+
+    // Create a Date object using the combined string
+    return new Date(combinedString);
+  };
+
   useEffect(() => {
-    let payload = {};
+    (async () => {
+      let res = await dispatch(getScheduledAppointmentsSlice({email}));
+      const appointments = res.payload;
 
-    payload = {
-      mentorId: 'c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
-    };
+      console.log('-------------------appointments');
+      console.log('email--------------', email);
+      console.log(JSON.stringify(appointments));
+      // const appointments = [
+      //   {
+      //     startTime: '2023-11-03T16:50:00Z',
+      //     patientId: '3f409087-25b9-4772-9207-0ddeeaeb4c60',
+      //     endTime: '2023-11-03T17:40:00Z',
+      //     mentorId: 'c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
+      //     roomId: '5574617c-655b-4d7e-ab5a-256705b1a8a7',
+      //     unique_id:
+      //       '1698970580193_3f409087-25b9-4772-9207-0ddeeaeb4c60_c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
+      //     enable: true,
+      //   },
+      //   {
+      //     startTime: '2023-11-03T15:40:00Z',
+      //     patientId: '3f409087-25b9-4772-9207-0ddeeaeb4c60',
+      //     endTime: '2023-11-03T16:40:00Z',
+      //     mentorId: 'c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
+      //     roomId: '75876dcd-ec56-45a7-bea7-9b3460d96875',
+      //     unique_id:
+      //       '1698970563936_3f409087-25b9-4772-9207-0ddeeaeb4c60_c1d9286b-1758-4c5c-b1b1-539c6f6cf9fc',
+      //     enable: true,
+      //   },
+      // ];
+      const newDate = new Date();
+      const formattedAppointments = {};
+      appointments.forEach(appointment => {
+        const date =
+          newDate.getFullYear() +
+          '-' +
+          `${newDate.getMonth() + 1}` +
+          '-' +
+          `0${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+        if (!formattedAppointments[date]) {
+          formattedAppointments[date] = [];
+        }
 
-    const data = {
-      url: 'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getAppointmentList',
-      method: 'post',
-      string: 'post/getAppointmentList',
-    };
-
-    // dispatch(postMethod())
-
-    // AxiosMethods.postMethod(data)(payload)
-    //   .then(resp => {
-    //     console.log('resp', resp);
-    //   })
-    //   .catch(err => {
-    //     console.log('err', err);
-    //   });
-
-    axios
-      .post(
-        'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getAppointmentList',
-        payload,
-      )
-      .then(response => {
-        console.log('rep', response.data);
-
-        const appointments = response.data;
-
-        const formattedAppointments = {};
-        appointments.forEach(appointment => {
-          const date = appointment.startTime.split('T')[0]; // Extract date from startTime
-          if (!formattedAppointments[date]) {
-            formattedAppointments[date] = [];
-          }
-          formattedAppointments[date].push({
-            start: appointment.startTime,
-            end: appointment.endTime,
-            ...appointment,
-            // Other appointment data
-          });
+        formattedAppointments[date].push({
+          start: setDateTime(appointment.slots[0].startTime),
+          end: setDateTime(appointment.slots[0].endTime),
+          ...appointment,
+          // Other appointment data
         });
-
-        setAppointmentList(formattedAppointments);
-      })
-      .catch(error => {
-        console.log('error appi lit', error);
       });
+      console.log('-------------------formattedAppointments');
+      console.log(formattedAppointments);
+      setAppointmentList(formattedAppointments);
+    })();
+
+    // axios
+    //   .post(
+    //     'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getAppointmentList',
+    //     payload,
+    //   )
+    //   .then(response => {
+    //     console.log('rep', response.data);
+
+    //     const appointments = response.data;
+
+    //     const formattedAppointments = {};
+    //     appointments.forEach(appointment => {
+    //       const date = appointment.startTime.split('T')[0]; // Extract date from startTime
+    //       if (!formattedAppointments[date]) {
+    //         formattedAppointments[date] = [];
+    //       }
+    //       formattedAppointments[date].push({
+    //         start: appointment.startTime,
+    //         end: appointment.endTime,
+    //         ...appointment,
+    //         // Other appointment data
+    //       });
+    //     });
+
+    //     setAppointmentList(formattedAppointments);
+    //   })
+    //   .catch(error => {
+    //     console.log('error appi lit', error);
+    //   });
   }, []);
 
   const generateWeekData = () => {

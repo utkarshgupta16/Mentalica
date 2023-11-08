@@ -91,7 +91,7 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email}) => {
+  async ({email, fieldName = 'mentorEmailId'}) => {
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
@@ -100,12 +100,12 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
         // Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      data: {patientEmailId: email},
+      data: {[fieldName]: email},
     };
     return axios(config)
       .then(async response => {
         const {data, status} = response;
-        console.log("patientEmailId",response)
+        console.log('patientEmailId', response);
         if (status === 200) {
           return Promise.resolve(data);
         } else {
@@ -118,7 +118,6 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
       });
   },
 );
-
 
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',
