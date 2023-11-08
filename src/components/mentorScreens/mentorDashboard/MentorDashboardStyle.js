@@ -3,6 +3,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from '../../../utils/Responsive';
+import Colors from '../../../customs/Colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -30,15 +31,18 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: hp(2),
     marginTop: hp(2),
+    color: Colors.black,
   },
   dateText: {
     marginBottom: hp(3),
     fontSize: 15,
     fontWeight: 'bold',
+    color: Colors.black,
   },
   tabText: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: Colors.black,
   },
   appointments: {
     flex: 1,
@@ -85,10 +89,29 @@ export const styles = StyleSheet.create({
     backgroundColor: '#E4D0D0',
     borderRadius: 10,
   },
-  modalTextInput: {
+  itemText: {
+    color: '#888',
+    fontSize: 16,
+  },
+
+  itemContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-    marginHorizontal: wp(10),
-    marginTop: hp(3),
+    borderBottomColor: '#ccc',
+  },
+  timeColumn: {
+    width: 100, // Adjust the width as needed
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timeText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  appointmentDetails: {
+    flex: 1,
   },
 });

@@ -1,5 +1,12 @@
-import {FlatList, Image, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import {
+  Alert,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
 import {
@@ -10,14 +17,17 @@ import {
   SAVED,
 } from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
-import AppointmentList from './AppointmentList';
+import AppoinmentsList from './AppointmentList';
+import {useSelector} from 'react-redux';
 
-const PatientDashboard = () => {
-  const [selectedTab, setSelectedTab] = useState({tabStr: ALL});
+const PatientDashboard = ({navigation}) => {
+  const {email} = useSelector(state => state.auth);
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Andre,</Text>
-      <Text style={styles.dateText}>4th April overview</Text>
+      <Text style={styles.helloText}>Hello {email}</Text>
+      {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <View style={styles.tabs}>
         <PatientDashboardTabs
@@ -94,7 +104,9 @@ const PatientDashboard = () => {
           </View>
         </View>
       ) : null}
-      {selectedTab.tabStr == APPOINMENTS ? <AppointmentList /> : null}
+      {selectedTab.tabStr == APPOINMENTS ? (
+        <AppoinmentsList navigation={navigation} />
+      ) : null}
       {selectedTab.tabStr == ARTICLES ? (
         <Text
           style={{

@@ -1,8 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
 import reactotron from 'reactotron-react-native';
+
+const initialState = {
+  isAudioEnabled: true,
+  status: 'disconnected',
+  participants: new Map(),
+  videoTracks: new Map(),
+  userName: '',
+  roomName: '',
+  token: '',
+  isVideoEnabled: true,
+};
+
+export const AppContext = React.createContext(initialState);
+
 import MainNavigator from './src/navigation/MainNavigator';
 import {SafeAreaView, StyleSheet} from 'react-native';
+import {I18nextProvider} from 'react-i18next';
+import i18n from './src/utils/i18n';
+
 const App = () => {
+  const [props, setProps] = useState(initialState);
+
   if (__DEV__) {
     const yeOldeConsoleLog = console.log;
     console.log = (...args) => {
@@ -16,9 +35,12 @@ const App = () => {
     };
   }
   return (
-    <SafeAreaView style={styles.safeAreaViewStyle}>
-      <MainNavigator />
-    </SafeAreaView>
+    <AppContext.Provider value={{props, setProps}}>
+      <I18nextProvider i18n={i18n}>
+        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <MainNavigator style={styles.mainNavigator} />
+      </I18nextProvider>
+    </AppContext.Provider>
   );
 };
 

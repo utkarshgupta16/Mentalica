@@ -9,6 +9,7 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
 
 import {
@@ -19,26 +20,23 @@ import {
 } from '../../utils/Responsive';
 
 import Close from '../../icons/icon_close.svg';
-
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {slotsData} from '../../utils/default';
 const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
-  const renderInput = ({field, placeholder}) => {
-    return (
-      <TextInput
-        style={{
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-          borderWidth: 1,
-          marginLeft: 10,
-          borderRadius: 4,
-          borderColor: 'gray',
-          flex: 1,
-        }}
-        value={state[field]}
-        placeholder={placeholder}
-        onChangeText={text => setState({...state, [field]: text})}
-      />
-    );
-  };
+  const [isOpen, setOpen] = useState(false);
+  const [selectedSlot, setSlots] = useState('');
+  let slots1 =
+    (slots &&
+      slots.length &&
+      slots.map(val => `${val?.startTime}-${val?.endTime}`)) ||
+    [];
+  let filterData = slotsData.filter(val => {
+    if (!slots1.includes(val?.value)) {
+      return true;
+    }
+    return false;
+  });
+
   return (
     <SafeAreaView>
       <Modal
@@ -70,26 +68,44 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
         <Text style={{textAlign: 'center', fontSize: 18, marginVertical: 10}}>
           Book Slots
         </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: 'white',
+            zIndex: 1000,
+          }}>
+          {/* {renderInput({field: 'startTime', placeholder: 'Start Time'})}
+            {renderInput({field: 'endTime', placeholder: 'End Time'})} */}
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={1000}
+            open={isOpen}
+            setOpen={setOpen}
+            value={selectedSlot}
+            setValue={setSlots}
+            items={filterData}
+            placeholder={'Select Slot'}
+            style={{marginBottom: 10, backgroundColor: Colors.paleMintColor}}
+          />
+        </View>
         <View style={{alignItems: 'center'}}>
-          <View style={{flexDirection: 'row'}}>
-            {renderInput({field: 'startTime', placeholder: 'Start Time'})}
-            {renderInput({field: 'endTime', placeholder: 'End Time'})}
-          </View>
           <Pressable
             onPress={() => {
+              let [startTime, endTime] = selectedSlot?.split('-');
               let updateState = {
-                startTime: state.startTime.includes(':')
-                  ? state.startTime
-                  : `${state.startTime}:00`,
-                endTime: state.endTime.includes(':')
-                  ? state.endTime
-                  : `${state.endTime}:00`,
+                startTime: startTime?.includes(':')
+                  ? startTime
+                  : `${startTime}:00`,
+                endTime: endTime?.includes(':')
+                  ? endTime
+                  : `${state?.endTime}:00`,
               };
               let data = [...slots, updateState];
               addSlots(data);
-              setState({startTime: '', endTime: ''});
+              setSlots('');
             }}
-            disabled={!state.startTime || !state.endTime}
+            disabled={!selectedSlot}
             style={{
               backgroundColor: 'green',
               marginTop: 10,
@@ -98,7 +114,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
               paddingHorizontal: 15,
               paddingVertical: 5,
               borderColor: 'white',
-              opacity: state.startTime && state.endTime ? 1 : 0.5,
+              opacity: selectedSlot ? 1 : 0.5,
             }}>
             <Text style={{color: 'white'}}>Add</Text>
           </Pressable>
@@ -126,19 +142,18 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                   }}>
                   <View style={{}}>
                     <Text style={{paddingBottom: 5}}>
-                      Start Time: {item.startTime}
+                      Start Time: {item?.startTime}
                     </Text>
-                    <Text>End Time: {item.endTime}</Text>
+                    <Text>End Time: {item?.endTime}</Text>
                   </View>
                   <Pressable
                     style={{}}
                     onPress={() => {
-                      setState({...item});
                       let data = [...slots];
                       data.splice(index, 1);
                       addSlots(data);
                     }}>
-                    <Text>Edit</Text>
+                    <Text>Delete</Text>
                   </Pressable>
                 </View>
               );

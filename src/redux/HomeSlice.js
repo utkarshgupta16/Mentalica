@@ -116,7 +116,7 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email, fieldName = 'patientEmailId'}) => {
+  async ({email, fieldName = 'mentorEmailId'}) => {
     // let token = await AsyncStorage.getItem('token');
     console.log('getScheduledAppointmentsSlice==============', {
       [fieldName]: email,
@@ -133,7 +133,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
     return axios(config)
       .then(async response => {
         const {data, status} = response;
-        console.log('patientEmailId===========', response);
+        console.log('patientEmailId', response);
         if (status === 200) {
           return Promise.resolve(data);
         } else {
