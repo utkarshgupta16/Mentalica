@@ -89,12 +89,12 @@ const MentorDashboard = () => {
         </View>
       </Modal>
       <View style={styles.helloCont}>
-        <Text style={styles.helloText}>Hello Raquel,</Text>
+        {/* <Text style={styles.helloText}>Hello Raquel,</Text>
         <Pressable onPress={handleCreateOppointment}>
           <View style={styles.createAppointmentBtn}>
             <Text style={styles.AppontmentBtnText}>Create Appointment</Text>
           </View>
-        </Pressable>
+        </Pressable> */}
       </View>
       {selectDate ? (
         <Text style={styles.dateText}>

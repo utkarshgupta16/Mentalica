@@ -24,6 +24,8 @@ const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
+  // guptagaurav9566+1@gmail.com
+  // bhandari.tribhuwan@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState(
     'bhandari.tribhuwan@thinksys.com',
   );

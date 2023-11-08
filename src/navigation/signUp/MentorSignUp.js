@@ -171,8 +171,8 @@ const MentorSignUp = ({navigation}) => {
       temporaryCity = '',
       password = '',
       confirmPassword = '',
-      education = '',
-      expertise = '',
+      language = [],
+      expertise = [],
       //   fees = '',
     } = state;
 
@@ -185,7 +185,8 @@ const MentorSignUp = ({navigation}) => {
       !temporaryCity ||
       !password ||
       !confirmPassword ||
-      !expertise ||
+      !expertise.length ||
+      !language.length ||
       !slots.length
     ) {
       return true;
