@@ -18,6 +18,7 @@ import {logout} from '../../redux/AuthSlice';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {signOut} from '../../AWS/AWSConfiguration';
 import {getProfileSlice} from '../../redux/HomeSlice';
+import {screenWidth} from '../../utils/Responsive';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -53,9 +54,11 @@ const Profile = () => {
     (async () => {
       console.log('email', email);
       const res = await dispatch(getProfileSlice({email, type: loginFrom}));
+
     })();
   }, []);
-  console.log('loginFrom', loginFrom, email);
+  console.log('loginFrom', profileData);
+
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
@@ -71,7 +74,11 @@ const Profile = () => {
             />
           </View>
           <View style={styles.details}>
-            <Text style={styles.nameText}>{firstName + ' ' + lastName}</Text>
+            <Text
+              style={{...styles.nameText, width: screenWidth - 100}}
+              >
+              {firstName + ' ' + lastName}
+            </Text>
             <Text style={styles.emailText}>{email_id}</Text>
           </View>
         </View>
@@ -143,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nameText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: Colors.dune,
   },

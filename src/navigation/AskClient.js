@@ -18,7 +18,7 @@ const AskClient = ({navigation}) => {
   const onSubmitHandler = () => {
     const selectedType = selectedPatient ? PATIENT : MENTOR;
     dispatch(loginClient(selectedType));
-    navigation.navigate('MainRoute');
+    navigation.navigate('Login');
   };
 
   return (

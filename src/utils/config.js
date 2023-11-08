@@ -8,4 +8,6 @@ export const endPoints = {
   getPatientProfile: `${API_URL}/getMePatient`,
   getMentorProfile: `${API_URL}/getMeMentor`,
   getScheduledAppointments: `${API_URL}/getMentorAppointmentSlot`,
+  getTwilloToken: `${API_URL}/getTwilloToken`,
 };
+// https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId="75thbd"&userName="vhjadvc"

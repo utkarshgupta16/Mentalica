@@ -17,7 +17,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
 import {MENTOR} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-import {specialities, educationList} from '../../utils/default';
+import {specialities, educationList, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
@@ -26,7 +26,7 @@ const MentorSignUp = ({navigation}) => {
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
 
-  const [educationOpen, setEducationOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const [specialityOpen, setSpecialityOpen] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
@@ -46,20 +46,27 @@ const MentorSignUp = ({navigation}) => {
     expertise: [],
     fees: '500',
     experience: '4',
-    language: 'english,hindi',
+    language: [],
   });
 
-  console.log('sppppp', state.speciality);
-
   const handleInput = ({field, value}) => {
-    console.log('field:', field, value);
-    const valueType = typeof value;
-    console.log('valueType:', valueType);
     setState(prevState => ({...prevState, [field]: value}));
   };
-  console.log('slots', slots);
+
   const [specialistItems, setSpecialistItems] = useState(specialities);
-  const [educationItems, setEducationItems] = useState(educationList);
+
+  const convertString = (arrData = []) => {
+    let expertiseUpdated = '';
+    arrData &&
+      arrData.map((val, i) => {
+        if (i == 0) {
+          expertiseUpdated = expertiseUpdated + val;
+        } else {
+          expertiseUpdated = expertiseUpdated + ',' + val;
+        }
+      });
+    return expertiseUpdated;
+  };
 
   const handleSignup = async () => {
     try {
@@ -87,16 +94,16 @@ const MentorSignUp = ({navigation}) => {
       //   attributes: attributes,
       // });
       // console.log('resp:', resp);
-      const {password, confirmPassword, type, ...restData} = state;
-      // let expertiseUpdated = '';
-      // expertise &&
-      //   expertise.map((val, i) => {
-      //     if (i == 0) {
-      //       expertiseUpdated = expertiseUpdated + val;
-      //     } else {
-      //       expertiseUpdated = expertiseUpdated + ',' + val;
-      //     }
-      //   });
+      const {
+        password,
+        confirmPassword,
+        type,
+        expertise = [],
+        language = [],
+        ...restData
+      } = state;
+      let expertiseUpdated = convertString(expertise) || '';
+      let stringLanguageUpdated = convertString(language) || '';
 
       const resp = await Auth.signUp({
         username: state.emailId,
@@ -107,7 +114,13 @@ const MentorSignUp = ({navigation}) => {
       });
 
       const attRes = await dispatch(
-        singUpSlice({...restData, slots, type: MENTOR}),
+        singUpSlice({
+          ...restData,
+          expertise: expertiseUpdated,
+          language: stringLanguageUpdated,
+          slots,
+          type: MENTOR,
+        }),
       );
       setShowEnterCodeModal(true);
     } catch (err) {
@@ -158,8 +171,8 @@ const MentorSignUp = ({navigation}) => {
       temporaryCity = '',
       password = '',
       confirmPassword = '',
-      education = '',
-      expertise = '',
+      language = [],
+      expertise = [],
       //   fees = '',
     } = state;
 
@@ -172,8 +185,8 @@ const MentorSignUp = ({navigation}) => {
       !temporaryCity ||
       !password ||
       !confirmPassword ||
-      !education ||
-      !expertise ||
+      !expertise.length ||
+      !language.length ||
       !slots.length
     ) {
       return true;
@@ -197,166 +210,136 @@ const MentorSignUp = ({navigation}) => {
         showBackArrow={true}
         navigation={navigation}
       />
-      {/* <ScrollView
+      <ScrollView
         style={{flex: 1}}
         contentContainerStyle={{flex: 1, flexGrow: 1}}
-        nestedScrollEnabled
-        > */}
-      {/* =================================MODAL START================================= */}
-      {/* <Modal
-        avoidKeyboard={false}
-        onRequestClose={() => {
-          setShowEnterCodeModal(false);
-        }}
-        keyboardAvoidingBehavior={
-          Platform.OS === 'android' ? 'height' : 'padding'
-        }
-        animationType="slide"
-        transparent={true}
-        closeOnClick={true}
-        isVisible={true}
-        // isVisible={showEnterCodeModal}
-        onBackdropPress={() => {
-          setShowEnterCodeModal(false);
-        }} 
-        onBackButtonPress={() => {
-          setShowEnterCodeModal(false);
-        }}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.enterOTPText}>
-            Enter the 6-digit OTP sent to {state.emailId}
-          </Text>
-
-          <View style={styles.otpContainer}>
-            {otp.map((digit, index) => (
-              <TextInput
-                key={index}
-                style={styles.otpInput}
-                onChangeText={text => handleOtpChange(text, index)}
-                value={digit}
-                keyboardType="numeric"
-                maxLength={1}
-                ref={ref => (inputRefs.current[index] = ref)}
-              />
-            ))}
-          </View>
-          {otpError.message && (
-            <Text style={styles.otpErrorText}>{otpError.message}</Text>
-          )}
-          <Button title="Submit" onPress={submitCodeHandler} />
-          <View style={styles.resendCodeContainer}>
-            <Text style={styles.resendCodeAgainText}>Didn't get a code? </Text>
-            <View style={styles.resendMainContainer}>
-              <Pressable style={styles.resendButton} onPress={resendCode}>
-                <Text style={styles.resend}>Resend</Text>
-              </Pressable>
-              <Text style={styles.resendTimerText}>
-                In 00:{secondsLeft > 9 ? secondsLeft : '0' + secondsLeft}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </Modal> */}
-      <EnterOtpModal
-        state={state}
-        submitCodeHandler={submitCodeHandler}
-        resendCode={resendCode}
-        showEnterCodeModal={showEnterCodeModal}
-        setShowEnterCodeModal={setShowEnterCodeModal}
-        otpError={otpError}
-      />
-      {/* =================================MODAL END================================= */}
-
-      <View style={styles.mainContainer}>
-        {renderInput({placeholder: 'First Name', field: 'firstName'})}
-        {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-        {renderInput({placeholder: 'City', field: 'city'})}
-        {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-        {renderInput({placeholder: 'Email', field: 'emailId'})}
-        {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
-        {renderInput({
-          placeholder: 'Password',
-          field: 'password',
-          //   secureTextEntry: true,
-        })}
-        {renderInput({
-          placeholder: 'Confirm password',
-          field: 'confirmPassword',
-          //   secureTextEntry: true,
-        })}
-        {renderInput({
-          placeholder: 'Fees for 30 Mins',
-          field: 'fees',
-        })}
-        {renderInput({
-          placeholder: 'Experience in Years',
-          field: 'experience',
-        })}
-        {/* 
-          <DropDownPicker
-            zIndex={2000}
-            open={educationOpen}
-            setOpen={setEducationOpen}
-            value={state.education}
-            setValue={props => {
-              handleInput({field: 'education', value: props()});
-            }}
-            items={educationItems}
-            setItems={setEducationItems}
-            placeholder={'Select Education.'}
-            style={styles.dropdown}
-          /> */}
-        <DropDownPicker
-          zIndex={1000}
-          open={specialityOpen}
-          setOpen={setSpecialityOpen}
-          value={state.expertise}
-          setValue={props => {
-            const val = [...state.expertise, ...props()];
-            console.log('val', val, state.expertise, props());
-            handleInput({
-              field: 'expertise',
-              value: [...state.speciexpertiseality, ...props()],
-            });
-          }}
-          items={specialistItems}
-          setItems={setSpecialistItems}
-          placeholder={'Select Speciality.'}
-          style={styles.dropdown}
-          multiple={true}
+        nestedScrollEnabled={true}>
+        {/* =================================MODAL START================================= */}
+        <EnterOtpModal
+          state={state}
+          submitCodeHandler={submitCodeHandler}
+          resendCode={resendCode}
+          showEnterCodeModal={showEnterCodeModal}
+          setShowEnterCodeModal={setShowEnterCodeModal}
+          otpError={otpError}
         />
-        {state.password &&
-          state.confirmPassword &&
-          state.password !== state.confirmPassword && (
-            <Text style={styles.passwordNotMatchText}>
-              Password does not match.
+        {/* =================================MODAL END================================= */}
+
+        <View style={styles.mainContainer}>
+          {renderInput({placeholder: 'First Name', field: 'firstName'})}
+          {renderInput({placeholder: 'Last Name', field: 'lastName'})}
+          {renderInput({placeholder: 'City', field: 'city'})}
+          {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
+          {renderInput({placeholder: 'Email', field: 'emailId'})}
+          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+          {renderInput({
+            placeholder: 'Password',
+            field: 'password',
+            //   secureTextEntry: true,
+          })}
+          {renderInput({
+            placeholder: 'Confirm password',
+            field: 'confirmPassword',
+            //   secureTextEntry: true,
+          })}
+          {renderInput({
+            placeholder: 'Fees for 30 Mins',
+            field: 'fees',
+          })}
+          {renderInput({
+            placeholder: 'Experience in Years',
+            field: 'experience',
+          })}
+
+          <DropDownPicker
+            nestedScrollEnabled={true}
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={1000}
+            open={specialityOpen}
+            setOpen={setSpecialityOpen}
+            value={state?.expertise}
+            onSelectItem={val => {
+              let labels = val.map(i => i?.value);
+              handleInput({
+                field: 'expertise',
+                value: labels,
+              });
+            }}
+            items={specialistItems}
+            setItems={setSpecialistItems}
+            placeholder={'Select Speciality.'}
+            style={styles.dropdown}
+            multiple={true}
+          />
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={1000}
+            open={languageOpen}
+            setOpen={setLanguageOpen}
+            value={state?.language}
+            onSelectItem={val => {
+              let labels = val.map(i => i?.value);
+              handleInput({
+                field: 'language',
+                value: labels,
+              });
+            }}
+            items={languageList}
+            // setItems={setSpecialistItems}
+            placeholder={'Select Language.'}
+            style={styles.dropdown}
+            multiple={true}
+          />
+          {state.password &&
+            state.confirmPassword &&
+            state.password !== state.confirmPassword && (
+              <Text style={styles.passwordNotMatchText}>
+                Password does not match.
+              </Text>
+            )}
+          <Pressable
+            style={{
+              paddingVertical: 7,
+              borderStyle: 'dashed',
+              borderColor: 'blue',
+              borderWidth: 1,
+              borderRadius: 4,
+              alignItems: 'center',
+              marginBottom: 10,
+            }}
+            onPress={() => setShowSlots(!showSlots)}>
+            <Text
+              style={{
+                fontSize: 17,
+                color: 'blue',
+                // textDecorationStyle: 'solid',
+                // textDecorationLine: 'underline',
+              }}>
+              {slots.length ? 'Update Slots' : 'Add Slots'}
             </Text>
-          )}
-        <Pressable
-          style={{paddingVertical: 10}}
-          onPress={() => setShowSlots(!showSlots)}>
-          <Text style={{textDecorationStyle: 'solid', color: 'blue'}}>
-            Add Slots
-          </Text>
-        </Pressable>
+          </Pressable>
+        </View>
+      </ScrollView>
+      <View style={{paddingBottom: 10}}>
         <Button
-          // disabled={validateInputs()}
+          disabled={validateInputs()}
           title="Sign Up"
           onPress={handleSignup}
           secureTextEntry={true}
         />
-        {isLoading ? <Loader /> : null}
-        {showSlots ? (
-          <AddSlotsComponent
-            setState={setSlotState}
-            state={slotState}
-            addSlots={addSlots}
-            slots={slots}
-            close={() => setShowSlots(false)}
-          />
-        ) : null}
       </View>
-      {/* </ScrollView> */}
+      {isLoading ? <Loader /> : null}
+      {showSlots ? (
+        <AddSlotsComponent
+          setState={setSlotState}
+          state={slotState}
+          addSlots={addSlots}
+          slots={slots}
+          close={() => setShowSlots(false)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -422,7 +405,8 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 10,
     justifyContent: 'center',
     backgroundColor: Colors.paleMintColor,
   },

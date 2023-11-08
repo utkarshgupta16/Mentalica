@@ -7,6 +7,8 @@ import {
   Platform,
   Alert,
   Pressable,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Colors from '../../customs/Colors';
@@ -93,40 +95,11 @@ const PatientSignUp = ({navigation}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
 
+
   const handleSignup = async () => {
     try {
       setIsLoading(true);
-      // const {emailId, password} = state;
-      // const resp = await Auth.signUp({
-      //   emailId,
-      //   password,
-      //   attributes: {
-      //     'custom:firstName': state.firstName,
-      //     'custom:lastName': state.lastName,
-      //     'custom:city': state.city,
-      //     'custom:duty': state.duty,
-      //     'custom:feel': state.feel,
-      //     'custom:phoneNumber': state.phoneNumber,
-      //     'custom:temporaryCity': state.temporaryCity,
-      //     'custom:type': PATIENT,
-      //     gender: state.gender,
-      //   },
-      //   // autoSignIn: {
-      //   //   // optional - enables auto sign in after user is confirmed
-      //   //   enabled: true,
-      //   // },
-      // });
       const {password, confirmPassword, type, ...restData} = state;
-      // let expertiseUpdated = '';
-      // expertise &&
-      //   expertise.map((val, i) => {
-      //     if (i == 0) {
-      //       expertiseUpdated = expertiseUpdated + val;
-      //     } else {
-      //       expertiseUpdated = expertiseUpdated + ',' + val;
-      //     }
-      //   });
-
       const resp = await Auth.signUp({
         username: state.emailId,
         password,
@@ -134,11 +107,7 @@ const PatientSignUp = ({navigation}) => {
           'custom:type': PATIENT,
         },
       });
-
-      const attRes = await dispatch(
-        singUpSlice({...restData, type: PATIENT}),
-      );
-      console.log('resp:', resp);
+      const attRes = await dispatch(singUpSlice({...restData, type: PATIENT}));
       setShowEnterCodeModal(true);
     } catch (err) {
       Alert.alert('Error!', err, [
@@ -237,7 +206,11 @@ const PatientSignUp = ({navigation}) => {
     };
   }, [showEnterCodeModal, secondsLeft]);
   return (
-    <>
+    <SafeAreaView
+      style={{
+        backgroundColor: Colors.paleMintColor,
+        flex: 1,
+      }}>
       <CustomHeader
         title={'Sign Up'}
         showBackArrow={true}
@@ -296,83 +269,93 @@ const PatientSignUp = ({navigation}) => {
         </View>
       </Modal>
       {/* =================================MODAL END================================= */}
-      <View style={styles.container}>
-        {renderInput({placeholder: 'First Name', field: 'firstName'})}
-        {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-        {renderInput({placeholder: 'Age', field: 'age'})}
-        {renderInput({placeholder: 'City', field: 'city'})}
-        {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-        {renderInput({placeholder: 'Email', field: 'emailId'})}
-        {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+      <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{flex: 1, flexGrow: 1}}
+        nestedScrollEnabled={true}>
+        <View style={styles.container}>
+          {renderInput({placeholder: 'First Name', field: 'firstName'})}
+          {renderInput({placeholder: 'Last Name', field: 'lastName'})}
+          {renderInput({placeholder: 'Age', field: 'age'})}
+          {renderInput({placeholder: 'City', field: 'city'})}
+          {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
+          {renderInput({placeholder: 'Email', field: 'emailId'})}
+          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
 
-        <DropDownPicker
-          zIndex={3000}
-          open={openGender}
-          setOpen={setOpenGender}
-          value={state.gender}
-          setValue={props => {
-            handleInput({field: 'gender', value: props()});
-          }}
-          items={genderItems}
-          setItems={setGenderItems}
-          placeholder={'Choose gender.'}
-          style={styles.dropdown}
-        />
-        <DropDownPicker
-          zIndex={2000}
-          open={openDuty}
-          setOpen={setOpenDuty}
-          value={state.duty}
-          setValue={props => {
-            handleInput({field: 'duty', value: props()});
-          }}
-          items={dutyItems}
-          setItems={setDutyItems}
-          placeholder={'Choose Profession.'}
-          style={styles.dropdown}
-        />
-
-        <DropDownPicker
-          zIndex={1000}
-          open={feelOpen}
-          setOpen={setFeelOpen}
-          value={state.feel}
-          setValue={props => {
-            handleInput({field: 'feel', value: props()});
-          }}
-          items={feelItems}
-          setItems={setFeelItems}
-          placeholder={'Choose How do you feel.'}
-          style={styles.dropdown}
-        />
-        {renderInput({
-          placeholder: 'Password',
-          field: 'password',
-          // secureTextEntry: true,
-        })}
-        {renderInput({
-          placeholder: 'Confirm Password',
-          field: 'confirmPassword',
-          // secureTextEntry: true,
-        })}
-        {state.password &&
-          state.confirmPassword &&
-          state.password !== state.confirmPassword && (
-            <Text style={styles.passwordNotMatchText}>
-              Password does not match.
-            </Text>
-          )}
-
-        <View style={styles.buttonContainer}>
-          <Button
-            disabled={validateInputs()}
-            title="Sign Up"
-            onPress={handleSignup}
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={3000}
+            open={openGender}
+            setOpen={setOpenGender}
+            value={state.gender}
+            setValue={props => {
+              handleInput({field: 'gender', value: props()});
+            }}
+            items={genderItems}
+            setItems={setGenderItems}
+            placeholder={'Choose gender.'}
+            style={styles.dropdown}
           />
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={2000}
+            open={openDuty}
+            setOpen={setOpenDuty}
+            value={state.duty}
+            setValue={props => {
+              handleInput({field: 'duty', value: props()});
+            }}
+            items={dutyItems}
+            setItems={setDutyItems}
+            placeholder={'Choose Profession.'}
+            style={styles.dropdown}
+          />
+
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={1000}
+            open={feelOpen}
+            setOpen={setFeelOpen}
+            value={state.feel}
+            setValue={props => {
+              handleInput({field: 'feel', value: props()});
+            }}
+            items={feelItems}
+            setItems={setFeelItems}
+            placeholder={'Choose How do you feel.'}
+            style={styles.dropdown}
+          />
+          {renderInput({
+            placeholder: 'Password',
+            field: 'password',
+            // secureTextEntry: true,
+          })}
+          {renderInput({
+            placeholder: 'Confirm Password',
+            field: 'confirmPassword',
+            // secureTextEntry: true,
+          })}
+          {state.password &&
+            state.confirmPassword &&
+            state.password !== state.confirmPassword && (
+              <Text style={styles.passwordNotMatchText}>
+                Password does not match.
+              </Text>
+            )}
         </View>
-        {isLoading ? <Loader /> : null}
+      </ScrollView>
+      <View style={styles.buttonContainer}>
+        <Button
+          disabled={validateInputs()}
+          title="Sign Up"
+          onPress={handleSignup}
+        />
       </View>
-    </>
+      {isLoading ? <Loader /> : null}
+    </SafeAreaView>
   );
 };
 
@@ -461,6 +444,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
+    paddingBottom:10
   },
   dropdown: {
     marginBottom: 10,
