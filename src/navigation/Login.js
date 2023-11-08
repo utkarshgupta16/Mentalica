@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -21,12 +22,14 @@ import {setAttributes} from '../redux/HomeSlice';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
+  console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
   const [enteredEmail, setEnteredEmail] = useState(
     'bhandari.tribhuwan@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
 
@@ -35,12 +38,15 @@ const LoginScreen = ({navigation}) => {
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
+      setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const {attributes} = user;
       dispatch(setAttributes(attributes));
       dispatch(login(enteredEmail));
+      setLoading(false);
     } catch (err) {
       setError(err);
+      setLoading(false);
       console.log('hello ->error signing in', err);
     }
   };
@@ -120,6 +126,21 @@ const LoginScreen = ({navigation}) => {
       </Modal>
 
       <View style={styles.container}>
+        {isLoading ? (
+          <View
+            style={{
+              backgroundColor: '#00000082',
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              top: 0,
+              right: 0,
+            }}>
+            <ActivityIndicator color={'white'} size="large" />
+          </View>
+        ) : null}
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={handleEnteredEmail}

@@ -43,7 +43,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      let {payload=[]} = await dispatch(
+      let {payload = []} = await dispatch(
         getBooksSlots({email: selectedMentorData?.email_id}),
       );
       let data =
@@ -121,6 +121,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 let check = bookSlots && bookSlots?.includes(slot);
                 return (
                   <TouchableOpacity
+                    key={index}
                     disabled={check}
                     style={{paddingTop: 5, opacity: check ? 0.5 : 1}}
                     onPress={() => {

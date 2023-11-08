@@ -15,6 +15,7 @@ import {
 } from '../../../utils/Responsive';
 import {styles} from './MentorDashboardStyle';
 import Modal from 'react-native-modal';
+import AppointmentList from '../../patientScreens/patientDashboard/AppointmentList';
 
 const MentorDashboard = () => {
   const [isSelectDate, setIsSelectDate] = useState(null);

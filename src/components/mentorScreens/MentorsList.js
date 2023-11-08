@@ -40,6 +40,7 @@ const MentorsList = () => {
       try {
         setLoading(true);
         const {payload} = await dispatch(getAllMentorList());
+        console.log('setAllMentors', payload?.Items);
         setAllMentors(payload.Items);
         setLoading(false);
       } catch (err) {
@@ -49,8 +50,47 @@ const MentorsList = () => {
     })();
   }, []);
 
+  const renderExperties = ({data, label}) => {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <Text style={styles.expertiesText}>{`${label} :`}</Text>
+        {data && data.length ? (
+          <FlatList
+            data={data}
+            horizontal
+            renderItem={({item, index}) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    marginRight: 10,
+                    borderRadius: 13,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    backgroundColor: 'gray',
+                    marginBottom: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 14,
+                      fontWeight: '500',
+                      textAlign: 'center',
+                    }}>
+                    {item?.charAt(0).toUpperCase() + item?.slice(1)}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        ) : null}
+      </View>
+    );
+  };
+
   const renderItem = ({item, index}) => {
-    console.log('setShowDetails', item);
+    const expertiseArr = item?.expertise?.split(',') || [];
+    const languageArr = item?.language?.split(',') || [];
     return (
       <Pressable
         key={index}
@@ -79,18 +119,8 @@ const MentorsList = () => {
               </View>
             </View>
           </View>
-          <Text style={styles.expertiesText}>
-            Experties :{' '}
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item?.expertise}
-            </Text>
-          </Text>
-          <Text style={styles.launguageText}>
-            Speaks :{' '}
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item?.language}
-            </Text>
-          </Text>
+          {renderExperties({data: expertiseArr, label: 'Experties'})}
+          {renderExperties({data: languageArr, label: 'Speaks'})}
         </View>
         {/* <View style={styles.bookBtnCont}>
           {showAppointmentBtn ? (
@@ -119,8 +149,6 @@ const MentorsList = () => {
       </Pressable>
     );
   };
-
-  const keyExtractor = item => item.Username;
 
   const renderSlotsItem = ({item}) => {
     return (
@@ -162,7 +190,7 @@ const MentorsList = () => {
       <FlatList
         data={allMentors}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
       />
       {showDetails ? (
@@ -281,6 +309,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontWeight: '500',
     fontSize: 15,
+    color: 'black',
   },
   languageCont: {
     flexDirection: 'row',
