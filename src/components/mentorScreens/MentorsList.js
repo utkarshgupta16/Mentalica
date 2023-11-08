@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Pressable,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -29,15 +30,19 @@ const MentorsList = () => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
   const [allMentors, setAllMentors] = useState([]);
   const [modalVisible, setModalVisible] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const getMentorsList = await getMethod(
           'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getMentorList',
         );
+        setLoading(false);
         setAllMentors(getMentorsList);
       } catch (error) {
+        setLoading(false);
         console.error('Error fetching mentors:', error);
       }
     })();
@@ -57,10 +62,11 @@ const MentorsList = () => {
             />
             <View>
               <Text style={styles.mentorNameTxt}>
-                {item.Attributes.find(attr => attr.Name === 'custom:firstName')
-                  .Value || ''}{' '}
-                {item.Attributes.find(attr => attr.Name === 'custom:lastName')
-                  .Value || ''}
+                {item?.Attributes?.find(
+                  attr => attr?.Name === 'custom:firstName',
+                )?.Value || ''}{' '}
+                {item?.Attributes?.find(attr => attr.Name === 'custom:lastName')
+                  ?.Value || ''}
               </Text>
               <Text style={styles.experienceText}>
                 {item?.Attributes?.find(
@@ -180,10 +186,26 @@ const MentorsList = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+        }}>
+        <Text>
+          <ActivityIndicator size={'large'} color="#0000ff" />
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={allMentors}
+        extraData={allMentors}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -239,6 +261,15 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     marginHorizontal: 10,
     marginBottom: 15,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
   cardContainer: {
     padding: 10,
@@ -314,6 +345,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 50,
     backgroundColor: green,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   bookBtnText: {
     color: 'white',

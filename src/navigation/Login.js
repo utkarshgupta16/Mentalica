@@ -22,9 +22,7 @@ import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
-  const [enteredEmail, setEnteredEmail] = useState(
-    'gupta.utkarsh@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');

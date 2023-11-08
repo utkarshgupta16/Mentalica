@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
 
     backgroundColor: '#F5F7F8',
+    // backgroundColor: 'white',
   },
   heading: {
     flexDirection: 'row',

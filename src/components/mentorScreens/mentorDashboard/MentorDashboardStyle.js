@@ -8,7 +8,8 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
+    backgroundColor: '#F5F7F8',
     marginHorizontal: 8,
   },
   helloCont: {

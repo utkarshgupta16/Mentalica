@@ -93,7 +93,7 @@ const HomeNavigator = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" size={size} color={color} />
+              <MaterialIcons name="home" size={35} color={color} />
             ),
           }}
         />
@@ -104,7 +104,7 @@ const HomeNavigator = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" size={size} color={color} />
+              <MaterialIcons name="analytics" size={25} color={color} />
             ),
           }}
         />
@@ -113,14 +113,16 @@ const HomeNavigator = () => {
         name={MESSAGES}
         options={{
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="message" size={size} color={color} />
+            <MaterialIcons name="message" size={25} color={color} />
           ),
         }}
         component={Messages}
       />
       <Tab.Screen
         options={{
-          tabBarIcon: ({color, size}) => <UserIcon size={size} color={color} />,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name={'person'} size={30} color={color} />
+          ),
         }}
         name={PROFILE}
         component={Profile}
