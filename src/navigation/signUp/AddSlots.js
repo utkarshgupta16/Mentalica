@@ -21,6 +21,7 @@ import Close from '../../icons/icon_close.svg';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {slotsData} from '../../utils/default';
 const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
+  const {t} = useTranslation();
   const [isOpen, setOpen] = useState(false);
   const [selectedSlot, setSlots] = useState('');
   let slots1 =
@@ -64,7 +65,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
           />
         </Pressable>
         <Text style={{textAlign: 'center', fontSize: 18, marginVertical: 10}}>
-          Book Slots
+          {t("Book Slots")}
         </Text>
         <View
           style={{
@@ -114,7 +115,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
               borderColor: 'white',
               opacity: selectedSlot ? 1 : 0.5,
             }}>
-            <Text style={{color: 'white'}}>Add</Text>
+            <Text style={{color: 'white'}}>{t("Add")}</Text>
           </Pressable>
         </View>
 
@@ -140,9 +141,9 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                   }}>
                   <View style={{}}>
                     <Text style={{paddingBottom: 5}}>
-                      Start Time: {item?.startTime}
+                      {t("Start Time:")} {item?.startTime}
                     </Text>
-                    <Text>End Time: {item?.endTime}</Text>
+                    <Text>{t("End Time:")} {item?.endTime}</Text>
                   </View>
                   <Pressable
                     style={{}}
@@ -151,7 +152,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                       data.splice(index, 1);
                       addSlots(data);
                     }}>
-                    <Text>Delete</Text>
+                    <Text>{t("Delete")}</Text>
                   </Pressable>
                 </View>
               );

@@ -11,7 +11,7 @@ import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
 import {
   ALL,
-  APPOINMENTS,
+  APPOINTMENTS,
   ARTICLES,
   MENTORS_LIST,
   SAVED,
@@ -19,14 +19,18 @@ import {
 import MentorsList from '../../mentorScreens/MentorsList';
 import AppoinmentsList from './AppointmentList';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 const PatientDashboard = ({navigation}) => {
+  const {t} = useTranslation();
   const {email} = useSelector(state => state.auth);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello {email}</Text>
+      <Text style={styles.helloText}>
+        {t('Hello')} {email}
+      </Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <View style={styles.tabs}>
@@ -40,10 +44,10 @@ const PatientDashboard = ({navigation}) => {
         />
         <PatientDashboardTabs
           selectedTab={selectedTab}
-          title={APPOINMENTS}
-          tab={APPOINMENTS}
+          title={APPOINTMENTS}
+          tab={APPOINTMENTS}
           onPress={() => {
-            setSelectedTab({tabStr: APPOINMENTS});
+            setSelectedTab({tabStr: APPOINTMENTS});
           }}
         />
         <PatientDashboardTabs
@@ -104,7 +108,7 @@ const PatientDashboard = ({navigation}) => {
           </View>
         </View>
       ) : null}
-      {selectedTab.tabStr == APPOINMENTS ? (
+      {selectedTab.tabStr == APPOINTMENTS ? (
         <AppoinmentsList navigation={navigation} />
       ) : null}
       {selectedTab.tabStr == ARTICLES ? (
@@ -113,7 +117,7 @@ const PatientDashboard = ({navigation}) => {
             textAlign: 'center',
           }}>
           {' '}
-          No data found
+          {t("No data found")}
         </Text>
       ) : null}
       {selectedTab.tabStr == SAVED ? (
@@ -122,7 +126,7 @@ const PatientDashboard = ({navigation}) => {
             textAlign: 'center',
           }}>
           {' '}
-          No data found
+          {t("No data found")}
         </Text>
       ) : null}
       {selectedTab.tabStr == MENTORS_LIST ? <MentorsList /> : null}

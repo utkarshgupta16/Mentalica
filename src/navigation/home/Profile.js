@@ -19,8 +19,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {signOut} from '../../AWS/AWSConfiguration';
 import {getProfileSlice} from '../../redux/HomeSlice';
 import {screenWidth} from '../../utils/Responsive';
+import {useTranslation} from 'react-i18next';
 
 const Profile = () => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {loginFrom, email} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
@@ -54,7 +56,6 @@ const Profile = () => {
     (async () => {
       console.log('email', email);
       const res = await dispatch(getProfileSlice({email, type: loginFrom}));
-
     })();
   }, []);
   console.log('loginFrom', profileData);
@@ -74,9 +75,7 @@ const Profile = () => {
             />
           </View>
           <View style={styles.details}>
-            <Text
-              style={{...styles.nameText, width: screenWidth - 100}}
-              >
+            <Text style={{...styles.nameText, width: screenWidth - 100}}>
               {firstName + ' ' + lastName}
             </Text>
             <Text style={styles.emailText}>{email_id}</Text>
@@ -84,7 +83,9 @@ const Profile = () => {
         </View>
         <View style={styles.issuesContainer}>
           <Text style={styles.issuesTitleText}>
-            {loginFrom === MENTOR ? "I'm a specialist in" : 'I want to address'}
+            {loginFrom === MENTOR
+              ? t("I'm a specialist in")
+              : t("I want to address")}
           </Text>
           <View style={styles.allIssues}>
             {DUMMY_ISSUES.map(issue => (
@@ -95,13 +96,13 @@ const Profile = () => {
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.profDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Account Details</Text>
+          <Text style={styles.accDetailsTitle}>{t("Account Details")}</Text>
           {profileDetailsItems.map(item => (
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
         <View style={styles.paymentDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Payment</Text>
+          <Text style={styles.accDetailsTitle}>{t("Payment")}</Text>
           {(loginFrom === MENTOR
             ? paymentDetailsItemsMentor
             : paymentDetailsItemsPatient
@@ -111,7 +112,7 @@ const Profile = () => {
         </View>
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
-          <Text style={styles.logoutTitle}>Log out</Text>
+          <Text style={styles.logoutTitle}>{t("Log out")}</Text>
         </Pressable>
       </View>
       {isProfileLoading ? (

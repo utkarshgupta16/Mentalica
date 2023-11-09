@@ -37,7 +37,11 @@ import Timetable from 'react-native-calendar-timetable';
 import EventCalendar from 'react-native-events-calendar';
 import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
 import {useDispatch, useSelector} from 'react-redux';
-import {getScheduledAppointmentsSlice} from '../../../redux/HomeSlice';
+import {
+  getProfileSlice,
+  getScheduledAppointmentsSlice,
+} from '../../../redux/HomeSlice';
+import {useTranslation} from 'react-i18next';
 
 let {width} = Dimensions.get('window');
 
@@ -136,6 +140,7 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 }
 
 const MentorDashboard = ({navigation}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {email} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
@@ -305,19 +310,18 @@ const MentorDashboard = ({navigation}) => {
           setProps({
             ...props,
             token,
-            userName: data?.mentor_email_id , //data.mentorId,
-            roomName: data?.roomId
+            userName: data?.mentor_email_id, //data.mentorId,
+            roomName: data?.roomId,
           });
           navigation.navigate('AVChatScreen');
         })
-        .catch(err => {
-        });
+        .catch(err => {});
     });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Raquel,</Text>
+      <Text style={styles.helloText}>{t("Hello")} Raquel</Text>
       <Agenda
         // selected="2022-12-01"
         scrollEnabled
@@ -327,11 +331,11 @@ const MentorDashboard = ({navigation}) => {
         renderEmptyData={() => (
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'black'}}>No schedule</Text>
+            <Text style={{color: 'black'}}>{t("No schedule")}</Text>
           </View>
         )}
-        renderItem={(item) => {
-console.log('item-----------------', item)
+        renderItem={item => {
+          console.log('item-----------------', item);
           return (
             <TouchableOpacity
               onPress={() => {

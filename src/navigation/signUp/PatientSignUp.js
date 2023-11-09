@@ -21,8 +21,10 @@ import {Auth} from 'aws-amplify';
 import {PATIENT} from '../../utils/Strings';
 import {singUpSlice} from '../../redux/AuthSlice';
 import {useDispatch} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 const PatientSignUp = ({navigation}) => {
+  const {t} = useTranslation();
   // const {loginFrom} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +96,6 @@ const PatientSignUp = ({navigation}) => {
   const handleInput = ({field, value}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
-
 
   const handleSignup = async () => {
     try {
@@ -238,7 +239,7 @@ const PatientSignUp = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <Text style={styles.enterOTPText}>
-            Enter the 6-digit OTP sent to {state.emailId}
+            {t('Enter the 6-digit OTP sent to')} {state.emailId}
           </Text>
 
           <View style={styles.otpContainer}>
@@ -256,10 +257,12 @@ const PatientSignUp = ({navigation}) => {
           </View>
           <Button title="Submit" onPress={submitCodeHandler} />
           <View style={styles.resendCodeContainer}>
-            <Text style={styles.resendCodeAgainText}>Didn't get a code? </Text>
+            <Text style={styles.resendCodeAgainText}>
+              {t("Didn't get a code?")}
+            </Text>
             <View style={styles.resendMainContainer}>
               <Pressable style={styles.resendButton} onPress={resendCode}>
-                <Text style={styles.resend}>Resend</Text>
+                <Text style={styles.resend}>{t('Resend')}</Text>
               </Pressable>
               <Text style={styles.resendTimerText}>
                 In 00:{secondsLeft > 9 ? secondsLeft : '0' + secondsLeft}
@@ -342,7 +345,7 @@ const PatientSignUp = ({navigation}) => {
             state.confirmPassword &&
             state.password !== state.confirmPassword && (
               <Text style={styles.passwordNotMatchText}>
-                Password does not match.
+                {t('Password does not match.')}
               </Text>
             )}
         </View>
@@ -444,7 +447,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
-    paddingBottom:10
+    paddingBottom: 10,
   },
   dropdown: {
     marginBottom: 10,

@@ -21,7 +21,10 @@ import {specialities, educationList, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
+import {useTranslation} from 'react-i18next';
+
 const MentorSignUp = ({navigation}) => {
+  const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -296,7 +299,7 @@ const MentorSignUp = ({navigation}) => {
             state.confirmPassword &&
             state.password !== state.confirmPassword && (
               <Text style={styles.passwordNotMatchText}>
-                Password does not match.
+                {t('Password does not match.')}
               </Text>
             )}
           <Pressable
@@ -317,7 +320,7 @@ const MentorSignUp = ({navigation}) => {
                 // textDecorationStyle: 'solid',
                 // textDecorationLine: 'underline',
               }}>
-              {slots.length ? 'Update Slots' : 'Add Slots'}
+              {slots.length ? t('Update Slots') : t('Add Slots')}
             </Text>
           </Pressable>
         </View>

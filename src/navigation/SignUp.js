@@ -7,8 +7,10 @@ import Button from '../components/Button';
 import Loader from '../customs/Loader';
 import {Auth} from 'aws-amplify';
 import {configureAws, signUp} from '../AWS/AWSConfiguration';
+import { useTranslation } from 'react-i18next';
 
 const SignupScreen = ({navigation}) => {
+  const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');

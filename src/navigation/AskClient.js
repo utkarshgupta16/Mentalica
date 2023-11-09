@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {I18nManager, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  I18nManager,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Colors from '../customs/Colors';
 import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
@@ -7,7 +13,7 @@ import {useDispatch} from 'react-redux';
 import {loginClient} from '../redux/AuthSlice';
 import {MENTOR, PATIENT} from '../utils/Strings';
 import {useTranslation} from 'react-i18next';
-import RNRestart from "react-native-restart";
+import RNRestart from 'react-native-restart';
 
 const AskClient = ({navigation}) => {
   const {t, i18n} = useTranslation();
@@ -49,7 +55,7 @@ const AskClient = ({navigation}) => {
         </View>
       </TouchableOpacity>
 
-      <Text style={styles.typeText}>{t('select_type')}</Text>
+      <Text style={styles.typeText}>{t('Select your type')}</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.patient}>
           <CheckBox
@@ -63,7 +69,7 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
-          <Text style={styles.chooseText}>{t('I_am_patient')}</Text>
+          <Text style={styles.chooseText}>{t('I am a Patient')}</Text>
         </View>
         <View style={styles.mentor}>
           <CheckBox
@@ -77,14 +83,14 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
-          <Text style={styles.chooseText}>{t('I_am_mentor')}</Text>
+          <Text style={styles.chooseText}>{t('I am a Therapist/Mentor')}</Text>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
       <Button
         disabled={!selectedPatient && !selectedMentor}
         onPress={onSubmitHandler}
-        title="Submit"
+        title={t('Submit')}
       />
     </View>
   );

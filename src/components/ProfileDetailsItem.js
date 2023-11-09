@@ -3,11 +3,13 @@ import {Pressable, StyleSheet, Text} from 'react-native';
 import Colors from '../customs/Colors';
 // import ArrowRight from '../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useTranslation } from 'react-i18next';
 
 const ProfileDetailsItem = ({title}) => {
+  const {t} = useTranslation();
   return (
     <Pressable style={styles.mainContainer}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{t(title)}</Text>
       <MaterialIcons
         name="arrow-forward-ios"
         size={16}

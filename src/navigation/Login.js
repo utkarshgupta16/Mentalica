@@ -19,8 +19,10 @@ import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
 import {Amplify, Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
+import {useTranslation} from 'react-i18next';
 
 const LoginScreen = ({navigation}) => {
+  const {t} = useTranslation();
   const {loginFrom} = useSelector(state => state.auth);
   console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
@@ -85,7 +87,7 @@ const LoginScreen = ({navigation}) => {
   return (
     <>
       <CustomHeader
-        title="Login"
+        title={t("Login")}
         navigation={navigation}
         showBackArrow={true}
       />
@@ -110,14 +112,14 @@ const LoginScreen = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <View style={styles.codeContainer}>
-            <Text>Enter Email:</Text>
+            <Text>{`${t('Enter Email')}:`}</Text>
             <TextInput
               onChangeText={text => setEnteredEmail(text)}
               style={styles.modalTextInput}
             />
           </View>
           <View style={styles.codeContainer}>
-            <Text>Enter Code:</Text>
+            <Text>{`${t('Enter Code')}:`}</Text>
             <TextInput
               onChangeText={text => setEnteredCode(text)}
               style={styles.modalTextInput}
@@ -147,14 +149,14 @@ const LoginScreen = ({navigation}) => {
           <TextInput
             onChangeText={handleEnteredEmail}
             style={styles.input}
-            placeholder="E-mail"
+            placeholder={t("E-mail")}
             keyboardType="email-address"
             value={enteredEmail}
           />
           <TextInput
             onChangeText={handleEnteredPassword}
             style={styles.input}
-            placeholder="Password"
+            placeholder={t("Password")}
             secureTextEntry={true}
             value={enteredPassword}
           />
@@ -167,11 +169,11 @@ const LoginScreen = ({navigation}) => {
                 style={styles.checkBox}
                 boxType="square"
               />
-              <Text style={styles.rememberMeText}>Remember Me</Text>
+              <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
             </View>
             <Button
               disabled={!enteredEmail.trim() || !enteredPassword.trim()}
-              title="Login"
+              title={t("Login")}
               onPress={loginHandler}
             />
           </View>
@@ -179,20 +181,22 @@ const LoginScreen = ({navigation}) => {
         <View style={styles.buttonContainerView}>
           <Pressable
             style={styles.signUpContainer}
-            title="Sign Up"
+            title={t("Sign Up")}
             onPress={signUpClickHandler}>
-            <Text style={styles.signUpText}> Sign Up</Text>
+            <Text style={styles.signUpText}> {t('Sign Up')}</Text>
           </Pressable>
         </View>
         {error ? (
           <View style={styles.buttonContainerView}>
             <Pressable
               style={styles.signUpContainer}
-              title="Enter Code"
+              title={t("Enter Code")}
               onPress={() => {
                 setShowEnterCodeModal(true);
               }}>
-              <Text style={styles.signUpText}>Confirm Verification Code</Text>
+              <Text style={styles.signUpText}>
+                {t('Confirm Verification Code')}
+              </Text>
             </Pressable>
           </View>
         ) : null}

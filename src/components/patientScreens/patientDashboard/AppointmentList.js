@@ -26,7 +26,7 @@ import {
 } from 'react-native-permissions';
 import {
   ALL,
-  APPOINMENTS,
+  APPOINTMENTS,
   ARTICLES,
   MENTORS_LIST,
   SAVED,
@@ -34,9 +34,11 @@ import {
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 const AppoinmentsList = ({navigation}) => {
+  const {t} = useTranslation();
   const {props, setProps} = useContext(AppContext);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [appointmentList, setAppointmentList] = useState({});
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email} = useSelector(state => state.auth);
@@ -186,7 +188,7 @@ const AppoinmentsList = ({navigation}) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Text style={{color: 'black'}}>No schedule</Text>
+            <Text style={{color: 'black'}}>{t("No schedule")}</Text>
           </View>
         )}
         renderItem={item => {
