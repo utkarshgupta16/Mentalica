@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   Image,
+  Alert,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -45,8 +46,19 @@ const Profile = () => {
   ];
 
   const logoutPressHandler = () => {
-    signOut();
-    dispatch(logout());
+    Alert.alert('Log Out', 'Are you sure want to log out?', [
+      {
+        text: 'No, Cancel',
+        onPress: () => null,
+      },
+      {
+        text: 'Yes, Log Out',
+        onPress: async () => {
+          signOut();
+          dispatch(logout());
+        },
+      },
+    ]);
   };
 
   if (loading) {
