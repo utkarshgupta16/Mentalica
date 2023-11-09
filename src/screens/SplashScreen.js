@@ -11,9 +11,15 @@ const SplashScreen = ({navigation}) => {
       navigation.replace('MainRoute');
     }, 3000);
   }, []);
-
+  console.log('SplashScreen');
   return (
-    <View style={{flex: 1, backgroundColor: 'blue', justifyContent: 'center'}}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       {/* <LottieView
                 // onAnimationFinish={onUplooadingDone}
                 // height={200}
@@ -38,7 +44,7 @@ const SplashScreen = ({navigation}) => {
             </View> */}
       <Image
         source={require('../icons/logo-no-background.png')}
-        style={{width: 200, height: 300}}
+        style={{width: 300}}
         resizeMode="contain"
       />
     </View>

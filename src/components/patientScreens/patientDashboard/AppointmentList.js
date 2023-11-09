@@ -192,7 +192,6 @@ const AppoinmentsList = ({navigation}) => {
         )}
         renderItem={item => {
           let name = type == MENTOR ? item?.patientName : item?.mentorName;
-          console.log('item+++++++++++++++', item);
           let {endTime} = (item.slots && item.slots[0]) || {};
           let currentTime = new Date().getTime();
           const [hours, minutes] = endTime.split(':');
@@ -241,7 +240,10 @@ const AppoinmentsList = ({navigation}) => {
 
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text style={{fontSize: 15, fontWeight: '500',color:"#33A3DC"}}>{name}</Text>
+                  <Text
+                    style={{fontSize: 15, fontWeight: '500', color: '#33A3DC'}}>
+                    {name}
+                  </Text>
                 </View>
               </View>
             </TouchableOpacity>

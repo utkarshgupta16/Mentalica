@@ -21,6 +21,9 @@ import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {widthPercentageToDP as wp} from '../../utils/Responsive';
+
 const MentorSignUp = ({navigation}) => {
   const typeOfItems = [
     {
@@ -73,15 +76,15 @@ const MentorSignUp = ({navigation}) => {
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: 'Roshan Testing',
-    lastName: 'Mentor',
-    city: 'Gwalior',
-    temporaryCity: 'Noida',
-    phoneNumber: '1234567890',
-    emailId: 'jambhulkar.roshan@thinksys.com',
-    password: 'Password@123',
-    confirmPassword: 'Password@123',
-    age: '25',
+    firstName: '',
+    lastName: '',
+    city: '',
+    temporaryCity: '',
+    phoneNumber: '',
+    emailId: '',
+    password: '',
+    confirmPassword: '',
+    age: '',
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -90,7 +93,7 @@ const MentorSignUp = ({navigation}) => {
     language: [],
     // PATIENT:
     // type: PATIENT,
-    
+
     gender: '',
     duty: '',
     feel: '',
@@ -317,6 +320,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Speciality.'}
         style={styles.dropdown}
         multiple={true}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
@@ -337,6 +341,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Language.'}
         style={styles.dropdown}
         multiple={true}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       {renderInput({
         placeholder: 'Fees for 30 Mins',
@@ -351,11 +356,6 @@ const MentorSignUp = ({navigation}) => {
 
   const patientExtras = (
     <>
-      {renderInput({
-        placeholder: 'Age',
-        field: 'age',
-        keyBoardType: 'number-pad',
-      })}
       <DropDownPicker
         listMode="SCROLLVIEW"
         autoScroll={true}
@@ -369,6 +369,7 @@ const MentorSignUp = ({navigation}) => {
         items={genderItems}
         setItems={setGenderItems}
         placeholder={'Choose gender.'}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
       />
       <DropDownPicker
@@ -385,6 +386,7 @@ const MentorSignUp = ({navigation}) => {
         setItems={setDutyItems}
         placeholder={'Choose Profession.'}
         style={styles.dropdown}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
 
       <DropDownPicker
@@ -401,6 +403,7 @@ const MentorSignUp = ({navigation}) => {
         setItems={setFeelItems}
         placeholder={'Choose How do you feel.'}
         style={styles.dropdown}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
     </>
   );
@@ -411,10 +414,15 @@ const MentorSignUp = ({navigation}) => {
         showBackArrow={true}
         navigation={navigation}
       />
-      <ScrollView
+      {/* <ScrollView
         style={{flex: 1}}
         contentContainerStyle={{flex: 1, flexGrow: 1}}
-        nestedScrollEnabled={true}>
+        nestedScrollEnabled={true}> */}
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
+        style={{flex: 1, backgroundColor: Colors.paleMintColor}}
+        contentContainerStyle={{flexGrow: 1}}>
         {/* =================================MODAL START================================= */}
         <EnterOtpModal
           state={state}
@@ -434,6 +442,11 @@ const MentorSignUp = ({navigation}) => {
           {renderInput({
             placeholder: 'Phone Number',
             field: 'phoneNumber',
+            keyBoardType: 'number-pad',
+          })}
+          {renderInput({
+            placeholder: 'Age',
+            field: 'age',
             keyBoardType: 'number-pad',
           })}
           {renderInput({placeholder: 'Email', field: 'emailId'})}
@@ -465,6 +478,7 @@ const MentorSignUp = ({navigation}) => {
             setItems={setTypeItems}
             placeholder={'Select Type.'}
             style={styles.dropdown}
+            containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
           />
 
           {/* CHECK FOR THE TYPE: */}
@@ -489,7 +503,8 @@ const MentorSignUp = ({navigation}) => {
             </Pressable>
           ) : null}
         </View>
-      </ScrollView>
+        {/* </ScrollView> */}
+      </KeyboardAwareScrollView>
       <View style={styles.signUpButtonContainer}>
         <Button
           disabled={validateInputs()}
@@ -576,23 +591,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   mainContainer: {
-    flex: 1,
+    // flex: 1,
     paddingHorizontal: 16,
     paddingTop: 10,
     justifyContent: 'center',
     backgroundColor: Colors.paleMintColor,
+    paddingBottom: 10,
   },
   input: {
     height: 40,
     borderColor: 'gray',
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
     paddingLeft: 10,
   },
   dropdown: {
-    marginBottom: 10,
     backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
   },
   passwordNotMatchText: {
     color: Colors.red,
@@ -600,17 +616,17 @@ const styles = StyleSheet.create({
   slotContainer: {
     paddingVertical: 7,
     borderStyle: 'dashed',
-    borderColor: 'blue',
+    borderColor: '#33A3DC',
     borderWidth: 1,
     borderRadius: 4,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 7,
+    marginHorizontal: 5,
   },
   slotsText: {
     fontSize: 17,
-    color: 'blue',
-    // textDecorationStyle: 'solid',
-    // textDecorationLine: 'underline',
+    color: '#33A3DC',
+    fontWeight: 'bold',
   },
   signUpButtonContainer: {
     paddingBottom: 10,

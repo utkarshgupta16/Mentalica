@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, {useLayoutEffect} from 'react';
 import {Amplify} from 'aws-amplify';
 import {AppRegistry} from 'react-native';
 import App from './App';
@@ -8,7 +8,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {store} from './src/redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
-import SplashScreen from "react-native-splash-screen";
+import SplashScreen from 'react-native-splash-screen';
 
 const config = {
   Auth: {

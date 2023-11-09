@@ -19,17 +19,18 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator  initialRouteName="SplashScreen">
+      <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : AuthNavigator}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
-      <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          options={{ headerShown: false }}
-        />
+     
     </NavigationContainer>
   );
 };

@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -34,7 +35,7 @@ const LoginScreen = ({navigation}) => {
   // const [enteredEmail, setEnteredEmail] = useState(
   //   'bhandari.tribhuwan@thinksys.com',
   // );
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState('Gupta.utkarsh@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -93,7 +94,7 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: Colors.paleMintColor,
@@ -199,7 +200,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         ) : null}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
