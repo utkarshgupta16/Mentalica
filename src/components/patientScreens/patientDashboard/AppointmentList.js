@@ -243,7 +243,7 @@ const AppoinmentsList = ({navigation}) => {
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
                   <Text
-                    style={{fontSize: 15, fontWeight: '500', color: '#33A3DC'}}>
+                    style={{fontSize: 15, fontWeight: "bold", color: '#33A3DC'}}>
                     {name}
                   </Text>
                 </View>

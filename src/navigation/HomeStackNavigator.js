@@ -11,14 +11,54 @@ export default function HomeStackNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name={HOME}
-        component={
-          loginFrom === MENTOR ? <MentorDashboard /> : <PatientDashboard />
-        }
-        options={{
-          header: () => null,
-        }}
+        name="PatientDashboard"
+        component={PatientDashboard}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AVChatScreen"
+        component={AVChatScreen}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
+    // </NavigationContainer>
   );
-}
+};
+
+export default function HomeStackNavigator() {
+  const {loginFrom} = useSelector(state => state.auth);
+  return (
+    <View style={{flex: 1}}>
+      {loginFrom === MENTOR ? (
+        <MentorDashboardStack />
+      ) : (
+        <PatientDashboardStack />
+      )}
+    </View>
+  );
+};
+// export default function HomeStackNavigator() {
+//   const {loginFrom} = useSelector(state => state.auth);
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name={HOME}
+//         component={
+//           loginFrom === MENTOR ? (
+//             <MentorDashboardStack />
+//           ) : (
+//             <PatientDashboardStack />
+//           )
+//         }
+//         options={{
+//           header: () => null,
+//         }}
+//       />
+//       <Stack.Screen
+//         name="AVChatScreen"
+//         component={AVChatScreen}
+//         options={{headerShown: false}}
+//       />
+//     </Stack.Navigator>
+//   );
+// }

@@ -22,8 +22,49 @@ import Colors from '../customs/Colors';
 import { useTranslation } from 'react-i18next';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
+import AVChatScreen from './home/AVChatScreen';
+const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const MentorDashboardStack = () => {
+  return (
+    // <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MentorDashboard"
+        component={MentorDashboard}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AVChatScreen"
+        component={AVChatScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+    // </NavigationContainer>
+  );
+};
+
+const PatientDashboardStack = () => {
+  return (
+    // <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="PatientDashboard"
+        component={PatientDashboard}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AVChatScreen"
+        component={AVChatScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+    // </NavigationContainer>
+  );
+};
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
@@ -38,7 +79,7 @@ const HomeNavigator = () => {
       {type === MENTOR ? (
         <Tab.Screen
           name={t(HOME)}
-          component={MentorDashboard}
+          component={MentorDashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
@@ -49,7 +90,7 @@ const HomeNavigator = () => {
       ) : (
         <Tab.Screen
           name={t(HOME)}
-          component={PatientDashboard}
+          component={PatientDashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
