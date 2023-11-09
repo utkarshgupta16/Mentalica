@@ -8,6 +8,7 @@ import {useSelector} from 'react-redux';
 import PatientSignUp from './signUp/PatientSignUp';
 import MentorSignUp from './signUp/MentorSignUp';
 import AuthNavigator from './AuthNavigator';
+import {Text} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 

@@ -22,6 +22,16 @@ import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
 const MentorSignUp = ({navigation}) => {
+  const typeOfItems = [
+    {
+      label: 'Patient',
+      value: PATIENT,
+    },
+    {
+      label: 'Mentor',
+      value: MENTOR,
+    },
+  ];
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -29,32 +39,60 @@ const MentorSignUp = ({navigation}) => {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [specialityOpen, setSpecialityOpen] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
+  const [typeValue, setTypeValue] = useState(PATIENT);
+  const [openGender, setOpenGender] = useState(false);
+  const [genderItems, setGenderItems] = useState([
+    {label: 'Male', value: 'male'},
+    {label: 'Female', value: 'female'},
+  ]);
+  const [dutyItems, setDutyItems] = useState([
+    {label: 'Civilian', value: 'civilian'},
+    {label: 'Soldier', value: 'soldier'},
+    {label: 'Student', value: 'student'},
+  ]);
+  const [feelItems, setFeelItems] = useState([
+    {label: 'Anxiety', value: 'anxiety'},
+    {label: 'Fear', value: 'fear'},
+    {label: 'Danger', value: 'danger'},
+    {label: 'Disappointment', value: 'disappointment'},
+    {label: 'Loneliness', value: 'loneliness'},
+    {label: 'Hate', value: 'hate'},
+    {label: 'Abandoned', value: 'abandoned'},
+    {label: 'Trauma', value: 'trauma'},
+    {label: 'Shocked', value: 'shocked'},
+    {label: 'Pain', value: 'pain'},
+    {label: 'Anger', value: 'anger'},
+    {label: 'Depressed', value: 'depressed'},
+    {label: 'Sadness', value: 'sadnesss'},
+  ]);
+  const [openDuty, setOpenDuty] = useState(false);
+  const [feelOpen, setFeelOpen] = useState(false);
+  const [typeItems, setTypeItems] = useState(typeOfItems);
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: '',
-    lastName: '',
-    city: '',
-    temporaryCity: '',
-    phoneNumber: '',
-    emailId: '',
-    password: '',
-    confirmPassword: '',
-    // gender: '',
+    firstName: 'utkarsh',
+    lastName: 'gupta',
+    city: 'Gwalior',
+    temporaryCity: 'Noida',
+    phoneNumber: '1234567890',
+    emailId: 'utkarsh@gmail.com',
+    password: 'Password@123',
+    confirmPassword: 'Password@123',
     // MENTOR:
     // type: MENTOR,
-    // expertise: [],
-    // fees: '',
-    // experience: '',
-    // language: [],
+    expertise: [],
+    fees: '',
+    experience: '',
+    language: [],
     // PATIENT:
-    // age: '15',
-    // gender: 'male',
-    // duty: 'civilian',
-    // feel: 'fear',
     // type: PATIENT,
+    age: '',
+    gender: '',
+    duty: '',
+    feel: '',
   });
 
   const handleInput = ({field, value}) => {
@@ -80,7 +118,45 @@ const MentorSignUp = ({navigation}) => {
     try {
       setIsLoading(true);
 
-      // console.log('state:', state);
+      const {
+        expertise = [],
+        fees = '',
+        experience = '',
+        language = [],
+        // PATIENT:
+        // type: PATIENT,
+        age = '',
+        gender = '',
+        duty = '',
+        feel = '',
+        ...commonSignupData
+      } = state;
+
+      let finalSignupData = {
+        ...commonSignupData,
+      };
+
+      if (typeValue === MENTOR) {
+        let expertiseUpdated = convertString(expertise) || '';
+        let stringLanguageUpdated = convertString(language) || '';
+        finalSignupData = {
+          ...finalSignupData,
+          expertise: expertiseUpdated,
+          fees,
+          experience,
+          language: stringLanguageUpdated,
+          slots,
+        };
+      } else {
+        finalSignupData = {
+          ...finalSignupData,
+          age,
+          gender,
+          duty,
+          feel,
+        };
+      }
+
       // const {emailId, password} = state;
       // const attributes = {
       //   'custom:firstName': state.firstName,
@@ -94,40 +170,26 @@ const MentorSignUp = ({navigation}) => {
       //   'custom:experience': state.experience,
       //   'custom:language': state.language,
       // };
-      // console.log('attributes:', attributes);
 
       // const resp = await Auth.signUp({
       //   emailId,
       //   password,
       //   attributes: attributes,
       // });
-      // console.log('resp:', resp);
-      const {
-        password,
-        confirmPassword,
-        type,
-        expertise = [],
-        language = [],
-        ...restData
-      } = state;
-      let expertiseUpdated = convertString(expertise) || '';
-      let stringLanguageUpdated = convertString(language) || '';
+      const {password, confirmPassword, ...restData} = finalSignupData;
 
       const resp = await Auth.signUp({
         username: state.emailId,
         password,
         attributes: {
-          'custom:type': 'Mentor',
+          'custom:type': typeValue,
         },
       });
 
       const attRes = await dispatch(
         singUpSlice({
           ...restData,
-          expertise: expertiseUpdated,
-          language: stringLanguageUpdated,
-          slots,
-          type: MENTOR,
+          type: typeValue,
         }),
       );
       setShowEnterCodeModal(true);
@@ -171,34 +233,61 @@ const MentorSignUp = ({navigation}) => {
 
   const validateInputs = () => {
     const {
-      firstName,
+      firstName = '',
       lastName = '',
       city = '',
+      temporaryCity = '',
       phoneNumber = '',
       emailId = '',
-      temporaryCity = '',
       password = '',
       confirmPassword = '',
-      language = [],
+      // MENTOR:
+      // type: MENTOR,
       expertise = [],
+      fees = '',
+      experience = '',
+      language = [],
+      // PATIENT:
+      // type: PATIENT,
+      age = '',
+      gender = '',
+      duty = '',
+      feel = '',
       //   fees = '',
     } = state;
 
     if (
       !firstName ||
       !lastName ||
-      !emailId ||
-      !phoneNumber ||
       !city ||
       !temporaryCity ||
+      !phoneNumber ||
+      !emailId ||
       !password ||
-      !confirmPassword ||
-      !expertise.length ||
-      !language.length ||
-      !slots.length
+      !confirmPassword
     ) {
       return true;
     }
+    if (typeValue === MENTOR) {
+      if (
+        !expertise.length ||
+        !language.length ||
+        // !slots.length ||
+        !fees ||
+        !experience
+      ) {
+        return true;
+      }
+    }
+    if (typeValue === PATIENT) {
+      if (!age || !gender || !duty || !feel) {
+        return true;
+      }
+    }
+    if (!typeValue) {
+      return true;
+    }
+
     return false;
   };
 
@@ -207,6 +296,111 @@ const MentorSignUp = ({navigation}) => {
     console.log('response:', response);
   };
 
+  const mentorExtras = (
+    <>
+      <DropDownPicker
+        nestedScrollEnabled={true}
+        listMode="SCROLLVIEW"
+        autoScroll={true}
+        zIndex={2000}
+        open={specialityOpen}
+        setOpen={setSpecialityOpen}
+        value={state?.expertise}
+        onSelectItem={val => {
+          let labels = val.map(i => i?.value);
+          handleInput({
+            field: 'expertise',
+            value: labels,
+          });
+        }}
+        items={specialistItems}
+        setItems={setSpecialistItems}
+        placeholder={'Select Speciality.'}
+        style={styles.dropdown}
+        multiple={true}
+      />
+      <DropDownPicker
+        listMode="SCROLLVIEW"
+        autoScroll={true}
+        zIndex={1000}
+        open={languageOpen}
+        setOpen={setLanguageOpen}
+        value={state?.language}
+        onSelectItem={val => {
+          let labels = val.map(i => i?.value);
+          handleInput({
+            field: 'language',
+            value: labels,
+          });
+        }}
+        items={languageList}
+        // setItems={setSpecialistItems}
+        placeholder={'Select Language.'}
+        style={styles.dropdown}
+        multiple={true}
+      />
+      {renderInput({
+        placeholder: 'Fees for 30 Mins',
+        field: 'fees',
+      })}
+      {renderInput({
+        placeholder: 'Experience in Years',
+        field: 'experience',
+      })}
+    </>
+  );
+
+  const patientExtras = (
+    <>
+      {renderInput({placeholder: 'Age', field: 'age'})}
+      <DropDownPicker
+        listMode="SCROLLVIEW"
+        autoScroll={true}
+        zIndex={3000}
+        open={openGender}
+        setOpen={setOpenGender}
+        value={state.gender}
+        setValue={props => {
+          handleInput({field: 'gender', value: props()});
+        }}
+        items={genderItems}
+        setItems={setGenderItems}
+        placeholder={'Choose gender.'}
+        style={styles.dropdown}
+      />
+      <DropDownPicker
+        listMode="SCROLLVIEW"
+        autoScroll={true}
+        zIndex={2000}
+        open={openDuty}
+        setOpen={setOpenDuty}
+        value={state.duty}
+        setValue={props => {
+          handleInput({field: 'duty', value: props()});
+        }}
+        items={dutyItems}
+        setItems={setDutyItems}
+        placeholder={'Choose Profession.'}
+        style={styles.dropdown}
+      />
+
+      <DropDownPicker
+        listMode="SCROLLVIEW"
+        autoScroll={true}
+        zIndex={1000}
+        open={feelOpen}
+        setOpen={setFeelOpen}
+        value={state.feel}
+        setValue={props => {
+          handleInput({field: 'feel', value: props()});
+        }}
+        items={feelItems}
+        setItems={setFeelItems}
+        placeholder={'Choose How do you feel.'}
+        style={styles.dropdown}
+      />
+    </>
+  );
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -252,75 +446,24 @@ const MentorSignUp = ({navigation}) => {
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
-            zIndex={3000}
+            zIndex={10000}
             open={typeOpen}
             setOpen={setTypeOpen}
-            value={state?.expertise}
-            onSelectItem={val => {
-              let labels = val.map(i => i?.value);
-              handleInput({
-                field: 'expertise',
-                value: labels,
-              });
-            }}
-            items={specialistItems}
-            setItems={setSpecialistItems}
-            placeholder={'Select Speciality.'}
+            value={typeValue}
+            setValue={setTypeValue}
+            // onSelectItem={val => {
+            //   console.log('val:', val);
+            // }}
+            items={typeItems}
+            setItems={setTypeItems}
+            placeholder={'Select Type.'}
             style={styles.dropdown}
-            multiple={true}
           />
 
           {/* CHECK FOR THE TYPE: */}
 
-          <DropDownPicker
-            nestedScrollEnabled={true}
-            listMode="SCROLLVIEW"
-            autoScroll={true}
-            zIndex={2000}
-            open={specialityOpen}
-            setOpen={setSpecialityOpen}
-            value={state?.expertise}
-            onSelectItem={val => {
-              let labels = val.map(i => i?.value);
-              handleInput({
-                field: 'expertise',
-                value: labels,
-              });
-            }}
-            items={specialistItems}
-            setItems={setSpecialistItems}
-            placeholder={'Select Speciality.'}
-            style={styles.dropdown}
-            multiple={true}
-          />
-          <DropDownPicker
-            listMode="SCROLLVIEW"
-            autoScroll={true}
-            zIndex={1000}
-            open={languageOpen}
-            setOpen={setLanguageOpen}
-            value={state?.language}
-            onSelectItem={val => {
-              let labels = val.map(i => i?.value);
-              handleInput({
-                field: 'language',
-                value: labels,
-              });
-            }}
-            items={languageList}
-            // setItems={setSpecialistItems}
-            placeholder={'Select Language.'}
-            style={styles.dropdown}
-            multiple={true}
-          />
-          {renderInput({
-            placeholder: 'Fees for 30 Mins',
-            field: 'fees',
-          })}
-          {renderInput({
-            placeholder: 'Experience in Years',
-            field: 'experience',
-          })}
+          {typeValue === MENTOR && mentorExtras}
+          {typeValue === PATIENT && patientExtras}
 
           {state.password &&
             state.confirmPassword &&
@@ -329,30 +472,18 @@ const MentorSignUp = ({navigation}) => {
                 Password does not match.
               </Text>
             )}
-          <Pressable
-            style={{
-              paddingVertical: 7,
-              borderStyle: 'dashed',
-              borderColor: 'blue',
-              borderWidth: 1,
-              borderRadius: 4,
-              alignItems: 'center',
-              marginBottom: 10,
-            }}
-            onPress={() => setShowSlots(!showSlots)}>
-            <Text
-              style={{
-                fontSize: 17,
-                color: 'blue',
-                // textDecorationStyle: 'solid',
-                // textDecorationLine: 'underline',
-              }}>
-              {slots.length ? 'Update Slots' : 'Add Slots'}
-            </Text>
-          </Pressable>
+          {typeValue === MENTOR ? (
+            <Pressable
+              style={styles.slotContainer}
+              onPress={() => setShowSlots(!showSlots)}>
+              <Text style={styles.slotsText}>
+                {slots.length ? 'Update Slots' : 'Add Slots'}
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       </ScrollView>
-      <View style={{paddingBottom: 10}}>
+      <View style={styles.signUpButtonContainer}>
         <Button
           disabled={validateInputs()}
           title="Sign Up"
@@ -458,5 +589,23 @@ const styles = StyleSheet.create({
   },
   passwordNotMatchText: {
     color: Colors.red,
+  },
+  slotContainer: {
+    paddingVertical: 7,
+    borderStyle: 'dashed',
+    borderColor: 'blue',
+    borderWidth: 1,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  slotsText: {
+    fontSize: 17,
+    color: 'blue',
+    // textDecorationStyle: 'solid',
+    // textDecorationLine: 'underline',
+  },
+  signUpButtonContainer: {
+    paddingBottom: 10,
   },
 });

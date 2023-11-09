@@ -6,7 +6,6 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
-  TextInput,
   Pressable,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';

@@ -21,7 +21,6 @@ const EnterOtpModal = ({
 }) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [secondsLeft, setSecondsLeft] = useState(30);
-  console.log('secondsLeft !== 0', secondsLeft !== 0);
   const inputRefs = useRef([]);
   const handleOtpChange = (text, index) => {
     if (text.length === 1 && index < 5) {

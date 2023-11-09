@@ -86,11 +86,11 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <>
-      <CustomHeader
+      {/* <CustomHeader
         title="Login"
         navigation={navigation}
         showBackArrow={true}
-      />
+      /> */}
 
       <Modal
         avoidKeyboard={false}

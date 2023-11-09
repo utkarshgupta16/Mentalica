@@ -11,7 +11,7 @@ export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
   var config = {
     method: 'post',
     url:
-      type == PATIENT
+      type === PATIENT
         ? endPoints.singUpPatientProfile
         : endPoints.singUpMentorProfile,
     headers: {

@@ -46,11 +46,12 @@ const PatientSignUp = ({navigation}) => {
     firstName: '',
     lastName: '',
     city: '',
-    temporaryCity: 'temporaryCity',
+    temporaryCity: '',
     phoneNumber: '57575575656',
     emailId: '',
     password: '',
     confirmPassword: '',
+    // EXTRAS
     age: '15',
     gender: 'male',
     duty: 'civilian',
@@ -107,6 +108,7 @@ const PatientSignUp = ({navigation}) => {
       });
       console.log('resp:', resp);
       const attRes = await dispatch(singUpSlice({...restData, type: PATIENT}));
+
       console.log('attRes:', attRes);
       setShowEnterCodeModal(true);
     } catch (err) {
@@ -280,12 +282,13 @@ const PatientSignUp = ({navigation}) => {
         <View style={styles.container}>
           {renderInput({placeholder: 'First Name', field: 'firstName'})}
           {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-          {renderInput({placeholder: 'Age', field: 'age'})}
+
           {renderInput({placeholder: 'City', field: 'city'})}
           {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
           {renderInput({placeholder: 'Email', field: 'emailId'})}
           {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
 
+          {renderInput({placeholder: 'Age', field: 'age'})}
           <DropDownPicker
             listMode="SCROLLVIEW"
             autoScroll={true}

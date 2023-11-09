@@ -335,8 +335,8 @@ const MentorDashboard = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
-                  `You'll be joined to this video call`,
-                  `Are you sure you want to join?`,
+                  "You'll be joined to this video call",
+                  'Are you sure you want to join?',
                   [
                     {
                       onPress: () => videoCallAction(item),
