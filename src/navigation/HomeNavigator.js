@@ -21,8 +21,49 @@ import PatientStats from '../components/patientScreens/patientStats/PatientStats
 import Colors from '../customs/Colors';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
+import AVChatScreen from './home/AVChatScreen';
+const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const MentorDashboardStack = () => {
+  return (
+    // <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MentorDashboard"
+        component={MentorDashboard}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AVChatScreen"
+        component={AVChatScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+    // </NavigationContainer>
+  );
+};
+
+const PatientDashboardStack = () => {
+  return (
+    // <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="PatientDashboard"
+        component={PatientDashboard}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AVChatScreen"
+        component={AVChatScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+    // </NavigationContainer>
+  );
+};
 
 const HomeNavigator = () => {
   const {type} = useSelector(state => state.auth);
@@ -35,7 +76,7 @@ const HomeNavigator = () => {
       {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
-          component={MentorDashboard}
+          component={MentorDashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
@@ -46,7 +87,7 @@ const HomeNavigator = () => {
       ) : (
         <Tab.Screen
           name={HOME}
-          component={PatientDashboard}
+          component={PatientDashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (

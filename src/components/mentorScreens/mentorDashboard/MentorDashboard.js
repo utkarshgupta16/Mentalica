@@ -377,7 +377,14 @@ const MentorDashboard = ({navigation}) => {
                 {/* </View> */}
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text>{name}</Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      color: '#33A3DC',
+                    }}>
+                    {name}
+                  </Text>
                   {/* Render other appointment data */}
                 </View>
               </View>

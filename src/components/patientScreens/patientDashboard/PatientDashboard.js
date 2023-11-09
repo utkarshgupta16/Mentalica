@@ -172,8 +172,8 @@ const renderItem = ({item}) => {
           borderTopRightRadius: 10,
           borderBottomRightRadius: 10,
         }}>
-        <Text style={{fontSize: 16, fontWeight: '700'}}>{item.title}</Text>
-        <Text style={{marginTop: 10}}>{item.author}</Text>
+        <Text style={{fontSize: 16, fontWeight: '700'}}>{item?.title}</Text>
+        <Text style={{marginTop: 10}}>{item?.author}</Text>
       </View>
     </View>
   );
