@@ -3,12 +3,12 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import {iosPlatform} from './config';
 
 class LocalNotificationService {
-  configure = (onOpenNotification?: any) => {
+  configure = onOpenNotification => {
     PushNotification.configure({
       onRegister(token) {
         console.log('[LocalNotificationService] onRegister:', token);
       },
-      onNotification(notification: any) {
+      onNotification(notification) {
         // on click notification in android
         console.log('[LocalNotificationService] onNotification:', notification);
         if (!notification?.data) {
@@ -49,12 +49,12 @@ class LocalNotificationService {
   };
 
   showNotification = (
-    id: any,
-    title: string,
-    message: string,
+    id,
+    title,
+    message,
     data = {},
     options = {},
-    channelID?: string,
+    channelID,
   ) => {
     PushNotification.localNotification({
       foreground: true,
@@ -78,12 +78,12 @@ class LocalNotificationService {
   };
 
   buildAndroidNotification = (
-    id: string,
-    title: string,
-    message: string,
+    id,
+    title,
+    message,
     data = {},
     options = {},
-    channelID?: string,
+    channelID,
   ) => ({
     id,
     autoCancel: true,
@@ -101,20 +101,14 @@ class LocalNotificationService {
     channelId: channelID, // (required) channelId
   });
 
-  buildIOSNotification = (
-    id?: string,
-    title?: string,
-    message?: string,
-    data = {},
-    options = {},
-  ) => ({
+  buildIOSNotification = (id, title, message, data = {}, options = {}) => ({
     //@ts-ignore
     alertAction: options.alertAction || 'view',
     //@ts-ignore
     category: options.category || '',
   });
 
-  scheduleNotification(data: any) {
+  scheduleNotification(data) {
     PushNotification.localNotificationSchedule(data);
   }
 }

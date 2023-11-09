@@ -132,27 +132,27 @@ const App = () => {
               },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              registerNotification();
+              // registerNotification();
             } else {
               console.log('please allow notification permission from settings');
             }
           } else {
-            registerNotification();
+            // registerNotification();
           }
         } catch (err) {
           console.error('errror --> ', err);
           return false;
         }
       };
-      requestPushNotificationPermission();
+      // requestPushNotificationPermission();
     } else {
       // fcmService.registerAppWithFCM();
       // fcmService.register(onRegister, onNotification, onOpenNotification);
       // localNotificationService.configure(onOpenNotification);
     }
     return () => {
-      fcmService.unRegister();
-      localNotificationService.unregister();
+      // fcmService.unRegister();
+      // localNotificationService.unregister();
     };
   }, []);
 

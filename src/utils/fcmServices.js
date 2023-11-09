@@ -4,11 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {iosPlatform} from './config';
 
 class FCMService {
-  register(
-    onRegister: (token: string) => void,
-    onNotification: (message: any) => void,
-    onOpenNotification: (data: any) => void,
-  ): void {
+  register(onRegister, onNotification, onOpenNotification) {
     this.checkPermission(onRegister);
     this.createNotificationListeners(
       onRegister,
@@ -17,30 +13,31 @@ class FCMService {
     );
   }
 
-  async registerAppWithFCM(): Promise<void> {
+  async registerAppWithFCM() {
     if (iosPlatform) {
-      await messaging().setAutoInitEnabled(true);
+      (await messaging) && messaging().setAutoInitEnabled(true);
     }
   }
 
-  checkPermission(onRegister: (token: string) => void): void {
-    messaging()
-      .hasPermission()
-      .then(enabled => {
-        if (enabled) {
-          // User has permissions
-          this.getToken(onRegister);
-        } else {
-          // User doesn't have permission
-          this.requestPermission(onRegister);
-        }
-      })
-      .catch((error: any) => {
-        console.log('[FCMService] Permission rejected ', error);
-      });
+  checkPermission(onRegister) {
+    messaging &&
+      messaging()
+        .hasPermission()
+        .then(enabled => {
+          if (enabled) {
+            // User has permissions
+            this.getToken(onRegister);
+          } else {
+            // User doesn't have permission
+            this.requestPermission(onRegister);
+          }
+        })
+        .catch(error => {
+          console.log('[FCMService] Permission rejected ', error);
+        });
   }
 
-  async getToken(onRegister: (token: string) => void): Promise<void> {
+  async getToken(onRegister) {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
     console.log('fcmTokem is --> ', fcmToken);
     if (!fcmToken) {
@@ -57,7 +54,7 @@ class FCMService {
     }
   }
 
-  requestPermission(onRegister: (token: string) => void): void {
+  requestPermission(onRegister) {
     messaging()
       .requestPermission()
       .then(() => {
@@ -68,7 +65,7 @@ class FCMService {
       });
   }
 
-  deleteToken(): void {
+  deleteToken() {
     console.log('[FCMService] deleteToken');
     messaging()
       .deleteToken()
@@ -77,11 +74,7 @@ class FCMService {
       });
   }
 
-  createNotificationListeners(
-    onRegister: (token: string) => void,
-    onNotification: (message: any) => void,
-    onOpenNotification: (data: any) => void,
-  ): void {
+  createNotificationListeners(onRegister, onNotification, onOpenNotification) {
     // When the application is running, but in the background
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
@@ -117,7 +110,7 @@ class FCMService {
     });
   }
 
-  unRegister(): void {
+  unRegister() {
     //@ts-ignore
     this.messageListener();
   }
