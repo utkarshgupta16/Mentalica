@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: 'bold',
     marginTop: hp(2),
+    marginBottom: hp(1),
     color: Colors.black,
   },
   dateText: {

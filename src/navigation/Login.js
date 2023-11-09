@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,27 +14,33 @@ import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import CustomHeader from '../customs/Header';
 import {useDispatch, useSelector} from 'react-redux';
-import {login} from '../redux/AuthSlice';
+import {login, getType} from '../redux/AuthSlice';
 import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
 import Loader from '../customs/Loader';
+import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 
 const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
   // guptagaurav9566+1@gmail.com
+
   // bhandari.tribhuwan@thinksys.com
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'bhandari.tribhuwan@thinksys.com',
+  // );
   const [enteredEmail, setEnteredEmail] = useState(
-    'bhandari.tribhuwan@thinksys.com',
+    'guptagaurav9566+1@gmail.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
+  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
 
   const dispatch = useDispatch();
 
@@ -43,9 +49,11 @@ const LoginScreen = ({navigation}) => {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
+      const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
       dispatch(login(enteredEmail));
+      dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {
       setError(err);
@@ -85,11 +93,11 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <>
-      <CustomHeader
+      {/* <CustomHeader
         title="Login"
         navigation={navigation}
         showBackArrow={true}
-      />
+      /> */}
 
       <Modal
         avoidKeyboard={false}

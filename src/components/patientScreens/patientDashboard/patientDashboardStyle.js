@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   helloText: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: hp(1),
     marginLeft: wp(2),
@@ -30,12 +30,24 @@ export const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingBottom: hp(2),
+    paddingHorizontal: wp(2),
   },
   belowTabsContainer: {
     backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
     borderRadius: 6,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 1.17,
+    shadowRadius: 1.65,
+    elevation: 1,
+
+    height: hp(73),
   },
   headingText: {
     fontWeight: 'bold',
@@ -45,6 +57,14 @@ export const styles = StyleSheet.create({
     marginTop: hp(2),
     flexDirection: 'row',
     justifyContent: 'center',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
   leftCont: {
     width: wp(30),
@@ -73,7 +93,15 @@ export const styles = StyleSheet.create({
   },
   recommendedArticlesCont: {
     marginTop: hp(1),
-    height: hp(48),
+    height: hp(52),
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),

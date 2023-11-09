@@ -16,15 +16,15 @@ import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 // import ArrowRight from '../../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {signOut} from '../../AWS/AWSConfiguration';
+import {getCurrentUserInfo, signOut} from '../../AWS/AWSConfiguration';
 import {getProfileSlice} from '../../redux/HomeSlice';
 import {screenWidth} from '../../utils/Responsive';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const {loginFrom, email} = useSelector(state => state.auth);
+  const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
-  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
+  const [loading, setLoading] = useState(false);
   const {
     feel = '',
     email_id = '',
@@ -34,7 +34,7 @@ const Profile = () => {
 
   const DUMMY_ISSUES = feel
     ? feel?.split(',')
-    : ['depression', 'anxiety', 'student life', 'loneliness'];
+    : ['Depression', 'Anxiety', 'Student life', 'Loneliness'];
   const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
   const paymentDetailsItemsPatient = [
     'Edit payment information',
@@ -51,24 +51,15 @@ const Profile = () => {
     dispatch(logout());
   };
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const currentUserInfo = await getCurrentUserInfo();
-      setLoading(false);
-      setCurrentUserInfo({str: currentUserInfo?.attributes['custom:type']});
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const res = await dispatch(
-        getProfileSlice({email, type: currentUserInfo.str}),
-      );
-      console.log('res -----> ', res);
-    })();
-  }, []);
-
+  if (loading) {
+    return (
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Text>
+          <ActivityIndicator size={'large'} />
+        </Text>
+      </View>
+    );
+  }
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
@@ -143,7 +134,6 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   imageContainer: {
-    borderWidth: 1,
     width: 56,
     height: 56,
     borderRadius: 8,

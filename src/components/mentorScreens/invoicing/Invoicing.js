@@ -133,6 +133,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: wp(3),
     paddingVertical: hp(1),
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.17,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
 });
 

@@ -16,244 +16,30 @@ import {
   MENTORS_LIST,
   SAVED,
 } from '../../../utils/Strings';
-import axios from 'axios';
-import Colors from '../../../customs/Colors';
-import {
-  checkMultiple,
-  request,
-  requestMultiple,
-  PERMISSIONS,
-  RESULTS,
-} from 'react-native-permissions';
-import {AppContext} from '../../../../App';
-import {Agenda} from 'react-native-calendars';
-import moment from 'moment';
 import MentorsList from '../../mentorScreens/MentorsList';
 import AppoinmentsList from './AppointmentList';
-// import AppoinmentsList from './AppointmentList';
-
-const url =
-  'https://aefc-2401-4900-1c82-5450-b098-152c-8a6e-6483.ngrok-free.app';
+import {useDispatch, useSelector} from 'react-redux';
+import {getProfileSlice} from '../../../redux/HomeSlice';
 
 const PatientDashboard = ({navigation}) => {
-  const {props, setProps} = useContext(AppContext);
+  const {email, type} = useSelector(state => state.auth);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [mentorName, setMentorName] = useState('');
 
-  const [appointmentList, setAppointmentList] = useState({});
-  console.log('PappointmentList------------------------------');
-  console.log(appointmentList);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      .post(
-        'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getAppointmentList',
-        {
-          patientId: '3f409087-25b9-4772-9207-0ddeeaeb4c60',
-        },
-      )
-      .then(response => {
-        console.log('rep', response.data);
-
-        const appointments = response.data;
-
-        const formattedAppointments = {};
-        appointments.forEach(appointment => {
-          const date = appointment.startTime.split('T')[0]; // Extract date from startTime
-          if (!formattedAppointments[date]) {
-            formattedAppointments[date] = [];
-          }
-          formattedAppointments[date].push({
-            start: appointment.startTime,
-            end: appointment.endTime,
-            ...appointment,
-            // Other appointment data
-          });
-        });
-        console.log('rep MOD', formattedAppointments);
-        setAppointmentList(formattedAppointments);
-      })
-      .catch(error => {
-        console.log('error appi lit', error);
-      });
+    (async () => {
+      const res = await dispatch(getProfileSlice({email, type: type}));
+      console.log('res from patient =============================', res);
+      setMentorName(res?.payload?.Items[0]?.firstName);
+    })();
   }, []);
-
-  const _checkPermissions = callback => {
-    console.log('ran-----------');
-    const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-    const androidPermissions = [
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ];
-    checkMultiple(
-      Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-    ).then(statuses => {
-      console.log('insdie then');
-      const [CAMERA, AUDIO] =
-        Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-      if (
-        statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-        statuses[AUDIO] === RESULTS.UNAVAILABLE
-      ) {
-        console.log('inside if');
-        Alert.alert(
-          'Error',
-          'Hardware to support video calls is not available',
-        );
-      } else if (
-        statuses[CAMERA] === RESULTS.BLOCKED ||
-        statuses[AUDIO] === RESULTS.BLOCKED
-      ) {
-        console.log('inside selse if');
-        Alert.alert(
-          'Error',
-          'Permission to access hardware was blocked, please grant manually',
-        );
-      } else {
-        console.log('inside selse');
-        if (
-          statuses[CAMERA] === RESULTS.DENIED &&
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          console.log('inside denied');
-          requestMultiple(
-            Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-          ).then(newStatuses => {
-            if (
-              newStatuses[CAMERA] === RESULTS.GRANTED &&
-              newStatuses[AUDIO] === RESULTS.GRANTED
-            ) {
-              console.log('will run callback1');
-              callback && callback();
-            } else {
-              console.log('not will run callback');
-              Alert.alert('Error', 'One of the permissions was not granted');
-            }
-          });
-        } else if (
-          statuses[CAMERA] === RESULTS.DENIED ||
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          console.log('dined else if');
-          request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-            result => {
-              if (result === RESULTS.GRANTED) {
-                callback && callback();
-              } else {
-                Alert.alert('Error', 'Permission not granted');
-              }
-            },
-          );
-        } else if (
-          statuses[CAMERA] === RESULTS.GRANTED ||
-          statuses[AUDIO] === RESULTS.GRANTED
-        ) {
-          console.log('will run callback elllse if');
-          callback && callback();
-        }
-      }
-    });
-  };
-
-  const videoCallAction = data => {
-    console.log('data rooomdid---------------------------', data.roomId);
-    _checkPermissions(() => {
-      axios
-        .get(
-          `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data.roomId}&userName=${data.patientId}`,
-        )
-        .then(response => {
-          console.log('reP-------------------', response.data);
-          const token = response.data.token ?? response.data;
-
-          setProps({
-            ...props,
-            token,
-            userName: data.patientId,
-            roomName: data.roomId,
-          });
-
-          navigation.navigate('AVChatScreen');
-        })
-        .catch(err => {
-          console.log('err----------------------', err);
-        });
-    });
-  };
-
-  // const openAVScreen = () => {
-  //   navigation.navigate('AVChatScreen');
-  // };
-
-  // return (
-  //   <View style={styles.container}>
-  //     <Text style={styles.helloText}>Hello Andre,</Text>
-  //     <Text style={styles.dateText}>4th April overview</Text>
-  //     <View style={styles.tabs}>
-  //       <Agenda
-  //         scrollEnabled
-  //         showOnlySelectedDayItems
-  //         // showClosingKnob={true}
-  //         items={appointmentList}
-  //         style={{ width: 100, height: 200}}
-  //         renderEmptyData={() => (
-  //           <View
-  //             style={{
-  //               // flex: 1,
-  //               alignItems: 'center',
-  //               justifyContent: 'center',
-  //             }}>
-  //             <Text style={{color: 'black'}}>No schedule</Text>
-  //           </View>
-  //         )}
-  //         renderItem={(item, isFirst) => {
-  //           console.log('item-------------------');
-  //           console.log(item);
-  //           return (
-  //             <TouchableOpacity
-  //               onPress={() => {
-  //                 Alert.alert(
-  //                   `You'll be joined to this video call`,
-  //                   `Are you sure you want to join?`,
-  //                   [
-  //                     {
-  //                       onPress: () => videoCallAction(item),
-  //                       text: 'Yes',
-  //                     },
-  //                     {
-  //                       onPress: () => null,
-  //                       text: 'No',
-  //                     },
-  //                   ],
-  //                 );
-  //               }}>
-  //               <View style={styles.itemContainer}>
-  //                 <View style={styles.timeColumn}>
-  //                   <Text style={styles.timeText}>
-  //                     {moment(item.start).format('LT')}
-  //                   </Text>
-  //                   <Text style={[styles.timeText]}>-</Text>
-  //                   <Text style={styles.timeText}>
-  //                     {moment(item.end).format('LT')}
-  //                   </Text>
-  //                 </View>
-
-  //                 <View style={styles.appointmentDetails}>
-  //                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-  //                   <Text>{item.roomId}</Text>
-  //                 </View>
-  //               </View>
-  //             </TouchableOpacity>
-  //           );
-  //         }}
-  //       />
-  //     </View>
-  //   </View>
-  // );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Andre,</Text>
-      <Text style={styles.dateText}>4th April overview</Text>
+      <Text style={styles.helloText}>Hello {mentorName}</Text>
+      {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <View style={styles.tabs}>
         <PatientDashboardTabs
@@ -331,9 +117,7 @@ const PatientDashboard = ({navigation}) => {
         </View>
       ) : null}
       {selectedTab.tabStr == APPOINMENTS ? (
-        <View style={{width: '100%', height: '100%'}}>
-          <AppoinmentsList />
-        </View>
+        <AppoinmentsList navigation={navigation} />
       ) : null}
       {selectedTab.tabStr == ARTICLES ? (
         <Text
@@ -364,9 +148,8 @@ const renderItem = ({item}) => {
       style={{
         flexDirection: 'row',
         marginVertical: 9,
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: 'gray',
-        borderRadius: 6,
       }}>
       <Image
         source={{uri: item.image}}
@@ -374,8 +157,8 @@ const renderItem = ({item}) => {
           width: '30%',
           height: 100,
           resizeMode: 'cover',
-          borderTopLeftRadius: 5,
-          borderBottomLeftRadius: 5,
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
         }}
       />
 
@@ -385,6 +168,8 @@ const renderItem = ({item}) => {
           paddingHorizontal: 10,
           justifyContent: 'center',
           backgroundColor: '#F5F7F8',
+          borderTopRightRadius: 10,
+          borderBottomRightRadius: 10,
         }}>
         <Text style={{fontSize: 16, fontWeight: '700'}}>{item.title}</Text>
         <Text style={{marginTop: 10}}>{item.author}</Text>
@@ -400,7 +185,7 @@ const articlesData = [
     title: 'The healing power of nature',
     author: 'Sara Fawler',
     image:
-      'https://cdn.pixabay.com/photo/2020/01/08/08/43/baloon-4749597_1280.png',
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
   },
   {
     id: 2,
@@ -421,7 +206,7 @@ const articlesData = [
     title: 'The healing power of nature',
     author: 'Sara Fawler',
     image:
-      'https://cdn.pixabay.com/photo/2020/01/08/08/43/baloon-4749597_1280.png',
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
   },
   {
     id: 5,

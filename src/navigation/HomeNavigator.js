@@ -19,51 +19,20 @@ import {
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
-import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
-import {ActivityIndicator, View} from 'react-native';
-import {Text} from 'react-native-svg';
 
 const Tab = createBottomTabNavigator();
 
 const HomeNavigator = () => {
-  const {loginFrom} = useSelector(state => state.auth);
-
-  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const currentUserInfo = await getCurrentUserInfo();
-      setLoading(false);
-      setCurrentUserInfo({str: currentUserInfo?.attributes['custom:type']});
-    })();
-  }, []);
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100%',
-          width: '100%',
-        }}>
-        <Text>
-          <ActivityIndicator size="large" color="#0000ff" />;
-        </Text>
-      </View>
-    );
-  }
+  const {type} = useSelector(state => state.auth);
 
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors.accentColor,
       }}>
-      {currentUserInfo.str === MENTOR ? (
+      {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
           component={MentorDashboard}
@@ -86,7 +55,7 @@ const HomeNavigator = () => {
           }}
         />
       )}
-      {currentUserInfo.str === MENTOR ? (
+      {type === MENTOR ? (
         <Tab.Screen
           name={INVOICING}
           component={Invoicing}
@@ -112,6 +81,7 @@ const HomeNavigator = () => {
       <Tab.Screen
         name={MESSAGES}
         options={{
+          headerShown: false,
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="message" size={25} color={color} />
           ),
@@ -120,6 +90,7 @@ const HomeNavigator = () => {
       />
       <Tab.Screen
         options={{
+          headerShown: false,
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name={'person'} size={30} color={color} />
           ),

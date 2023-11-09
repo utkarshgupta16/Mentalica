@@ -9,11 +9,22 @@ const Auth = createNativeStackNavigator();
 
 export default function AuthNavigator() {
   return (
-    <Auth.Navigator initialRouteName='AskClient'>
-      <Auth.Screen name="AskClient" component={AskClient} options={{ header: () => false }} />
-      <Auth.Screen name="Login" component={Login} options={{ header: () => false }} />
-      <Auth.Screen name="PatientSignUp" component={PatientSignUp} options={{ header: () => false }} />
-      <Auth.Screen name="MentorSignUp" component={MentorSignUp} options={{ header: () => false }} />
+    <Auth.Navigator initialRouteName="AskClient">
+      <Auth.Screen
+        name="Login"
+        component={Login}
+        options={{header: () => false}}
+      />
+      <Auth.Screen
+        name="PatientSignUp"
+        component={PatientSignUp}
+        options={{header: () => false}}
+      />
+      <Auth.Screen
+        name="MentorSignUp"
+        component={MentorSignUp}
+        options={{header: () => false}}
+      />
     </Auth.Navigator>
   );
 }

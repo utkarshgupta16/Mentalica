@@ -48,5 +48,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     // height: '75%',
     backgroundColor: '#EEEDED',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.17,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
 });

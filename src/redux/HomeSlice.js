@@ -182,6 +182,7 @@ const initialState = {
   isProfileLoading: false,
   scheduledAppointmentsData: [],
   isScheduleLoading: false,
+  type: '',
 };
 const HomeSlice = createSlice({
   name: 'home',
