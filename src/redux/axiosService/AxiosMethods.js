@@ -16,7 +16,6 @@ const postMethod = ({url, method, string, token}) => {
     return axios(config)
       .then(async result => {
         let data = result.data;
-        console.log('data:', data, result);
 
         const {response = {}, status} = result || {};
         if (status === 200) {
@@ -34,36 +33,57 @@ const postMethod = ({url, method, string, token}) => {
   });
 };
 
-const getMethod = ({url, method, string, token}) => {
-  createAsyncThunk(string, async () => {
-    const config = {
-      method: method,
-      url: url,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
+// const getMethod = ({url, method, string}) => {
+//   createAsyncThunk(string, async () => {
+//     const config = {
+//       method: method,
+//       url: url,
+//       // headers: {
+//       //   Authorization: `Bearer ${token}`,
+//       //   'Content-Type': 'application/json',
+//       // },
+//     };
 
-    return axios(config)
-      .then(response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        }
-      })
-      .catch(err => {
-        let statusCode = 500;
-        if (err?.response) {
-          statusCode = err?.response.status;
-        }
-        if (statusCode === 401) {
-          return Promise.reject(err?.response?.data?.message);
-        } else {
-          return Promise.reject(new Error(err));
-        }
-      });
-  });
+//     return axios(config)
+//       .then(response => {
+//         const {data, status} = response;
+//         if (status === 200) {
+//           return Promise.resolve(data);
+//         }
+//       })
+//       .catch(err => {
+//         let statusCode = 500;
+//         if (err?.response) {
+//           statusCode = err?.response.status;
+//         }
+//         if (statusCode == 401) {
+//           return Promise.reject(err?.response?.data?.message);
+//         } else {
+//           return Promise.reject(new Error(err));
+//         }
+//       });
+//   });
+// };
+
+const getMethod = url => {
+  return axios({
+    method: 'get',
+    url: url,
+  })
+    .then(function (result) {
+      const {response = {}, status} = result || {};
+      let data = result.data;
+      if (status === 200) {
+        return Promise.resolve(result.data);
+      } else if (status === 401) {
+        return Promise.reject(INVALID_CREDENTIAL);
+      } else {
+        return Promise.reject(result.response);
+      }
+    })
+    .catch(err => {
+      return Promise.reject(err?.response);
+    });
 };
 
 export {postMethod, getMethod};

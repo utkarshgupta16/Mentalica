@@ -6,17 +6,18 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
-  TextInput,
   Pressable,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
+
 import {
   heightPercentageToDP as hp,
   screenHeight,
   screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
+
 import Close from '../../icons/icon_close.svg';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {slotsData} from '../../utils/default';

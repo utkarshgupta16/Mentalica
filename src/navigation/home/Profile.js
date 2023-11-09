@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -16,14 +16,15 @@ import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 // import ArrowRight from '../../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {signOut} from '../../AWS/AWSConfiguration';
+import {getCurrentUserInfo, signOut} from '../../AWS/AWSConfiguration';
 import {getProfileSlice} from '../../redux/HomeSlice';
 import {screenWidth} from '../../utils/Responsive';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const {loginFrom, email} = useSelector(state => state.auth);
+  const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const [loading, setLoading] = useState(false);
   const {
     feel = '',
     email_id = '',
@@ -50,14 +51,15 @@ const Profile = () => {
     dispatch(logout());
   };
 
-  useEffect(() => {
-    (async () => {
-      console.log('email', email);
-      const res = await dispatch(getProfileSlice({email, type: loginFrom}));
-    })();
-  }, []);
-  console.log('loginFrom', profileData);
-
+  if (loading) {
+    return (
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Text>
+          <ActivityIndicator size={'large'} />
+        </Text>
+      </View>
+    );
+  }
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
@@ -73,9 +75,7 @@ const Profile = () => {
             />
           </View>
           <View style={styles.details}>
-            <Text
-              style={{...styles.nameText, width: 350}}
-              >
+            <Text style={{...styles.nameText, width: screenWidth - 100}}>
               {firstName + ' ' + lastName}
             </Text>
             <Text style={styles.emailText}>{email_id}</Text>

@@ -99,7 +99,13 @@ const EnterOtpModal = ({
         <View style={styles.resendCodeContainer}>
           <Text style={styles.resendCodeAgainText}>Didn't get a code? </Text>
           <View style={styles.resendMainContainer}>
-            <Pressable style={styles.resendButton} onPress={resendCode}>
+            <Pressable
+              disabled={secondsLeft !== 0}
+              style={[
+                styles.resendButton,
+                secondsLeft !== 0 && styles.lessOpacity,
+              ]}
+              onPress={resendCode}>
               <Text style={styles.resend}>Resend</Text>
             </Pressable>
             <Text style={styles.resendTimerText}>
@@ -155,6 +161,12 @@ const styles = StyleSheet.create({
   },
   resendButton: {
     marginRight: 8,
+  },
+  lessOpacity: {
+    opacity: 0.5,
+  },
+  textGrey: {
+    color: Colors.grayishBlue,
   },
   resend: {
     marginLeft: 5,

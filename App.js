@@ -8,11 +8,13 @@ import {
   Platform,
   SafeAreaView,
   StyleSheet,
+  Text,
 } from 'react-native';
 import {fcmService} from './src/utils/fcmServices';
 import {localNotificationService} from './src/utils/localPushNotification';
 import PushNotification from 'react-native-push-notification';
 import {androidPlatform} from './src/utils/config';
+
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';

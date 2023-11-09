@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  SectionList,
-  FlatList,
-} from 'react-native';
+import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
 import React from 'react';
 import {
   heightPercentageToDP as hp,
@@ -100,6 +93,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
 
     backgroundColor: '#F5F7F8',
+    // backgroundColor: 'white',
   },
   heading: {
     flexDirection: 'row',
@@ -132,6 +126,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: wp(3),
     paddingVertical: hp(1),
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.17,
+    shadowRadius: 4.65,
+    elevation: 3,
   },
 });
 

@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   FlatList,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  Platform,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -37,7 +37,11 @@ import Timetable from 'react-native-calendar-timetable';
 import EventCalendar from 'react-native-events-calendar';
 import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
 import {useDispatch, useSelector} from 'react-redux';
-import {getScheduledAppointmentsSlice} from '../../../redux/HomeSlice';
+import {
+  getProfileSlice,
+  getScheduledAppointmentsSlice,
+} from '../../../redux/HomeSlice';
+import {HELLO} from '../../../utils/Strings';
 
 let {width} = Dimensions.get('window');
 
@@ -137,12 +141,13 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
-  const {email} = useSelector(state => state.auth);
+  const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [mentorName, setMentorName] = useState('');
 
   const [appointmentList, setAppointmentList] = useState({});
   const setDateTime = time => {
@@ -151,6 +156,13 @@ const MentorDashboard = ({navigation}) => {
     now.setHours(hours, minutes, 0, 0);
     return now;
   };
+
+  useEffect(() => {
+    (async () => {
+      const res = await dispatch(getProfileSlice({email, type}));
+      setMentorName(res?.payload?.Items[0]?.firstName);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -208,7 +220,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, []);
+  }, [dispatch, email]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -305,19 +317,20 @@ const MentorDashboard = ({navigation}) => {
           setProps({
             ...props,
             token,
-            userName: data?.mentor_email_id , //data.mentorId,
-            roomName: data?.roomId
+            userName: data?.mentor_email_id, //data.mentorId,
+            roomName: data?.roomId,
           });
           navigation.navigate('AVChatScreen');
         })
-        .catch(err => {
-        });
+        .catch(err => {});
     });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Raquel,</Text>
+      <Text style={styles.helloText}>
+        {HELLO} {mentorName && mentorName},
+      </Text>
       <Agenda
         // selected="2022-12-01"
         scrollEnabled
@@ -330,14 +343,14 @@ const MentorDashboard = ({navigation}) => {
             <Text style={{color: 'black'}}>No schedule</Text>
           </View>
         )}
-        renderItem={(item) => {
-console.log('item-----------------', item)
+        renderItem={item => {
+          console.log('item-----------------', item);
           return (
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
-                  `You'll be joined to this video call`,
-                  `Are you sure you want to join?`,
+                  "You'll be joined to this video call",
+                  'Are you sure you want to join?',
                   [
                     {
                       onPress: () => videoCallAction(item),
