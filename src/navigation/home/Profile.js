@@ -38,6 +38,7 @@ const Profile = () => {
     'Payment methods',
     'Payment history',
   ];
+
   const paymentDetailsItemsMentor = [
     'Edit fiscal information',
     'Banking information',
@@ -64,7 +65,7 @@ const Profile = () => {
           <View style={styles.imageContainer}>
             <Image
               source={
-                loginFrom == PATIENT
+                loginFrom === PATIENT
                   ? require('../../icons/patient.jpg')
                   : require('../../icons/doctor.jpg')
               }

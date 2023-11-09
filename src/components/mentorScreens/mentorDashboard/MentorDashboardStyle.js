@@ -70,6 +70,22 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  startTime: {
+    fontWeight: '600',
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  slot: {
+    borderWidth: 1,
+    width: 100,
+    height: 40,
+  },
+  modalView: {
+    height: hp(30),
+    width: '100%',
+    backgroundColor: '#E4D0D0',
+    borderRadius: 10,
+  },
   itemText: {
     color: '#888',
     fontSize: 16,

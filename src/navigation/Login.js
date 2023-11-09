@@ -63,11 +63,12 @@ const LoginScreen = ({navigation}) => {
   };
 
   const signUpClickHandler = () => {
-    if (loginFrom === MENTOR) {
-      navigation.navigate(MENTOR_SIGN_UP);
-    } else {
-      navigation.navigate(PATIENT_SIGN_UP);
-    }
+    navigation.navigate(MENTOR_SIGN_UP);
+    // if (loginFrom === MENTOR) {
+    //   navigation.navigate(MENTOR_SIGN_UP);
+    // } else {
+    //   navigation.navigate(PATIENT_SIGN_UP);
+    // }
   };
 
   const handleEnteredEmail = email => {
