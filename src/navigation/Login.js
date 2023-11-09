@@ -97,8 +97,9 @@ const LoginScreen = ({navigation}) => {
       style={{
         flex: 1,
         backgroundColor: Colors.paleMintColor,
-        justifyContent: "space-between",
+        justifyContent: 'space-between',
       }}>
+      {isLoading ? <Loader /> : null}
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
         <Image
           source={require('../icons/logo-no-background.png')}
@@ -143,7 +144,6 @@ const LoginScreen = ({navigation}) => {
         </View>
       </Modal>
       <View style={styles.container}>
-        {isLoading ? <Loader /> : null}
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={handleEnteredEmail}
