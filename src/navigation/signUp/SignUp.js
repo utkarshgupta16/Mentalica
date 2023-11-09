@@ -305,6 +305,7 @@ const MentorSignUp = ({navigation}) => {
     <>
       <DropDownPicker
         nestedScrollEnabled={true}
+        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={2000}
@@ -326,6 +327,7 @@ const MentorSignUp = ({navigation}) => {
         containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
+        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={1000}
@@ -360,6 +362,7 @@ const MentorSignUp = ({navigation}) => {
   const patientExtras = (
     <>
       <DropDownPicker
+       dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={3000}
@@ -377,8 +380,9 @@ const MentorSignUp = ({navigation}) => {
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
+        dropDownDirection="TOP"
         autoScroll={true}
-        zIndex={2000}
+        zIndex={4000}
         open={openDuty}
         setOpen={setOpenDuty}
         value={state.duty}
@@ -393,6 +397,7 @@ const MentorSignUp = ({navigation}) => {
       />
 
       <DropDownPicker
+       dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={1000}
@@ -466,10 +471,11 @@ const MentorSignUp = ({navigation}) => {
           {/* CHECK FOR THE TYPE: */}
 
           <DropDownPicker
+            dropDownDirection="TOP"
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
-            zIndex={10000}
+            zIndex={3000}
             open={typeOpen}
             setOpen={setTypeOpen}
             value={typeValue}

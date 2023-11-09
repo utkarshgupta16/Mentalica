@@ -61,7 +61,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       setBookSlots(data);
       setLoading(false);
     })();
-  }, []);
+  }, [dispatch, selectedMentorData?.email_id]);
 
   return (
     <>
@@ -121,11 +121,9 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
           {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
             <FlatList
               data={selectedMentorData?.slots}
-              // horizontal
-              columnWrapperStyle={{flexWrap: 'wrap'}}
-              scrollEventThrottle={1900}
-              numColumns={3}
-              style={{marginTop: 15}}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
                 let slot = `${item?.startTime}-${item?.endTime}`;

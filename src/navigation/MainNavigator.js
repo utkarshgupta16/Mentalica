@@ -1,14 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import Login from './Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeNavigator from './HomeNavigator';
-import AskClient from './AskClient';
 import {useSelector} from 'react-redux';
-import PatientSignUp from './signUp/PatientSignUp';
-import MentorSignUp from './signUp/MentorSignUp';
 import AuthNavigator from './AuthNavigator';
-import {Text} from 'react-native';
 import SplashScreen from '../screens/SplashScreen';
 
 const Stack = createNativeStackNavigator();
@@ -18,11 +13,11 @@ const MainNavigator = () => {
   console.log('isLoggedIn', isLoggedIn);
   return (
     <NavigationContainer>
-      <Stack.Navigator  initialRouteName="SplashScreen">
-      <Stack.Screen
+      <Stack.Navigator initialRouteName="SplashScreen">
+        <Stack.Screen
           name="SplashScreen"
           component={SplashScreen}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="MainRoute"
@@ -30,7 +25,6 @@ const MainNavigator = () => {
           options={{headerShown: false}}
         />
       </Stack.Navigator>
-     
     </NavigationContainer>
   );
 };
