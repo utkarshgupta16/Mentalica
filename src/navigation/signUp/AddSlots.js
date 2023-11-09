@@ -38,18 +38,17 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
   return (
     <View
       style={{
-        flex: 1,
         borderRadius: 10,
       }}>
       <Modal
         animationType="slide"
         transparent={true}
         isVisible={true}
-        style={{flex: 0.7, top: 120, borderRadius: 10}}
+        style={{borderRadius: 10}}
         onRequestClose={() => setVisible(false)}>
         <View
           style={{
-            flex: 1,
+            flex: 0.4,
             paddingHorizontal: wp(3),
             backgroundColor: '#FFFFFFCC',
             borderRadius: 10,
@@ -162,11 +161,38 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
 
           {slots && slots.length ? (
             <FlatList
+              columnWrapperStyle={{flexWrap: 'wrap'}}
+              scrollEventThrottle={1900}
+              showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 100}}
               data={slots}
-              style={{marginTop: 10, flex: 1}}
+              style={{
+                marginTop: 10,
+              }}
+              numColumns={3}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
+                return (
+                  <View key={index} style={{paddingTop: 5, opacity: 1}}>
+                    <View
+                      style={{
+                        marginRight: 10,
+                        borderRadius: 13,
+                        paddingHorizontal: 8,
+                        paddingVertical: 3,
+                        backgroundColor: 'gray',
+                        marginBottom: 10,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                        }}>
+                        {`${item?.startTime}-${item?.endTime}`}
+                      </Text>
+                    </View>
+                  </View>
+                );
                 return (
                   <View
                     style={{
@@ -190,24 +216,27 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                     </View>
                     <Pressable
                       style={{}}
-                      onPress={() => {
-                        let keyIndex = `${item.startTime}-${item.endTime}`;
-                        let selectedSlotNew = [...selectedSlot];
-                        let selectedIndexKey =
-                          selectedSlotNew.indexOf(keyIndex);
-                        let data = [...slots];
-                        data.splice(index, 1);
-                        selectedSlotNew.splice(selectedIndexKey, 1);
-                        addSlots(data);
-                        setSlots(selectedSlotNew);
-                      }}>
+                      // onPress={() => {
+                      //   let keyIndex = `${item.startTime}-${item.endTime}`;
+                      //   let selectedSlotNew = [...selectedSlot];
+                      //   let selectedIndexKey =
+                      //     selectedSlotNew.indexOf(keyIndex);
+                      //   let data = [...slots];
+                      //   data.splice(index, 1);
+                      //   selectedSlotNew.splice(selectedIndexKey, 1);
+                      //   addSlots(data);
+                      //   setSlots(selectedSlotNew);
+                      // }}
+                    >
                       <Text
                         style={{
                           color: '#33A3DC',
                           fontSize: 15,
                           fontWeight: '500',
                         }}>
-                        Delete
+                        {`${new Date().getFullYear()}-${
+                          new Date().getMonth() + 1
+                        }-${new Date().getDate()}`}
                       </Text>
                     </Pressable>
                   </View>
@@ -215,6 +244,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
               }}
             />
           ) : (
+            // </View>
             <View
               style={{
                 flex: 1,
@@ -222,11 +252,6 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
             />
           )}
         </View>
-
-
-
-
-
       </Modal>
     </View>
   );
