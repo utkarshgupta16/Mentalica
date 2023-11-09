@@ -7,7 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   Image,
-  Alert,
+  Alert
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -17,6 +17,7 @@ import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
+import {useTranslation} from 'react-i18next';
 
 const Profile = () => {
   const {t} = useTranslation();
@@ -95,7 +96,7 @@ const Profile = () => {
           <Text style={styles.issuesTitleText}>
             {loginFrom === MENTOR
               ? t("I'm a specialist in")
-              : t("I want to address")}
+              : t('I want to address')}
           </Text>
           <View style={styles.allIssues}>
             {DUMMY_ISSUES.map(issue => (
@@ -106,13 +107,13 @@ const Profile = () => {
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.profDetailsCont}>
-          <Text style={styles.accDetailsTitle}>{t("Account Details")}</Text>
+          <Text style={styles.accDetailsTitle}>{t('Account Details')}</Text>
           {profileDetailsItems.map(item => (
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
         <View style={styles.paymentDetailsCont}>
-          <Text style={styles.accDetailsTitle}>{t("Payment")}</Text>
+          <Text style={styles.accDetailsTitle}>{t('Payment')}</Text>
           {(loginFrom === MENTOR
             ? paymentDetailsItemsMentor
             : paymentDetailsItemsPatient
@@ -122,7 +123,7 @@ const Profile = () => {
         </View>
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
-          <Text style={styles.logoutTitle}>{t("Log out")}</Text>
+          <Text style={styles.logoutTitle}>{t('Log out')}</Text>
         </Pressable>
       </View>
       {isProfileLoading ? (

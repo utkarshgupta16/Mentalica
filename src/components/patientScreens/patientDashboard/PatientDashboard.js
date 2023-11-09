@@ -25,7 +25,7 @@ import {useTranslation} from 'react-i18next';
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const {email, type} = useSelector(state => state.auth);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [mentorName, setMentorName] = useState('');
 
   const dispatch = useDispatch();
