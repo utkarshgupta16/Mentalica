@@ -85,4 +85,8 @@ export const slotsData = [
     value: '17:00-17:30',
     label: '17:00-17:30',
   },
+  {
+    value: '18:00-18:30',
+    label: '18:00-18:30',
+  },
 ];
