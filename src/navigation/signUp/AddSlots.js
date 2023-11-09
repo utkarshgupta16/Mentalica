@@ -21,172 +21,214 @@ import Close from '../../icons/icon_close.svg';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {slotsData} from '../../utils/default';
 const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
-  const [isOpen, setOpen] = useState(false);
-  const [selectedSlot, setSlots] = useState('');
   let slots1 =
     (slots &&
       slots.length &&
-      slots.map(val => `${val?.startTime}-${val?.endTime}`)) ||
+      slots?.map(val => `${val?.startTime}-${val?.endTime}`)) ||
     [];
-  let filterData = slotsData.filter(val => {
-    if (!slots1.includes(val?.value)) {
-      return true;
-    }
-    return false;
-  });
-
+  const [isOpen, setOpen] = useState(false);
+  const [selectedSlot, setSlots] = useState([...slots1]);
+  
+  // let filterData = slotsData.filter(val => {
+  //   if (!slots1.includes(val?.value)) {
+  //     return true;
+  //   }
+  //   return false;
+  // });
   return (
-    <SafeAreaView>
+    <View
+      style={{
+        flex: 1,
+        borderRadius: 10,
+      }}>
       <Modal
-        onBackButtonPress={() => close && close()}
-        onRequestClose={() => close && close()}
-        animationIn={'slideInRight'}
-        animationOut={'slideOutRight'}
-        backdropColor={'#00000029'}
-        backdropOpacity={1}
+        animationType="slide"
+        transparent={true}
         isVisible={true}
-        style={{
-          flex: 1,
-          alignSelf: 'flex-end',
-          width: screenWidth * 0.9,
-          height: screenHeight,
-          margin: 0,
-          paddingVertical: hp(5),
-          paddingHorizontal: wp(4),
-          backgroundColor: 'white',
-        }}>
-        <Pressable onPress={() => close && close()}>
-          <Close
-            height={25}
-            width={25}
-            color={'black'}
-            style={{marginLeft: -3}}
-          />
-        </Pressable>
-        <Text style={{textAlign: 'center', fontSize: 18, marginVertical: 10}}>
-          Book Slots
-        </Text>
+        style={{flex: 0.7, top: 120, borderRadius: 10}}
+        onRequestClose={() => setVisible(false)}>
         <View
           style={{
-            flexDirection: 'row',
+            flex: 1,
+            paddingHorizontal: wp(3),
+            backgroundColor: '#FFFFFFCC',
+            borderRadius: 10,
             backgroundColor: 'white',
-            zIndex: 1000,
           }}>
-          {/* {renderInput({field: 'startTime', placeholder: 'Start Time'})}
-            {renderInput({field: 'endTime', placeholder: 'End Time'})} */}
-          <DropDownPicker
-            listMode="SCROLLVIEW"
-            autoScroll={true}
-            zIndex={1000}
-            open={isOpen}
-            setOpen={setOpen}
-            value={selectedSlot}
-            setValue={setSlots}
-            items={filterData}
-            placeholder={'Select Slot'}
-            style={{marginBottom: 10, backgroundColor: Colors.paleMintColor}}
-          />
-        </View>
-        <View style={{alignItems: 'center'}}>
-          <Pressable
-            onPress={() => {
-              let [startTime, endTime] = selectedSlot?.split('-');
-              let updateState = {
-                startTime: startTime?.includes(':')
-                  ? startTime
-                  : `${startTime}:00`,
-                endTime: endTime?.includes(':')
-                  ? endTime
-                  : `${state?.endTime}:00`,
-              };
-              let data = [...slots, updateState];
-              addSlots(data);
-              setSlots('');
-            }}
-            disabled={!selectedSlot}
-            style={{
-              backgroundColor: 'green',
-              marginTop: 10,
-              borderWidth: 1,
-              borderRadius: 4,
-              paddingHorizontal: 15,
-              paddingVertical: 5,
-              borderColor: 'white',
-              opacity: selectedSlot ? 1 : 0.5,
-            }}>
-            <Text style={{color: 'white'}}>Add</Text>
-          </Pressable>
-        </View>
-
-        {slots && slots.length ? (
-          <FlatList
-            data={slots}
-            style={{marginTop: 10, flex: 1}}
-            keyExtractor={(item, index) => index}
-            renderItem={({item, index}) => {
-              return (
-                <View
-                  style={{
-                    borderRadius: 4,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                    marginLeft: 5,
-                    borderWidth: 1,
-                    borderColor: 'gray',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 10,
-                  }}>
-                  <View style={{}}>
-                    <Text style={{paddingBottom: 5}}>
-                      Start Time: {item?.startTime}
-                    </Text>
-                    <Text>End Time: {item?.endTime}</Text>
-                  </View>
-                  <Pressable
-                    style={{}}
-                    onPress={() => {
-                      let data = [...slots];
-                      data.splice(index, 1);
-                      addSlots(data);
-                    }}>
-                    <Text>Delete</Text>
-                  </Pressable>
-                </View>
-              );
-            }}
-          />
-        ) : (
           <View
             style={{
-              flex: 1,
-            }}
-          />
-        )}
-        {/* <Pressable
-          onPress={() => {
-            console.log('backgroundColor', slots);
-          }}
-          disabled={!slots.length}
-          style={{
-            backgroundColor: 'green',
-            marginTop: 10,
-            borderWidth: 1,
-            borderRadius: 4,
-            paddingHorizontal: 15,
-            paddingVertical: 8,
-            borderColor: 'white',
-            opacity: slots.length ? 1 : 0.5,
-          }}>
-          <Text
-            style={{color: 'white', textAlign: 'center', fontWeight: 'bold'}}>
-            Submit
-          </Text>
-        </Pressable> */}
-        {/* </View> */}
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginVertical: 10,
+            }}>
+            <View />
+            <Text
+              style={{
+                textAlign: 'center',
+                color: '#33A3DC',
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginVertical: 10,
+              }}>
+              Add Slots
+            </Text>
+            <Pressable
+              onPress={() => {
+                close && close();
+              }}
+              style={{
+                paddingLeft: wp(2),
+                // alignItems: 'flex-end',
+              }}>
+              <Close />
+            </Pressable>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: 'white',
+              zIndex: 1000,
+            }}>
+            {/* {renderInput({field: 'startTime', placeholder: 'Start Time'})}
+            {renderInput({field: 'endTime', placeholder: 'End Time'})} */}
+            <DropDownPicker
+              listMode="SCROLLVIEW"
+              autoScroll={true}
+              zIndex={1000}
+              open={isOpen}
+              setOpen={setOpen}
+              value={selectedSlot}
+              onSelectItem={val => {
+                let labels = val.map(i => i?.value);
+                let slotsArray = [];
+                labels.map(val => {
+                  let [startTime, endTime] = val?.split('-');
+                  let updateState = {
+                    startTime: startTime?.includes(':')
+                      ? startTime
+                      : `${startTime}:00`,
+                    endTime: endTime?.includes(':')
+                      ? endTime
+                      : `${state?.endTime}:00`,
+                  };
+                  slotsArray.push(updateState);
+                });
+                let data = [...slotsArray];
+                addSlots(data);
+                setSlots(labels);
+              }}
+              items={slotsData}
+              placeholder={'Select Slot'}
+              dropDownContainerStyle={{borderColor: '#33A3DC'}}
+              style={{
+                marginBottom: 10,
+                backgroundColor: Colors.paleMintColor,
+                borderColor: '#33A3DC',
+              }}
+              multiple={true}
+            />
+          </View>
+          {/* <View style={{alignItems: 'center'}}>
+            <Pressable
+              onPress={() => {
+                let [startTime, endTime] = selectedSlot?.split('-');
+                let updateState = {
+                  startTime: startTime?.includes(':')
+                    ? startTime
+                    : `${startTime}:00`,
+                  endTime: endTime?.includes(':')
+                    ? endTime
+                    : `${state?.endTime}:00`,
+                };
+                let data = [...slots, updateState];
+                addSlots(data);
+                setSlots('');
+              }}
+              disabled={!selectedSlot}
+              style={{
+                backgroundColor: 'green',
+                marginTop: 10,
+                borderWidth: 1,
+                borderRadius: 4,
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                borderColor: 'white',
+                opacity: selectedSlot ? 1 : 0.5,
+              }}>
+              <Text style={{color: 'white'}}>Add</Text>
+            </Pressable>
+          </View> */}
+
+          {slots && slots.length ? (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={slots}
+              style={{marginTop: 10, flex: 1}}
+              keyExtractor={(item, index) => index}
+              renderItem={({item, index}) => {
+                return (
+                  <View
+                    style={{
+                      borderRadius: 4,
+                      paddingHorizontal: 10,
+                      paddingVertical: 5,
+                      marginLeft: 5,
+                      borderWidth: 1,
+                      borderColor: 'gray',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 10,
+                      borderColor: '#33A3DC',
+                    }}>
+                    <View style={{}}>
+                      <Text style={{paddingBottom: 5}}>
+                        Start Time{` : ${item?.startTime}`}
+                      </Text>
+                      <Text>End Time {`  : ${item?.endTime}`}</Text>
+                    </View>
+                    <Pressable
+                      style={{}}
+                      onPress={() => {
+                        let keyIndex = `${item.startTime}-${item.endTime}`;
+                        let selectedSlotNew = [...selectedSlot];
+                        let selectedIndexKey =
+                          selectedSlotNew.indexOf(keyIndex);
+                        let data = [...slots];
+                        data.splice(index, 1);
+                        selectedSlotNew.splice(selectedIndexKey, 1);
+                        addSlots(data);
+                        setSlots(selectedSlotNew);
+                      }}>
+                      <Text
+                        style={{
+                          color: '#33A3DC',
+                          fontSize: 15,
+                          fontWeight: '500',
+                        }}>
+                        Delete
+                      </Text>
+                    </Pressable>
+                  </View>
+                );
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
+          )}
+        </View>
+
+
+
+
+
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
