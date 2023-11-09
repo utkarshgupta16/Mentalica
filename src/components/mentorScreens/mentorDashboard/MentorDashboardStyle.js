@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
+    backgroundColor: '#F5F7F8',
     marginHorizontal: 8,
   },
   helloCont: {
@@ -29,8 +30,8 @@ export const styles = StyleSheet.create({
   helloText: {
     fontSize: 21,
     fontWeight: 'bold',
-    marginBottom: hp(2),
     marginTop: hp(2),
+    marginBottom: hp(1),
     color: Colors.black,
   },
   dateText: {
@@ -43,10 +44,6 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     color: Colors.black,
-  },
-  appointments: {
-    flex: 1,
-    marginTop: 10,
   },
   appointmentCont: {
     flexDirection: 'row',
