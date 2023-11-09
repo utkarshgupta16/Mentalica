@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "442531165345",
+    "project_id": "mentalica-dev-f499b",
+    "storage_bucket": "mentalica-dev-f499b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442531165345:android:19d64d9309d349247a6ce0",
+        "android_client_info": {
+          "package_name": "com.mentalica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgZllGCM6TSyG-freVcjFwdI8Apes-_pc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
