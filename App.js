@@ -1,21 +1,32 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import reactotron from 'reactotron-react-native';
-import {Provider} from 'react-redux';
 import MainNavigator from './src/navigation/MainNavigator';
+import {I18nextProvider} from 'react-i18next';
+import i18n from './src/utils/i18n';
 import {
   PermissionsAndroid,
   Platform,
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
-import store from './src/redux/store';
 import {fcmService} from './src/utils/fcmServices';
 import {localNotificationService} from './src/utils/localPushNotification';
 import PushNotification from 'react-native-push-notification';
 import {androidPlatform} from './src/utils/config';
+export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
 let notificationIDs = 0;
+const initialState = {
+  isAudioEnabled: true,
+  status: 'disconnected',
+  participants: new Map(),
+  videoTracks: new Map(),
+  userName: '',
+  roomName: '',
+  token: '',
+  isVideoEnabled: true,
+};
 
 function onNotification(notify) {
   const options = {
@@ -93,20 +104,17 @@ function onNotification(notify) {
 function onOpenNotification(data) {
   console.log('Handle notification by fcmService (onOpenNotification)', data);
 }
-function onOpenNotifications(data) {
-  console.log(
-    'Handle notification by localNotificationService (onOpenNotification)',
-    data,
-  );
-}
+
 function onRegister(token) {}
 
 const registerNotification = () => {
   fcmService.register(onRegister, onNotification, onOpenNotification);
-  localNotificationService.configure(onOpenNotifications);
+  localNotificationService.configure(onOpenNotification);
 };
 
 const App = () => {
+  const [props, setProps] = useState(initialState);
+
   useEffect(() => {
     if (androidPlatform) {
       const requestPushNotificationPermission = async () => {
@@ -159,12 +167,13 @@ const App = () => {
       });
     };
   }
-
   return (
-    <Provider store={store}>
-      <SafeAreaView style={styles.safeAreaViewStyle} />
-      <MainNavigator style={styles.mainNavigator} />
-    </Provider>
+    <AppContext.Provider value={{props, setProps}}>
+      <I18nextProvider i18n={i18n}>
+        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <MainNavigator style={styles.mainNavigator} />
+      </I18nextProvider>
+    </AppContext.Provider>
   );
 };
 

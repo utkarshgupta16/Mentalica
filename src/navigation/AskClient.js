@@ -1,28 +1,55 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../customs/Colors';
 import CheckBox from '@react-native-community/checkbox';
 import Button from '../components/Button';
+import {useDispatch} from 'react-redux';
+import {loginClient} from '../redux/AuthSlice';
+import {MENTOR, PATIENT} from '../utils/Strings';
+import {useTranslation} from 'react-i18next';
 
 const AskClient = ({navigation}) => {
+  const {t, i18n} = useTranslation();
+  const dispatch = useDispatch();
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [error, setError] = useState(null);
 
   const onSubmitHandler = () => {
-    if (!selectedPatient && !selectedMentor) {
-      setError('Please Select your type.');
-      return;
-    }
-    navigation.navigate('MainRoute');
+    const selectedType = selectedPatient ? PATIENT : MENTOR;
+    dispatch(loginClient(selectedType));
+    navigation.navigate('Login');
   };
 
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.typeText}>Select your type:</Text>
+      <TouchableOpacity
+        onPress={() =>
+          i18n
+            .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+            .then(() => {
+              I18nManager.forceRTL(i18n.language === 'he');
+            })
+            .catch(err => {
+              console.log('something went wrong while applying RTL');
+            })
+        }>
+        <View style={{borderRadius: 8, padding: 8, backgroundColor: 'blue'}}>
+          <Text
+            style={{
+              color: 'white',
+              // margin: 9,
+
+              fontSize: 18,
+            }}>
+            {i18n.language === 'en' ? 'English' : 'Hebrew'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+      <Text style={styles.typeText}>{t('select_type')}</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.patient}>
-          <Text style={styles.chooseText}>I am a Patient</Text>
           <CheckBox
             disabled={false}
             value={selectedPatient}
@@ -34,9 +61,9 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
+          <Text style={styles.chooseText}>{t('I_am_patient')}</Text>
         </View>
         <View style={styles.mentor}>
-          <Text style={styles.chooseText}>I am a Therapist/Mentor</Text>
           <CheckBox
             disabled={false}
             value={selectedMentor}
@@ -48,10 +75,15 @@ const AskClient = ({navigation}) => {
             style={styles.checkBox}
             boxType="square"
           />
+          <Text style={styles.chooseText}>I am a Therapist/Mentor</Text>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
-      <Button onPress={onSubmitHandler} title="Submit" />
+      <Button
+        disabled={!selectedPatient && !selectedMentor}
+        onPress={onSubmitHandler}
+        title="Submit"
+      />
     </View>
   );
 };
@@ -77,7 +109,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     color: Colors.dune,
-    marginRight: 10,
   },
   typeText: {
     fontWeight: '700',
@@ -85,7 +116,9 @@ const styles = StyleSheet.create({
     color: Colors.dune,
     marginBottom: 64,
   },
-  checkBox: {},
+  checkBox: {
+    marginRight: 10,
+  },
   mentor: {
     flexDirection: 'row',
     alignItems: 'center',

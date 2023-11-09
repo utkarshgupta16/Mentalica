@@ -1,0 +1,7 @@
+{
+  "translation": {
+    "select_type": "Select your type",
+    "I_am_patient": "I am a Patient",
+    "I_am_mentor": "I am a Therapist/Mentor"
+  }
+}

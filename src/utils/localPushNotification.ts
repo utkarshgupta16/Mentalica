@@ -3,7 +3,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import {iosPlatform} from './config';
 
 class LocalNotificationService {
-  configure = (onOpenNotifications: any) => {
+  configure = (onOpenNotification?: any) => {
     PushNotification.configure({
       onRegister(token) {
         console.log('[LocalNotificationService] onRegister:', token);
@@ -17,9 +17,7 @@ class LocalNotificationService {
 
         notification.userInteraction = true;
         // on click notification in android
-        onOpenNotifications(
-          iosPlatform ? notification.data : notification.data,
-        );
+        onOpenNotification(iosPlatform ? notification.data : notification.data);
         if (iosPlatform) {
           // (required) Called when a remote is received or opened, or local notification
           notification.finish(PushNotificationIOS.FetchResult.NoData);
