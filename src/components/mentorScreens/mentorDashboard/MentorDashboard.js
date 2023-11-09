@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   FlatList,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  Platform,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -42,6 +42,7 @@ import {
   getScheduledAppointmentsSlice,
 } from '../../../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
+import {HELLO, MENTOR} from '../../../utils/Strings';
 
 let {width} = Dimensions.get('window');
 
@@ -142,12 +143,13 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const dispatch = useDispatch();
-  const {email} = useSelector(state => state.auth);
+  const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [mentorName, setMentorName] = useState('');
 
   const [appointmentList, setAppointmentList] = useState({});
   const setDateTime = time => {
@@ -156,6 +158,13 @@ const MentorDashboard = ({navigation}) => {
     now.setHours(hours, minutes, 0, 0);
     return now;
   };
+
+  useEffect(() => {
+    (async () => {
+      const res = await dispatch(getProfileSlice({email, type}));
+      setMentorName(res?.payload?.Items[0]?.firstName);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -213,7 +222,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, []);
+  }, [dispatch, email]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -322,6 +331,9 @@ const MentorDashboard = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>{t("Hello")} Raquel</Text>
+      <Text style={styles.helloText}>
+        {HELLO} {mentorName && mentorName},
+      </Text>
       <Agenda
         // selected="2022-12-01"
         scrollEnabled
@@ -335,13 +347,13 @@ const MentorDashboard = ({navigation}) => {
           </View>
         )}
         renderItem={item => {
-          console.log('item-----------------', item);
+          let name = type == MENTOR ? item?.patientName : item?.mentorName;
           return (
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
-                  `You'll be joined to this video call`,
-                  `Are you sure you want to join?`,
+                  "You'll be joined to this video call",
+                  'Are you sure you want to join?',
                   [
                     {
                       onPress: () => videoCallAction(item),
@@ -368,7 +380,7 @@ const MentorDashboard = ({navigation}) => {
                 {/* </View> */}
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text>{item.roomId}</Text>
+                  <Text>{name}</Text>
                   {/* Render other appointment data */}
                 </View>
               </View>

@@ -18,19 +18,30 @@ import {
 } from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
 import AppoinmentsList from './AppointmentList';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getProfileSlice} from '../../../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();
-  const {email} = useSelector(state => state.auth);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
+  const {email, type} = useSelector(state => state.auth);
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [mentorName, setMentorName] = useState('');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      const res = await dispatch(getProfileSlice({email, type: type}));
+  console.log('res from patient =============================', res,email);
+
+      setMentorName(res?.payload?.Items[0]?.firstName);
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>
-        {t('Hello')} {email}
-      </Text>
+      <Text style={styles.helloText}>{t('Hello')} {mentorName}</Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <View style={styles.tabs}>
@@ -140,9 +151,8 @@ const renderItem = ({item}) => {
       style={{
         flexDirection: 'row',
         marginVertical: 9,
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: 'gray',
-        borderRadius: 6,
       }}>
       <Image
         source={{uri: item.image}}
@@ -150,8 +160,8 @@ const renderItem = ({item}) => {
           width: '30%',
           height: 100,
           resizeMode: 'cover',
-          borderTopLeftRadius: 5,
-          borderBottomLeftRadius: 5,
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
         }}
       />
 
@@ -161,6 +171,8 @@ const renderItem = ({item}) => {
           paddingHorizontal: 10,
           justifyContent: 'center',
           backgroundColor: '#F5F7F8',
+          borderTopRightRadius: 10,
+          borderBottomRightRadius: 10,
         }}>
         <Text style={{fontSize: 16, fontWeight: '700'}}>{item.title}</Text>
         <Text style={{marginTop: 10}}>{item.author}</Text>
@@ -176,7 +188,7 @@ const articlesData = [
     title: 'The healing power of nature',
     author: 'Sara Fawler',
     image:
-      'https://cdn.pixabay.com/photo/2020/01/08/08/43/baloon-4749597_1280.png',
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
   },
   {
     id: 2,
@@ -197,7 +209,7 @@ const articlesData = [
     title: 'The healing power of nature',
     author: 'Sara Fawler',
     image:
-      'https://cdn.pixabay.com/photo/2020/01/08/08/43/baloon-4749597_1280.png',
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
   },
   {
     id: 5,

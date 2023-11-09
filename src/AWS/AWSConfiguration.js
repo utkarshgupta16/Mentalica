@@ -24,7 +24,6 @@ const configureAws = () => {
 
 async function confirmSignUp() {
   try {
-    // await Auth.confirmSignUp('gauravatlive@gmail.com', '084241');
     await Auth.confirmSignUp('jambhulkar.roshan@thinksys.com', '175596');
   } catch (error) {
     console.log('error confirming sign up', error);
@@ -64,7 +63,31 @@ async function signOut() {
   }
 }
 
-//Amplify.Auth.userAttribute
 
-export {configureAws, confirmSignUp, signIn, signUp, signOut};
+async function getCurrentUserInfo() {
+  try {
+    const profile = await Auth.currentUserInfo();
+    return profile;
+  } catch (error) {
+    console.log('error signing out: ', error);
+  }
+}
+//output --------> getCurrentUserInfo
+// profile {"attributes": {"custom:city": "California",
+// "custom:expertise": "danger",
+// "custom:firstName": "roshan",
+//  "custom:lastName": "Jambhuilkar", "custom:phoneNumber": "1234567890",
+//  "custom:temporaryCity": "Singapore", "custom:type": "Mentor",
+//   "email": "Jambhulkar.roshan@thinksys.com", "email_verified": true,
+//    "sub": "21a5e85f-b32a-4a86-a474-ef5800ef12e2"}, "id": undefined,
+//    "username": "21a5e85f-b32a-4a86-a474-ef5800ef12e2"}
+
+export {
+  configureAws,
+  confirmSignUp,
+  signIn,
+  signUp,
+  signOut,
+  getCurrentUserInfo,
+};
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Pressable,
   Platform,
   ActivityIndicator,
+  Image,
+  SafeAreaView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -14,12 +16,15 @@ import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import CustomHeader from '../customs/Header';
 import {useDispatch, useSelector} from 'react-redux';
-import {login} from '../redux/AuthSlice';
+import {login, getType} from '../redux/AuthSlice';
 import {MENTOR} from '../utils/Strings';
 import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
-import {Amplify, Auth} from 'aws-amplify';
+import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
+import Loader from '../customs/Loader';
+import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import Logo from '../icons/logo-black.svg';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -27,15 +32,18 @@ const LoginScreen = ({navigation}) => {
   console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
   // guptagaurav9566+1@gmail.com
+
   // bhandari.tribhuwan@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState(
-    'bhandari.tribhuwan@thinksys.com',
-  );
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'bhandari.tribhuwan@thinksys.com',
+  // );
+  const [enteredEmail, setEnteredEmail] = useState('Gupta.utkarsh@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
+  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
 
   const dispatch = useDispatch();
 
@@ -44,9 +52,11 @@ const LoginScreen = ({navigation}) => {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
+      const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
       dispatch(login(enteredEmail));
+      dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {
       setError(err);
@@ -56,11 +66,12 @@ const LoginScreen = ({navigation}) => {
   };
 
   const signUpClickHandler = () => {
-    if (loginFrom === MENTOR) {
-      navigation.navigate(MENTOR_SIGN_UP);
-    } else {
-      navigation.navigate(PATIENT_SIGN_UP);
-    }
+    navigation.navigate(MENTOR_SIGN_UP);
+    // if (loginFrom === MENTOR) {
+    //   navigation.navigate(MENTOR_SIGN_UP);
+    // } else {
+    //   navigation.navigate(PATIENT_SIGN_UP);
+    // }
   };
 
   const handleEnteredEmail = email => {
@@ -85,13 +96,20 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <>
-      <CustomHeader
-        title={t("Login")}
-        navigation={navigation}
-        showBackArrow={true}
-      />
-
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: Colors.paleMintColor,
+        justifyContent: 'space-between',
+      }}>
+      {isLoading ? <Loader /> : null}
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <Image
+          source={require('../icons/logo-no-background.png')}
+          style={{width: 200, height: 300}}
+          resizeMode="contain"
+        />
+      </View>
       <Modal
         avoidKeyboard={false}
         onRequestClose={() => {
@@ -128,23 +146,7 @@ const LoginScreen = ({navigation}) => {
           <Button title="Submit" onPress={submitCodeHandler} />
         </View>
       </Modal>
-
       <View style={styles.container}>
-        {isLoading ? (
-          <View
-            style={{
-              backgroundColor: '#00000082',
-              justifyContent: 'center',
-              alignItems: 'center',
-              position: 'absolute',
-              left: 0,
-              bottom: 0,
-              top: 0,
-              right: 0,
-            }}>
-            <ActivityIndicator color={'white'} size="large" />
-          </View>
-        ) : null}
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={handleEnteredEmail}
@@ -179,6 +181,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         </View>
         <View style={styles.buttonContainerView}>
+          <Text style={styles.askSignup}>Don't have an account? Wanna </Text>
           <Pressable
             style={styles.signUpContainer}
             title={t("Sign Up")}
@@ -201,7 +204,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         ) : null}
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -219,9 +222,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     paddingHorizontal: 16,
-    backgroundColor: Colors.paleMintColor,
   },
   logo: {
     width: 120,
@@ -263,18 +265,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainerView: {
+    // justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
     justifyContent: 'center',
-
-    // alignItems: 'center',
+  },
+  askSignup: {
+    fontSize: 14,
   },
   signUpContainer: {
-    marginTop: 14,
+    // marginTop: 14,
   },
   signUpText: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.primaryDarkBlue,
     textDecorationLine: 'none',
+    color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',

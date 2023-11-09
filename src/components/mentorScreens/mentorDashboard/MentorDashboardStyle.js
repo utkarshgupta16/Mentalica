@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
+    backgroundColor: '#F5F7F8',
     marginHorizontal: 8,
   },
   helloCont: {
@@ -29,20 +30,20 @@ export const styles = StyleSheet.create({
   helloText: {
     fontSize: 21,
     fontWeight: 'bold',
-    marginBottom: hp(2),
     marginTop: hp(2),
-    color: Colors.black
+    marginBottom: hp(1),
+    color: Colors.black,
   },
   dateText: {
     marginBottom: hp(3),
     fontSize: 15,
     fontWeight: 'bold',
-    color: Colors.black
+    color: Colors.black,
   },
   tabText: {
     fontWeight: 'bold',
     fontSize: 16,
-    color: Colors.black
+    color: Colors.black,
   },
   appointmentCont: {
     flexDirection: 'row',
@@ -68,6 +69,22 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  startTime: {
+    fontWeight: '600',
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  slot: {
+    borderWidth: 1,
+    width: 100,
+    height: 40,
+  },
+  modalView: {
+    height: hp(30),
+    width: '100%',
+    backgroundColor: '#E4D0D0',
+    borderRadius: 10,
   },
   itemText: {
     color: '#888',

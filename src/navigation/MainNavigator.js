@@ -8,6 +8,8 @@ import {useSelector} from 'react-redux';
 import PatientSignUp from './signUp/PatientSignUp';
 import MentorSignUp from './signUp/MentorSignUp';
 import AuthNavigator from './AuthNavigator';
+import {Text} from 'react-native';
+import SplashScreen from '../screens/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,30 +18,19 @@ const MainNavigator = () => {
   console.log('isLoggedIn', isLoggedIn);
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {/* {isLoggedIn ? null : ( */}
-        {/* <Stack.Screen
-            name="AskClient"
-            component={AskClient}
-            options={{headerShown: false}}
-          /> */}
-        {/* )} */}
+      <Stack.Navigator  initialRouteName="SplashScreen">
+      <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="MainRoute"
           component={isLoggedIn ? HomeNavigator : AuthNavigator}
           options={{headerShown: false}}
         />
-        {/* <Stack.Screen
-          name="PatientSignUp"
-          component={PatientSignUp}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="MentorSignUp"
-          component={MentorSignUp}
-          options={{headerShown: false}}
-        /> */}
       </Stack.Navigator>
+     
     </NavigationContainer>
   );
 };
