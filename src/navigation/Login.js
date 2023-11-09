@@ -6,17 +6,14 @@ import {
   StyleSheet,
   Pressable,
   Platform,
-  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
-import CustomHeader from '../customs/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../redux/AuthSlice';
-import {MENTOR} from '../utils/Strings';
-import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
+import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
 import Loader from '../customs/Loader';
@@ -56,11 +53,6 @@ const LoginScreen = ({navigation}) => {
 
   const signUpClickHandler = () => {
     navigation.navigate(MENTOR_SIGN_UP);
-    // if (loginFrom === MENTOR) {
-    //   navigation.navigate(MENTOR_SIGN_UP);
-    // } else {
-    //   navigation.navigate(PATIENT_SIGN_UP);
-    // }
   };
 
   const handleEnteredEmail = email => {
