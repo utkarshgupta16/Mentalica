@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   Image,
+  Alert,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -14,11 +15,8 @@ import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
 import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
-// import ArrowRight from '../../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {getCurrentUserInfo, signOut} from '../../AWS/AWSConfiguration';
-import {getProfileSlice} from '../../redux/HomeSlice';
 import {screenWidth} from '../../utils/Responsive';
+import {signOut} from '../../AWS/AWSConfiguration';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -47,8 +45,19 @@ const Profile = () => {
   ];
 
   const logoutPressHandler = () => {
-    signOut();
-    dispatch(logout());
+    Alert.alert('Log Out', 'Are you sure want to log out?', [
+      {
+        text: 'No, Cancel',
+        onPress: () => null,
+      },
+      {
+        text: 'Yes, Log Out',
+        onPress: async () => {
+          signOut();
+          dispatch(logout());
+        },
+      },
+    ]);
   };
 
   if (loading) {
