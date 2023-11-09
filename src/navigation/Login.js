@@ -6,17 +6,16 @@ import {
   StyleSheet,
   Pressable,
   Platform,
-  ActivityIndicator,
+  Image,
+  SafeAreaView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
-import CustomHeader from '../customs/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
-import {MENTOR} from '../utils/Strings';
-import {MENTOR_SIGN_UP, PATIENT_SIGN_UP} from '../utils/route';
+import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
 import Loader from '../customs/Loader';
@@ -33,7 +32,7 @@ const LoginScreen = ({navigation}) => {
   //   'bhandari.tribhuwan@thinksys.com',
   // );
   const [enteredEmail, setEnteredEmail] = useState(
-    'guptagaurav9566+1@gmail.com',
+    'Gupta.utkarsh@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -64,11 +63,6 @@ const LoginScreen = ({navigation}) => {
 
   const signUpClickHandler = () => {
     navigation.navigate(MENTOR_SIGN_UP);
-    // if (loginFrom === MENTOR) {
-    //   navigation.navigate(MENTOR_SIGN_UP);
-    // } else {
-    //   navigation.navigate(PATIENT_SIGN_UP);
-    // }
   };
 
   const handleEnteredEmail = email => {
@@ -93,13 +87,20 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <>
-      {/* <CustomHeader
-        title="Login"
-        navigation={navigation}
-        showBackArrow={true}
-      /> */}
-
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: Colors.paleMintColor,
+        justifyContent: 'space-between',
+      }}>
+      {isLoading ? <Loader /> : null}
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <Image
+          source={require('../icons/logo-no-background.png')}
+          style={{width: 200, height: 300}}
+          resizeMode="contain"
+        />
+      </View>
       <Modal
         avoidKeyboard={false}
         onRequestClose={() => {
@@ -136,9 +137,7 @@ const LoginScreen = ({navigation}) => {
           <Button title="Submit" onPress={submitCodeHandler} />
         </View>
       </Modal>
-
       <View style={styles.container}>
-        {isLoading ? <Loader /> : null}
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={handleEnteredEmail}
@@ -194,7 +193,7 @@ const LoginScreen = ({navigation}) => {
           </View>
         ) : null}
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -212,9 +211,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     paddingHorizontal: 16,
-    backgroundColor: Colors.paleMintColor,
   },
   logo: {
     width: 120,

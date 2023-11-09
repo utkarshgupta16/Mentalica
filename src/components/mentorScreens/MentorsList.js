@@ -35,6 +35,7 @@ const MentorsList = () => {
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
+  console.log("allMentors",allMentors)
   useEffect(() => {
     (async () => {
       try {
@@ -57,6 +58,7 @@ const MentorsList = () => {
         {data && data.length ? (
           <FlatList
             data={data}
+            style={{flex:0.8}}
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {

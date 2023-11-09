@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   Image,
+  Alert,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -27,10 +28,10 @@ const Profile = () => {
     email_id = '',
     firstName = '',
     lastName = '',
+    expertise = '',
   } = (profileData.Items && profileData?.Items[0]) || {};
-
-  const DUMMY_ISSUES = feel
-    ? feel?.split(',')
+  const DUMMY_ISSUES = expertise
+    ? expertise?.split(',')
     : ['Depression', 'Anxiety', 'Student life', 'Loneliness'];
   const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
   const paymentDetailsItemsPatient = [
@@ -45,8 +46,19 @@ const Profile = () => {
   ];
 
   const logoutPressHandler = () => {
-    signOut();
-    dispatch(logout());
+    Alert.alert('Log Out', 'Are you sure want to log out?', [
+      {
+        text: 'No, Cancel',
+        onPress: () => null,
+      },
+      {
+        text: 'Yes, Log Out',
+        onPress: async () => {
+          signOut();
+          dispatch(logout());
+        },
+      },
+    ]);
   };
 
   if (loading) {
@@ -129,7 +141,7 @@ const styles = StyleSheet.create({
   },
   topPartContainer: {
     backgroundColor: Colors.white,
-    paddingTop: 6,
+    paddingTop: 15,
   },
   imageContainer: {
     width: 56,

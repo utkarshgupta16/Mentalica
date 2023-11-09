@@ -15,7 +15,7 @@ const initialState = {
 export const AppContext = React.createContext(initialState);
 
 import MainNavigator from './src/navigation/MainNavigator';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './src/utils/i18n';
 

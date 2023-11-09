@@ -31,7 +31,8 @@ const PatientDashboard = ({navigation}) => {
   useEffect(() => {
     (async () => {
       const res = await dispatch(getProfileSlice({email, type: type}));
-      console.log('res from patient =============================', res);
+  console.log('res from patient =============================', res,email);
+
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
   }, []);

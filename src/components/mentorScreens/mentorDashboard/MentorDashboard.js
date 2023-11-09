@@ -41,7 +41,7 @@ import {
   getProfileSlice,
   getScheduledAppointmentsSlice,
 } from '../../../redux/HomeSlice';
-import {HELLO} from '../../../utils/Strings';
+import {HELLO, MENTOR} from '../../../utils/Strings';
 
 let {width} = Dimensions.get('window');
 
@@ -159,8 +159,7 @@ const MentorDashboard = ({navigation}) => {
 
   useEffect(() => {
     (async () => {
-      const res = await dispatch(getProfileSlice({email, type: type}));
-      console.log('res from mentor =============================', res);
+      const res = await dispatch(getProfileSlice({email, type}));
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
   }, []);
@@ -345,7 +344,7 @@ const MentorDashboard = ({navigation}) => {
           </View>
         )}
         renderItem={item => {
-          console.log('item-----------------', item);
+          let name = type == MENTOR ? item?.patientName : item?.mentorName;
           return (
             <TouchableOpacity
               onPress={() => {
@@ -378,7 +377,7 @@ const MentorDashboard = ({navigation}) => {
                 {/* </View> */}
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text>{item.roomId}</Text>
+                  <Text>{name}</Text>
                   {/* Render other appointment data */}
                 </View>
               </View>

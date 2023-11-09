@@ -28,7 +28,7 @@ import {
 } from '../../redux/HomeSlice';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  console.log('loginFrom', email);
+  const {profileData: {Items = []} = {}} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
   const [bookSlots, setBookSlots] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -38,6 +38,12 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     patientEmailId: email,
     startTime: '',
     endTime: '',
+    mentorName: `${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`,
+    patientName:
+      Items &&
+      Items.length &&
+      Items[0] &&
+      `${Items[0]?.firstName} ${Items[0]?.lastName}`,
   });
 
   useEffect(() => {
@@ -55,7 +61,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       setBookSlots(data);
       setLoading(false);
     })();
-  }, []);
+  }, [dispatch, selectedMentorData?.email_id]);
 
   return (
     <>
