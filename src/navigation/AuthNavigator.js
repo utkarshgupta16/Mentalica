@@ -15,14 +15,9 @@ const Auth = createNativeStackNavigator();
 
 export default function AuthNavigator() {
   return (
-    <Auth.Navigator initialRouteName={ASK_CLIENT}>
+    <Auth.Navigator initialRouteName="AskClient">
       <Auth.Screen
-        name={ASK_CLIENT}
-        component={AskClient}
-        options={{header: () => false}}
-      />
-      <Auth.Screen
-        name={LOGIN}
+        name="Login"
         component={Login}
         options={{header: () => false}}
       />

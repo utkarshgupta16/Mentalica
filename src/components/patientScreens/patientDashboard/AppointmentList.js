@@ -28,6 +28,7 @@ import {
   ALL,
   APPOINMENTS,
   ARTICLES,
+  MENTOR,
   MENTORS_LIST,
   SAVED,
 } from '../../../utils/Strings';
@@ -39,7 +40,7 @@ const AppoinmentsList = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
   const [appointmentList, setAppointmentList] = useState({});
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
-  const {email} = useSelector(state => state.auth);
+  const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -190,6 +191,8 @@ const AppoinmentsList = ({navigation}) => {
           </View>
         )}
         renderItem={item => {
+          let name = type == MENTOR ? item?.patientName : item?.mentorName;
+          console.log('item+++++++++++++++', item);
           let {endTime} = (item.slots && item.slots[0]) || {};
           let currentTime = new Date().getTime();
           const [hours, minutes] = endTime.split(':');
@@ -238,7 +241,7 @@ const AppoinmentsList = ({navigation}) => {
 
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text>{item?.roomId}</Text>
+                  <Text style={{fontSize: 15, fontWeight: '500',color:"#33A3DC"}}>{name}</Text>
                 </View>
               </View>
             </TouchableOpacity>

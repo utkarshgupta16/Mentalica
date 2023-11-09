@@ -39,6 +39,7 @@ const initialState = {
   isLoggedIn: false,
   loginFrom: null,
   email: '',
+  type: '',
 };
 const Authslice = createSlice({
   name: 'auth',
@@ -47,6 +48,9 @@ const Authslice = createSlice({
     login: (state, action) => {
       state.isLoggedIn = true;
       state.email = action.payload;
+    },
+    getType: (state, action) => {
+      state.type = action.payload;
     },
     logout: state => {
       state.isLoggedIn = false;
@@ -57,5 +61,5 @@ const Authslice = createSlice({
   },
 });
 
-export const {login, logout, loginClient} = Authslice.actions;
+export const {login, logout, loginClient, getType} = Authslice.actions;
 export default Authslice.reducer;

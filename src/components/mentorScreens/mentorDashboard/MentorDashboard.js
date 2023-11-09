@@ -37,7 +37,11 @@ import Timetable from 'react-native-calendar-timetable';
 import EventCalendar from 'react-native-events-calendar';
 import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
 import {useDispatch, useSelector} from 'react-redux';
-import {getScheduledAppointmentsSlice} from '../../../redux/HomeSlice';
+import {
+  getProfileSlice,
+  getScheduledAppointmentsSlice,
+} from '../../../redux/HomeSlice';
+import {HELLO} from '../../../utils/Strings';
 
 let {width} = Dimensions.get('window');
 
@@ -137,12 +141,13 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
-  const {email} = useSelector(state => state.auth);
+  const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [mentorName, setMentorName] = useState('');
 
   const [appointmentList, setAppointmentList] = useState({});
   const setDateTime = time => {
@@ -151,6 +156,13 @@ const MentorDashboard = ({navigation}) => {
     now.setHours(hours, minutes, 0, 0);
     return now;
   };
+
+  useEffect(() => {
+    (async () => {
+      const res = await dispatch(getProfileSlice({email, type}));
+      setMentorName(res?.payload?.Items[0]?.firstName);
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -316,7 +328,9 @@ const MentorDashboard = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello Raquel,</Text>
+      <Text style={styles.helloText}>
+        {HELLO} {mentorName && mentorName},
+      </Text>
       <Agenda
         // selected="2022-12-01"
         scrollEnabled

@@ -28,7 +28,7 @@ import {
 } from '../../redux/HomeSlice';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  console.log('loginFrom', email);
+  const {profileData: {Items = []} = {}} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
   const [bookSlots, setBookSlots] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -38,6 +38,12 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     patientEmailId: email,
     startTime: '',
     endTime: '',
+    mentorName: `${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`,
+    patientName:
+      Items &&
+      Items.length &&
+      Items[0] &&
+      `${Items[0]?.firstName} ${Items[0]?.lastName}`,
   });
 
   useEffect(() => {
@@ -68,6 +74,8 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
           backdropColor={'#00000029'}
           backdropOpacity={1}
           isVisible={true}
+          animationInTiming={700}
+          animationOutTiming={600}
           style={{
             flex: 1,
             alignSelf: 'flex-end',
@@ -113,8 +121,11 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
           {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
             <FlatList
               data={selectedMentorData?.slots}
-              horizontal
-              style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
+              // horizontal
+              columnWrapperStyle={{flexWrap: 'wrap'}}
+              scrollEventThrottle={1900}
+              numColumns={3}
+              style={{marginTop: 15}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
                 let slot = `${item?.startTime}-${item?.endTime}`;

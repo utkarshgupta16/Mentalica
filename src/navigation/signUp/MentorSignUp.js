@@ -73,14 +73,15 @@ const MentorSignUp = ({navigation}) => {
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: 'utkarsh',
-    lastName: 'gupta',
+    firstName: 'Roshan Testing',
+    lastName: 'Mentor',
     city: 'Gwalior',
     temporaryCity: 'Noida',
     phoneNumber: '1234567890',
-    emailId: 'utkarsh@gmail.com',
+    emailId: 'jambhulkar.roshan@thinksys.com',
     password: 'Password@123',
     confirmPassword: 'Password@123',
+    age: '25',
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -89,7 +90,7 @@ const MentorSignUp = ({navigation}) => {
     language: [],
     // PATIENT:
     // type: PATIENT,
-    age: '',
+    
     gender: '',
     duty: '',
     feel: '',
@@ -125,7 +126,6 @@ const MentorSignUp = ({navigation}) => {
         language = [],
         // PATIENT:
         // type: PATIENT,
-        age = '',
         gender = '',
         duty = '',
         feel = '',
@@ -150,7 +150,6 @@ const MentorSignUp = ({navigation}) => {
       } else {
         finalSignupData = {
           ...finalSignupData,
-          age,
           gender,
           duty,
           feel,
@@ -185,7 +184,6 @@ const MentorSignUp = ({navigation}) => {
           'custom:type': typeValue,
         },
       });
-
       const attRes = await dispatch(
         singUpSlice({
           ...restData,
@@ -206,12 +204,13 @@ const MentorSignUp = ({navigation}) => {
     }
   };
 
-  const renderInput = ({field, placeholder, ...props}) => {
+  const renderInput = ({field, placeholder, keyBoardType, ...props}) => {
     return (
       <TextInput
         style={styles.input}
         placeholder={placeholder}
         value={state[field]}
+        keyboardType={keyBoardType || 'default'}
         {...props}
         onChangeText={text => handleInput({value: text, field})}
       />
@@ -352,7 +351,11 @@ const MentorSignUp = ({navigation}) => {
 
   const patientExtras = (
     <>
-      {renderInput({placeholder: 'Age', field: 'age'})}
+      {renderInput({
+        placeholder: 'Age',
+        field: 'age',
+        keyBoardType: 'number-pad',
+      })}
       <DropDownPicker
         listMode="SCROLLVIEW"
         autoScroll={true}
@@ -428,7 +431,11 @@ const MentorSignUp = ({navigation}) => {
           {renderInput({placeholder: 'Last Name', field: 'lastName'})}
           {renderInput({placeholder: 'City', field: 'city'})}
           {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
-          {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
+          {renderInput({
+            placeholder: 'Phone Number',
+            field: 'phoneNumber',
+            keyBoardType: 'number-pad',
+          })}
           {renderInput({placeholder: 'Email', field: 'emailId'})}
           {renderInput({
             placeholder: 'Password',

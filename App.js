@@ -49,6 +49,7 @@ export default App;
 
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
-    // flex: 1,
+    flex: 0,
+    backgroundColor: '#F5F7F8',
   },
 });

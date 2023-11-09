@@ -2,6 +2,28 @@
   "translation": {
     "select_type": "Select your type",
     "I_am_patient": "I am a Patient",
-    "I_am_mentor": "I am a Therapist/Mentor"
+    "I_am_mentor": "I am a Therapist/Mentor",
+    "hello": "Hello",
+    "I_am_specialist_in": "I am specialist in",
+    "account_details": "Account Details",
+    "edit_profile": "Edit Profile",
+    "contact_details": "Contact Details",
+    "password": "Password",
+    "payment": "Payment",
+    "edit_fiscal_information": "Edit Fiscal Information",
+    "banking_information": "Banking Information",
+    "log_out": "Log Out",
+    "home": "Home",
+    "invoicing": "Invoicing",
+    "messages": "Messages",
+    "profile": "Profile",
+    "current_balance": "Current Balance",
+    "batch_invoicing": "Batch Invoicing",
+    "all": "All",
+    "appointments": "Appointments",
+    "articles": "Articles",
+    "saved": "Saved",
+    "mentors_list": "Mentors List",
+    "no_schedule": "No Schedule"
   }
 }
