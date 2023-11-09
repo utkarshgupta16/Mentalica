@@ -116,6 +116,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             <FlatList
               data={selectedMentorData?.slots}
               horizontal
+              showsHorizontalScrollIndicator={false}
               style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {

@@ -14,11 +14,8 @@ import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
 import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
-// import ArrowRight from '../../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {getCurrentUserInfo, signOut} from '../../AWS/AWSConfiguration';
-import {getProfileSlice} from '../../redux/HomeSlice';
 import {screenWidth} from '../../utils/Responsive';
+import {signOut} from '../../AWS/AWSConfiguration';
 
 const Profile = () => {
   const dispatch = useDispatch();
