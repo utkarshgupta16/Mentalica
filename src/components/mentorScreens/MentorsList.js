@@ -60,6 +60,7 @@ const MentorsList = () => {
             data={data}
             style={{flex:0.8}}
             horizontal
+            showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
               return (
                 <View
@@ -199,6 +200,7 @@ const MentorsList = () => {
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
       />
       {showDetails ? (
         <MentorDetails
@@ -210,7 +212,6 @@ const MentorsList = () => {
       {isLoading ? (
         <View
           style={{
-            // backgroundColor: '#00000082',
             justifyContent: 'center',
             alignItems: 'center',
             position: 'absolute',
