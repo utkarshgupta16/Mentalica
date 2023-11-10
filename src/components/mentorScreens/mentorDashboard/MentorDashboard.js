@@ -8,6 +8,7 @@ import {
   Alert,
   Dimensions,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -142,6 +143,7 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
+  const [refreshing, onRefresh] = useState(false);
  const isFocused= useIsFocused()
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
@@ -166,31 +168,34 @@ const MentorDashboard = ({navigation}) => {
     })();
   }, []);
 
+  const updateData=async()=>{
+    let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
+    const appointments = res.payload;
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments.forEach(appointment => {
+      const date =
+        newDate.getFullYear() +
+        '-' +
+        `${newDate.getMonth() + 1}` +
+        '-' +
+        `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
+
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
+      });
+    });
+    setAppointmentList(formattedAppointments);
+  }
   useEffect(() => {
     (async () => {
-      let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
-      const appointments = res.payload;
-      const newDate = new Date();
-      const formattedAppointments = {};
-      appointments.forEach(appointment => {
-        const date =
-          newDate.getFullYear() +
-          '-' +
-          `${newDate.getMonth() + 1}` +
-          '-' +
-          `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
-
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
-          // Other appointment data
-        });
-      });
-      setAppointmentList(formattedAppointments);
+      updateData()
     })();
 
     // axios
@@ -222,7 +227,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, [dispatch, email,isFocused]);
+  }, [dispatch, email]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -335,6 +340,16 @@ const MentorDashboard = ({navigation}) => {
       </Text>
       <Agenda
         // selected="2022-12-01"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              onRefresh(true);
+              await updateData();
+              onRefresh(false);
+            }}
+          />
+        }
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}

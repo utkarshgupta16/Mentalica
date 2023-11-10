@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
@@ -39,6 +40,7 @@ const AppoinmentsList = ({navigation}) => {
   const {props, setProps} = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
   const [appointmentList, setAppointmentList] = useState({});
+  const [refreshing, onRefresh] = useState(false);
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
@@ -51,33 +53,37 @@ const AppoinmentsList = ({navigation}) => {
     return now;
   };
 
+  const updateData = async () => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({email, fieldName: 'patientEmailId'}),
+    );
+    const appointments = res.payload;
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments.forEach(appointment => {
+      const date =
+        newDate.getFullYear() +
+        '-' +
+        `${newDate.getMonth() + 1}` +
+        '-' +
+        `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
+
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
+      });
+    });
+    setAppointmentList(formattedAppointments);
+  };
+
   useEffect(() => {
     (async () => {
-      let res = await dispatch(
-        getScheduledAppointmentsSlice({email, fieldName: 'patientEmailId'}),
-      );
-      const appointments = res.payload;
-      const newDate = new Date();
-      const formattedAppointments = {};
-      appointments.forEach(appointment => {
-        const date =
-          newDate.getFullYear() +
-          '-' +
-          `${newDate.getMonth() + 1}` +
-          '-' +
-          `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
-
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
-          // Other appointment data
-        });
-      });
-      setAppointmentList(formattedAppointments);
+      updateData();
     })();
   }, []);
 
@@ -174,6 +180,16 @@ const AppoinmentsList = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Agenda
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              onRefresh(true);
+              await updateData();
+              onRefresh(false);
+            }}
+          />
+        }
         // selected="2022-12-01"
         scrollEnabled
         // style={{width: 100, height: 400}}
@@ -241,7 +257,11 @@ const AppoinmentsList = ({navigation}) => {
                 <View style={styles.appointmentDetails}>
                   {/* <Text>{'Scheduled Appointment'}</Text> */}
                   <Text
-                    style={{fontSize: 15, fontWeight: "bold", color: '#33A3DC'}}>
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      color: '#33A3DC',
+                    }}>
                     {name}
                   </Text>
                 </View>
