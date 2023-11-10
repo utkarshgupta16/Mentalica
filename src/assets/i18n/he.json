@@ -73,6 +73,13 @@
     "Add": "הוסף",
     "Delete": "מחק",
     "Start Time:": "זמן התחלה:",
-    "End Time:": "זמן סיום:"
+    "End Time:": "זמן סיום:",
+    "Hebrew": "עברית",
+    "You'll be joined to this video call": "תתקשר לשיחת הווידאו",
+    "Are you sure you want to join?": "האם אתה בטוח שברצונך להצטרף?",
+    "Meeting Link Expired": "קישור הפג תוקף",
+    "Yes": "כן",
+    "No": "לא",
+    "Okay": "בסדר"
   }
 }

@@ -44,7 +44,7 @@ import {
 } from '../../../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import {HELLO, MENTOR} from '../../../utils/Strings';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
 let {width} = Dimensions.get('window');
 
@@ -143,10 +143,11 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 }
 
 const MentorDashboard = ({navigation}) => {
+  const isFocus = useIsFocused();
   const {t} = useTranslation();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
- const isFocused= useIsFocused()
+  const isFocused = useIsFocused();
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
@@ -170,8 +171,10 @@ const MentorDashboard = ({navigation}) => {
     })();
   }, []);
 
-  const updateData=async()=>{
-    let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
+  const updateData = async () => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({email, fieldName: 'mentorEmailId'}),
+    );
     const appointments = res.payload;
     const newDate = new Date();
     const formattedAppointments = {};
@@ -194,10 +197,10 @@ const MentorDashboard = ({navigation}) => {
       });
     });
     setAppointmentList(formattedAppointments);
-  }
+  };
   useEffect(() => {
     (async () => {
-      updateData()
+      updateData();
     })();
 
     // axios
@@ -229,7 +232,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, [dispatch, email]);
+  }, [dispatch, email, isFocus]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -368,16 +371,16 @@ const MentorDashboard = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
-                  "You'll be joined to this video call",
-                  'Are you sure you want to join?',
+                  t(`You'll be joined to this video call`),
+                  t(`Are you sure you want to join?`),
                   [
                     {
                       onPress: () => videoCallAction(item),
-                      text: 'Yes',
+                      text: t('Yes'),
                     },
                     {
                       onPress: () => null,
-                      text: 'No',
+                      text: t('No'),
                     },
                   ],
                 );

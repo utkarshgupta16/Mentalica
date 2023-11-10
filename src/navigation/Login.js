@@ -8,6 +8,7 @@ import {
   Platform,
   Image,
   SafeAreaView,
+  I18nManager,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -21,6 +22,10 @@ import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import DropDownPicker from 'react-native-dropdown-picker';
+import i18n from '../utils/i18n';
+import RNRestart from 'react-native-restart';
+import {widthPercentageToDP} from '../utils/Responsive';
 // import Logo from '../icons/logo-black.svg';
 
 const LoginScreen = ({navigation}) => {
@@ -28,15 +33,22 @@ const LoginScreen = ({navigation}) => {
   const {loginFrom} = useSelector(state => state.auth);
   console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setLanguage] = useState(
+    i18n.language === 'he' ? 'Hebrew' : 'English',
+  );
+  const langOptions = [
+    {label: t('English'), value: t('English')},
+    {label: t('Hebrew'), value: t('Hebrew')},
+  ];
+
   // guptagaurav9566+1@gmail.com
 
   // bhandari.tribhuwan@thinksys.com
   // const [enteredEmail, setEnteredEmail] = useState(
   //   'bhandari.tribhuwan@thinksys.com',
   // );
-  const [enteredEmail, setEnteredEmail] = useState(
-    'Gupta.utkarsh@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -137,22 +149,24 @@ const LoginScreen = ({navigation}) => {
               style={styles.modalTextInput}
             />
           </View>
-          <Button title={t("Submit")} onPress={submitCodeHandler} />
+          <Button title={t('Submit')} onPress={submitCodeHandler} />
         </View>
       </Modal>
       <View style={styles.container}>
         <View style={styles.inputContainer}>
           <TextInput
+            textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredEmail}
             style={styles.input}
-            placeholder={t("E-mail")}
+            placeholder={t('E-mail')}
             keyboardType="email-address"
             value={enteredEmail}
           />
           <TextInput
+            textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredPassword}
             style={styles.input}
-            placeholder={t("Password")}
+            placeholder={t('Password')}
             secureTextEntry={true}
             value={enteredPassword}
           />
@@ -169,25 +183,59 @@ const LoginScreen = ({navigation}) => {
             </View>
             <Button
               disabled={!enteredEmail.trim() || !enteredPassword.trim()}
-              title={t("Login")}
+              title={t('Login')}
               onPress={loginHandler}
             />
           </View>
         </View>
         <View style={styles.buttonContainerView}>
-          <Text style={styles.askSignup}>Don't have an account? Wanna </Text>
+          <Text style={styles.askSignup}>
+            {t("Don't have an account? Wanna")}
+          </Text>
           <Pressable
             style={styles.signUpContainer}
-            title={t("Sign Up")}
+            title={t('Sign Up')}
             onPress={signUpClickHandler}>
             <Text style={styles.signUpText}> {t('Sign Up')}</Text>
           </Pressable>
         </View>
+        <DropDownPicker
+          dropDownDirection="TOP"
+          listMode="SCROLLVIEW"
+          autoScroll={true}
+          zIndex={3000}
+          open={isOpen}
+          setOpen={setIsOpen}
+          value={t(selectedLanguage)}
+          setValue={props => {
+            i18n
+              .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+              .then(() => {
+                I18nManager.allowRTL(i18n.language === 'he');
+                I18nManager.forceRTL(i18n.language === 'he');
+                RNRestart.Restart();
+                setLanguage(props());
+              })
+              .catch(err => {
+                console.log('something went wrong while applying RTL', err);
+              });
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: Colors.white,
+            borderWidth: 0,
+            alignSelf: 'center',
+            width: widthPercentageToDP(30),
+          }}
+          items={langOptions}
+          placeholder={t('Select Language')}
+          containerStyle={{borderBottomColor: 'gray'}}
+          style={styles.dropdown}
+        />
         {error ? (
           <View style={styles.buttonContainerView}>
             <Pressable
               style={styles.signUpContainer}
-              title={t("Enter Code")}
+              title={t('Enter Code')}
               onPress={() => {
                 setShowEnterCodeModal(true);
               }}>
@@ -280,6 +328,12 @@ const styles = StyleSheet.create({
   warningMessage: {
     color: 'tomato',
     fontSize: 12,
+  },
+  dropdown: {
+    backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
+    alignSelf: 'center',
+    width: widthPercentageToDP(30),
   },
 });
 

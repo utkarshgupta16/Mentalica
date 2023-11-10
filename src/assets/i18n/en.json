@@ -73,6 +73,13 @@
     "Add": "Add",
     "Delete": "Delete",
     "Start Time:": "Start Time:",
-    "End Time:": "End Time:"
+    "End Time:": "End Time:",
+    "Hebrew": "Hebrew",
+    "You'll be joined to this video call": "You'll be joined to this video call",
+    "Are you sure you want to join?": "Are you sure you want to join?",
+    "Meeting Link Expired": "Meeting Link Expired",
+    "Yes": "Yes",
+    "No": "No",
+    "Okay": "Okay"
   }
 }

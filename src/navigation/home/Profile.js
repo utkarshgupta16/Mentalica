@@ -17,10 +17,12 @@ import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
 import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
-import {screenWidth} from '../../utils/Responsive';
+import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
 import {useTranslation} from 'react-i18next';
 import i18n from '../../utils/i18n';
+import RNRestart from 'react-native-restart';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Profile = () => {
   const {t} = useTranslation();
@@ -28,6 +30,14 @@ const Profile = () => {
   const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setLanguage] = useState(
+    i18n.language === 'he' ? 'Hebrew' : 'English',
+  );
+  const langOptions = [
+    {label: t('English'), value: t('English')},
+    {label: t('Hebrew'), value: t('Hebrew')},
+  ];
   const {
     feel = '',
     email_id = '',
@@ -125,20 +135,38 @@ const Profile = () => {
           ))}
         </View>
 
-        {/* <TouchableOpacity
-          onPress={() =>
+        <DropDownPicker
+          dropDownDirection="TOP"
+          listMode="SCROLLVIEW"
+          autoScroll={true}
+          zIndex={3000}
+          open={isOpen}
+          setOpen={setIsOpen}
+          value={t(selectedLanguage)}
+          setValue={props => {
             i18n
               .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
               .then(() => {
+                I18nManager.allowRTL(i18n.language === 'he');
                 I18nManager.forceRTL(i18n.language === 'he');
                 RNRestart.Restart();
+                setLanguage(props());
               })
               .catch(err => {
                 console.log('something went wrong while applying RTL', err);
-              })
-          }>
-          <Text>{i18n.language === 'he' ? 'Hebrew' : 'English'}</Text>
-        </TouchableOpacity> */}
+              });
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: Colors.white,
+            borderWidth: 0,
+            alignSelf: 'center',
+            width: widthPercentageToDP(36),
+          }}
+          items={langOptions}
+          placeholder={t('Select Language')}
+          containerStyle={{borderBottomColor: 'gray'}}
+          style={styles.dropdown}
+        />
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
           <Text style={styles.logoutTitle}>{t('Log out')}</Text>
@@ -229,5 +257,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     textDecorationLine: 'underline',
+  },
+  dropdown: {
+    backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
+    alignSelf: 'center',
+    width: widthPercentageToDP(36),
   },
 });

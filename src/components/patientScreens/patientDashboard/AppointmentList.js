@@ -36,7 +36,7 @@ import {
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 const AppoinmentsList = ({navigation}) => {
   const {t} = useTranslation();
   const {props, setProps} = useContext(AppContext);
@@ -205,7 +205,7 @@ const AppoinmentsList = ({navigation}) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Text style={{color: 'black'}}>{t("No schedule")}</Text>
+            <Text style={{color: 'black'}}>{t('No schedule')}</Text>
           </View>
         )}
         renderItem={item => {
@@ -223,24 +223,24 @@ const AppoinmentsList = ({navigation}) => {
               onPress={() => {
                 if (checkExpired) {
                   Alert.alert(
-                    `You'll be joined to this video call`,
-                    `Are you sure you want to join?`,
+                    t(`You'll be joined to this video call`),
+                    t(`Are you sure you want to join?`),
                     [
                       {
                         onPress: () => videoCallAction(item),
-                        text: 'Yes',
+                        text: t('Yes'),
                       },
                       {
                         onPress: () => null,
-                        text: 'No',
+                        text: t('No'),
                       },
                     ],
                   );
                 } else {
-                  Alert.alert(`Meeting Link Expired`, ``, [
+                  Alert.alert(t(`Meeting Link Expired`), ``, [
                     {
                       onPress: () => null,
-                      text: 'OK',
+                      text: t('Okay'),
                     },
                   ]);
                 }
