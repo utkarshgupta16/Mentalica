@@ -330,9 +330,8 @@ const MentorDashboard = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>{t("Hello")} Raquel</Text>
       <Text style={styles.helloText}>
-        {HELLO} {mentorName && mentorName},
+        {t(HELLO)} {mentorName && mentorName}
       </Text>
       <Agenda
         // selected="2022-12-01"
@@ -343,7 +342,7 @@ const MentorDashboard = ({navigation}) => {
         renderEmptyData={() => (
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'black'}}>{t("No schedule")}</Text>
+            <Text style={{color: 'black'}}>{t('No schedule')}</Text>
           </View>
         )}
         renderItem={item => {

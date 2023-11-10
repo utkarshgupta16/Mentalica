@@ -137,7 +137,7 @@ const LoginScreen = ({navigation}) => {
               style={styles.modalTextInput}
             />
           </View>
-          <Button title="Submit" onPress={submitCodeHandler} />
+          <Button title={t("Submit")} onPress={submitCodeHandler} />
         </View>
       </Modal>
       <View style={styles.container}>

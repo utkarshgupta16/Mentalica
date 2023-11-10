@@ -7,7 +7,9 @@ import {
   Pressable,
   ActivityIndicator,
   Image,
-  Alert
+  Alert,
+  TouchableOpacity,
+  I18nManager,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -18,6 +20,7 @@ import {logout} from '../../redux/AuthSlice';
 import {screenWidth} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
 import {useTranslation} from 'react-i18next';
+import i18n from '../../utils/i18n';
 
 const Profile = () => {
   const {t} = useTranslation();
@@ -121,6 +124,21 @@ const Profile = () => {
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
+
+        {/* <TouchableOpacity
+          onPress={() =>
+            i18n
+              .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+              .then(() => {
+                I18nManager.forceRTL(i18n.language === 'he');
+                RNRestart.Restart();
+              })
+              .catch(err => {
+                console.log('something went wrong while applying RTL', err);
+              })
+          }>
+          <Text>{i18n.language === 'he' ? 'Hebrew' : 'English'}</Text>
+        </TouchableOpacity> */}
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
           <Text style={styles.logoutTitle}>{t('Log out')}</Text>
