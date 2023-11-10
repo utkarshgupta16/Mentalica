@@ -65,7 +65,7 @@ const AppoinmentsList = ({navigation}) => {
           '-' +
           `${newDate.getMonth() + 1}` +
           '-' +
-          `0${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+          `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
           formattedAppointments[date] = [];
         }

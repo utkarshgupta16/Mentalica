@@ -42,6 +42,7 @@ import {
   getScheduledAppointmentsSlice,
 } from '../../../redux/HomeSlice';
 import {HELLO, MENTOR} from '../../../utils/Strings';
+import { useIsFocused } from '@react-navigation/native';
 
 let {width} = Dimensions.get('window');
 
@@ -141,6 +142,7 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
+ const isFocused= useIsFocused()
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
@@ -166,7 +168,7 @@ const MentorDashboard = ({navigation}) => {
 
   useEffect(() => {
     (async () => {
-      let res = await dispatch(getScheduledAppointmentsSlice({email}));
+      let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
       const appointments = res.payload;
       const newDate = new Date();
       const formattedAppointments = {};
@@ -176,7 +178,7 @@ const MentorDashboard = ({navigation}) => {
           '-' +
           `${newDate.getMonth() + 1}` +
           '-' +
-          `0${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+          `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
           formattedAppointments[date] = [];
         }
@@ -220,7 +222,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, [dispatch, email]);
+  }, [dispatch, email,isFocused]);
 
   const generateWeekData = () => {
     const weekData = [];
