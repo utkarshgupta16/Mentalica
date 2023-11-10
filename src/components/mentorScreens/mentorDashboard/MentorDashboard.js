@@ -8,6 +8,7 @@ import {
   Alert,
   Dimensions,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -43,6 +44,7 @@ import {
 } from '../../../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import {HELLO, MENTOR} from '../../../utils/Strings';
+import { useIsFocused } from '@react-navigation/native';
 
 let {width} = Dimensions.get('window');
 
@@ -143,6 +145,8 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const [refreshing, onRefresh] = useState(false);
+ const isFocused= useIsFocused()
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
@@ -166,31 +170,34 @@ const MentorDashboard = ({navigation}) => {
     })();
   }, []);
 
+  const updateData=async()=>{
+    let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
+    const appointments = res.payload;
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments.forEach(appointment => {
+      const date =
+        newDate.getFullYear() +
+        '-' +
+        `${newDate.getMonth() + 1}` +
+        '-' +
+        `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
+
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
+      });
+    });
+    setAppointmentList(formattedAppointments);
+  }
   useEffect(() => {
     (async () => {
-      let res = await dispatch(getScheduledAppointmentsSlice({email}));
-      const appointments = res.payload;
-      const newDate = new Date();
-      const formattedAppointments = {};
-      appointments.forEach(appointment => {
-        const date =
-          newDate.getFullYear() +
-          '-' +
-          `${newDate.getMonth() + 1}` +
-          '-' +
-          `0${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
-
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
-          // Other appointment data
-        });
-      });
-      setAppointmentList(formattedAppointments);
+      updateData()
     })();
 
     // axios
@@ -335,6 +342,16 @@ const MentorDashboard = ({navigation}) => {
       </Text>
       <Agenda
         // selected="2022-12-01"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              onRefresh(true);
+              await updateData();
+              onRefresh(false);
+            }}
+          />
+        }
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}
