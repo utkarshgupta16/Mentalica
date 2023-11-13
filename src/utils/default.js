@@ -135,3 +135,16 @@ export const articlesData = [
       'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
   },
 ];
+
+export const PAYMENT_DETAIL_ITEM_PATIENT = [
+  'Edit payment information',
+  'Payment methods',
+  'Payment history',
+];
+
+export const PAYMENT_DETAIL_ITEM_MENTOR=[
+  'Edit fiscal information',
+  'Banking information',
+]
+
+export const PROFILE_DETAILS=['Edit profile', 'Contact details', 'Password']

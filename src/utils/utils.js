@@ -1,45 +1,48 @@
 import {
-    checkMultiple,
-    request,
-    requestMultiple,
-    PERMISSIONS,
-    RESULTS,
-  } from 'react-native-permissions';
-  
+  checkMultiple,
+  request,
+  requestMultiple,
+  PERMISSIONS,
+  RESULTS,
+} from 'react-native-permissions';
+import {Platform} from 'react-native';
+import {
+  ERROR,
+  HARDWARE_SUPPORT,
+  ONE_GRANTED,
+  PERMISSIONS_ACCESS,
+  PERMISSIONS_GRANTED,
+} from './Strings';
+
+export const iosPlatform = Platform.OS === 'ios';
+export const androidPlatform = Platform.OS === 'android';
+
 export const _checkPermissions = callback => {
-    const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-    const androidPermissions = [
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ];
-    checkMultiple(
-      Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-    ).then(statuses => {
-      const [CAMERA, AUDIO] =
-        Platform.OS === 'ios' ? iosPermissions : androidPermissions;
+  const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
+  const androidPermissions = [
+    PERMISSIONS.ANDROID.CAMERA,
+    PERMISSIONS.ANDROID.RECORD_AUDIO,
+  ];
+  checkMultiple(iosPlatform ? iosPermissions : androidPermissions).then(
+    statuses => {
+      const [CAMERA, AUDIO] = iosPlatform ? iosPermissions : androidPermissions;
       if (
         statuses[CAMERA] === RESULTS.UNAVAILABLE ||
         statuses[AUDIO] === RESULTS.UNAVAILABLE
       ) {
-        Alert.alert(
-          'Error',
-          'Hardware to support video calls is not available',
-        );
+        Alert.alert(ERROR, HARDWARE_SUPPORT);
       } else if (
         statuses[CAMERA] === RESULTS.BLOCKED ||
         statuses[AUDIO] === RESULTS.BLOCKED
       ) {
-        Alert.alert(
-          'Error',
-          'Permission to access hardware was blocked, please grant manually',
-        );
+        Alert.alert(ERROR, PERMISSIONS_ACCESS);
       } else {
         if (
           statuses[CAMERA] === RESULTS.DENIED &&
           statuses[AUDIO] === RESULTS.DENIED
         ) {
           requestMultiple(
-            Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+            iosPlatform ? iosPermissions : androidPermissions,
           ).then(newStatuses => {
             if (
               newStatuses[CAMERA] === RESULTS.GRANTED &&
@@ -47,7 +50,7 @@ export const _checkPermissions = callback => {
             ) {
               callback && callback();
             } else {
-              Alert.alert('Error', 'One of the permissions was not granted');
+              Alert.alert(ERROR, ONE_GRANTED);
             }
           });
         } else if (
@@ -59,7 +62,7 @@ export const _checkPermissions = callback => {
               if (result === RESULTS.GRANTED) {
                 callback && callback();
               } else {
-                Alert.alert('Error', 'Permission not granted');
+                Alert.alert(ERROR, PERMISSIONS_GRANTED);
               }
             },
           );
@@ -70,5 +73,6 @@ export const _checkPermissions = callback => {
           callback && callback();
         }
       }
-    });
-  };
+    },
+  );
+};

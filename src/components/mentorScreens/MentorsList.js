@@ -54,13 +54,16 @@ const MentorsList = () => {
 
   const renderExperties = ({data, label}) => {
     return (
-      <View style={{flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row',flex:1}}>
         <Text style={styles.expertiesText}>{`${label} :`}</Text>
         {data && data.length ? (
           <FlatList
             data={data}
-            style={{flex: 0.8}}
-            horizontal
+            style={{flex: 1}}
+            // horizontal
+            numColumns={3}
+            columnWrapperStyle={{flexWrap: 'wrap'}}
+            scrollEventThrottle={1900}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
               return (

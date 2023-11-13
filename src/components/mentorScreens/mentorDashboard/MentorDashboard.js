@@ -10,6 +10,7 @@ import {
   Platform,
   RefreshControl,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -20,20 +21,8 @@ import {
 import {styles} from './MentorDashboardStyle';
 import axios from 'axios';
 import {AppContext, setProps, props} from '../../../../App';
-import {
-  checkMultiple,
-  request,
-  requestMultiple,
-  PERMISSIONS,
-  RESULTS,
-} from 'react-native-permissions';
 import Colors from '../../../customs/Colors';
-import {
-  Agenda,
-  DateData,
-  AgendaEntry,
-  AgendaSchedule,
-} from 'react-native-calendars';
+import {Agenda} from 'react-native-calendars';
 import Timetable from 'react-native-calendar-timetable';
 // import AppointmentList from './AppointmentList';
 import EventCalendar from 'react-native-events-calendar';
@@ -45,7 +34,16 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import {HELLO, MENTOR} from '../../../utils/Strings';
+import {
+  ARE_YOU_JOIN,
+  HELLO,
+  MENTOR,
+  MENTOR_EMAIL_ID,
+  NO,
+  RELOAD,
+  YES,
+  YOU_JOINED_CALL,
+} from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
@@ -175,18 +173,22 @@ const MentorDashboard = ({navigation}) => {
 
   const updateData = async () => {
     let res = await dispatch(
-      getScheduledAppointmentsSlice({email, fieldName: 'mentorEmailId'}),
+      getScheduledAppointmentsSlice({email, fieldName: MENTOR_EMAIL_ID}),
     );
     const appointments = res.payload;
     const newDate = new Date();
     const formattedAppointments = {};
     appointments.forEach(appointment => {
       const date =
-        newDate.getFullYear() +
+        newDate?.getFullYear() +
         '-' +
-        `${newDate.getMonth() + 1}` +
+        `${newDate?.getMonth() + 1}` +
         '-' +
-        `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+        `${
+          newDate?.getDate() < 10
+            ? `0${newDate?.getDate()}`
+            : newDate?.getDate()
+        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
       if (!formattedAppointments[date]) {
         formattedAppointments[date] = [];
       }
@@ -252,73 +254,6 @@ const MentorDashboard = ({navigation}) => {
     setSelectDate(item.date === isSelectDate ? null : item.date);
   };
 
-  // const _checkPermissions = callback => {
-  //   const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-  //   const androidPermissions = [
-  //     PERMISSIONS.ANDROID.CAMERA,
-  //     PERMISSIONS.ANDROID.RECORD_AUDIO,
-  //   ];
-  //   checkMultiple(
-  //     Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-  //   ).then(statuses => {
-  //     const [CAMERA, AUDIO] =
-  //       Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-  //     if (
-  //       statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-  //       statuses[AUDIO] === RESULTS.UNAVAILABLE
-  //     ) {
-  //       Alert.alert(
-  //         'Error',
-  //         'Hardware to support video calls is not available',
-  //       );
-  //     } else if (
-  //       statuses[CAMERA] === RESULTS.BLOCKED ||
-  //       statuses[AUDIO] === RESULTS.BLOCKED
-  //     ) {
-  //       Alert.alert(
-  //         'Error',
-  //         'Permission to access hardware was blocked, please grant manually',
-  //       );
-  //     } else {
-  //       if (
-  //         statuses[CAMERA] === RESULTS.DENIED &&
-  //         statuses[AUDIO] === RESULTS.DENIED
-  //       ) {
-  //         requestMultiple(
-  //           Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-  //         ).then(newStatuses => {
-  //           if (
-  //             newStatuses[CAMERA] === RESULTS.GRANTED &&
-  //             newStatuses[AUDIO] === RESULTS.GRANTED
-  //           ) {
-  //             callback && callback();
-  //           } else {
-  //             Alert.alert('Error', 'One of the permissions was not granted');
-  //           }
-  //         });
-  //       } else if (
-  //         statuses[CAMERA] === RESULTS.DENIED ||
-  //         statuses[AUDIO] === RESULTS.DENIED
-  //       ) {
-  //         request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-  //           result => {
-  //             if (result === RESULTS.GRANTED) {
-  //               callback && callback();
-  //             } else {
-  //               Alert.alert('Error', 'Permission not granted');
-  //             }
-  //           },
-  //         );
-  //       } else if (
-  //         statuses[CAMERA] === RESULTS.GRANTED ||
-  //         statuses[AUDIO] === RESULTS.GRANTED
-  //       ) {
-  //         callback && callback();
-  //       }
-  //     }
-  //   });
-  // };
-
   const videoCallAction = data => {
     _checkPermissions(async () => {
       try {
@@ -365,7 +300,6 @@ const MentorDashboard = ({navigation}) => {
       </Text>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
-        // selected="2022-12-01"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -387,9 +321,9 @@ const MentorDashboard = ({navigation}) => {
               await updateData();
               setLoading(false);
             }}
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: '#33A3DC', paddingBottom: 10}}>Reload</Text>
-            <AIcon name="refresh" size={35} color="#33A3DC" />
+            style={styles.reloadButton}>
+            <Text style={styles.reloadText}>{RELOAD}</Text>
+            <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
           </Pressable>
         )}
         renderItem={item => {
@@ -397,23 +331,18 @@ const MentorDashboard = ({navigation}) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                Alert.alert(
-                  "You'll be joined to this video call",
-                  'Are you sure you want to join?',
-                  [
-                    {
-                      onPress: () => videoCallAction(item),
-                      text: 'Yes',
-                    },
-                    {
-                      onPress: () => null,
-                      text: 'No',
-                    },
-                  ],
-                );
+                Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+                  {
+                    onPress: () => videoCallAction(item),
+                    text: YES,
+                  },
+                  {
+                    onPress: () => null,
+                    text: NO,
+                  },
+                ]);
               }}>
               <View style={styles.itemContainer}>
-                {/* <View style={{alignSelf: 'flex-start'}}> */}
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
@@ -423,18 +352,8 @@ const MentorDashboard = ({navigation}) => {
                     {moment(item?.end).format('LT')}
                   </Text>
                 </View>
-                {/* </View> */}
                 <View style={styles.appointmentDetails}>
-                  {/* <Text>{'Scheduled Appointment'}</Text> */}
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: 'bold',
-                      color: '#33A3DC',
-                    }}>
-                    {name}
-                  </Text>
-                  {/* Render other appointment data */}
+                  <Text style={styles.mentorTextStyle}>{name}</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -446,26 +365,3 @@ const MentorDashboard = ({navigation}) => {
 };
 
 export default MentorDashboard;
-
-const timeSlots = [
-  '08:00',
-  '09:00',
-  '10:00',
-  '11:00',
-  '12:00',
-  '01:00',
-  '02:00',
-  '03:00',
-  '04:00',
-  '05:00',
-  '06:00',
-  '07:00',
-];
-
-const bookedSlots = [
-  {name: 'John Doe', start: '09:00', duration: 2},
-  {name: 'Alice Smith', start: '01:00', duration: 1},
-  {name: 'Roshan J', start: '02:00', duration: 1},
-  {name: 'Kaushiki P', start: '04:00', duration: 1},
-  // Add more booked slots as needed
-];

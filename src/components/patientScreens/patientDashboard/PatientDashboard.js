@@ -14,6 +14,7 @@ import {
   APPOINMENTS,
   ARTICLES,
   MENTORS_LIST,
+  NO_DATA_FOUND,
   SAVED,
 } from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
@@ -33,8 +34,7 @@ const PatientDashboard = ({navigation}) => {
         style={{
           textAlign: 'center',
         }}>
-        {' '}
-        No data found
+        {NO_DATA_FOUND}
       </Text>
     ),
     [SAVED]: (
@@ -42,8 +42,7 @@ const PatientDashboard = ({navigation}) => {
         style={{
           textAlign: 'center',
         }}>
-        {' '}
-        No data found
+        {NO_DATA_FOUND}
       </Text>
     ),
     [MENTORS_LIST]: <MentorsList />,

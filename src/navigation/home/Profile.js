@@ -13,11 +13,27 @@ import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import {MENTOR, PATIENT} from '../../utils/Strings';
+import {
+  ACCOUNT_DETAILS,
+  ARE_YOU_LOGOUT,
+  I_AM_SPECIALIST,
+  I_WANT,
+  LOGOUT,
+  MENTOR,
+  NO_CANCEL,
+  PATIENT,
+  PAYMENT,
+  YES,
+} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
 import ScreenLoading from '../../components/ScreenLoading';
+import {
+  PAYMENT_DETAIL_ITEM_MENTOR,
+  PAYMENT_DETAIL_ITEM_PATIENT,
+  PROFILE_DETAILS,
+} from '../../utils/default';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -33,25 +49,18 @@ const Profile = () => {
   } = (profileData.Items && profileData?.Items[0]) || {};
   const DUMMY_ISSUES =
     type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
-  const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
-  const paymentDetailsItemsPatient = [
-    'Edit payment information',
-    'Payment methods',
-    'Payment history',
-  ];
-  const paymentDetailsItemsMentor = [
-    'Edit fiscal information',
-    'Banking information',
-  ];
+  const profileDetailsItems = PROFILE_DETAILS;
+  const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
+  const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
   const logoutPressHandler = () => {
-    Alert.alert('Log Out', 'Are you sure want to log out?', [
+    Alert.alert(LOGOUT, ARE_YOU_LOGOUT, [
       {
-        text: 'No, Cancel',
+        text: NO_CANCEL,
         onPress: () => null,
       },
       {
-        text: 'Yes, Log Out',
+        text: `${YES}, ${LOGOUT}`,
         onPress: async () => {
           signOut();
           dispatch(logout());
@@ -92,7 +101,7 @@ const Profile = () => {
         </View>
         <View style={styles.issuesContainer}>
           <Text style={styles.issuesTitleText}>
-            {loginFrom === MENTOR ? "I'm a specialist in" : 'I want to address'}
+            {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
             {DUMMY_ISSUES.map(issue => (
@@ -103,13 +112,13 @@ const Profile = () => {
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.profDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Account Details</Text>
+          <Text style={styles.accDetailsTitle}>{ACCOUNT_DETAILS}</Text>
           {profileDetailsItems.map(item => (
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
         <View style={styles.paymentDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Payment</Text>
+          <Text style={styles.accDetailsTitle}>{PAYMENT}</Text>
           {(loginFrom === MENTOR
             ? paymentDetailsItemsMentor
             : paymentDetailsItemsPatient
@@ -119,7 +128,7 @@ const Profile = () => {
         </View>
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
-          <Text style={styles.logoutTitle}>Log out</Text>
+          <Text style={styles.logoutTitle}>{LOGOUT}</Text>
         </Pressable>
       </View>
       {isProfileLoading ? <ScreenLoading /> : null}

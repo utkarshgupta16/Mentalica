@@ -1,5 +1,6 @@
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
+import Colors from '../customs/Colors';
 
 export default function PatientDashboardTabs({
   onPress,
@@ -11,7 +12,7 @@ export default function PatientDashboardTabs({
     <Pressable onPress={onPress}>
       <View
         style={{
-          backgroundColor: selectedTab?.tabStr == tab ? '#DDE6ED' : null,
+          backgroundColor: selectedTab?.tabStr == tab ? Colors.lightDark : null,
           paddingHorizontal: 6,
           paddingVertical: 5,
           borderRadius: 50,

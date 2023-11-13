@@ -28,10 +28,17 @@ import {
 import {
   ALL,
   APPOINMENTS,
+  ARE_YOU_JOIN,
   ARTICLES,
+  LINK_EXPIRED,
   MENTOR,
   MENTORS_LIST,
+  NO,
+  PATIENT_EMAIL_ID,
+  RELOAD,
   SAVED,
+  YES,
+  YOU_JOINED_CALL,
 } from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
@@ -60,7 +67,7 @@ const AppoinmentsList = ({navigation}) => {
   const updateData = async () => {
     try {
       let res = await dispatch(
-        getScheduledAppointmentsSlice({email, fieldName: 'patientEmailId'}),
+        getScheduledAppointmentsSlice({email, fieldName: PATIENT_EMAIL_ID}),
       );
       const appointments = res.payload;
       const newDate = new Date();
@@ -71,7 +78,9 @@ const AppoinmentsList = ({navigation}) => {
           '-' +
           `${newDate.getMonth() + 1}` +
           '-' +
-          `${newDate.getDate()}`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+          `${
+            newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()
+          }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
           formattedAppointments[date] = [];
         }
@@ -80,7 +89,6 @@ const AppoinmentsList = ({navigation}) => {
           start: setDateTime(appointment.slots[0].startTime),
           end: setDateTime(appointment.slots[0].endTime),
           ...appointment,
-          // Other appointment data
         });
       });
       setAppointmentList(formattedAppointments);
@@ -99,73 +107,6 @@ const AppoinmentsList = ({navigation}) => {
     })();
   }, []);
 
-  // const _checkPermissions = callback => {
-  //   const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-  //   const androidPermissions = [
-  //     PERMISSIONS.ANDROID.CAMERA,
-  //     PERMISSIONS.ANDROID.RECORD_AUDIO,
-  //   ];
-  //   checkMultiple(
-  //     Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-  //   ).then(statuses => {
-  //     const [CAMERA, AUDIO] =
-  //       Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-  //     if (
-  //       statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-  //       statuses[AUDIO] === RESULTS.UNAVAILABLE
-  //     ) {
-  //       Alert.alert(
-  //         'Error',
-  //         'Hardware to support video calls is not available',
-  //       );
-  //     } else if (
-  //       statuses[CAMERA] === RESULTS.BLOCKED ||
-  //       statuses[AUDIO] === RESULTS.BLOCKED
-  //     ) {
-  //       Alert.alert(
-  //         'Error',
-  //         'Permission to access hardware was blocked, please grant manually',
-  //       );
-  //     } else {
-  //       if (
-  //         statuses[CAMERA] === RESULTS.DENIED &&
-  //         statuses[AUDIO] === RESULTS.DENIED
-  //       ) {
-  //         requestMultiple(
-  //           Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-  //         ).then(newStatuses => {
-  //           if (
-  //             newStatuses[CAMERA] === RESULTS.GRANTED &&
-  //             newStatuses[AUDIO] === RESULTS.GRANTED
-  //           ) {
-  //             callback && callback();
-  //           } else {
-  //             console.log('not will run callback');
-  //             Alert.alert('Error', 'One of the permissions was not granted');
-  //           }
-  //         });
-  //       } else if (
-  //         statuses[CAMERA] === RESULTS.DENIED ||
-  //         statuses[AUDIO] === RESULTS.DENIED
-  //       ) {
-  //         request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-  //           result => {
-  //             if (result === RESULTS.GRANTED) {
-  //               callback && callback();
-  //             } else {
-  //               Alert.alert('Error', 'Permission not granted');
-  //             }
-  //           },
-  //         );
-  //       } else if (
-  //         statuses[CAMERA] === RESULTS.GRANTED ||
-  //         statuses[AUDIO] === RESULTS.GRANTED
-  //       ) {
-  //         callback && callback();
-  //       }
-  //     }
-  //   });
-  // };
   const videoCallAction = data => {
     _checkPermissions(async () => {
       try {
@@ -221,11 +162,8 @@ const AppoinmentsList = ({navigation}) => {
             }}
           />
         }
-        // selected="2022-12-01"
         scrollEnabled
-        // style={{width: 100, height: 400}}
         showOnlySelectedDayItems
-        // showClosingKnob={true}
         items={appointmentList}
         renderEmptyData={() => (
           <Pressable
@@ -234,9 +172,9 @@ const AppoinmentsList = ({navigation}) => {
               await updateData();
               setLoading(false);
             }}
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: '#33A3DC', paddingBottom: 10}}>Reload</Text>
-            <AIcon name="refresh" size={35} color="#33A3DC" />
+            style={styles.reloadButton}>
+            <Text style={styles.reloadText}>{RELOAD}</Text>
+            <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
           </Pressable>
         )}
         renderItem={item => {
@@ -252,22 +190,18 @@ const AppoinmentsList = ({navigation}) => {
               style={{opacity: checkExpired ? 1 : 0.5}}
               onPress={() => {
                 if (checkExpired) {
-                  Alert.alert(
-                    `You'll be joined to this video call`,
-                    `Are you sure you want to join?`,
-                    [
-                      {
-                        onPress: () => videoCallAction(item),
-                        text: 'Yes',
-                      },
-                      {
-                        onPress: () => null,
-                        text: 'No',
-                      },
-                    ],
-                  );
+                  Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+                    {
+                      onPress: () => videoCallAction(item),
+                      text: YES,
+                    },
+                    {
+                      onPress: () => null,
+                      text: NO,
+                    },
+                  ]);
                 } else {
-                  Alert.alert(`Meeting Link Expired`, ``, [
+                  Alert.alert(LINK_EXPIRED, ``, [
                     {
                       onPress: () => null,
                       text: 'OK',
@@ -287,7 +221,6 @@ const AppoinmentsList = ({navigation}) => {
                 </View>
 
                 <View style={styles.appointmentDetails}>
-                  {/* <Text>{'Scheduled Appointment'}</Text> */}
                   <Text
                     style={{
                       fontSize: 15,
