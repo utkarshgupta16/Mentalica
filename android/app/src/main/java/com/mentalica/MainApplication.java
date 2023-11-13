@@ -1,6 +1,6 @@
 package com.mentalica;
 
-import com.reactnativerestart.RestartPackage;
+// import com.reactnativerestart.RestartPackage;
 import android.app.Application;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -31,10 +31,10 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
            packages.add(new TwilioPackage());
           return packages;
-//            return Arrays.<ReactPackage>asList(
-//                    new TwilioPackage(),
-//                    new RestartPackage() // Add this line
-//            );
+          //  return Arrays.<ReactPackage>asList(
+          //          new TwilioPackage(),
+          //          new RestartPackage() // Add this line
+          //  );
         }
 
         @Override

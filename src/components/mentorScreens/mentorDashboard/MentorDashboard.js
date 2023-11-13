@@ -34,19 +34,11 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import {
-  ARE_YOU_JOIN,
-  HELLO,
-  MENTOR,
-  MENTOR_EMAIL_ID,
-  NO,
-  RELOAD,
-  YES,
-  YOU_JOINED_CALL,
-} from '../../../utils/Strings';
+import convertLang from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
+import {useTranslation} from 'react-i18next';
 
 let {width} = Dimensions.get('window');
 
@@ -145,6 +137,18 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 }
 
 const MentorDashboard = ({navigation}) => {
+  const {
+    ARE_YOU_JOIN,
+    HELLO,
+    MENTOR,
+    MENTOR_EMAIL_ID,
+    NO,
+    RELOAD,
+    YES,
+    YOU_JOINED_CALL,
+  } = convertLang(useTranslation);
+  const isFocus = useIsFocused();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
   const isFocused = useIsFocused();
@@ -236,7 +240,7 @@ const MentorDashboard = ({navigation}) => {
     //   .catch(error => {
     //     console.log('error appi lit', error);
     //   });
-  }, [dispatch, email]);
+  }, [dispatch, email, isFocus]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -296,7 +300,7 @@ const MentorDashboard = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {mentorName && mentorName},
+        {HELLO} {mentorName && mentorName}
       </Text>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
@@ -322,7 +326,7 @@ const MentorDashboard = ({navigation}) => {
               setLoading(false);
             }}
             style={styles.reloadButton}>
-            <Text style={styles.reloadText}>{RELOAD}</Text>
+            <Text style={styles.reloadText}>{t(RELOAD)}</Text>
             <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
           </Pressable>
         )}
@@ -331,14 +335,14 @@ const MentorDashboard = ({navigation}) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+                Alert.alert(t(YOU_JOINED_CALL), t(ARE_YOU_JOIN), [
                   {
                     onPress: () => videoCallAction(item),
-                    text: YES,
+                    text: t(YES),
                   },
                   {
                     onPress: () => null,
-                    text: NO,
+                    text: t(NO),
                   },
                 ]);
               }}>

@@ -25,31 +25,34 @@ import {
   PERMISSIONS,
   RESULTS,
 } from 'react-native-permissions';
-import {
-  ALL,
-  APPOINMENTS,
-  ARE_YOU_JOIN,
-  ARTICLES,
-  LINK_EXPIRED,
-  MENTOR,
-  MENTORS_LIST,
-  NO,
-  PATIENT_EMAIL_ID,
-  RELOAD,
-  SAVED,
-  YES,
-  YOU_JOINED_CALL,
-} from '../../../utils/Strings';
+import convertLang from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
-
+import {useTranslation} from 'react-i18next';
 const AppoinmentsList = ({navigation}) => {
+  const {t} = useTranslation();
+  const {
+    ALL,
+    APPOINTMENTS,
+    ARE_YOU_JOIN,
+    ARTICLES,
+    LINK_EXPIRED,
+    MENTOR,
+    MENTORS_LIST,
+    NO,
+    PATIENT_EMAIL_ID,
+    RELOAD,
+    SAVED,
+    YES,
+    YOU_JOINED_CALL,
+    OKAY
+  } = convertLang(useTranslation);
   const {props, setProps} = useContext(AppContext);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [appointmentList, setAppointmentList] = useState({});
   const [refreshing, onRefresh] = useState(false);
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
@@ -204,7 +207,7 @@ const AppoinmentsList = ({navigation}) => {
                   Alert.alert(LINK_EXPIRED, ``, [
                     {
                       onPress: () => null,
-                      text: 'OK',
+                      text: OKAY,
                     },
                   ]);
                 }

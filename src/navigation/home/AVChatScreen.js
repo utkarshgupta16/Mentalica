@@ -20,6 +20,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React, {useRef, useContext, useEffect, useState} from 'react';
 import {AppContext} from '../../../App';
 import Colors from '../../customs/Colors';
+import { useTranslation } from 'react-i18next';
 // const { TwilioVideo } = require('react-native-twilio-video-webrtc');
 
 const initialState = {
@@ -39,6 +40,7 @@ const height = Dimensions.get('window').height;
 const dimensions = Dimensions.get('window');
 
 export default VideoCallScreen = ({navigation}) => {
+  const {t} = useTranslation();
   const twilioVideo = useRef(null);
   const {props, setProps} = useContext(AppContext);
   const [showControls, setShowControls] = useState(true);

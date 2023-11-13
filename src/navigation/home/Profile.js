@@ -8,38 +8,55 @@ import {
   ActivityIndicator,
   Image,
   Alert,
+  TouchableOpacity,
+  I18nManager,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  ACCOUNT_DETAILS,
-  ARE_YOU_LOGOUT,
-  I_AM_SPECIALIST,
-  I_WANT,
-  LOGOUT,
-  MENTOR,
-  NO_CANCEL,
-  PATIENT,
-  PAYMENT,
-  YES,
-} from '../../utils/Strings';
+import convertLang from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
-import {screenWidth} from '../../utils/Responsive';
+import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
 import ScreenLoading from '../../components/ScreenLoading';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
   PROFILE_DETAILS,
+  LANG_OPTION,
 } from '../../utils/default';
+import {useTranslation} from 'react-i18next';
+import i18n from '../../utils/i18n';
+import RNRestart from 'react-native-restart';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Profile = () => {
+  const {
+    ACCOUNT_DETAILS,
+    ARE_YOU_LOGOUT,
+    ENGLISH,
+    HEBREW,
+    I_AM_SPECIALIST,
+    I_WANT,
+    LOGOUT,
+    MENTOR,
+    NO_CANCEL,
+    PATIENT,
+    PAYMENT,
+    SELECT_LANG,
+    YES,
+  } = convertLang(useTranslation);
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setLanguage] = useState(
+    i18n.language === 'he' ? HEBREW : ENGLISH,
+  );
+  const langOptions = LANG_OPTION;
   const {
     feel = '',
     email_id = '',
@@ -127,6 +144,39 @@ const Profile = () => {
           ))}
         </View>
 
+        <DropDownPicker
+          dropDownDirection="TOP"
+          listMode="SCROLLVIEW"
+          autoScroll={true}
+          zIndex={3000}
+          open={isOpen}
+          setOpen={setIsOpen}
+          value={t(selectedLanguage)}
+          setValue={props => {
+            i18n
+              .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+              .then(() => {
+                I18nManager.allowRTL(i18n.language === 'he');
+                I18nManager.forceRTL(i18n.language === 'he');
+                RNRestart.Restart();
+                setLanguage(props());
+              })
+              .catch(err => {
+                console.log('something went wrong while applying RTL', err);
+              });
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: Colors.white,
+            borderWidth: 0,
+            alignSelf: 'center',
+            width: widthPercentageToDP(36),
+          }}
+          items={langOptions}
+          placeholder={SELECT_LANG}
+          containerStyle={{borderBottomColor: 'gray'}}
+          style={styles.dropdown}
+        />
+
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
           <Text style={styles.logoutTitle}>{LOGOUT}</Text>
         </Pressable>
@@ -211,5 +261,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     textDecorationLine: 'underline',
+  },
+  dropdown: {
+    backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
+    alignSelf: 'center',
+    width: widthPercentageToDP(36),
   },
 });

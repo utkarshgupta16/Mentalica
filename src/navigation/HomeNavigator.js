@@ -19,6 +19,7 @@ import {
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
+import { useTranslation } from 'react-i18next';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
@@ -66,6 +67,8 @@ const PatientDashboardStack = () => {
 };
 
 const HomeNavigator = () => {
+  const {t} = useTranslation();
+  const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
 
   return (
@@ -75,7 +78,7 @@ const HomeNavigator = () => {
       }}>
       {type === MENTOR ? (
         <Tab.Screen
-          name={HOME}
+          name={t(HOME)}
           component={MentorDashboardStack}
           options={{
             headerShown: false,
@@ -86,7 +89,7 @@ const HomeNavigator = () => {
         />
       ) : (
         <Tab.Screen
-          name={HOME}
+          name={t(HOME)}
           component={PatientDashboardStack}
           options={{
             headerShown: false,
@@ -98,7 +101,7 @@ const HomeNavigator = () => {
       )}
       {type === MENTOR ? (
         <Tab.Screen
-          name={INVOICING}
+          name={t(INVOICING)}
           component={Invoicing}
           options={{
             headerShown: false,
@@ -109,7 +112,7 @@ const HomeNavigator = () => {
         />
       ) : (
         <Tab.Screen
-          name={STATS}
+          name={t(STATS)}
           component={PatientStats}
           options={{
             headerShown: false,
@@ -120,7 +123,7 @@ const HomeNavigator = () => {
         />
       )}
       <Tab.Screen
-        name={MESSAGES}
+        name={t(MESSAGES)}
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => (
@@ -136,7 +139,7 @@ const HomeNavigator = () => {
             <MaterialIcons name={'person'} size={30} color={color} />
           ),
         }}
-        name={PROFILE}
+        name={t(PROFILE)}
         component={Profile}
       />
     </Tab.Navigator>

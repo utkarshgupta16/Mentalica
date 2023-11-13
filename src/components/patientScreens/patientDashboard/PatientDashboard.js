@@ -9,14 +9,7 @@ import {
 import React, {useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
-import {
-  ALL,
-  APPOINMENTS,
-  ARTICLES,
-  MENTORS_LIST,
-  NO_DATA_FOUND,
-  SAVED,
-} from '../../../utils/Strings';
+import convertLang from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProfileSlice} from '../../../redux/HomeSlice';
@@ -24,11 +17,21 @@ import {articlesData} from '../../../utils/default';
 import TabComponent from './TabComponent';
 import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
+import {useTranslation} from 'react-i18next';
 
 const PatientDashboard = ({navigation}) => {
+  const {
+    ALL,
+    APPOINTMENTS,
+    ARTICLES,
+    HELLO,
+    MENTORS_LIST,
+    NO_DATA_FOUND,
+    SAVED,
+  } = convertLang(useTranslation);
   const components = {
     [ALL]: <AllTabComponent />,
-    [APPOINMENTS]: <AppointmentList navigation={navigation} />,
+    [APPOINTMENTS]: <AppointmentList navigation={navigation} />,
     [ARTICLES]: (
       <Text
         style={{
@@ -48,20 +51,22 @@ const PatientDashboard = ({navigation}) => {
     [MENTORS_LIST]: <MentorsList />,
   };
   const {email, type} = useSelector(state => state.auth);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [mentorName, setMentorName] = useState('');
   const dispatch = useDispatch();
-
   useEffect(() => {
     (async () => {
       const res = await dispatch(getProfileSlice({email, type: type}));
+      console.log('res==============', res, type, email);
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
-  }, []);
+  }, [email, type]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.helloText}>Hello {mentorName}</Text>
+      <Text style={styles.helloText}>
+        {HELLO} {mentorName}
+      </Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <TabComponent selectedTab={selectedTab} setSelectedTab={setSelectedTab} />

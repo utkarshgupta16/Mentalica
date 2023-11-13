@@ -21,10 +21,13 @@ import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
+import {useTranslation} from 'react-i18next';
+
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp} from '../../utils/Responsive';
 
 const MentorSignUp = ({navigation}) => {
+  const {t} = useTranslation();
   const typeOfItems = [
     {
       label: 'Patient',
@@ -496,7 +499,7 @@ const MentorSignUp = ({navigation}) => {
             state.confirmPassword &&
             state.password !== state.confirmPassword && (
               <Text style={styles.passwordNotMatchText}>
-                Password does not match.
+                {t('Password does not match.')}
               </Text>
             )}
           {typeValue === MENTOR ? (
@@ -504,7 +507,7 @@ const MentorSignUp = ({navigation}) => {
               style={styles.slotContainer}
               onPress={() => setShowSlots(!showSlots)}>
               <Text style={styles.slotsText}>
-                {slots.length ? 'Update Slots' : 'Add Slots'}
+                {slots.length ? t('Update Slots') : t('Add Slots')}
               </Text>
             </Pressable>
           ) : null}

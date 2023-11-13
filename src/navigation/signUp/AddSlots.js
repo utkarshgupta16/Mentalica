@@ -21,7 +21,10 @@ import {
 import Close from '../../icons/icon_close.svg';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {slotsData} from '../../utils/default';
+import { useTranslation } from 'react-i18next';
+
 const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
+  const {t} = useTranslation();
   let slots1 =
     (slots &&
       slots.length &&
