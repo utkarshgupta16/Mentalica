@@ -49,6 +49,7 @@ const Profile = () => {
     YES,
     RESTART_APP,
     CHANGE_LANG,
+    OKAY
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
@@ -161,7 +162,7 @@ const Profile = () => {
                 onPress: () => null,
               },
               {
-                text: 'OK',
+                text: OKAY,
                 onPress: () => {
                   i18n
                     .changeLanguage(i18n.language === 'he' ? 'en' : 'he')

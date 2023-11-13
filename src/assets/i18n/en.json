@@ -80,6 +80,9 @@
     "Meeting Link Expired": "Meeting Link Expired",
     "Yes": "Yes",
     "No": "No",
-    "Okay": "Okay"
+    "Okay": "Okay",
+    "Are you sure want to change language": "Are you sure want to change language",
+    "your app will be restarted when you changed language": "your app will be restarted when you changed language",
+    "No, Cancel":"No, Cancel"
   }
 }

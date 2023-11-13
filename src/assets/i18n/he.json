@@ -80,6 +80,9 @@
     "Meeting Link Expired": "קישור הפג תוקף",
     "Yes": "כן",
     "No": "לא",
-    "Okay": "בסדר"
+    "Okay": "בסדר",
+   "Are you sure want to change language" :"האם אתה בטוח רוצה לשנות שפה",
+   "your app will be restarted when you changed language" :"האפליקציה שלך תופעל מחדש כשתשנה שפה",
+   "No, Cancel":"לא, בטל"
   }
 }
