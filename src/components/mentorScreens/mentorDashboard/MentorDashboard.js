@@ -9,6 +9,7 @@ import {
   Dimensions,
   Platform,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
@@ -37,13 +38,17 @@ import Timetable from 'react-native-calendar-timetable';
 // import AppointmentList from './AppointmentList';
 import EventCalendar from 'react-native-events-calendar';
 import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
+import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getProfileSlice,
   getScheduledAppointmentsSlice,
+  getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
 import {HELLO, MENTOR} from '../../../utils/Strings';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import {_checkPermissions} from '../../../utils/utils';
+import ScreenLoading from '../../ScreenLoading';
 
 let {width} = Dimensions.get('window');
 
@@ -144,13 +149,13 @@ function YourComponent({style, item, dayIndex, daysTotal}) {
 const MentorDashboard = ({navigation}) => {
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
- const isFocused= useIsFocused()
+  const isFocused = useIsFocused();
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [mentorName, setMentorName] = useState('');
 
   const [appointmentList, setAppointmentList] = useState({});
@@ -168,8 +173,10 @@ const MentorDashboard = ({navigation}) => {
     })();
   }, []);
 
-  const updateData=async()=>{
-    let res = await dispatch(getScheduledAppointmentsSlice({email,fieldName:"mentorEmailId"}));
+  const updateData = async () => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({email, fieldName: 'mentorEmailId'}),
+    );
     const appointments = res.payload;
     const newDate = new Date();
     const formattedAppointments = {};
@@ -192,10 +199,10 @@ const MentorDashboard = ({navigation}) => {
       });
     });
     setAppointmentList(formattedAppointments);
-  }
+  };
   useEffect(() => {
     (async () => {
-      updateData()
+      updateData();
     })();
 
     // axios
@@ -245,91 +252,109 @@ const MentorDashboard = ({navigation}) => {
     setSelectDate(item.date === isSelectDate ? null : item.date);
   };
 
-  const _checkPermissions = callback => {
-    const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-    const androidPermissions = [
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ];
-    checkMultiple(
-      Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-    ).then(statuses => {
-      const [CAMERA, AUDIO] =
-        Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-      if (
-        statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-        statuses[AUDIO] === RESULTS.UNAVAILABLE
-      ) {
-        Alert.alert(
-          'Error',
-          'Hardware to support video calls is not available',
-        );
-      } else if (
-        statuses[CAMERA] === RESULTS.BLOCKED ||
-        statuses[AUDIO] === RESULTS.BLOCKED
-      ) {
-        Alert.alert(
-          'Error',
-          'Permission to access hardware was blocked, please grant manually',
-        );
-      } else {
-        if (
-          statuses[CAMERA] === RESULTS.DENIED &&
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          requestMultiple(
-            Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-          ).then(newStatuses => {
-            if (
-              newStatuses[CAMERA] === RESULTS.GRANTED &&
-              newStatuses[AUDIO] === RESULTS.GRANTED
-            ) {
-              callback && callback();
-            } else {
-              Alert.alert('Error', 'One of the permissions was not granted');
-            }
-          });
-        } else if (
-          statuses[CAMERA] === RESULTS.DENIED ||
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-            result => {
-              if (result === RESULTS.GRANTED) {
-                callback && callback();
-              } else {
-                Alert.alert('Error', 'Permission not granted');
-              }
-            },
-          );
-        } else if (
-          statuses[CAMERA] === RESULTS.GRANTED ||
-          statuses[AUDIO] === RESULTS.GRANTED
-        ) {
-          callback && callback();
-        }
-      }
-    });
-  };
+  // const _checkPermissions = callback => {
+  //   const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
+  //   const androidPermissions = [
+  //     PERMISSIONS.ANDROID.CAMERA,
+  //     PERMISSIONS.ANDROID.RECORD_AUDIO,
+  //   ];
+  //   checkMultiple(
+  //     Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+  //   ).then(statuses => {
+  //     const [CAMERA, AUDIO] =
+  //       Platform.OS === 'ios' ? iosPermissions : androidPermissions;
+  //     if (
+  //       statuses[CAMERA] === RESULTS.UNAVAILABLE ||
+  //       statuses[AUDIO] === RESULTS.UNAVAILABLE
+  //     ) {
+  //       Alert.alert(
+  //         'Error',
+  //         'Hardware to support video calls is not available',
+  //       );
+  //     } else if (
+  //       statuses[CAMERA] === RESULTS.BLOCKED ||
+  //       statuses[AUDIO] === RESULTS.BLOCKED
+  //     ) {
+  //       Alert.alert(
+  //         'Error',
+  //         'Permission to access hardware was blocked, please grant manually',
+  //       );
+  //     } else {
+  //       if (
+  //         statuses[CAMERA] === RESULTS.DENIED &&
+  //         statuses[AUDIO] === RESULTS.DENIED
+  //       ) {
+  //         requestMultiple(
+  //           Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+  //         ).then(newStatuses => {
+  //           if (
+  //             newStatuses[CAMERA] === RESULTS.GRANTED &&
+  //             newStatuses[AUDIO] === RESULTS.GRANTED
+  //           ) {
+  //             callback && callback();
+  //           } else {
+  //             Alert.alert('Error', 'One of the permissions was not granted');
+  //           }
+  //         });
+  //       } else if (
+  //         statuses[CAMERA] === RESULTS.DENIED ||
+  //         statuses[AUDIO] === RESULTS.DENIED
+  //       ) {
+  //         request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
+  //           result => {
+  //             if (result === RESULTS.GRANTED) {
+  //               callback && callback();
+  //             } else {
+  //               Alert.alert('Error', 'Permission not granted');
+  //             }
+  //           },
+  //         );
+  //       } else if (
+  //         statuses[CAMERA] === RESULTS.GRANTED ||
+  //         statuses[AUDIO] === RESULTS.GRANTED
+  //       ) {
+  //         callback && callback();
+  //       }
+  //     }
+  //   });
+  // };
 
   const videoCallAction = data => {
-    _checkPermissions(() => {
-      axios
-        .get(
-          // `${url}/getTwilloToken?roomId=${data.roomId}`,
-          `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.mentor_email_id}`,
-        )
-        .then(response => {
-          const token = response.data.token ?? response.data;
-          setProps({
-            ...props,
-            token,
-            userName: data?.mentor_email_id, //data.mentorId,
-            roomName: data?.roomId,
-          });
-          navigation.navigate('AVChatScreen');
-        })
-        .catch(err => {});
+    _checkPermissions(async () => {
+      try {
+        const {payload = {}} = await dispatch(
+          getTwilloTokenSlice({
+            roomId: data?.roomId,
+            userName: data?.patient_email_Id,
+          }),
+        );
+        const token = payload?.token;
+        setProps({
+          ...props,
+          token,
+          userName: data?.mentor_email_id,
+          roomName: data?.roomId,
+        });
+        token && navigation.navigate('AVChatScreen');
+      } catch (err) {
+        console.log('err----------------------', err);
+      }
+      // axios
+      //   .get(
+      //     // `${url}/getTwilloToken?roomId=${data.roomId}`,
+      //     `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.mentor_email_id}`,
+      //   )
+      //   .then(response => {
+      //     const token = response.data.token ?? response.data;
+      //     setProps({
+      //       ...props,
+      //       token,
+      //       userName: data?.mentor_email_id, //data.mentorId,
+      //       roomName: data?.roomId,
+      //     });
+      //     navigation.navigate('AVChatScreen');
+      //   })
+      //   .catch(err => {});
     });
   };
 
@@ -338,6 +363,7 @@ const MentorDashboard = ({navigation}) => {
       <Text style={styles.helloText}>
         {HELLO} {mentorName && mentorName},
       </Text>
+      {isLoading ? <ScreenLoading /> : null}
       <Agenda
         // selected="2022-12-01"
         refreshControl={
@@ -355,10 +381,16 @@ const MentorDashboard = ({navigation}) => {
         showClosingKnob={true}
         items={appointmentList}
         renderEmptyData={() => (
-          <View
+          <Pressable
+            onPress={async () => {
+              setLoading(true);
+              await updateData();
+              setLoading(false);
+            }}
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'black'}}>No schedule</Text>
-          </View>
+            <Text style={{color: '#33A3DC', paddingBottom: 10}}>Reload</Text>
+            <AIcon name="refresh" size={35} color="#33A3DC" />
+          </Pressable>
         )}
         renderItem={item => {
           let name = type == MENTOR ? item?.patientName : item?.mentorName;

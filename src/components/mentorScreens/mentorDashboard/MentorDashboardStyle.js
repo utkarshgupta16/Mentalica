@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: 'white',
     backgroundColor: '#F5F7F8',
-    marginHorizontal: 8,
+    // marginHorizontal: 8,
   },
   helloCont: {
     flexDirection: 'row',

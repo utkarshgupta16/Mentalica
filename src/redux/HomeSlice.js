@@ -30,10 +30,10 @@ export const getAllMentorList = createAsyncThunk(
 
 export const getTwilloTokenSlice = createAsyncThunk(
   'home/getTwilloTokenSlice',
-  async roomId => {
+  async ({roomId,userName}) => {
     var config = {
       method: 'get',
-      url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=testing`,
+      url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=${userName}`,
       headers: {
         // Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',

@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
     // backgroundColor: 'white',
     backgroundColor: '#F5F7F8',
     flex: 1,
+    paddingTop:hp(2)
   },
   helloText: {
     fontSize: 20,
@@ -41,9 +42,9 @@ export const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 0,
     },
-    shadowOpacity: 1.17,
+    shadowOpacity: 0.6,
     shadowRadius: 1.65,
     elevation: 1,
 
@@ -102,6 +103,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 3,
+    
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),

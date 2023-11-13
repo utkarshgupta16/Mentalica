@@ -20,6 +20,7 @@ import {getAllMentorList} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
+import ScreenLoading from '../ScreenLoading';
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
@@ -35,7 +36,7 @@ const MentorsList = () => {
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
-  console.log("allMentors",allMentors)
+  console.log('allMentors', allMentors);
   useEffect(() => {
     (async () => {
       try {
@@ -58,7 +59,7 @@ const MentorsList = () => {
         {data && data.length ? (
           <FlatList
             data={data}
-            style={{flex:0.8}}
+            style={{flex: 0.8}}
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
@@ -209,20 +210,7 @@ const MentorsList = () => {
           selectedMentorData={selectedMentorData}
         />
       ) : null}
-      {isLoading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
-            top: 0,
-            right: 0,
-          }}>
-          <ActivityIndicator color={'green'} size="large" />
-        </View>
-      ) : null}
+      {isLoading ? <ScreenLoading /> : null}
     </View>
   );
 };

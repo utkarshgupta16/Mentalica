@@ -26,6 +26,7 @@ import {
   getBooksSlots,
   getScheduledAppointmentsSlice,
 } from '../../redux/HomeSlice';
+import ScreenLoading from '../ScreenLoading';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
   const {profileData: {Items = []} = {}} = useSelector(state => state.home);
@@ -86,22 +87,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             paddingHorizontal: wp(4),
             backgroundColor: 'white',
           }}>
-          {isLoading ? (
-            <View
-              style={{
-                backgroundColor: '#00000082',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                top: 0,
-                right: 0,
-              }}>
-              <ActivityIndicator color={'green'} size="large" />
-            </View>
-          ) : null}
-
+          {isLoading ? <ScreenLoading /> : null}
           <Pressable onPress={() => close && close()}>
             <Close
               height={25}

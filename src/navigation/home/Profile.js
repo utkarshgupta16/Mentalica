@@ -17,6 +17,7 @@ import {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
+import ScreenLoading from '../../components/ScreenLoading';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -30,9 +31,8 @@ const Profile = () => {
     lastName = '',
     expertise = '',
   } = (profileData.Items && profileData?.Items[0]) || {};
-  const DUMMY_ISSUES = expertise
-    ? expertise?.split(',')
-    : ['Depression', 'Anxiety', 'Student life', 'Loneliness'];
+  const DUMMY_ISSUES =
+    type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
   const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
   const paymentDetailsItemsPatient = [
     'Edit payment information',
@@ -122,12 +122,7 @@ const Profile = () => {
           <Text style={styles.logoutTitle}>Log out</Text>
         </Pressable>
       </View>
-      {isProfileLoading ? (
-        <View
-          style={{position: 'absolute', left: 0, bottom: 0, right: 0, top: 0}}>
-          <ActivityIndicator size={'large'} color="green" />
-        </View>
-      ) : null}
+      {isProfileLoading ? <ScreenLoading /> : null}
     </ScrollView>
   );
 };

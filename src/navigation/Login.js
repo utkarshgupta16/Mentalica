@@ -32,8 +32,9 @@ const LoginScreen = ({navigation}) => {
   // const [enteredEmail, setEnteredEmail] = useState(
   //   'bhandari.tribhuwan@thinksys.com',
   // );
+  // patel.sonu@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState(
-    'Gupta.utkarsh@thinksys.com',
+    'pandey.kaushiki@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);

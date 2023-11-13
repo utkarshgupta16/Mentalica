@@ -11,7 +11,7 @@ export default function PatientDashboardTabs({
     <Pressable onPress={onPress}>
       <View
         style={{
-          backgroundColor: selectedTab.tabStr == tab ? '#DDE6ED' : null,
+          backgroundColor: selectedTab?.tabStr == tab ? '#DDE6ED' : null,
           paddingHorizontal: 6,
           paddingVertical: 5,
           borderRadius: 50,
