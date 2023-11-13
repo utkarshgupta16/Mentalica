@@ -26,18 +26,20 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
 import {widthPercentageToDP} from '../utils/Responsive';
-import { LANG_OPTION } from '../utils/default';
+import {LANG_OPTION} from '../utils/default';
+import ConvertLang from '../utils/Strings';
 // import Logo from '../icons/logo-black.svg';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
+  const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
-  const langOptions = LANG_OPTION
+  const langOptions = LANG_OPTION;
 
   // guptagaurav9566+1@gmail.com
 
@@ -46,9 +48,7 @@ const LoginScreen = ({navigation}) => {
   //   'bhandari.tribhuwan@thinksys.com',
   // );
   // patel.sonu@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState(
-    'patel.sonu@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -207,17 +207,33 @@ const LoginScreen = ({navigation}) => {
           setOpen={setIsOpen}
           value={t(selectedLanguage)}
           setValue={props => {
-            i18n
-              .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
-              .then(() => {
-                I18nManager.allowRTL(i18n.language === 'he');
-                I18nManager.forceRTL(i18n.language === 'he');
-                RNRestart.Restart();
-                setLanguage(props());
-              })
-              .catch(err => {
-                console.log('something went wrong while applying RTL', err);
-              });
+            Alert.alert(CHANGE_LANG, RESTART_APP, [
+              {
+                text: NO_CANCEL,
+                onPress: () => null,
+              },
+              {
+                text: 'OK',
+                onPress: () => {
+                  i18n
+                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                    .then(() => {
+                      I18nManager.allowRTL(i18n.language === 'he');
+                      I18nManager.forceRTL(i18n.language === 'he');
+                      setLanguage(props());
+                      setTimeout(() => {
+                        RNRestart.Restart();
+                      }, 5);
+                    })
+                    .catch(err => {
+                      console.log(
+                        'something went wrong while applying RTL',
+                        err,
+                      );
+                    });
+                },
+              },
+            ]);
           }}
           dropDownContainerStyle={{
             backgroundColor: Colors.white,

@@ -47,6 +47,8 @@ const Profile = () => {
     PAYMENT,
     SELECT_LANG,
     YES,
+    RESTART_APP,
+    CHANGE_LANG,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
@@ -153,38 +155,34 @@ const Profile = () => {
           setOpen={setIsOpen}
           value={t(selectedLanguage)}
           setValue={props => {
-            Alert.alert(
-              'Are you sure want to change language',
-              'your app will be restarted when you changed language',
-              [
-                {
-                  text: NO_CANCEL,
-                  onPress: () => null,
+            Alert.alert(CHANGE_LANG, RESTART_APP, [
+              {
+                text: NO_CANCEL,
+                onPress: () => null,
+              },
+              {
+                text: 'OK',
+                onPress: () => {
+                  i18n
+                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                    .then(() => {
+                      I18nManager.allowRTL(i18n.language === 'he');
+                      I18nManager.forceRTL(i18n.language === 'he');
+                      setLanguage(props());
+                      // RNRestart.Restart();
+                      setTimeout(() => {
+                        RNRestart.Restart();
+                      }, 5);
+                    })
+                    .catch(err => {
+                      console.log(
+                        'something went wrong while applying RTL',
+                        err,
+                      );
+                    });
                 },
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    i18n
-                      .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
-                      .then(() => {
-                        I18nManager.allowRTL(i18n.language === 'he');
-                        I18nManager.forceRTL(i18n.language === 'he');
-                        setLanguage(props());
-                        // RNRestart.Restart();
-                        setTimeout(() => {
-                          RNRestart.Restart();
-                        }, 5);
-                      })
-                      .catch(err => {
-                        console.log(
-                          'something went wrong while applying RTL',
-                          err,
-                        );
-                      });
-                  },
-                },
-              ],
-            );
+              },
+            ]);
           }}
           dropDownContainerStyle={{
             backgroundColor: Colors.white,

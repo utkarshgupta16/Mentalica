@@ -1,4 +1,8 @@
 export default convertString = convertLang => {
+  const CHANGE_LANG = convertLang('Are you sure want to change language');
+  const RESTART_APP = convertLang(
+    'your app will be restarted when you changed language',
+  );
   const PASSWORD_NOT_MATCH = convertLang('Password does not match.');
   const UPDATE_SLOTS = convertLang('Update Slots');
   const ADD_SLOTS = convertLang('Add Slots');
@@ -45,6 +49,7 @@ export default convertString = convertLang => {
   const SELECT_LANG = convertLang('Select Language');
 
   return {
+    RESTART_APP,
     UPDATE_SLOTS,
     ADD_SLOTS,
     OKAY,
@@ -87,6 +92,7 @@ export default convertString = convertLang => {
     PERMISSIONS_ACCESS,
     ONE_GRANTED,
     PASSWORD_NOT_MATCH,
+    CHANGE_LANG,
   };
 };
 
