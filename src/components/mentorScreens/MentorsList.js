@@ -36,13 +36,11 @@ const MentorsList = () => {
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
-  console.log('allMentors', allMentors);
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const {payload} = await dispatch(getAllMentorList());
-        console.log('setAllMentors', payload?.Items);
         setAllMentors(payload.Items);
         setLoading(false);
       } catch (err) {

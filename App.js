@@ -33,18 +33,14 @@ function onNotification(notify) {
   const options = {
     playSound: true,
   };
-  console.log('1');
   if (androidPlatform) {
-    console.log('2');
     if (Platform.Version > 25) {
-      console.log('3');
       PushNotification.getChannels(channelIDs => {
         if (
           channelIDs &&
           channelIDs.length > 0 &&
           channelIDs.includes(LOCAL_NOTIFICATION_CHANNEL_ID)
         ) {
-          console.log('4');
           notificationIDs += 1;
           localNotificationService.showNotification(
             notificationIDs,
@@ -54,9 +50,7 @@ function onNotification(notify) {
             options,
             LOCAL_NOTIFICATION_CHANNEL_ID,
           );
-          console.log('5');
         } else {
-          console.log('6');
           PushNotification.createChannel(
             {
               channelId: LOCAL_NOTIFICATION_CHANNEL_ID, // (required)
@@ -64,7 +58,6 @@ function onNotification(notify) {
               importance: 3,
             },
             created => {
-              console.log('7');
               notificationIDs += 1;
               if (created) {
                 localNotificationService.showNotification(
@@ -75,7 +68,6 @@ function onNotification(notify) {
                   options,
                   LOCAL_NOTIFICATION_CHANNEL_ID,
                 );
-                console.log('8');
               }
             },
           );
@@ -103,7 +95,6 @@ function onNotification(notify) {
 }
 
 function onOpenNotification(data) {
-  console.log('Handle notification by fcmService (onOpenNotification)', data);
 }
 
 function onRegister(token) {}
@@ -132,19 +123,19 @@ const App = () => {
               },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              registerNotification();
+              // registerNotification();
             } else {
               console.log('please allow notification permission from settings');
             }
           } else {
-            registerNotification();
+            // registerNotification();
           }
         } catch (err) {
           console.error('errror --> ', err);
           return false;
         }
       };
-      requestPushNotificationPermission();
+      // requestPushNotificationPermission();
     } else {
       // fcmService.registerAppWithFCM();
       // fcmService.register(onRegister, onNotification, onOpenNotification);

@@ -33,6 +33,7 @@ import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
+import {AV_CHAT_SCREEN} from '../../../utils/route';
 const AppoinmentsList = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -49,8 +50,8 @@ const AppoinmentsList = ({navigation}) => {
     SAVED,
     YES,
     YOU_JOINED_CALL,
-    OKAY
-  } = convertLang(useTranslation);
+    OKAY,
+  } = convertLang(t);
   const {props, setProps} = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [appointmentList, setAppointmentList] = useState({});
@@ -126,7 +127,7 @@ const AppoinmentsList = ({navigation}) => {
           userName: data?.patient_email_Id,
           roomName: data?.roomId,
         });
-        navigation.navigate('AVChatScreen');
+        navigation.navigate(AV_CHAT_SCREEN);
       } catch (err) {
         console.log('err----------------------', err);
       }
@@ -148,7 +149,7 @@ const AppoinmentsList = ({navigation}) => {
       //   .catch(err => {
       //     console.log('err----------------------', err);
       //   });
-    });
+    }, t);
   };
 
   return (

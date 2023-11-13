@@ -12,9 +12,9 @@ import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 
 // Register background handler
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Message handled in the background!', remoteMessage);
-});
+// messaging().setBackgroundMessageHandler(async remoteMessage => {
+//   console.log('Message handled in the background!', remoteMessage);
+// });
 
 const config = {
   Auth: {

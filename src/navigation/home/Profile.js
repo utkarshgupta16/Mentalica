@@ -32,6 +32,7 @@ import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 const Profile = () => {
+  const {t} = useTranslation();
   const {
     ACCOUNT_DETAILS,
     ARE_YOU_LOGOUT,
@@ -46,8 +47,7 @@ const Profile = () => {
     PAYMENT,
     SELECT_LANG,
     YES,
-  } = convertLang(useTranslation);
-  const {t} = useTranslation();
+  } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
@@ -153,17 +153,38 @@ const Profile = () => {
           setOpen={setIsOpen}
           value={t(selectedLanguage)}
           setValue={props => {
-            i18n
-              .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
-              .then(() => {
-                I18nManager.allowRTL(i18n.language === 'he');
-                I18nManager.forceRTL(i18n.language === 'he');
-                RNRestart.Restart();
-                setLanguage(props());
-              })
-              .catch(err => {
-                console.log('something went wrong while applying RTL', err);
-              });
+            Alert.alert(
+              'Are you sure want to change language',
+              'your app will be restarted when you changed language',
+              [
+                {
+                  text: NO_CANCEL,
+                  onPress: () => null,
+                },
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    i18n
+                      .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                      .then(() => {
+                        I18nManager.allowRTL(i18n.language === 'he');
+                        I18nManager.forceRTL(i18n.language === 'he');
+                        setLanguage(props());
+                        // RNRestart.Restart();
+                        setTimeout(() => {
+                          RNRestart.Restart();
+                        }, 5);
+                      })
+                      .catch(err => {
+                        console.log(
+                          'something went wrong while applying RTL',
+                          err,
+                        );
+                      });
+                  },
+                },
+              ],
+            );
           }}
           dropDownContainerStyle={{
             backgroundColor: Colors.white,
@@ -225,7 +246,7 @@ const styles = StyleSheet.create({
   },
   profileDetailsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 32,
+    paddingHorizontal: 17,
     marginBottom: 36,
   },
   issuesTitleText: {

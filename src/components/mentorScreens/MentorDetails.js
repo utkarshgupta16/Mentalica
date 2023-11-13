@@ -179,7 +179,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                           const resp = await dispatch(
                             bookAppointmentSlice(state),
                           );
-                          console.log('bookAppointmentSlice', resp);
                           close && close();
                           setLoading(false);
                         } catch (err) {

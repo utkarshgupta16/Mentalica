@@ -11,7 +11,6 @@ const SplashScreen = ({navigation}) => {
       navigation.replace('MainRoute');
     }, 3000);
   }, []);
-  console.log('SplashScreen');
   return (
     <View
       style={{

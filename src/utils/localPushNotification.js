@@ -6,11 +6,9 @@ class LocalNotificationService {
   configure = onOpenNotification => {
     PushNotification.configure({
       onRegister(token) {
-        console.log('[LocalNotificationService] onRegister:', token);
       },
       onNotification(notification) {
         // on click notification in android
-        console.log('[LocalNotificationService] onNotification:', notification);
         if (!notification?.data) {
           return;
         }

@@ -26,21 +26,18 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
 import {widthPercentageToDP} from '../utils/Responsive';
+import { LANG_OPTION } from '../utils/default';
 // import Logo from '../icons/logo-black.svg';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {loginFrom} = useSelector(state => state.auth);
-  console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
-  const langOptions = [
-    {label: 'English', value: 'English'},
-    {label: 'Hebrew', value: 'Hebrew'},
-  ];
+  const langOptions = LANG_OPTION
 
   // guptagaurav9566+1@gmail.com
 
@@ -50,7 +47,7 @@ const LoginScreen = ({navigation}) => {
   // );
   // patel.sonu@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
+    'patel.sonu@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -75,7 +72,6 @@ const LoginScreen = ({navigation}) => {
     } catch (err) {
       setError(err);
       setLoading(false);
-      console.log('hello ->error signing in', err);
     }
   };
 

@@ -55,8 +55,6 @@ export default VideoCallScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    console.log('AVSCREEN-------------------------');
-    console.log(props);
     twilioVideo.current.connect({
       roomName: props.roomName,
       accessToken: props.token,
@@ -81,10 +79,8 @@ export default VideoCallScreen = ({navigation}) => {
   const _onFlipButtonPress = () => {
     twilioVideo.current.flipCamera();
   };
-  console.log('stattu------------');
   //   console.log(props.status);
   //   console.log(props.videoTracks);
-  console.log('props', props);
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -127,9 +123,6 @@ export default VideoCallScreen = ({navigation}) => {
       {props.status === 'connected' && props.videoTracks.size > 0 ? (
         <View style={styles.remoteGrid}>
           {Array.from(props.videoTracks, ([trackSid, trackIdentifier]) => {
-            console.log('RENDERED REMOTE VIEW--------------------');
-            console.log('trackSid', trackSid);
-            console.log('trackIdentifier', trackIdentifier);
             return (
               <TwilioVideoParticipantView
                 enabled={true}
@@ -207,26 +200,18 @@ export default VideoCallScreen = ({navigation}) => {
       <TwilioVideo
         ref={twilioVideo}
         onRoomDidConnect={() => {
-          console.log('connected');
           setProps({...props, status: 'connected'});
         }}
         onRoomDidDisconnect={() => {
-          console.log('Disconnected');
           setProps({...props, status: 'disconnected'});
           navigation.goBack();
         }}
         onRoomDidFailToConnect={error => {
-          console.log('failed connected');
           Alert.alert('Error', error.error);
           setProps({...props, status: 'disconnected'});
           navigation.goBack();
         }}
         onParticipantAddedVideoTrack={({participant, track}) => {
-          console.log('addded participant');
-          console.log(participant);
-          console.log(track);
-          console.log(participant);
-          console.log(track);
           if (track.enabled) {
             setProps({
               ...props,
@@ -244,7 +229,6 @@ export default VideoCallScreen = ({navigation}) => {
           }
         }}
         onParticipantRemovedVideoTrack={({track}) => {
-          console.log('participant removved', track);
           const videoTracks = props.videoTracks;
           videoTracks.delete(track.trackSid);
           setProps({...props, videoTracks});

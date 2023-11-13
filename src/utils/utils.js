@@ -6,18 +6,18 @@ import {
   RESULTS,
 } from 'react-native-permissions';
 import {Platform} from 'react-native';
-import {
-  ERROR,
-  HARDWARE_SUPPORT,
-  ONE_GRANTED,
-  PERMISSIONS_ACCESS,
-  PERMISSIONS_GRANTED,
-} from './Strings';
-
+import convertLang from './Strings';
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
 
-export const _checkPermissions = callback => {
+export const _checkPermissions = (callback,useTranslation) => {
+    const {
+        ERROR,
+        HARDWARE_SUPPORT,
+        ONE_GRANTED,
+        PERMISSIONS_ACCESS,
+        PERMISSIONS_GRANTED,
+      } = convertLang(useTranslation);
   const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
   const androidPermissions = [
     PERMISSIONS.ANDROID.CAMERA,

@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import {View} from 'react-native';
-import {
-  ALL,
-  APPOINMENTS,
-  ARTICLES,
-  MENTORS_LIST,
-  SAVED,
-} from '../../../utils/Strings';
+import convertLang from '../../../utils/Strings';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
+import {useTranslation} from 'react-i18next';
 const TabComponent = ({selectedTab, setSelectedTab}) => {
+  const {t} = useTranslation();
+    const {
+        ALL,
+        APPOINTMENTS,
+        ARTICLES,
+        MENTORS_LIST,
+        SAVED,
+      }=convertLang(t)
   return (
     <View style={styles.tabs}>
       <PatientDashboardTabs
@@ -22,10 +25,10 @@ const TabComponent = ({selectedTab, setSelectedTab}) => {
       />
       <PatientDashboardTabs
         selectedTab={selectedTab}
-        title={APPOINMENTS}
-        tab={APPOINMENTS}
+        title={APPOINTMENTS}
+        tab={APPOINTMENTS}
         onPress={() => {
-          setSelectedTab({tabStr: APPOINMENTS});
+          setSelectedTab({tabStr: APPOINTMENTS});
         }}
       />
       <PatientDashboardTabs

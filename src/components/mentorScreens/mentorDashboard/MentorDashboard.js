@@ -39,104 +39,9 @@ import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
-
-let {width} = Dimensions.get('window');
-
-const url = 'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com';
-
-const events = [
-  {
-    start: '2023-11-11 00:30:00',
-    end: '2023-11-11 02:30:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 01:30:00',
-    end: '2023-11-11 02:20:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 04:10:00',
-    end: '2023-11-11 04:40:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 01:05:00',
-    end: '2023-11-11 01:45:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 14:30:00',
-    end: '2023-11-11 16:30:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 01:20:00',
-    end: '2023-11-11 02:20:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 04:10:00',
-    end: '2023-11-11 04:40:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 00:45:00',
-    end: '2023-11-11 01:45:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 11:30:00',
-    end: '2023-11-11 12:30:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 01:30:00',
-    end: '2023-11-11 02:00:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 03:10:00',
-    end: '2023-11-11 03:40:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-  {
-    start: '2023-11-11 00:10:00',
-    end: '2023-11-11 01:45:00',
-    title: 'Dr. Mariana Joseph',
-    summary: '3412 Piedmont Rd NE, GA 3032',
-  },
-];
-
-function YourComponent({style, item, dayIndex, daysTotal}) {
-  return (
-    <View
-      style={{
-        ...style, // apply calculated styles, be careful not to override these accidentally (unless you know what you are doing)
-        backgroundColor: 'red',
-        borderRadius: 10,
-        elevation: 5,
-      }}>
-      <Text>{item.title}</Text>
-      <Text>
-        {dayIndex} of {daysTotal}
-      </Text>
-    </View>
-  );
-}
-
+import { AV_CHAT_SCREEN } from '../../../utils/route';
 const MentorDashboard = ({navigation}) => {
+  const {t} = useTranslation();
   const {
     ARE_YOU_JOIN,
     HELLO,
@@ -146,9 +51,8 @@ const MentorDashboard = ({navigation}) => {
     RELOAD,
     YES,
     YOU_JOINED_CALL,
-  } = convertLang(useTranslation);
+  } = convertLang(t);
   const isFocus = useIsFocused();
-  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
   const isFocused = useIsFocused();
@@ -210,36 +114,6 @@ const MentorDashboard = ({navigation}) => {
     (async () => {
       updateData();
     })();
-
-    // axios
-    //   .post(
-    //     'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getAppointmentList',
-    //     payload,
-    //   )
-    //   .then(response => {
-    //     console.log('rep', response.data);
-
-    //     const appointments = response.data;
-
-    //     const formattedAppointments = {};
-    //     appointments.forEach(appointment => {
-    //       const date = appointment.startTime.split('T')[0]; // Extract date from startTime
-    //       if (!formattedAppointments[date]) {
-    //         formattedAppointments[date] = [];
-    //       }
-    //       formattedAppointments[date].push({
-    //         start: appointment.startTime,
-    //         end: appointment.endTime,
-    //         ...appointment,
-    //         // Other appointment data
-    //       });
-    //     });
-
-    //     setAppointmentList(formattedAppointments);
-    //   })
-    //   .catch(error => {
-    //     console.log('error appi lit', error);
-    //   });
   }, [dispatch, email, isFocus]);
 
   const generateWeekData = () => {
@@ -274,7 +148,7 @@ const MentorDashboard = ({navigation}) => {
           userName: data?.mentor_email_id,
           roomName: data?.roomId,
         });
-        token && navigation.navigate('AVChatScreen');
+        token && navigation.navigate(AV_CHAT_SCREEN);
       } catch (err) {
         console.log('err----------------------', err);
       }
@@ -326,7 +200,7 @@ const MentorDashboard = ({navigation}) => {
               setLoading(false);
             }}
             style={styles.reloadButton}>
-            <Text style={styles.reloadText}>{t(RELOAD)}</Text>
+            <Text style={styles.reloadText}>{RELOAD}</Text>
             <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
           </Pressable>
         )}
@@ -335,14 +209,14 @@ const MentorDashboard = ({navigation}) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                Alert.alert(t(YOU_JOINED_CALL), t(ARE_YOU_JOIN), [
+                Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
                   {
                     onPress: () => videoCallAction(item),
-                    text: t(YES),
+                    text: YES,
                   },
                   {
                     onPress: () => null,
-                    text: t(NO),
+                    text: NO,
                   },
                 ]);
               }}>

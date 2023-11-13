@@ -1,3 +1,4 @@
+
 export const specialities = [
   {label: 'Anxiety', value: 'anxiety'},
   {label: 'Fear', value: 'fear'},
@@ -142,9 +143,13 @@ export const PAYMENT_DETAIL_ITEM_PATIENT = [
   'Payment history',
 ];
 
-export const PAYMENT_DETAIL_ITEM_MENTOR=[
+export const PAYMENT_DETAIL_ITEM_MENTOR = [
   'Edit fiscal information',
   'Banking information',
-]
+];
 
-export const PROFILE_DETAILS=['Edit profile', 'Contact details', 'Password']
+export const PROFILE_DETAILS = ['Edit profile', 'Contact details', 'Password'];
+export const LANG_OPTION = [
+  {label: 'English', value: 'English'},
+  {label: 'Hebrew', value: 'Hebrew'},
+];

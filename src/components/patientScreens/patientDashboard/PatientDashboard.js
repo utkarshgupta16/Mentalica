@@ -20,6 +20,7 @@ import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
 
 const PatientDashboard = ({navigation}) => {
+  const {t} = useTranslation();
   const {
     ALL,
     APPOINTMENTS,
@@ -28,7 +29,7 @@ const PatientDashboard = ({navigation}) => {
     MENTORS_LIST,
     NO_DATA_FOUND,
     SAVED,
-  } = convertLang(useTranslation);
+  } = convertLang(t);
   const components = {
     [ALL]: <AllTabComponent />,
     [APPOINTMENTS]: <AppointmentList navigation={navigation} />,
@@ -52,20 +53,19 @@ const PatientDashboard = ({navigation}) => {
   };
   const {email, type} = useSelector(state => state.auth);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
-  const [mentorName, setMentorName] = useState('');
+  const [patientName, setPatientName] = useState('');
   const dispatch = useDispatch();
   useEffect(() => {
     (async () => {
       const res = await dispatch(getProfileSlice({email, type: type}));
-      console.log('res==============', res, type, email);
-      setMentorName(res?.payload?.Items[0]?.firstName);
+      setPatientName(res?.payload?.Items[0]?.firstName);
     })();
   }, [email, type]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {mentorName}
+        {HELLO} {patientName}
       </Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
