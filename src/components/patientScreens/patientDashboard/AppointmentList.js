@@ -25,7 +25,7 @@ import {
   PERMISSIONS,
   RESULTS,
 } from 'react-native-permissions';
-import convertLang from '../../../utils/Strings';
+import convertLang, {MENTOR} from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
@@ -42,7 +42,6 @@ const AppoinmentsList = ({navigation}) => {
     ARE_YOU_JOIN,
     ARTICLES,
     LINK_EXPIRED,
-    MENTOR,
     MENTORS_LIST,
     NO,
     PATIENT_EMAIL_ID,

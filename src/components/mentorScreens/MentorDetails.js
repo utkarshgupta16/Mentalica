@@ -25,6 +25,7 @@ import {
   bookAppointmentSlice,
   getBooksSlots,
   getScheduledAppointmentsSlice,
+  sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
@@ -181,6 +182,16 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                           );
                           close && close();
                           setLoading(false);
+                          selectedMentorData?.fcmToken &&
+                            dispatch(
+                              sendNotificationSlice({
+                                fcmToken: selectedMentorData?.fcmToken,
+                                data: {
+                                  title: `Meeting scheduled with patient: ${state?.patientName}`,
+                                  body: `Scheduled today at : ${selectedSlot}`,
+                                },
+                              }),
+                            );
                         } catch (err) {
                           setLoading(false);
                         }

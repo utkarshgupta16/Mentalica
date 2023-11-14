@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.whiteLight,
     flex: 1,
     paddingTop: hp(2),
+    position:"relative"
   },
   helloText: {
     fontSize: 20,

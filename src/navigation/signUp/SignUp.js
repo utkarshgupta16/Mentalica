@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   Alert,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -15,7 +16,7 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import convertLang from '../../utils/Strings';
+import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
@@ -24,11 +25,11 @@ import AddSlotsComponent from './AddSlots';
 import {useTranslation} from 'react-i18next';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp} from '../../utils/Responsive';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
-  const {MENTOR, PATIENT, PASSWORD_NOT_MATCH, ADD_SLOTS, UPDATE_SLOTS} =
-    convertLang(t);
+  const {PASSWORD_NOT_MATCH, ADD_SLOTS, UPDATE_SLOTS} = convertLang(t);
   const typeOfItems = [
     {
       label: 'Patient',
@@ -139,10 +140,10 @@ const MentorSignUp = ({navigation}) => {
         ...commonSignupData
       } = state;
 
+      let fcmToken = await AsyncStorage.getItem('fcmToken');
       let finalSignupData = {
         ...commonSignupData,
       };
-
       if (typeValue === MENTOR) {
         let expertiseUpdated = convertString(expertise) || '';
         let stringLanguageUpdated = convertString(language) || '';
@@ -194,6 +195,8 @@ const MentorSignUp = ({navigation}) => {
       const attRes = await dispatch(
         singUpSlice({
           ...restData,
+          fcmToken: fcmToken ? fcmToken : '',
+          deviceType: Platform.OS,
           type: typeValue,
         }),
       );

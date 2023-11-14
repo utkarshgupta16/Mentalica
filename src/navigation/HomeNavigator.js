@@ -8,11 +8,11 @@ import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
 // import {MaterialIcons} from '@expo/vector-icons';
-import convertLang from '../utils/Strings';
+import convertLang, {MENTOR} from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
@@ -22,7 +22,6 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const MentorDashboardStack = () => {
-
   return (
     // <NavigationContainer>
     <Stack.Navigator>
@@ -63,17 +62,9 @@ const PatientDashboardStack = () => {
 const HomeNavigator = () => {
   const {t} = useTranslation();
 
-  const {
-    HOME,
-    INVOICING,
-    MENTOR,
-    MESSAGES,
-    PROFILE,
-    STATS,
-  }=convertLang(t)
+  const {HOME, INVOICING, MESSAGES, PROFILE, STATS} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
-
   return (
     <Tab.Navigator
       screenOptions={{
