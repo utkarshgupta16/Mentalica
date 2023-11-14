@@ -34,24 +34,23 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import convertLang from '../../../utils/Strings';
+import convertLang,{MENTOR} from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
-import { AV_CHAT_SCREEN } from '../../../utils/route';
+import {AV_CHAT_SCREEN} from '../../../utils/route';
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const {
     ARE_YOU_JOIN,
     HELLO,
-    MENTOR,
     MENTOR_EMAIL_ID,
     NO,
     RELOAD,
     YES,
     YOU_JOINED_CALL,
-  } = convertLang(t);
+  } = (t && convertLang(t)) || {};
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
@@ -138,7 +137,7 @@ const MentorDashboard = ({navigation}) => {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
             roomId: data?.roomId,
-            userName: data?.patient_email_Id,
+            userName: data?.mentor_email_id,
           }),
         );
         const token = payload?.token;

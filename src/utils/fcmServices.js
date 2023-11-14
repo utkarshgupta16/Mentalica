@@ -39,6 +39,7 @@ class FCMService {
 
   async getToken(onRegister) {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
+    console.log("fcmToken===============",fcmToken)
     if (!fcmToken) {
       try {
         fcmToken = await messaging().getToken();
