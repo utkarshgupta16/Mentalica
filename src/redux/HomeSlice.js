@@ -54,6 +54,35 @@ export const getTwilloTokenSlice = createAsyncThunk(
   },
 );
 
+export const editProfileSlice = createAsyncThunk(
+  'home/editProfileSlice',
+  async updateData => {
+    // let token = await AsyncStorage.getItem('token');
+    var config = {
+      method: 'post',
+      url: endPoints.editProfile,
+      headers: {
+        // Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      data: updateData,
+    };
+    return axios(config)
+      .then(async response => {
+        const {data, status} = response;
+        if (status === 200) {
+          return Promise.resolve(data);
+        } else {
+          return Promise.reject(new Error('Server Error!'));
+        }
+      })
+      .catch(err => {
+        console.log('err', err);
+        return Promise.reject(new Error(err));
+      });
+  },
+);
+
 export const bookAppointmentSlice = createAsyncThunk(
   'home/bookAppointmentSlice',
   async bookData => {
@@ -118,6 +147,9 @@ export const sendNotificationSlice = createAsyncThunk(
 export const getProfileSlice = createAsyncThunk(
   'home/getProfileSlice',
   async ({email, type}) => {
+    if (!type) {
+      return;
+    }
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
@@ -151,7 +183,9 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
   async ({email, fieldName = 'mentorEmailId'}) => {
     // let token = await AsyncStorage.getItem('token');
-
+    if (!email) {
+      return;
+    }
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
@@ -180,6 +214,9 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',
   async ({email}) => {
+    if (!email) {
+      return;
+    }
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
@@ -212,6 +249,7 @@ const initialState = {
   isProfileLoading: false,
   scheduledAppointmentsData: [],
   isScheduleLoading: false,
+  isEditProfileLoading: false,
   type: '',
 };
 const HomeSlice = createSlice({
@@ -228,7 +266,7 @@ const HomeSlice = createSlice({
     });
     builder.addCase(getProfileSlice.fulfilled, (state, action) => {
       state.isProfileLoading = false;
-      state.profileData = action.payload;
+      state.profileData = action.payload?.Items[0];
     });
     builder.addCase(getProfileSlice.rejected, (state, action) => {
       state.isProfileLoading = false;
@@ -247,6 +285,20 @@ const HomeSlice = createSlice({
     builder.addCase(getScheduledAppointmentsSlice.rejected, (state, action) => {
       state.isScheduleLoading = false;
       state.scheduledAppointmentsData = [];
+    });
+    builder.addCase(editProfileSlice.pending, state => {
+      state.isEditProfileLoading = true;
+    });
+    builder.addCase(editProfileSlice.fulfilled, (state, action) => {
+      state.isEditProfileLoading = false;
+      state.profileData = {
+        ...state.profileData,
+        ...action.payload?.Attributes,
+      };
+    });
+    builder.addCase(editProfileSlice.rejected, (state, action) => {
+      state.isEditProfileLoading = false;
+      state.profileData = state.profileData?.Items[0];
     });
   },
 });

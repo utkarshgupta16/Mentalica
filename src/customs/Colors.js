@@ -13,6 +13,7 @@ const Colors = {
   blueDarkColor: '#33A3DC',
   lightDark: '#DDE6ED',
   whiteLight: '#F5F7F8',
+  dustyGray: "#999999",
 };
 
 export default Colors;

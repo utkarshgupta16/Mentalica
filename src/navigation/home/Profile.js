@@ -15,7 +15,7 @@ import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import convertLang from '../../utils/Strings';
+import convertLang, {PATIENT, MENTOR} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
@@ -31,7 +31,7 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const Profile = () => {
+const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
     ACCOUNT_DETAILS,
@@ -41,9 +41,7 @@ const Profile = () => {
     I_AM_SPECIALIST,
     I_WANT,
     LOGOUT,
-    MENTOR,
     NO_CANCEL,
-    PATIENT,
     PAYMENT,
     SELECT_LANG,
     YES,
@@ -66,10 +64,20 @@ const Profile = () => {
     firstName = '',
     lastName = '',
     expertise = '',
-  } = (profileData.Items && profileData?.Items[0]) || {};
+  } = profileData || {};
   const DUMMY_ISSUES =
     type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
-  const profileDetailsItems = PROFILE_DETAILS;
+
+  const profileDetailsItems = [
+    {
+      label: 'Edit profile',
+      screen: 'EditProfilePatient',
+      props: profileData || {},
+    },
+
+    {label: 'Contact details', screen: '', props: profileData || {}},
+    {label: 'Password', screen: ''},
+  ];
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
@@ -134,7 +142,13 @@ const Profile = () => {
         <View style={styles.profDetailsCont}>
           <Text style={styles.accDetailsTitle}>{ACCOUNT_DETAILS}</Text>
           {profileDetailsItems.map(item => (
-            <ProfileDetailsItem key={item} title={item} />
+            <ProfileDetailsItem
+              navigation={navigation}
+              key={item?.label}
+              title={item?.label}
+              screen={item?.screen}
+              data={item?.props}
+            />
           ))}
         </View>
         <View style={styles.paymentDetailsCont}>
