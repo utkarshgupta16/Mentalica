@@ -30,7 +30,7 @@ import {
 import ScreenLoading from '../ScreenLoading';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  const {profileData: {Items = []} = {}} = useSelector(state => state.home);
+  const {profileData} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
   const [bookSlots, setBookSlots] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -42,10 +42,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     endTime: '',
     mentorName: `${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`,
     patientName:
-      Items &&
-      Items.length &&
-      Items[0] &&
-      `${Items[0]?.firstName} ${Items[0]?.lastName}`,
+      profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
   useEffect(() => {
