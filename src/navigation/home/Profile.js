@@ -8,21 +8,58 @@ import {
   ActivityIndicator,
   Image,
   Alert,
+  TouchableOpacity,
+  I18nManager,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import {MENTOR, PATIENT} from '../../utils/Strings';
+import convertLang from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
-import {screenWidth} from '../../utils/Responsive';
+import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
+import ScreenLoading from '../../components/ScreenLoading';
+import {
+  PAYMENT_DETAIL_ITEM_MENTOR,
+  PAYMENT_DETAIL_ITEM_PATIENT,
+  PROFILE_DETAILS,
+  LANG_OPTION,
+} from '../../utils/default';
+import {useTranslation} from 'react-i18next';
+import i18n from '../../utils/i18n';
+import RNRestart from 'react-native-restart';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Profile = () => {
+  const {t} = useTranslation();
+  const {
+    ACCOUNT_DETAILS,
+    ARE_YOU_LOGOUT,
+    ENGLISH,
+    HEBREW,
+    I_AM_SPECIALIST,
+    I_WANT,
+    LOGOUT,
+    MENTOR,
+    NO_CANCEL,
+    PATIENT,
+    PAYMENT,
+    SELECT_LANG,
+    YES,
+    RESTART_APP,
+    CHANGE_LANG,
+    OKAY
+  } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setLanguage] = useState(
+    i18n.language === 'he' ? HEBREW : ENGLISH,
+  );
+  const langOptions = LANG_OPTION;
   const {
     feel = '',
     email_id = '',
@@ -30,29 +67,20 @@ const Profile = () => {
     lastName = '',
     expertise = '',
   } = (profileData.Items && profileData?.Items[0]) || {};
-  const DUMMY_ISSUES = expertise
-    ? expertise?.split(',')
-    : ['Depression', 'Anxiety', 'Student life', 'Loneliness'];
-  const profileDetailsItems = ['Edit profile', 'Contact details', 'Password'];
-  const paymentDetailsItemsPatient = [
-    'Edit payment information',
-    'Payment methods',
-    'Payment history',
-  ];
-
-  const paymentDetailsItemsMentor = [
-    'Edit fiscal information',
-    'Banking information',
-  ];
+  const DUMMY_ISSUES =
+    type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
+  const profileDetailsItems = PROFILE_DETAILS;
+  const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
+  const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
   const logoutPressHandler = () => {
-    Alert.alert('Log Out', 'Are you sure want to log out?', [
+    Alert.alert(LOGOUT, ARE_YOU_LOGOUT, [
       {
-        text: 'No, Cancel',
+        text: NO_CANCEL,
         onPress: () => null,
       },
       {
-        text: 'Yes, Log Out',
+        text: `${YES}, ${LOGOUT}`,
         onPress: async () => {
           signOut();
           dispatch(logout());
@@ -77,7 +105,7 @@ const Profile = () => {
           <View style={styles.imageContainer}>
             <Image
               source={
-                loginFrom === PATIENT
+                loginFrom == PATIENT
                   ? require('../../icons/patient.jpg')
                   : require('../../icons/doctor.jpg')
               }
@@ -93,7 +121,7 @@ const Profile = () => {
         </View>
         <View style={styles.issuesContainer}>
           <Text style={styles.issuesTitleText}>
-            {loginFrom === MENTOR ? "I'm a specialist in" : 'I want to address'}
+            {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
             {DUMMY_ISSUES.map(issue => (
@@ -104,13 +132,13 @@ const Profile = () => {
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.profDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Account Details</Text>
+          <Text style={styles.accDetailsTitle}>{ACCOUNT_DETAILS}</Text>
           {profileDetailsItems.map(item => (
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
         <View style={styles.paymentDetailsCont}>
-          <Text style={styles.accDetailsTitle}>Payment</Text>
+          <Text style={styles.accDetailsTitle}>{PAYMENT}</Text>
           {(loginFrom === MENTOR
             ? paymentDetailsItemsMentor
             : paymentDetailsItemsPatient
@@ -119,16 +147,61 @@ const Profile = () => {
           ))}
         </View>
 
+        <DropDownPicker
+          dropDownDirection="TOP"
+          listMode="SCROLLVIEW"
+          autoScroll={true}
+          zIndex={3000}
+          open={isOpen}
+          setOpen={setIsOpen}
+          value={t(selectedLanguage)}
+          setValue={props => {
+            Alert.alert(CHANGE_LANG, RESTART_APP, [
+              {
+                text: NO_CANCEL,
+                onPress: () => null,
+              },
+              {
+                text: OKAY,
+                onPress: () => {
+                  i18n
+                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                    .then(() => {
+                      I18nManager.allowRTL(i18n.language === 'he');
+                      I18nManager.forceRTL(i18n.language === 'he');
+                      setLanguage(props());
+                      // RNRestart.Restart();
+                      setTimeout(() => {
+                        RNRestart.Restart();
+                      }, 5);
+                    })
+                    .catch(err => {
+                      console.log(
+                        'something went wrong while applying RTL',
+                        err,
+                      );
+                    });
+                },
+              },
+            ]);
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: Colors.white,
+            borderWidth: 0,
+            alignSelf: 'center',
+            width: widthPercentageToDP(36),
+          }}
+          items={langOptions}
+          placeholder={SELECT_LANG}
+          containerStyle={{borderBottomColor: 'gray'}}
+          style={styles.dropdown}
+        />
+
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
-          <Text style={styles.logoutTitle}>Log out</Text>
+          <Text style={styles.logoutTitle}>{LOGOUT}</Text>
         </Pressable>
       </View>
-      {isProfileLoading ? (
-        <View
-          style={{position: 'absolute', left: 0, bottom: 0, right: 0, top: 0}}>
-          <ActivityIndicator size={'large'} color="green" />
-        </View>
-      ) : null}
+      {isProfileLoading ? <ScreenLoading /> : null}
     </ScrollView>
   );
 };
@@ -144,6 +217,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
   imageContainer: {
+    borderWidth: 1,
     width: 56,
     height: 56,
     borderRadius: 8,
@@ -171,7 +245,7 @@ const styles = StyleSheet.create({
   },
   profileDetailsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 32,
+    paddingHorizontal: 17,
     marginBottom: 36,
   },
   issuesTitleText: {
@@ -207,5 +281,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     textDecorationLine: 'underline',
+  },
+  dropdown: {
+    backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
+    alignSelf: 'center',
+    width: widthPercentageToDP(36),
   },
 });

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   Alert,
-  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -16,20 +15,17 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
+import {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
-import {useTranslation} from 'react-i18next';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp} from '../../utils/Responsive';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTranslation} from 'react-i18next';
 
 const MentorSignUp = ({navigation}) => {
-  const {t} = useTranslation();
-  const {PASSWORD_NOT_MATCH, ADD_SLOTS, UPDATE_SLOTS} = convertLang(t);
   const typeOfItems = [
     {
       label: 'Patient',
@@ -140,10 +136,10 @@ const MentorSignUp = ({navigation}) => {
         ...commonSignupData
       } = state;
 
-      let fcmToken = await AsyncStorage.getItem('fcmToken');
       let finalSignupData = {
         ...commonSignupData,
       };
+
       if (typeValue === MENTOR) {
         let expertiseUpdated = convertString(expertise) || '';
         let stringLanguageUpdated = convertString(language) || '';
@@ -195,8 +191,6 @@ const MentorSignUp = ({navigation}) => {
       const attRes = await dispatch(
         singUpSlice({
           ...restData,
-          fcmToken: fcmToken ? fcmToken : '',
-          deviceType: Platform.OS,
           type: typeValue,
         }),
       );
@@ -208,7 +202,6 @@ const MentorSignUp = ({navigation}) => {
           onPress: () => null,
         },
       ]);
-      console.log('err:', err);
     } finally {
       setIsLoading(false);
     }
@@ -231,7 +224,6 @@ const MentorSignUp = ({navigation}) => {
     try {
       const enteredCode = enteredOtp.join('');
       const res = await Auth.confirmSignUp(state.emailId, enteredCode);
-      console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
@@ -302,14 +294,12 @@ const MentorSignUp = ({navigation}) => {
 
   const resendCode = async () => {
     const response = await Auth.resendSignUp(state.emailId);
-    console.log('response:', response);
   };
 
   const mentorExtras = (
     <>
       <DropDownPicker
         nestedScrollEnabled={true}
-        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={2000}
@@ -331,7 +321,6 @@ const MentorSignUp = ({navigation}) => {
         containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
-        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={1000}
@@ -366,7 +355,6 @@ const MentorSignUp = ({navigation}) => {
   const patientExtras = (
     <>
       <DropDownPicker
-        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={3000}
@@ -384,9 +372,8 @@ const MentorSignUp = ({navigation}) => {
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
-        dropDownDirection="TOP"
         autoScroll={true}
-        zIndex={4000}
+        zIndex={2000}
         open={openDuty}
         setOpen={setOpenDuty}
         value={state.duty}
@@ -401,7 +388,6 @@ const MentorSignUp = ({navigation}) => {
       />
 
       <DropDownPicker
-        dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={1000}
@@ -475,11 +461,10 @@ const MentorSignUp = ({navigation}) => {
           {/* CHECK FOR THE TYPE: */}
 
           <DropDownPicker
-            dropDownDirection="TOP"
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
-            zIndex={3000}
+            zIndex={10000}
             open={typeOpen}
             setOpen={setTypeOpen}
             value={typeValue}
@@ -503,7 +488,7 @@ const MentorSignUp = ({navigation}) => {
             state.confirmPassword &&
             state.password !== state.confirmPassword && (
               <Text style={styles.passwordNotMatchText}>
-                {PASSWORD_NOT_MATCH}
+                Password does not match.
               </Text>
             )}
           {typeValue === MENTOR ? (
@@ -511,7 +496,7 @@ const MentorSignUp = ({navigation}) => {
               style={styles.slotContainer}
               onPress={() => setShowSlots(!showSlots)}>
               <Text style={styles.slotsText}>
-                {slots.length ? UPDATE_SLOTS : ADD_SLOTS}
+                {slots.length ? 'Update Slots' : 'Add Slots'}
               </Text>
             </Pressable>
           ) : null}

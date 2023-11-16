@@ -1,16 +1,17 @@
 import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
 import React from 'react';
 import {styles} from './PatientStatsStyle';
-
+import {useTranslation} from 'react-i18next';
 
 const PatientStats = () => {
+  const {t} = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>My mood</Text>
-      <Text style={styles.dateText}>4th April overview</Text>
+      <Text style={styles.titleText}>{t('My Mood')}</Text>
+      {/* <Text style={styles.dateText}>4th April overview</Text> */}
       <Pressable>
         <View style={styles.newEntryBtn}>
-          <Text>New entry</Text>
+          <Text>{t('New Entry')}</Text>
         </View>
       </Pressable>
       <View style={styles.listContainer}>

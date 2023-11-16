@@ -7,3 +7,4 @@ export const MENTOR_SIGN_UP = 'MentorSignUp';
 export const PATIENT_SIGN_UP = 'PatientSignUp';
 export const LOGIN = 'Login';
 export const ASK_CLIENT = '"AskClient"';
+export const AV_CHAT_SCREEN="AVChatScreen"

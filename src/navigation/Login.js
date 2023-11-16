@@ -8,6 +8,7 @@ import {
   Platform,
   Image,
   SafeAreaView,
+  I18nManager,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -18,22 +19,36 @@ import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
+import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import DropDownPicker from 'react-native-dropdown-picker';
+import i18n from '../utils/i18n';
+import RNRestart from 'react-native-restart';
+import {widthPercentageToDP} from '../utils/Responsive';
+import {LANG_OPTION} from '../utils/default';
+import ConvertLang from '../utils/Strings';
+// import Logo from '../icons/logo-black.svg';
 
 const LoginScreen = ({navigation}) => {
+  const {t} = useTranslation();
+  const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
-  console.log('loginFrom', loginFrom);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setLanguage] = useState(
+    i18n.language === 'he' ? 'Hebrew' : 'English',
+  );
+  const langOptions = LANG_OPTION;
+
   // guptagaurav9566+1@gmail.com
 
   // bhandari.tribhuwan@thinksys.com
   // const [enteredEmail, setEnteredEmail] = useState(
   //   'bhandari.tribhuwan@thinksys.com',
   // );
-  const [enteredEmail, setEnteredEmail] = useState(
-    'Gupta.utkarsh@thinksys.com',
-  );
+  // patel.sonu@thinksys.com
+  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -57,7 +72,6 @@ const LoginScreen = ({navigation}) => {
     } catch (err) {
       setError(err);
       setLoading(false);
-      console.log('hello ->error signing in', err);
     }
   };
 
@@ -121,35 +135,37 @@ const LoginScreen = ({navigation}) => {
         }}>
         <View style={styles.modalContainer}>
           <View style={styles.codeContainer}>
-            <Text>Enter Email:</Text>
+            <Text>{`${t('Enter Email')}:`}</Text>
             <TextInput
               onChangeText={text => setEnteredEmail(text)}
               style={styles.modalTextInput}
             />
           </View>
           <View style={styles.codeContainer}>
-            <Text>Enter Code:</Text>
+            <Text>{`${t('Enter Code')}:`}</Text>
             <TextInput
               onChangeText={text => setEnteredCode(text)}
               style={styles.modalTextInput}
             />
           </View>
-          <Button title="Submit" onPress={submitCodeHandler} />
+          <Button title={t('Submit')} onPress={submitCodeHandler} />
         </View>
       </Modal>
       <View style={styles.container}>
         <View style={styles.inputContainer}>
           <TextInput
+            textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredEmail}
             style={styles.input}
-            placeholder="E-mail"
+            placeholder={t('E-mail')}
             keyboardType="email-address"
             value={enteredEmail}
           />
           <TextInput
+            textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredPassword}
             style={styles.input}
-            placeholder="Password"
+            placeholder={t('Password')}
             secureTextEntry={true}
             value={enteredPassword}
           />
@@ -162,33 +178,85 @@ const LoginScreen = ({navigation}) => {
                 style={styles.checkBox}
                 boxType="square"
               />
-              <Text style={styles.rememberMeText}>Remember Me</Text>
+              <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
             </View>
             <Button
               disabled={!enteredEmail.trim() || !enteredPassword.trim()}
-              title="Login"
+              title={t('Login')}
               onPress={loginHandler}
             />
           </View>
         </View>
         <View style={styles.buttonContainerView}>
-          <Text style={styles.askSignup}>Don't have an account? Wanna </Text>
+          <Text style={styles.askSignup}>
+            {t("Don't have an account? Wanna")}
+          </Text>
           <Pressable
             style={styles.signUpContainer}
-            title="Sign Up"
+            title={t('Sign Up')}
             onPress={signUpClickHandler}>
-            <Text style={styles.signUpText}> Sign Up</Text>
+            <Text style={styles.signUpText}> {t('Sign Up')}</Text>
           </Pressable>
         </View>
+        <DropDownPicker
+          dropDownDirection="TOP"
+          listMode="SCROLLVIEW"
+          autoScroll={true}
+          zIndex={3000}
+          open={isOpen}
+          setOpen={setIsOpen}
+          value={t(selectedLanguage)}
+          setValue={props => {
+            Alert.alert(CHANGE_LANG, RESTART_APP, [
+              {
+                text: NO_CANCEL,
+                onPress: () => null,
+              },
+              {
+                text: 'OK',
+                onPress: () => {
+                  i18n
+                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                    .then(() => {
+                      I18nManager.allowRTL(i18n.language === 'he');
+                      I18nManager.forceRTL(i18n.language === 'he');
+                      setLanguage(props());
+                      setTimeout(() => {
+                        RNRestart.Restart();
+                      }, 5);
+                    })
+                    .catch(err => {
+                      console.log(
+                        'something went wrong while applying RTL',
+                        err,
+                      );
+                    });
+                },
+              },
+            ]);
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: Colors.white,
+            borderWidth: 0,
+            alignSelf: 'center',
+            width: widthPercentageToDP(30),
+          }}
+          items={langOptions}
+          placeholder={t('Select Language')}
+          containerStyle={{borderBottomColor: 'gray'}}
+          style={styles.dropdown}
+        />
         {error ? (
           <View style={styles.buttonContainerView}>
             <Pressable
               style={styles.signUpContainer}
-              title="Enter Code"
+              title={t('Enter Code')}
               onPress={() => {
                 setShowEnterCodeModal(true);
               }}>
-              <Text style={styles.signUpText}>Confirm Verification Code</Text>
+              <Text style={styles.signUpText}>
+                {t('Confirm Verification Code')}
+              </Text>
             </Pressable>
           </View>
         ) : null}
@@ -275,6 +343,12 @@ const styles = StyleSheet.create({
   warningMessage: {
     color: 'tomato',
     fontSize: 12,
+  },
+  dropdown: {
+    backgroundColor: Colors.paleMintColor,
+    borderWidth: 0,
+    alignSelf: 'center',
+    width: widthPercentageToDP(30),
   },
 });
 

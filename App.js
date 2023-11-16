@@ -1,6 +1,23 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import reactotron from 'reactotron-react-native';
+import MainNavigator from './src/navigation/MainNavigator';
+import {I18nextProvider} from 'react-i18next';
+import i18n from './src/utils/i18n';
+import {
+  PermissionsAndroid,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+} from 'react-native';
+import {fcmService} from './src/utils/fcmServices';
+import {localNotificationService} from './src/utils/localPushNotification';
+import PushNotification from 'react-native-push-notification';
+import {androidPlatform} from './src/utils/config';
+export const AppContext = React.createContext(initialState);
 
+const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
+let notificationIDs = 0;
 const initialState = {
   isAudioEnabled: true,
   status: 'disconnected',
@@ -12,15 +29,140 @@ const initialState = {
   isVideoEnabled: true,
 };
 
-export const AppContext = React.createContext(initialState);
+function onNotification(notify) {
+  const options = {
+    playSound: true,
+  };
+  if (androidPlatform) {
+    if (Platform.Version > 25) {
+      PushNotification.getChannels(channelIDs => {
+        if (
+          channelIDs &&
+          channelIDs.length > 0 &&
+          channelIDs.includes(LOCAL_NOTIFICATION_CHANNEL_ID)
+        ) {
+          notificationIDs += 1;
+          localNotificationService.showNotification(
+            notificationIDs,
+            notify.notification?.title
+              ? notify.notification?.title
+              : notify?.data?.title,
+            notify.notification?.body
+              ? notify.notification?.body
+              : notify?.data?.body,
+            notify?.data,
+            options,
+            LOCAL_NOTIFICATION_CHANNEL_ID,
+          );
+        } else {
+          PushNotification.createChannel(
+            {
+              channelId: LOCAL_NOTIFICATION_CHANNEL_ID, // (required)
+              channelName: 'Mentalica Application', // (required)
+              importance: 3,
+            },
+            created => {
+              notificationIDs += 1;
+              if (created) {
+                localNotificationService.showNotification(
+                  notificationIDs,
+                  notify.notification?.title
+                    ? notify.notification?.title
+                    : notify?.data?.title,
+                  notify.notification?.body
+                    ? notify.notification?.body
+                    : notify?.data?.body,
+                  notify?.data,
+                  options,
+                  LOCAL_NOTIFICATION_CHANNEL_ID,
+                );
+              }
+            },
+          );
+        }
+      });
+    } else {
+      notificationIDs += 1;
+      localNotificationService.showNotification(
+        notificationIDs,
+        notify.notification?.title
+          ? notify.notification?.title
+          : notify?.data?.title,
+        notify.notification?.body
+          ? notify.notification?.body
+          : notify?.data?.body,
+        notify?.data,
+        options,
+      );
+    }
+  } else {
+    localNotificationService.showNotification(
+      0,
+      notify.notification?.title
+        ? notify.notification?.title
+        : notify?.data?.title,
+      notify.notification?.body
+        ? notify.notification?.body
+        : notify?.data?.body,
+      notify?.data,
+      options,
+    );
+  }
+}
 
-import MainNavigator from './src/navigation/MainNavigator';
-import {SafeAreaView, StyleSheet, StatusBar} from 'react-native';
-import {I18nextProvider} from 'react-i18next';
-import i18n from './src/utils/i18n';
+function onOpenNotification(data) {}
+
+function onRegister(token) {}
+
+const registerNotification = () => {
+  fcmService.register(onRegister, onNotification, onOpenNotification);
+  localNotificationService.configure(onOpenNotification);
+};
 
 const App = () => {
   const [props, setProps] = useState(initialState);
+
+  useEffect(() => {
+    if (androidPlatform) {
+      const requestPushNotificationPermission = async () => {
+        try {
+          if (Platform.Version > 32) {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+              {
+                title: 'Push Notification Permission',
+                message: 'This app requires access for push notification.',
+                buttonNeutral: 'Ask Me Later',
+                buttonNegative: 'Cancel',
+                buttonPositive: 'OK',
+              },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              Platform.OS == 'android' && registerNotification();
+            } else {
+              console.log('please allow notification permission from settings');
+            }
+          } else {
+            Platform.OS == 'android' && registerNotification();
+          }
+        } catch (err) {
+          console.error('errror --> ', err);
+          return false;
+        }
+      };
+      Platform.OS == 'android' && requestPushNotificationPermission();
+    } else {
+      Platform.OS == 'android' && fcmService.registerAppWithFCM();
+      Platform.OS == 'android' &&
+        fcmService.register(onRegister, onNotification, onOpenNotification);
+      Platform.OS == 'android' &&
+        localNotificationService.configure(onOpenNotification);
+    }
+    return () => {
+      Platform.OS == 'android' && fcmService.unRegister();
+      Platform.OS == 'android' && localNotificationService.unregister();
+    };
+  }, []);
 
   if (__DEV__) {
     const yeOldeConsoleLog = console.log;
@@ -49,6 +191,6 @@ export default App;
 
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
-    // flex: 1,
+    flex: 0,
   },
 });

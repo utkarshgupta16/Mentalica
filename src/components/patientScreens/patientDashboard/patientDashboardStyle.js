@@ -5,14 +5,16 @@ import {
 } from '../../../utils/Responsive';
 import Colors from '../../../customs/Colors';
 
-const screenBackgroundColor = '#F5F7F8';
+const screenBackgroundColor = Colors.whiteLight;
 
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(2),
     // backgroundColor: 'white',
-    backgroundColor: '#F5F7F8',
+    backgroundColor: Colors.whiteLight,
     flex: 1,
+    paddingTop: hp(2),
+    position:"relative"
   },
   helloText: {
     fontSize: 20,
@@ -41,9 +43,9 @@ export const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 0,
     },
-    shadowOpacity: 1.17,
+    shadowOpacity: 0.6,
     shadowRadius: 1.65,
     elevation: 1,
 
@@ -142,4 +144,6 @@ export const styles = StyleSheet.create({
   appointmentDetails: {
     flex: 1,
   },
+  reloadButton: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  reloadText:{color: '#33A3DC', paddingBottom: 10}
 });

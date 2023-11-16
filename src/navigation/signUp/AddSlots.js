@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   heightPercentageToDP as hp,
   screenHeight,
@@ -21,7 +21,10 @@ import {
 import Close from '../../icons/icon_close.svg';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {slotsData} from '../../utils/default';
+import { useTranslation } from 'react-i18next';
+
 const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
+  const {t} = useTranslation();
   let slots1 =
     (slots &&
       slots.length &&
@@ -29,7 +32,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
     [];
   const [isOpen, setOpen] = useState(false);
   const [selectedSlot, setSlots] = useState([...slots1]);
-  
+
   // let filterData = slotsData.filter(val => {
   //   if (!slots1.includes(val?.value)) {
   //     return true;
@@ -46,10 +49,16 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
         transparent={true}
         isVisible={true}
         style={{borderRadius: 10}}
-        onRequestClose={() => setVisible(false)}>
+        onBackdropPress={() => {
+          close && close();
+        }}
+        onBackButtonPress={() => {
+          close && close();
+        }}
+        onRequestClose={() => close && close()}>
         <View
           style={{
-            flex: 0.4,
+            flex: 0.5,
             paddingHorizontal: wp(3),
             backgroundColor: '#FFFFFFCC',
             borderRadius: 10,
@@ -81,7 +90,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                 paddingLeft: wp(2),
                 // alignItems: 'flex-end',
               }}>
-              <Close />
+              <MaterialIcons name="close" size={25} />
             </Pressable>
           </View>
           <View
@@ -89,13 +98,14 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
               flexDirection: 'row',
               backgroundColor: 'white',
               zIndex: 1000,
+              flex: 1,
             }}>
             {/* {renderInput({field: 'startTime', placeholder: 'Start Time'})}
             {renderInput({field: 'endTime', placeholder: 'End Time'})} */}
             <DropDownPicker
               listMode="SCROLLVIEW"
               autoScroll={true}
-              zIndex={1000}
+              zIndex={2000}
               open={isOpen}
               setOpen={setOpen}
               value={selectedSlot}
@@ -125,6 +135,9 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
                 marginBottom: 10,
                 backgroundColor: Colors.paleMintColor,
                 borderColor: '#33A3DC',
+              }}
+              containerStyle={{
+                flex: 1,
               }}
               multiple={true}
             />
@@ -160,7 +173,7 @@ const AddSlot = ({close, state, addSlots, slots = [], setState}) => {
             </Pressable>
           </View> */}
 
-          {slots && slots.length ? (
+          {slots && slots.length && !isOpen ? (
             <FlatList
               columnWrapperStyle={{flexWrap: 'wrap'}}
               scrollEventThrottle={1900}

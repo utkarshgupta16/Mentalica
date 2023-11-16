@@ -3,6 +3,7 @@ import axios from 'axios';
 import {endPoints} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
+import {FIREBASE_SERVER_KEY} from '@env';
 export const getAllMentorList = createAsyncThunk(
   'home/getAllMentorList',
   async () => {
@@ -30,10 +31,10 @@ export const getAllMentorList = createAsyncThunk(
 
 export const getTwilloTokenSlice = createAsyncThunk(
   'home/getTwilloTokenSlice',
-  async roomId => {
+  async ({roomId, userName}) => {
     var config = {
       method: 'get',
-      url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=testing`,
+      url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=${userName}`,
       headers: {
         // Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -66,6 +67,38 @@ export const bookAppointmentSlice = createAsyncThunk(
       },
       data: bookData,
     };
+    return axios(config)
+      .then(async response => {
+        const {data, status} = response;
+        if (status === 200) {
+          return Promise.resolve(data);
+        } else {
+          return Promise.reject(new Error('Server Error!'));
+        }
+      })
+      .catch(err => {
+        console.log('err', err);
+        return Promise.reject(new Error(err));
+      });
+  },
+);
+
+export const sendNotificationSlice = createAsyncThunk(
+  'home/sendNotificationSlice',
+  async ({fcmToken, data}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.sendNotification,
+      headers: {
+        Authorization: `key=${FIREBASE_SERVER_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      data: {
+        to: fcmToken,
+        data,
+      },
+    };
+    console.log('sendNotificationSlice=========');
     return axios(config)
       .then(async response => {
         const {data, status} = response;
@@ -118,9 +151,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
   async ({email, fieldName = 'mentorEmailId'}) => {
     // let token = await AsyncStorage.getItem('token');
-    console.log('getScheduledAppointmentsSlice==============', {
-      [fieldName]: email,
-    });
+
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
@@ -133,7 +164,6 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
     return axios(config)
       .then(async response => {
         const {data, status} = response;
-        console.log('patientEmailId', response);
         if (status === 200) {
           return Promise.resolve(data);
         } else {
