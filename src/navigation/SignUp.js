@@ -3,7 +3,6 @@ import {
   Alert,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -319,7 +318,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Speciality.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        containerStyle={styles.dropdownContainerStyle}
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
@@ -340,7 +339,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Language.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        containerStyle={styles.dropdownContainerStyle}
       />
       {renderInput({
         placeholder: 'Fees for 30 Mins',
@@ -368,7 +367,7 @@ const MentorSignUp = ({navigation}) => {
         items={genderItems}
         setItems={setGenderItems}
         placeholder={'Choose gender.'}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        containerStyle={styles.dropdownContainerStyle}
         style={styles.dropdown}
       />
       <DropDownPicker
@@ -605,6 +604,10 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: Colors.paleMintColor,
     borderWidth: 0,
+  },
+  dropdownContainerStyle: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
   },
   passwordNotMatchText: {
     color: Colors.red,

@@ -37,7 +37,6 @@ import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
 const AppoinmentsList = ({navigation}) => {
   const {props, setProps} = useContext(AppContext);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINMENTS});
   const [appointmentList, setAppointmentList] = useState({});
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email, type = ''} = useSelector(state => state.auth);
@@ -174,6 +173,11 @@ const AppoinmentsList = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Agenda
+        theme={{
+          selectedDayBackgroundColor: Colors.darkPaleMintColor,
+          selectedDayTextColor: Colors.white,
+          todayTextColor: Colors.darkPaleMintColor,
+        }}
         // selected="2022-12-01"
         scrollEnabled
         // style={{width: 100, height: 400}}
@@ -191,7 +195,7 @@ const AppoinmentsList = ({navigation}) => {
           </View>
         )}
         renderItem={item => {
-          let name = type == MENTOR ? item?.patientName : item?.mentorName;
+          let name = type === MENTOR ? item?.patientName : item?.mentorName;
           let {endTime} = (item.slots && item.slots[0]) || {};
           let currentTime = new Date().getTime();
           const [hours, minutes] = endTime.split(':');
@@ -219,7 +223,7 @@ const AppoinmentsList = ({navigation}) => {
                     ],
                   );
                 } else {
-                  Alert.alert(`Meeting Link Expired`, ``, [
+                  Alert.alert('Meeting Link Expired', ``, [
                     {
                       onPress: () => null,
                       text: 'OK',
@@ -250,59 +254,6 @@ const AppoinmentsList = ({navigation}) => {
           );
         }}
       />
-      {/* <FlatList
-        data={scheduledAppointmentsData}
-        renderItem={({item, index}) => {
-          return (
-            <View
-              style={{
-                backgroundColor: 'green',
-                borderRadius: 8,
-                padding: 10,
-                flex: 1,
-                marginBottom: 10,
-                position: 'relative',
-              }}>
-              {isLoading ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'absolute',
-                    left: 0,
-                    bottom: 0,
-                    top: 0,
-                    right: 0,
-                  }}>
-                  <ActivityIndicator color={'white'} size="large" />
-                </View>
-              ) : null}
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                Mentor Email : {item?.mentor_email_id}
-              </Text>
-              <Text
-                style={{paddingTop: 10, color: 'white', fontWeight: 'bold'}}>
-                Meeting Time :{' '}
-                {item?.slots[0].startTime + '-' + item?.slots[0].endTime}
-              </Text>
-              <Pressable
-                style={{marginTop: 10}}
-                onPress={async () => {
-                  setLoading(true);
-                  const res = await dispatch(getTwilloTokenSlice(item.roomId));
-                  setLoading(false);
-                  console.log('roomId================', res);
-                }}>
-                <Text
-                  style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
-                  Join
-                </Text>
-              </Pressable>
-            </View>
-          );
-        }}
-      />
-       */}
     </View>
   );
 };

@@ -10,8 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Colors from '../../customs/Colors';
-// import ArrowRight from '../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import {
@@ -21,11 +19,7 @@ import {
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  bookAppointmentSlice,
-  getBooksSlots,
-  getScheduledAppointmentsSlice,
-} from '../../redux/HomeSlice';
+import {bookAppointmentSlice, getBooksSlots} from '../../redux/HomeSlice';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
   const {profileData: {Items = []} = {}} = useSelector(state => state.home);
@@ -102,7 +96,9 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             </View>
           ) : null}
 
-          <Pressable onPress={() => close && close()}>
+          <Pressable
+            style={styles.crossButton}
+            onPress={() => close && close()}>
             <Close
               height={25}
               width={25}
@@ -110,10 +106,10 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               style={{marginLeft: -3}}
             />
           </Pressable>
-          <Text style={{textAlign: 'center', fontSize: 18, marginVertical: 10}}>
+          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
             Email : {selectedMentorData?.email_id}
           </Text>
-          <Text style={{textAlign: 'center', fontSize: 18, marginVertical: 10}}>
+          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
             Full Name :{' '}
             {`${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`}
           </Text>
@@ -147,32 +143,20 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       });
                     }}>
                     <View
-                      style={{
-                        marginRight: 10,
-                        borderRadius: 13,
-                        paddingHorizontal: 8,
-                        paddingVertical: 3,
-                        backgroundColor:
-                          slot == selectedSlot ? 'green' : 'gray',
-                        marginBottom: 10,
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                        }}>
-                        {slot}
-                      </Text>
+                      style={[
+                        styles.slotContainer,
+                        slot === selectedSlot
+                          ? styles.backgroundGreen
+                          : styles.backgroundSaffron,
+                      ]}>
+                      <Text style={styles.slotText}>{slot}</Text>
                     </View>
                   </TouchableOpacity>
                 );
               }}
             />
           ) : (
-            <View
-              style={{
-                flex: 1,
-              }}
-            />
+            <View style={styles.bookSlotContainer} />
           )}
           {selectedSlot ? (
             <Pressable
@@ -233,6 +217,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  crossButton: {
+    marginBottom: 20,
+  },
+  slotContainer: {
+    marginRight: 10,
+    borderRadius: 13,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 10,
+  },
+  slotText: {
+    color: 'black',
+  },
+  backgroundGreen: {
+    backgroundColor: Colors.parrotGreen,
+  },
+  backgroundSaffron: {
+    backgroundColor: Colors.saffron,
+  },
+  bookSlotContainer: {
+    flex: 1,
   },
   title: {
     fontSize: 16,

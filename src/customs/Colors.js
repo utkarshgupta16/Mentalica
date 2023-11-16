@@ -1,6 +1,6 @@
 const Colors = {
-  paleMintColor: '#D9ECE4',
-  darkPaleMintColor: '#00565E',
+  paleMintColor: '#F0F8FF',
+  darkPaleMintColor: '#4A9393',
   black: '#000000',
   white: '#FFFFFF',
   primaryBlue: '#3B697E',
@@ -10,6 +10,9 @@ const Colors = {
   palePink: '#E9DCD8',
   primaryDarkBlue: '#404655',
   accentColor: '#6E77A2',
+  saffron: '#eab676',
+  lightgreen: 'lightgreen',
+  parrotGreen: '#51cf66',
 };
 
 export default Colors;

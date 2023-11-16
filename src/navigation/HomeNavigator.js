@@ -30,7 +30,8 @@ const HomeNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: Colors.accentColor,
+        // tabBarActiveTintColor: Colors.darkPaleMintColor,
+        tabBarInactiveTintColor: Colors.darkPaleMintColor,
       }}>
       {type === MENTOR ? (
         <Tab.Screen

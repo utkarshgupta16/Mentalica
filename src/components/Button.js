@@ -28,7 +28,8 @@ const styles = StyleSheet.create({
   pressable: {
     paddingHorizontal: 50,
     paddingVertical: 10,
-    backgroundColor: Colors.primaryBlue,
+    backgroundColor: Colors.darkPaleMintColor,
+    // backgroundColor: Colors.primaryBlue,
     borderRadius: 4,
   },
   lessOpacity: {

@@ -1,12 +1,5 @@
-import {
-  Alert,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import {FlatList, Image, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
 import {
@@ -20,6 +13,7 @@ import MentorsList from '../../mentorScreens/MentorsList';
 import AppoinmentsList from './AppointmentList';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProfileSlice} from '../../../redux/HomeSlice';
+import Colors from '../../../customs/Colors';
 
 const PatientDashboard = ({navigation}) => {
   const {email, type} = useSelector(state => state.auth);
@@ -31,7 +25,7 @@ const PatientDashboard = ({navigation}) => {
   useEffect(() => {
     (async () => {
       const res = await dispatch(getProfileSlice({email, type: type}));
-  console.log('res from patient =============================', res,email);
+      console.log('res from patient =============================', res, email);
 
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
@@ -85,18 +79,27 @@ const PatientDashboard = ({navigation}) => {
         />
       </View>
       {/*  Next Appointments */}
-      {selectedTab.tabStr == 'All' ? (
+      {selectedTab.tabStr === 'All' ? (
         <View style={styles.belowTabsContainer}>
           <Text style={styles.headingText}>Next Appointments</Text>
           <View style={styles.nextAppointmentCont}>
             <View style={styles.leftCont}>
-              <Text style={{marginBottom: 9, fontWeight: 'bold', fontSize: 14}}>
+              <Text
+                style={{
+                  marginBottom: 9,
+                  fontWeight: 'bold',
+                  fontSize: 14,
+                  color: Colors.white,
+                }}>
                 Tomorrow
               </Text>
-              <Text style={{fontWeight: 'bold', fontSize: 14}}>10:00</Text>
+              <Text
+                style={{fontWeight: 'bold', fontSize: 14, color: Colors.white}}>
+                10:00
+              </Text>
             </View>
             <View style={styles.rightCont}>
-              <Text style={{marginBottom: 9, fontWeight: 'bold', fontSize: 16}}>
+              <Text style={{marginBottom: 9, fontWeight: '400', fontSize: 16}}>
                 Raqual Almeida
               </Text>
               <View style={styles.rightContVideoCall}>
@@ -117,7 +120,7 @@ const PatientDashboard = ({navigation}) => {
           </View>
         </View>
       ) : null}
-      {selectedTab.tabStr == APPOINMENTS ? (
+      {selectedTab.tabStr === APPOINMENTS ? (
         <AppoinmentsList navigation={navigation} />
       ) : null}
       {selectedTab.tabStr == ARTICLES ? (
@@ -129,7 +132,7 @@ const PatientDashboard = ({navigation}) => {
           No data found
         </Text>
       ) : null}
-      {selectedTab.tabStr == SAVED ? (
+      {selectedTab.tabStr === SAVED ? (
         <Text
           style={{
             textAlign: 'center',
@@ -138,7 +141,7 @@ const PatientDashboard = ({navigation}) => {
           No data found
         </Text>
       ) : null}
-      {selectedTab.tabStr == MENTORS_LIST ? <MentorsList /> : null}
+      {selectedTab.tabStr === MENTORS_LIST ? <MentorsList /> : null}
     </View>
   );
 };
@@ -168,7 +171,7 @@ const renderItem = ({item}) => {
           width: '69%',
           paddingHorizontal: 10,
           justifyContent: 'center',
-          backgroundColor: '#F5F7F8',
+          backgroundColor: Colors.paleMintColor,
           borderTopRightRadius: 10,
           borderBottomRightRadius: 10,
         }}>

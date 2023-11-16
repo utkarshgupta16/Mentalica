@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(2),
     // backgroundColor: 'white',
-    backgroundColor: '#F5F7F8',
+    backgroundColor: Colors.paleMintColor,
     flex: 1,
   },
   helloText: {
@@ -35,17 +35,10 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   belowTabsContainer: {
-    backgroundColor: '#EEEDED',
+    backgroundColor: Colors.paleMintColor,
+    // backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
     borderRadius: 6,
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 1.17,
-    shadowRadius: 1.65,
-    elevation: 1,
 
     height: hp(73),
   },
@@ -70,14 +63,14 @@ export const styles = StyleSheet.create({
     width: wp(30),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
-    backgroundColor: '#DFDFDE',
     borderBottomLeftRadius: 5,
+    backgroundColor: Colors.darkPaleMintColor,
   },
   rightCont: {
     width: wp(50),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
-    backgroundColor: '#EFB7B7',
+    backgroundColor: '#eab676',
     borderBottomLeftRadius: 5,
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
