@@ -3,6 +3,7 @@ export const INVOICING = 'Invoicing';
 export const STATS = 'Stats';
 export const MESSAGES = 'Messages';
 export const PROFILE = 'Profile';
+export const PROFILE_TAB_ROUTE = 'ProfileTabRoute';
 export const MENTOR_SIGN_UP = 'MentorSignUp';
 export const PATIENT_SIGN_UP = 'PatientSignUp';
 export const LOGIN = 'Login';

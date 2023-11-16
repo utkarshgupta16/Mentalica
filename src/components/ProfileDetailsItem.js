@@ -1,14 +1,27 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {Alert, Pressable, StyleSheet, Text} from 'react-native';
 import Colors from '../customs/Colors';
 // import ArrowRight from '../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
-const ProfileDetailsItem = ({title}) => {
+const ProfileDetailsItem = ({title, screen, navigation, data}) => {
   const {t} = useTranslation();
   return (
-    <Pressable style={styles.mainContainer}>
+    <Pressable
+      style={styles.mainContainer}
+      onPress={() => {
+        if (title == 'Contact details') {
+          Alert.alert(
+            'Contact Details',
+            `Phone Number : ${data?.phoneNumber}  
+             Email Id : ${data?.email_id}`,
+            [{text: 'OK', onPress: () => null}],
+          );
+        } else {
+          screen && navigation && navigation.navigate(screen, {data});
+        }
+      }}>
       <Text style={styles.title}>{t(title)}</Text>
       <MaterialIcons
         name="arrow-forward-ios"

@@ -16,10 +16,38 @@ import {useTranslation} from 'react-i18next';
 import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
+import {Text, Platform} from 'react-native';
+import {heightPercentageToDP as hp} from '../utils/Responsive';
+import {PROFILE_TAB_ROUTE} from '../utils/route';
+import ProfileStackNavigator from './home/ProfileStackNavigator';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+const renderTabTitle = (isFocused, tabName) => {
+  const color = isFocused ? Colors.accentColor : Colors.dustyGray;
+  const title = isFocused ? (
+    <Text
+      style={{
+        color,
+        fontSize: 12,
+        fontWeight: '700',
+      }}>
+      {tabName}
+    </Text>
+  ) : (
+    <Text
+      style={{
+        color,
+        fontSize: 12,
+        fontWeight: '400',
+      }}>
+      {tabName}
+    </Text>
+  );
+  return title;
+};
 
 const MentorDashboardStack = () => {
   return (
@@ -43,7 +71,7 @@ const MentorDashboardStack = () => {
 const PatientDashboardStack = () => {
   return (
     // <NavigationContainer>
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="PatientDashboard">
       <Stack.Screen
         name="PatientDashboard"
         component={PatientDashboard}
@@ -67,9 +95,19 @@ const HomeNavigator = () => {
   const {type} = useSelector(state => state.auth);
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({route}) => ({
+        unmountOnBlur: true,
+        headerShown: false,
+        tabBarStyle:
+          Platform.OS === 'android'
+            ? {
+                height: hp(7),
+                paddingBottom: hp(1),
+              }
+            : null,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: Colors.accentColor,
-      }}>
+      })}>
       {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
@@ -79,6 +117,9 @@ const HomeNavigator = () => {
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="home" size={size} color={color} />
             ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Home');
+            },
           }}
         />
       ) : (
@@ -90,6 +131,9 @@ const HomeNavigator = () => {
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="home" size={size} color={color} />
             ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Home');
+            },
           }}
         />
       )}
@@ -102,6 +146,9 @@ const HomeNavigator = () => {
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="analytics" size={26} color={color} />
             ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Invoice');
+            },
           }}
         />
       ) : (
@@ -113,6 +160,9 @@ const HomeNavigator = () => {
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="analytics" size={25} color={color} />
             ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Stats');
+            },
           }}
         />
       )}
@@ -123,6 +173,9 @@ const HomeNavigator = () => {
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="message" size={25} color={color} />
           ),
+          tabBarLabel: ({focused}) => {
+            return renderTabTitle(focused, 'Messages');
+          },
         }}
         component={Messages}
       />
@@ -132,9 +185,12 @@ const HomeNavigator = () => {
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name={'person'} size={30} color={color} />
           ),
+          tabBarLabel: ({focused}) => {
+            return renderTabTitle(focused, 'Profile');
+          },
         }}
-        name={t(PROFILE)}
-        component={Profile}
+        name={PROFILE_TAB_ROUTE}
+        component={ProfileStackNavigator}
       />
     </Tab.Navigator>
   );

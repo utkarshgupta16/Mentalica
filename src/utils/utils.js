@@ -5,7 +5,7 @@ import {
   PERMISSIONS,
   RESULTS,
 } from 'react-native-permissions';
-import {Platform} from 'react-native';
+import {Alert, Platform} from 'react-native';
 import convertLang from './Strings';
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
