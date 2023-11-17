@@ -2,7 +2,7 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
-import {MESSAGES} from '../../utils/route';
+import {CHATS_SCREEN, MESSAGES} from '../../utils/route';
 import ChatList from './ChatList';
 import Messages from './Messages';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
@@ -17,7 +17,7 @@ const MessagesStackNavigator = () => {
       />
 
       <Stack.Screen
-        name="Chats"
+        name={CHATS_SCREEN}
         component={Messages}
         options={({navigation}) => ({
           title: '',
