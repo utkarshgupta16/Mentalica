@@ -417,7 +417,7 @@ const AddSlot = ({
               renderItem={({item, index}) => {
                 let [startH, startM] = item?.startTime.split(':');
                 let [endH, endM] = item?.endTime.split(':');
-                let AM_PM = startH > 12 ? 'PM' : 'AM';
+                let AM_PM = startH >= 12 ? 'PM' : 'AM';
                 let startTime = `${
                   startH > 12 ? startH - 12 : startH
                 }:${startM} ${AM_PM}`;
