@@ -176,6 +176,7 @@ const App = () => {
       });
     };
   }
+
   return (
     <AppContext.Provider value={{props, setProps}}>
       <I18nextProvider i18n={i18n}>

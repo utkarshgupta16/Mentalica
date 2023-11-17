@@ -18,8 +18,9 @@ import PatientDashboard from '../components/patientScreens/patientDashboard/Pati
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
-import {PROFILE_TAB_ROUTE} from '../utils/route';
+import {MESSAGES_TAB_ROUTE, PROFILE_TAB_ROUTE} from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
+import MessagesStackNavigator from './home/MessagesStackNavigator';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
@@ -167,7 +168,7 @@ const HomeNavigator = () => {
         />
       )}
       <Tab.Screen
-        name={t(MESSAGES)}
+        name={MESSAGES_TAB_ROUTE}
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => (
@@ -177,7 +178,7 @@ const HomeNavigator = () => {
             return renderTabTitle(focused, 'Messages');
           },
         }}
-        component={Messages}
+        component={MessagesStackNavigator}
       />
       <Tab.Screen
         options={{
