@@ -30,7 +30,7 @@ import {useTranslation} from 'react-i18next';
 import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+import AddSlotsComponent from '../signUp/AddSlots';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -47,13 +47,15 @@ const Profile = ({navigation}) => {
     YES,
     RESTART_APP,
     CHANGE_LANG,
-    OKAY
+    OKAY,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
+  const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
+  const [showSlots, setShowSlots] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? HEBREW : ENGLISH,
   );
@@ -65,6 +67,8 @@ const Profile = ({navigation}) => {
     lastName = '',
     expertise = '',
   } = profileData || {};
+  const [slots, addSlots] = useState(profileData ? profileData.slots : []);
+
   const DUMMY_ISSUES =
     type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
@@ -73,11 +77,34 @@ const Profile = ({navigation}) => {
       label: 'Edit profile',
       screen: 'EditProfilePatient',
       props: profileData || {},
+      onPress: () => {
+        navigation.navigate('EditProfilePatient', {data: profileData});
+      },
     },
 
-    {label: 'Contact details', screen: '', props: profileData || {}},
+    {
+      label: 'Contact details',
+      screen: '',
+      props: profileData || {},
+      onPress: () => {
+        Alert.alert(
+          'Contact Details',
+          `Phone Number : ${profileData?.phoneNumber}  
+       Email Id : ${profileData?.email_id}`,
+          [{text: 'OK', onPress: () => null}],
+        );
+      },
+    },
     {label: 'Password', screen: ''},
   ];
+  if (type === MENTOR) {
+    profileDetailsItems.push({
+      label: "Today's Slots",
+      screen: '',
+      props: profileData || {},
+      onPress: () => setShowSlots(true),
+    });
+  }
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
@@ -107,7 +134,7 @@ const Profile = ({navigation}) => {
     );
   }
   return (
-    <ScrollView style={styles.mainContainer}>
+    <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
           <View style={styles.imageContainer}>
@@ -148,6 +175,7 @@ const Profile = ({navigation}) => {
               title={item?.label}
               screen={item?.screen}
               data={item?.props}
+              onPress={item.onPress}
             />
           ))}
         </View>
@@ -160,7 +188,18 @@ const Profile = ({navigation}) => {
             <ProfileDetailsItem key={item} title={item} />
           ))}
         </View>
-
+        {showSlots ? (
+          <AddSlotsComponent
+            isProfile={true}
+            email_id={email_id}
+            type={type}
+            setState={setSlotState}
+            state={slotState}
+            addSlots={addSlots}
+            slots={slots}
+            close={() => setShowSlots(false)}
+          />
+        ) : null}
         <DropDownPicker
           dropDownDirection="TOP"
           listMode="SCROLLVIEW"

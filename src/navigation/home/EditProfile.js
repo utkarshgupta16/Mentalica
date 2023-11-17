@@ -6,12 +6,27 @@ import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
 import {PATIENT} from '../../utils/Strings';
 
-const EditProfile = ({route}) => {
+const EditProfile = ({route, navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
   const {data} = route?.params || {};
-  const {email_id, fcmToken, deviceType, duty, gender, feel, age, ...restData} =
-    data;
+  const {
+    email_id,
+    fcmToken,
+    slots,
+    experience,
+    language,
+    temporaryCity,
+    city,
+    fees,
+    deviceType,
+    duty,
+    gender,
+    feel,
+    age,
+    expertise,
+    ...restData
+  } = data;
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
   const {type} = useSelector(state => state.auth);
@@ -49,6 +64,7 @@ const EditProfile = ({route}) => {
         }),
       );
       setLoading(false);
+      navigation.goBack();
     } catch (err) {
       setLoading(false);
     }
