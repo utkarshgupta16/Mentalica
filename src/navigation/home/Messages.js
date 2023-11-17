@@ -3,8 +3,10 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import {useTranslation} from 'react-i18next';
 import {View, Text, ImageBackground} from 'react-native';
 
-const Messages = () => {
+const Messages = ({route}) => {
   const [messages, setMessages] = useState([]);
+
+  console.log('route', route);
 
   useEffect(() => {
     setMessages([
