@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useCallback} from 'react';
+import {CHATS_SCREEN} from '../../utils/route';
 
 const USER_ICON = require('../../assets/images/user-icon.webp');
 
@@ -15,15 +16,23 @@ const ChatList = ({navigation}) => {
   const renderItem = useCallback(({item}) => {
     return (
       <Pressable
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: 'lightgray',
+          paddingBottom: 10,
+        }}
         onPress={() => {
-          navigation.navigate('Chats', {name: item.name, image: item.image});
+          navigation.navigate(CHATS_SCREEN, {
+            name: item.name,
+            image: item.image,
+          });
         }}>
         <View
           style={{
             flexDirection: 'row',
             paddingHorizontal: 10,
             alignItems: 'center',
-            marginTop: 15,
+            marginTop: 10,
           }}>
           <Image
             source={item?.image ? item.image : USER_ICON}
@@ -42,15 +51,9 @@ const ChatList = ({navigation}) => {
   }, []);
 
   return (
-    <TouchableOpacity
-    //   onPress={() => {
-    //     navigation.navigate('Chats');
-    //   }}
-    >
-      <View>
-        <FlatList data={chatListData} renderItem={renderItem} />
-      </View>
-    </TouchableOpacity>
+    <View style={{flex: 1}}>
+      <FlatList data={chatListData} renderItem={renderItem} />
+    </View>
   );
 };
 
