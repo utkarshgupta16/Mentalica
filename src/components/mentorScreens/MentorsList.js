@@ -21,6 +21,7 @@ import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
 import Colors from '../../customs/Colors';
+import ScreenLoading from '../ScreenLoading';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
@@ -40,7 +41,6 @@ const MentorsList = () => {
       try {
         setLoading(true);
         const {payload} = await dispatch(getAllMentorList());
-        console.log('setAllMentors', payload?.Items);
         setAllMentors(payload.Items);
         setLoading(false);
       } catch (err) {
@@ -52,13 +52,17 @@ const MentorsList = () => {
 
   const renderExperties = ({data, label}) => {
     return (
-      <View style={{flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row', flex: 1}}>
         <Text style={styles.expertiesText}>{`${label} :`}</Text>
         {data && data.length ? (
           <FlatList
             data={data}
             style={{flex: 0.8}}
             horizontal
+            // horizontal
+            numColumns={3}
+            columnWrapperStyle={{flexWrap: 'wrap'}}
+            scrollEventThrottle={1900}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
               return (
@@ -144,20 +148,7 @@ const MentorsList = () => {
           selectedMentorData={selectedMentorData}
         />
       ) : null}
-      {isLoading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
-            top: 0,
-            right: 0,
-          }}>
-          <ActivityIndicator color={'green'} size="large" />
-        </View>
-      ) : null}
+      {isLoading ? <ScreenLoading /> : null}
     </View>
   );
 };

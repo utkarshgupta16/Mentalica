@@ -22,7 +22,7 @@ i18n
     compatibilityJSON: 'v3',
     fallbackLng: 'en',
     lng: I18nManager.isRTL ? "he" : 'en',
-    debug: true,
+    debug: false, //keep true for logs
     resources: {
       en: en,
       he: he,

@@ -13,6 +13,10 @@ const Colors = {
   saffron: '#eab676',
   lightgreen: 'lightgreen',
   parrotGreen: '#51cf66',
+  blueDarkColor: '#33A3DC',
+  lightDark: '#DDE6ED',
+  whiteLight: '#F5F7F8',
+  dustyGray: '#999999',
 };
 
 export default Colors;

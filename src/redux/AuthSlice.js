@@ -7,6 +7,9 @@ import {PATIENT} from '../utils/Strings';
 
 export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
   let {type, ...restData} = data || {};
+  if (!type) {
+    return;
+  }
   // let token = await AsyncStorage.getItem('token');
   var config = {
     method: 'post',

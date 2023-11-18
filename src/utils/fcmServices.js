@@ -39,12 +39,11 @@ class FCMService {
 
   async getToken(onRegister) {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
-    console.log('fcmTokem is --> ', fcmToken);
+    console.log("fcmToken===============",fcmToken)
     if (!fcmToken) {
       try {
         fcmToken = await messaging().getToken();
         if (fcmToken) {
-          console.log('created fcmToken is --> ', fcmToken);
           onRegister(fcmToken);
           await AsyncStorage.setItem('fcmToken', fcmToken);
         }
@@ -66,7 +65,6 @@ class FCMService {
   }
 
   deleteToken() {
-    console.log('[FCMService] deleteToken');
     messaging()
       .deleteToken()
       .catch(error => {
@@ -88,24 +86,18 @@ class FCMService {
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification,
-          );
           // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
         }
       });
     // Foreground state messages
     //@ts-ignore
     this.messageListener = messaging().onMessage(async remoteMessage => {
-      console.log('[FCMService] A new FCM message arrived!', remoteMessage);
       if (remoteMessage) {
         onNotification(remoteMessage);
       }
     });
     // Triggered when there is a new token
     messaging().onTokenRefresh(fcmToken => {
-      console.log('[FCMService] New token refresh: ', fcmToken);
       onRegister(fcmToken);
     });
   }

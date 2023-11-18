@@ -10,6 +10,8 @@ export const endPoints = {
   getMentorProfile: `${API_URL}/getMeMentor`,
   getScheduledAppointments: `${API_URL}/getMentorAppointmentSlot`,
   getTwilloToken: `${API_URL}/getTwilloToken`,
+  sendNotification: "https://fcm.googleapis.com/fcm/send",
+  editProfile:`${API_URL}/updateProfile`
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: 'white',
     backgroundColor: '#F5F7F8',
-    marginHorizontal: 8,
+    // marginHorizontal: 8,
   },
   helloCont: {
     flexDirection: 'row',
@@ -111,4 +111,11 @@ export const styles = StyleSheet.create({
   appointmentDetails: {
     flex: 1,
   },
+  mentorTextStyle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#33A3DC',
+  },
+  reloadButton: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  reloadText:{color: '#33A3DC', paddingBottom: 10}
 });

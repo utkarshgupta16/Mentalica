@@ -3,24 +3,27 @@ import {
   Alert,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import CustomHeader from '../customs/Header';
-import Colors from '../customs/Colors';
-import Button from '../components/Button';
-import Loader from '../customs/Loader';
+import CustomHeader from '../../customs/Header';
+import Colors from '../../customs/Colors';
+import Button from '../../components/Button';
+import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-import {MENTOR, PATIENT} from '../utils/Strings';
-import EnterOtpModal from '../customs/EnterOtpModal';
-import {specialities, languageList} from '../utils/default';
+import {MENTOR, PATIENT} from '../../utils/Strings';
+import EnterOtpModal from '../../customs/EnterOtpModal';
+import {specialities, languageList} from '../../utils/default';
 import {useDispatch} from 'react-redux';
-import {singUpSlice} from '../redux/AuthSlice';
-import AddSlotsComponent from './signUp/AddSlots';
+import {singUpSlice} from '../../redux/AuthSlice';
+import AddSlotsComponent from './AddSlots';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {widthPercentageToDP as wp} from '../../utils/Responsive';
+import {useTranslation} from 'react-i18next';
 
 const MentorSignUp = ({navigation}) => {
   const typeOfItems = [
@@ -33,11 +36,6 @@ const MentorSignUp = ({navigation}) => {
       value: MENTOR,
     },
   ];
-import {configureAws, signUp} from '../AWS/AWSConfiguration';
-import { useTranslation } from 'react-i18next';
-
-const SignupScreen = ({navigation}) => {
-  const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -204,7 +202,6 @@ const SignupScreen = ({navigation}) => {
           onPress: () => null,
         },
       ]);
-      console.log('err:', err);
     } finally {
       setIsLoading(false);
     }
@@ -227,7 +224,6 @@ const SignupScreen = ({navigation}) => {
     try {
       const enteredCode = enteredOtp.join('');
       const res = await Auth.confirmSignUp(state.emailId, enteredCode);
-      console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
@@ -298,7 +294,6 @@ const SignupScreen = ({navigation}) => {
 
   const resendCode = async () => {
     const response = await Auth.resendSignUp(state.emailId);
-    console.log('response:', response);
   };
 
   const mentorExtras = (
@@ -323,7 +318,7 @@ const SignupScreen = ({navigation}) => {
         placeholder={'Select Speciality.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={styles.dropdownContainerStyle}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
@@ -344,7 +339,7 @@ const SignupScreen = ({navigation}) => {
         placeholder={'Select Language.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={styles.dropdownContainerStyle}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       {renderInput({
         placeholder: 'Fees for 30 Mins',
@@ -372,7 +367,7 @@ const SignupScreen = ({navigation}) => {
         items={genderItems}
         setItems={setGenderItems}
         placeholder={'Choose gender.'}
-        containerStyle={styles.dropdownContainerStyle}
+        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
       />
       <DropDownPicker
@@ -469,11 +464,14 @@ const SignupScreen = ({navigation}) => {
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
-            zIndex={3000}
+            zIndex={10000}
             open={typeOpen}
             setOpen={setTypeOpen}
             value={typeValue}
             setValue={setTypeValue}
+            // onSelectItem={val => {
+            //   console.log('val:', val);
+            // }}
             items={typeItems}
             setItems={setTypeItems}
             placeholder={'Select Type.'}
@@ -609,10 +607,6 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: Colors.paleMintColor,
     borderWidth: 0,
-  },
-  dropdownContainerStyle: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
   },
   passwordNotMatchText: {
     color: Colors.red,

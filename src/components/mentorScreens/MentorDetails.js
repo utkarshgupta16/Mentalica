@@ -19,10 +19,16 @@ import {
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
 import {useDispatch, useSelector} from 'react-redux';
-import {bookAppointmentSlice, getBooksSlots} from '../../redux/HomeSlice';
+import {
+  bookAppointmentSlice,
+  getBooksSlots,
+  getScheduledAppointmentsSlice,
+  sendNotificationSlice,
+} from '../../redux/HomeSlice';
+import ScreenLoading from '../ScreenLoading';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  const {profileData: {Items = []} = {}} = useSelector(state => state.home);
+  const {profileData} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
   const [bookSlots, setBookSlots] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -34,10 +40,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     endTime: '',
     mentorName: `${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`,
     patientName:
-      Items &&
-      Items.length &&
-      Items[0] &&
-      `${Items[0]?.firstName} ${Items[0]?.lastName}`,
+      profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
   useEffect(() => {
@@ -80,25 +83,8 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             paddingHorizontal: wp(4),
             backgroundColor: 'white',
           }}>
-          {isLoading ? (
-            <View
-              style={{
-                backgroundColor: '#00000082',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                top: 0,
-                right: 0,
-              }}>
-              <ActivityIndicator color={'green'} size="large" />
-            </View>
-          ) : null}
-
-          <Pressable
-            style={styles.crossButton}
-            onPress={() => close && close()}>
+          {isLoading ? <ScreenLoading /> : null}
+          <Pressable onPress={() => close && close()}>
             <Close
               height={25}
               width={25}
@@ -177,9 +163,18 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                           const resp = await dispatch(
                             bookAppointmentSlice(state),
                           );
-                          console.log('bookAppointmentSlice', resp);
                           close && close();
                           setLoading(false);
+                          selectedMentorData?.fcmToken &&
+                            dispatch(
+                              sendNotificationSlice({
+                                fcmToken: selectedMentorData?.fcmToken,
+                                data: {
+                                  title: `Meeting scheduled with patient: ${state?.patientName}`,
+                                  body: `Scheduled today at : ${selectedSlot}`,
+                                },
+                              }),
+                            );
                         } catch (err) {
                           setLoading(false);
                         }

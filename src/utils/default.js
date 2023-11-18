@@ -90,3 +90,69 @@ export const slotsData = [
     label: '18:00-18:30',
   },
 ];
+
+export const articlesData = [
+  {
+    id: 1,
+    title: 'The healing power of nature',
+    author: 'Sara Fawler',
+    image:
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
+  },
+  {
+    id: 2,
+    title: 'Celabrating the small wins',
+    author: 'Sara Fawler',
+    image:
+      'https://thumbs.dreamstime.com/z/single-green-leafe-peeple-tree-background-white-single-green-leafe-peeple-tree-184432850.jpg',
+  },
+  {
+    id: 3,
+    title: 'How loneliness can affect your brain',
+    author: 'Sara Fawler',
+    image:
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
+  },
+  {
+    id: 4,
+    title: 'The healing power of nature',
+    author: 'Sara Fawler',
+    image:
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
+  },
+  {
+    id: 5,
+    title: 'Celabrating the small wins',
+    author: 'Sara Fawler',
+    image:
+      'https://thumbs.dreamstime.com/z/single-green-leafe-peeple-tree-background-white-single-green-leafe-peeple-tree-184432850.jpg',
+  },
+  {
+    id: 6,
+    title: 'How loneliness can affect your brain',
+    author: 'Sara Fawler',
+    image:
+      'https://hips.hearstapps.com/hmg-prod/images/woman-praying-in-a-dark-place-royalty-free-image-543574284-1549494908.jpg?crop=0.66667xw:1xh;center,top&resize=640:*',
+  },
+];
+
+export const PAYMENT_DETAIL_ITEM_PATIENT = [
+  'Edit payment information',
+  'Payment methods',
+  'Payment history',
+];
+
+export const PAYMENT_DETAIL_ITEM_MENTOR = [
+  'Edit fiscal information',
+  'Banking information',
+];
+
+export const PROFILE_DETAILS = [
+  {label: 'Edit profile', screen: 'EditProfilePatient'},
+  {label: 'Contact details', screen: ''},
+  {label: 'Password', screen: ''},
+];
+export const LANG_OPTION = [
+  {label: 'English', value: 'English'},
+  {label: 'Hebrew', value: 'Hebrew'},
+];

@@ -33,30 +33,28 @@ function onNotification(notify) {
   const options = {
     playSound: true,
   };
-  console.log('1');
   if (androidPlatform) {
-    console.log('2');
     if (Platform.Version > 25) {
-      console.log('3');
       PushNotification.getChannels(channelIDs => {
         if (
           channelIDs &&
           channelIDs.length > 0 &&
           channelIDs.includes(LOCAL_NOTIFICATION_CHANNEL_ID)
         ) {
-          console.log('4');
           notificationIDs += 1;
           localNotificationService.showNotification(
             notificationIDs,
-            notify.notification.title,
-            notify.notification.body,
-            notify.data,
+            notify.notification?.title
+              ? notify.notification?.title
+              : notify?.data?.title,
+            notify.notification?.body
+              ? notify.notification?.body
+              : notify?.data?.body,
+            notify?.data,
             options,
             LOCAL_NOTIFICATION_CHANNEL_ID,
           );
-          console.log('5');
         } else {
-          console.log('6');
           PushNotification.createChannel(
             {
               channelId: LOCAL_NOTIFICATION_CHANNEL_ID, // (required)
@@ -64,18 +62,20 @@ function onNotification(notify) {
               importance: 3,
             },
             created => {
-              console.log('7');
               notificationIDs += 1;
               if (created) {
                 localNotificationService.showNotification(
                   notificationIDs,
-                  notify.notification.title,
-                  notify.notification.body,
-                  notify.data,
+                  notify.notification?.title
+                    ? notify.notification?.title
+                    : notify?.data?.title,
+                  notify.notification?.body
+                    ? notify.notification?.body
+                    : notify?.data?.body,
+                  notify?.data,
                   options,
                   LOCAL_NOTIFICATION_CHANNEL_ID,
                 );
-                console.log('8');
               }
             },
           );
@@ -85,26 +85,32 @@ function onNotification(notify) {
       notificationIDs += 1;
       localNotificationService.showNotification(
         notificationIDs,
-        notify.notification.title,
-        notify.notification.body,
-        notify.data,
+        notify.notification?.title
+          ? notify.notification?.title
+          : notify?.data?.title,
+        notify.notification?.body
+          ? notify.notification?.body
+          : notify?.data?.body,
+        notify?.data,
         options,
       );
     }
   } else {
     localNotificationService.showNotification(
       0,
-      notify.notification.title,
-      notify.notification.body,
-      notify.data,
+      notify.notification?.title
+        ? notify.notification?.title
+        : notify?.data?.title,
+      notify.notification?.body
+        ? notify.notification?.body
+        : notify?.data?.body,
+      notify?.data,
       options,
     );
   }
 }
 
-function onOpenNotification(data) {
-  console.log('Handle notification by fcmService (onOpenNotification)', data);
-}
+function onOpenNotification(data) {}
 
 function onRegister(token) {}
 
@@ -132,27 +138,29 @@ const App = () => {
               },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              // registerNotification();
+              Platform.OS == 'android' && registerNotification();
             } else {
               console.log('please allow notification permission from settings');
             }
           } else {
-            // registerNotification();
+            Platform.OS == 'android' && registerNotification();
           }
         } catch (err) {
           console.error('errror --> ', err);
           return false;
         }
       };
-      // requestPushNotificationPermission();
+      Platform.OS == 'android' && requestPushNotificationPermission();
     } else {
-      // fcmService.registerAppWithFCM();
-      // fcmService.register(onRegister, onNotification, onOpenNotification);
-      // localNotificationService.configure(onOpenNotification);
+      Platform.OS == 'android' && fcmService.registerAppWithFCM();
+      Platform.OS == 'android' &&
+        fcmService.register(onRegister, onNotification, onOpenNotification);
+      Platform.OS == 'android' &&
+        localNotificationService.configure(onOpenNotification);
     }
     return () => {
-      // fcmService.unRegister();
-      // localNotificationService.unregister();
+      Platform.OS == 'android' && fcmService.unRegister();
+      Platform.OS == 'android' && localNotificationService.unregister();
     };
   }, []);
 

@@ -121,7 +121,7 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     implementation project(':react-native-push-notification')   
     implementation project(':react-native-twilio-video-webrtc')
-    implementation project(':react-native-restart')
+    // implementation project(':react-native-restart')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
