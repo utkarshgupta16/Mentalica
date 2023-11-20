@@ -94,26 +94,47 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               style={{marginLeft: -3}}
             />
           </Pressable>
-          <Text style={{textAlign:"center",fontSize:17,fontWeight:"600"}}>Today's Slots</Text>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              paddingBottom: 5,
+              borderColor: 'lightgray',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 17,
+                fontWeight: '600',
+                color: 'gray',
+              }}>
+              Today's Available Slots
+            </Text>
+          </View>
           {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
             <FlatList
-              data={selectedMentorData?.slots}
-              horizontal
+              columnWrapperStyle={{flexWrap: 'wrap'}}
+              scrollEventThrottle={1900}
               showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              data={selectedMentorData?.slots}
+              numColumns={2}
+              // horizontal
+              // showsHorizontalScrollIndicator={false}
               style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
+                let slot = `${item?.startTime}-${item?.endTime}`;
                 let check = bookSlots && bookSlots?.includes(slot);
                 let [startH, startM] = item?.startTime.split(':');
                 let [endH, endM] = item?.endTime.split(':');
-                let AM_PM = startH > 12 ? 'PM' : 'AM';
+                let AM_PM = startH >= 12 ? 'PM' : 'AM';
                 let startTime = `${
                   startH > 12 ? startH - 12 : startH
                 }:${startM} ${AM_PM}`;
                 let endTime = `${
                   endH > 12 ? endH - 12 : endH
                 }:${endM} ${AM_PM}`;
-                let slot = `${startTime}-${endTime}`;
+                let shwSlot = `${startTime}-${endTime}`;
                 return (
                   <TouchableOpacity
                     key={index}
@@ -146,7 +167,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         style={{
                           color: 'white',
                         }}>
-                        {slot}
+                        {shwSlot || ""}
                       </Text>
                     </View>
                   </TouchableOpacity>
