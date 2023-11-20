@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingHorizontal: 14,
     borderRadius: 50,
-    backgroundColor: Colors.palePink,
+    backgroundColor: Colors.saffron,
     paddingVertical: 8,
     marginRight: 18,
     marginBottom: 20,

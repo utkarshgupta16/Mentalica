@@ -20,9 +20,9 @@ import {getAllMentorList} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
+import Colors from '../../customs/Colors';
 import ScreenLoading from '../ScreenLoading';
 const green = '#464E2E';
-const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
 const greenText = '#618264';
@@ -52,15 +52,16 @@ const MentorsList = () => {
 
   const renderExperties = ({data, label}) => {
     return (
-      <View style={{flexDirection: 'row',flex:1}}>
+      <View style={{flexDirection: 'row', flex: 1}}>
         <Text style={styles.expertiesText}>{`${label} :`}</Text>
         {data && data.length ? (
           <FlatList
             data={data}
-            style={{flex: 1}}
+            style={{flex: 0.8}}
+            horizontal
             // horizontal
-            numColumns={3}
-            columnWrapperStyle={{flexWrap: 'wrap'}}
+            // numColumns={3}
+            // columnWrapperStyle={{flexWrap: 'wrap'}}
             scrollEventThrottle={1900}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
@@ -72,14 +73,14 @@ const MentorsList = () => {
                     borderRadius: 13,
                     paddingHorizontal: 8,
                     paddingVertical: 3,
-                    backgroundColor: 'gray',
+                    backgroundColor: '#eab676',
                     marginBottom: 10,
                   }}>
                   <Text
                     style={{
-                      color: 'white',
+                      color: Colors.black,
                       fontSize: 14,
-                      fontWeight: '500',
+                      fontWeight: '300',
                       textAlign: 'center',
                     }}>
                     {item?.charAt(0).toUpperCase() + item?.slice(1)}
@@ -127,73 +128,9 @@ const MentorsList = () => {
           {renderExperties({data: expertiseArr, label: 'Experties'})}
           {renderExperties({data: languageArr, label: 'Speaks'})}
         </View>
-        {/* <View style={styles.bookBtnCont}>
-          {showAppointmentBtn ? (
-            <Pressable onPress={() => setShowAppointmentBtn(false)}>
-              <View style={styles.bookBtn}>
-                <Text style={styles.bookBtnText}>Select and book slot</Text>
-              </View>
-            </Pressable>
-          ) : (
-            <View style={styles.slotListCont}>
-              <Text style={{fontSize: 15}}>Available slots: </Text>
-              <View style={styles.slotList}>
-                <FlatList
-                  data={item?.slots}
-                  renderItem={renderSlotsItem}
-                  keyExtractor={key => key}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                />
-              </View>
-            </View>
-          )}
-        </View> */}
       </Pressable>
     );
   };
-
-  const renderSlotsItem = ({item}) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setShowAppointmentBtn(true);
-          setModalVisible(true);
-        }}>
-        <View
-          style={{
-            marginRight: 10,
-            borderRadius: 13,
-            paddingHorizontal: 8,
-            paddingVertical: 3,
-            backgroundColor: 'gray',
-            marginBottom: 10,
-          }}>
-          <Text
-            style={{
-              color: 'white',
-            }}>
-            {item?.startTime}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         flex: 1,
-  //       }}>
-  //       <Text>
-  //         <ActivityIndicator size={'large'} color="#0000ff" />
-  //       </Text>
-  //     </View>
-  //   );
-  // }
 
   return (
     <View style={styles.container}>
@@ -293,7 +230,7 @@ const styles = StyleSheet.create({
   mentorNameTxt: {
     fontSize: 19,
     fontWeight: '500',
-    color: greenText,
+    color: Colors.darkPaleMintColor,
     marginBottom: 10,
     width: wp(50),
   },

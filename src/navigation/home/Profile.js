@@ -134,7 +134,9 @@ const Profile = ({navigation}) => {
     );
   }
   return (
-    <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.mainContainer}
+      showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
           <View style={styles.imageContainer}>
@@ -240,7 +242,7 @@ const Profile = ({navigation}) => {
           }}
           dropDownContainerStyle={{
             backgroundColor: Colors.white,
-            borderWidth: 0,
+            borderWidth: 1,
             alignSelf: 'center',
             width: widthPercentageToDP(36),
           }}
@@ -266,8 +268,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topPartContainer: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.paleMintColor,
     paddingTop: 15,
+    borderBottomWidth: 0.2,
   },
   imageContainer: {
     borderWidth: 1,
@@ -314,6 +317,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     paddingHorizontal: 32,
     paddingTop: 16,
+    backgroundColor: Colors.paleMintColor,
   },
   profDetailsCont: {
     marginBottom: 24,
@@ -337,8 +341,9 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    borderWidth: 1,
     alignSelf: 'center',
     width: widthPercentageToDP(36),
+    paddingHorizontal: 10,
   },
 });

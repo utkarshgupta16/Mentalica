@@ -8,9 +8,7 @@ import {useTranslation} from 'react-i18next';
 const ProfileDetailsItem = ({title, screen, navigation, data,onPress}) => {
   const {t} = useTranslation();
   return (
-    <Pressable
-      style={styles.mainContainer}
-      onPress={onPress}>
+    <Pressable style={styles.mainContainer} onPress={onPress}>
       <Text style={styles.title}>{t(title)}</Text>
       <MaterialIcons
         name="arrow-forward-ios"

@@ -12,13 +12,20 @@ export default function PatientDashboardTabs({
     <Pressable onPress={onPress}>
       <View
         style={{
-          backgroundColor: selectedTab?.tabStr == tab ? Colors.lightDark : null,
+          backgroundColor:
+            selectedTab.tabStr == tab ? Colors.darkPaleMintColor : null,
           paddingHorizontal: 6,
           paddingVertical: 5,
           borderRadius: 50,
           // flex: 1
         }}>
-        <Text style={styles.tabText}>{title}</Text>
+        <Text
+          style={[
+            styles.tabText,
+            {color: selectedTab.tabStr == tab ? Colors.white : Colors.black},
+          ]}>
+          {title}
+        </Text>
       </View>
     </Pressable>
   );

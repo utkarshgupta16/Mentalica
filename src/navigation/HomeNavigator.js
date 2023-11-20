@@ -27,7 +27,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const renderTabTitle = (isFocused, tabName) => {
-  const color = isFocused ? Colors.accentColor : Colors.dustyGray;
+  const color = isFocused ? 'teal' : '#89B9AD';
   const title = isFocused ? (
     <Text
       style={{
@@ -96,19 +96,24 @@ const HomeNavigator = () => {
   const {type} = useSelector(state => state.auth);
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
-        unmountOnBlur: true,
-        headerShown: false,
-        tabBarStyle:
-          Platform.OS === 'android'
-            ? {
-                height: hp(7),
-                paddingBottom: hp(1),
-              }
-            : null,
-        tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Colors.accentColor,
-      })}>
+      screenOptions={{
+        tabBarActiveTintColor: 'teal',
+        tabBarInactiveTintColor: '#89B9AD',
+      }}
+      // screenOptions={({route}) => ({
+      //   unmountOnBlur: true,
+      //   headerShown: false,
+      //   tabBarStyle:
+      //     Platform.OS === 'android'
+      //       ? {
+      //           height: hp(7),
+      //           paddingBottom: hp(1),
+      //         }
+      //       : null,
+      //   tabBarHideOnKeyboard: true,
+      //   tabBarActiveTintColor: Colors.accentColor,
+      // })}
+    >
       {type === MENTOR ? (
         <Tab.Screen
           name={HOME}

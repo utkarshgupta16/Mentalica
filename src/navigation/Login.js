@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -54,7 +54,6 @@ const LoginScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
-  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
 
   const dispatch = useDispatch();
 
@@ -101,17 +100,12 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: Colors.paleMintColor,
-        justifyContent: 'space-between',
-      }}>
+    <SafeAreaView style={styles.mainContainer}>
       {isLoading ? <Loader /> : null}
-      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <View style={styles.imageContainer}>
         <Image
           source={require('../icons/logo-no-background.png')}
-          style={{width: 200, height: 300}}
+          style={styles.image}
           resizeMode="contain"
         />
       </View>
@@ -266,6 +260,20 @@ const LoginScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: Colors.paleMintColor,
+
+    justifyContent: 'space-between',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: 200,
+    height: 300,
+  },
   modalContainer: {
     backgroundColor: Colors.white,
     paddingHorizontal: 10,
@@ -338,7 +346,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     textDecorationLine: 'none',
-    color: Colors.primaryBlue,
+    color: Colors.darkPaleMintColor,
+    // color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',

@@ -42,7 +42,7 @@ const Messages = ({route}) => {
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: 'tealff'}}>
+    <View style={{flex: 1, backgroundColor: 'teal'}}>
       <ImageBackground
         source={require('../../assets/images/watsapp-background.png')}
         style={{flex: 1, justifyContent: 'center'}}>

@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
 import {PATIENT} from '../../utils/Strings';
+import Colors from '../../customs/Colors';
 
 const EditProfile = ({route, navigation}) => {
   const dispatch = useDispatch();
@@ -40,7 +41,8 @@ const EditProfile = ({route, navigation}) => {
           style={{
             padding: 8,
             borderRadius: 4,
-            borderWidth: 1,
+            // borderWidth: 1,
+            borderBottomWidth: 1,
             borderColor: 'lightgray',
           }}
           placeholder={placeholder}
@@ -75,15 +77,15 @@ const EditProfile = ({route, navigation}) => {
       {renderInput({placeholder: 'First Name', field: 'firstName'})}
       {renderInput({placeholder: 'Last Name', field: 'lastName'})}
       {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-      
+
       <TouchableOpacity
         onPress={onSave}
         style={{
+          marginTop: 10,
           justifyContent: 'center',
           alignItems: 'center',
-          borderWidth: 1,
           padding: 8,
-          backgroundColor: 'green',
+          backgroundColor: Colors.darkPaleMintColor,
           borderColor: 'white',
           borderRadius: 6,
         }}>

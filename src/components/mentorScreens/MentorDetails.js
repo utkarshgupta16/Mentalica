@@ -10,8 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Colors from '../../customs/Colors';
-// import ArrowRight from '../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import {
@@ -94,22 +92,14 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               style={{marginLeft: -3}}
             />
           </Pressable>
-          <View
-            style={{
-              borderBottomWidth: 1,
-              paddingBottom: 5,
-              borderColor: 'lightgray',
-            }}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: 17,
-                fontWeight: '600',
-                color: 'gray',
-              }}>
-              Today's Available Slots
-            </Text>
-          </View>
+          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
+            Email : {selectedMentorData?.email_id}
+          </Text>
+          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
+            Full Name :{' '}
+            {`${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`}
+          </Text>
+
           {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
             <FlatList
               columnWrapperStyle={{flexWrap: 'wrap'}}
@@ -154,32 +144,20 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       });
                     }}>
                     <View
-                      style={{
-                        marginRight: 10,
-                        borderRadius: 13,
-                        paddingHorizontal: 8,
-                        paddingVertical: 3,
-                        backgroundColor:
-                          slot == selectedSlot ? 'green' : 'gray',
-                        marginBottom: 10,
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                        }}>
-                        {shwSlot || ""}
-                      </Text>
+                      style={[
+                        styles.slotContainer,
+                        slot === selectedSlot
+                          ? styles.backgroundGreen
+                          : styles.backgroundSaffron,
+                      ]}>
+                      <Text style={styles.slotText}>{slot}</Text>
                     </View>
                   </TouchableOpacity>
                 );
               }}
             />
           ) : (
-            <View
-              style={{
-                flex: 1,
-              }}
-            />
+            <View style={styles.bookSlotContainer} />
           )}
           {selectedSlot ? (
             <Pressable
@@ -221,7 +199,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 );
               }}
               style={{
-                backgroundColor: 'green',
+                backgroundColor: Colors.darkPaleMintColor,
                 paddingVertical: 8,
                 borderRadius: 4,
               }}>
@@ -249,6 +227,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  crossButton: {
+    marginBottom: 20,
+  },
+  slotContainer: {
+    marginRight: 10,
+    borderRadius: 13,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 10,
+  },
+  slotText: {
+    color: 'black',
+  },
+  backgroundGreen: {
+    backgroundColor: Colors.parrotGreen,
+  },
+  backgroundSaffron: {
+    backgroundColor: Colors.saffron,
+  },
+  bookSlotContainer: {
+    flex: 1,
   },
   title: {
     fontSize: 16,

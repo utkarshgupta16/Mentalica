@@ -155,6 +155,12 @@ const AppoinmentsList = ({navigation}) => {
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
+        theme={{
+          selectedDayBackgroundColor: Colors.darkPaleMintColor,
+          selectedDayTextColor: Colors.white,
+          todayTextColor: Colors.darkPaleMintColor,
+        }}
+        // selected="2022-12-01"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -181,7 +187,7 @@ const AppoinmentsList = ({navigation}) => {
           </Pressable>
         )}
         renderItem={item => {
-          let name = type == MENTOR ? item?.patientName : item?.mentorName;
+          let name = type === MENTOR ? item?.patientName : item?.mentorName;
           let {endTime} = (item.slots && item.slots[0]) || {};
           const [hours, minutes] = endTime.split(':');
           const now = new Date();
@@ -238,59 +244,6 @@ const AppoinmentsList = ({navigation}) => {
           );
         }}
       />
-      {/* <FlatList
-        data={scheduledAppointmentsData}
-        renderItem={({item, index}) => {
-          return (
-            <View
-              style={{
-                backgroundColor: 'green',
-                borderRadius: 8,
-                padding: 10,
-                flex: 1,
-                marginBottom: 10,
-                position: 'relative',
-              }}>
-              {isLoading ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'absolute',
-                    left: 0,
-                    bottom: 0,
-                    top: 0,
-                    right: 0,
-                  }}>
-                  <ActivityIndicator color={'white'} size="large" />
-                </View>
-              ) : null}
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                Mentor Email : {item?.mentor_email_id}
-              </Text>
-              <Text
-                style={{paddingTop: 10, color: 'white', fontWeight: 'bold'}}>
-                Meeting Time :{' '}
-                {item?.slots[0].startTime + '-' + item?.slots[0].endTime}
-              </Text>
-              <Pressable
-                style={{marginTop: 10}}
-                onPress={async () => {
-                  setLoading(true);
-                  const res = await dispatch(getTwilloTokenSlice(item.roomId));
-                  setLoading(false);
-                  console.log('roomId================', res);
-                }}>
-                <Text
-                  style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
-                  Join
-                </Text>
-              </Pressable>
-            </View>
-          );
-        }}
-      />
-       */}
     </View>
   );
 };
