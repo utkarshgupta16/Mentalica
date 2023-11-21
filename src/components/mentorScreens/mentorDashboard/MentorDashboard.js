@@ -40,7 +40,10 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
+import ContactsScreen from '../../../screens/ContactScreen';
+
 const MentorDashboard = ({navigation}) => {
+
   const {t} = useTranslation();
   const {
     ARE_YOU_JOIN,
@@ -54,7 +57,6 @@ const MentorDashboard = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
-  const isFocused = useIsFocused();
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   // console.log('setprops---------------------', setProps);

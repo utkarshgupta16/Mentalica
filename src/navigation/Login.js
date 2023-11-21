@@ -40,22 +40,19 @@ const LoginScreen = ({navigation}) => {
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
   const langOptions = LANG_OPTION;
-
   // guptagaurav9566+1@gmail.com
-
   // bhandari.tribhuwan@thinksys.com
   // const [enteredEmail, setEnteredEmail] = useState(
   //   'bhandari.tribhuwan@thinksys.com',
   // );
   // patel.sonu@thinksys.com
+  //pandey.kaushiki@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
-  const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
-
   const dispatch = useDispatch();
 
   const loginHandler = async () => {

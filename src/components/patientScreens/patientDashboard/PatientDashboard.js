@@ -18,8 +18,10 @@ import TabComponent from './TabComponent';
 import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
+import ContactsScreen from '../../../screens/ContactScreen';
 
 const PatientDashboard = ({navigation}) => {
+
   const {t} = useTranslation();
   const {
     ALL,
