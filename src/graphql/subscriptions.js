@@ -268,6 +268,7 @@ export const onDeleteChatRoom = /* GraphQL */ `
     }
   }
 `;
+
 export const onCreateMessage = /* GraphQL */ `
   subscription OnCreateMessage($filter: ModelSubscriptionMessageFilterInput) {
     onCreateMessage(filter: $filter) {
@@ -280,11 +281,7 @@ export const onCreateMessage = /* GraphQL */ `
       Attachments {
         items {
           id
-          storageKey
           type
-          width
-          height
-          duration
           messageID
           chatroomID
           createdAt

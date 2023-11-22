@@ -15,7 +15,6 @@ const ChatListItem = ({chat}) => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [chatRoom, setChatRoom] = useState({...chat});
-console.log("chat",chat)
   useEffect(() => {
     const fetchUser = async () => {
       const authUser = await Auth.currentAuthenticatedUser();

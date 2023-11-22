@@ -21,7 +21,7 @@ import {
 import 'react-native-get-random-values';
 import {v4 as uuidv4} from 'uuid';
 
-const InputBox = ({chatroom, updateMessage}) => {
+const InputBox = ({chatroom,}) => {
   const [text, setText] = useState('');
   const [files, setFiles] = useState([]);
   const [progresses, setProgresses] = useState({});
@@ -38,9 +38,9 @@ const InputBox = ({chatroom, updateMessage}) => {
       graphqlOperation(createMessage, {input: newMessage}),
     );
     setText('');
-    updateMessage &&
-      newMessageData &&
-      updateMessage(newMessageData?.data?.createMessage);
+    // updateMessage &&
+    //   newMessageData &&
+    //   updateMessage(newMessageData?.data?.createMessage);
 
     // create attachments
     // await Promise.all(

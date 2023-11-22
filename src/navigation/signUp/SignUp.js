@@ -16,6 +16,7 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
+// import {signUp, confirmSignUp} from '@aws-amplify/auth';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, languageList} from '../../utils/default';
@@ -81,15 +82,15 @@ const MentorSignUp = ({navigation}) => {
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: '',
-    lastName: '',
-    city: '',
-    temporaryCity: '',
-    phoneNumber: '',
-    emailId: '',
-    password: '',
-    confirmPassword: '',
-    age: '',
+    firstName: 'Sonu Patel',
+    lastName: 'Patient',
+    city: 'Varanasi',
+    temporaryCity: 'Varanasi',
+    phoneNumber: '1234567890',
+    emailId: 'patel.sonu@thinksys.com',
+    password: 'Password@123',
+    confirmPassword: 'Password@123',
+    age: "29",
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -99,9 +100,9 @@ const MentorSignUp = ({navigation}) => {
     // PATIENT:
     // type: PATIENT,
 
-    gender: '',
-    duty: '',
-    feel: '',
+    gender: 'male',
+    duty: 'soldier',
+    feel: 'anxiety',
   });
 
   const handleInput = ({field, value}) => {
@@ -185,6 +186,18 @@ const MentorSignUp = ({navigation}) => {
       // });
       const {password, confirmPassword, ...restData} = finalSignupData;
 
+      // const resp = await signUp({
+      //   username: state.emailId,
+      //   password,
+      //   // attributes: {
+      //   //   'custom:type': typeValue,
+      //   // },
+      //   options: {
+      //     userAttributes: {
+      //       'custom:type': typeValue,
+      //     },
+      //   },
+      // });
       const resp = await Auth.signUp({
         username: state.emailId,
         password,
@@ -230,6 +243,11 @@ const MentorSignUp = ({navigation}) => {
   const submitCodeHandler = async enteredOtp => {
     try {
       const enteredCode = enteredOtp.join('');
+      // const res = await confirmSignUp({
+      //   username: state.emailId,
+      //   confirmationCode: enteredCode,
+      // });
+      // console.log('submitCodeHandler=======:', res);
       const res = await Auth.confirmSignUp(state.emailId, enteredCode);
       console.log('res:', res);
       navigation.goBack();

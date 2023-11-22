@@ -17,7 +17,14 @@ import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
-import {Auth} from 'aws-amplify';
+import {Auth} from "aws-amplify"
+// import {
+//   signIn,
+//   confirmSignUp,
+//   autoSignIn,
+//   confirmSignIn,
+//   signOut,
+// } from '@aws-amplify/auth';
 import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
@@ -58,6 +65,10 @@ const LoginScreen = ({navigation}) => {
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
+      // const user1 = await signIn({
+      //   username: enteredEmail,
+      //   password: enteredPassword,
+      // });
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const currentUserInfo = await getCurrentUserInfo();
@@ -67,6 +78,8 @@ const LoginScreen = ({navigation}) => {
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {
+      console.log('getCurrentUserInfo Error', err);
+
       setError(err);
       setLoading(false);
     }
@@ -86,7 +99,8 @@ const LoginScreen = ({navigation}) => {
 
   const submitCodeHandler = async () => {
     try {
-      const res = await Auth.confirmSignUp(enteredEmail, enteredCode);
+      console.log('res:', res);
+      const res = await confirmSignUp(enteredEmail, enteredCode);
       console.log('res:', res);
       setShowEnterCodeModal(false);
       setEnteredEmail('');

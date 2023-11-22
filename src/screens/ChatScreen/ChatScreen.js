@@ -13,7 +13,8 @@ import {useRoute, useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Message from '../../components/Message';
 import InputBox from '../../components/InputBox';
-import {API, graphqlOperation,PubSub} from 'aws-amplify';
+import {API, graphqlOperation} from 'aws-amplify';
+// import {generateClient} from '@aws-amplify/api';
 import {
   getChatRoom,
   listMessages,
@@ -28,41 +29,40 @@ import {
 } from '../../graphql/subscriptions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
+import {useSelector} from 'react-redux';
 
 // import {Feather} from '@expo/vector-icons';
 
 const ChatScreen = () => {
   const [chatRoom, setChatRoom] = useState(null);
   const [messages, setMessages] = useState([]);
+  const {attributes} = useSelector(state => state.home);
   const route = useRoute();
   const navigation = useNavigation();
   const chatroomID = route?.params?.id;
-  // console.log("chatroomID",chatroomID)
   // fetch Chat Room
   useEffect(() => {
     API.graphql(graphqlOperation(getChatRoom, {id: chatroomID})).then(result =>
       setChatRoom(result.data?.getChatRoom),
     );
-    // const subscription = API.graphql(
-    //   graphqlOperation(onUpdateChatRoom, {
-    //     filter: {id: {eq: chatroomID}},
-    //   }),
-    // ).subscribe({
-    //   next: ({value}) => {
-    //     setChatRoom(cr => ({
-    //       ...(cr || {}),
-    //       ...value.data.onUpdateChatRoom,
-    //     }));
-    //   },
-    //   error: err => console.warn(err),
-    // });
 
-    // return () => subscription.unsubscribe();
+    const subscription = API.graphql(
+      graphqlOperation(onUpdateChatRoom, {filter: {id: {eq: chatroomID}}}),
+    ).subscribe({
+      next: ({value}) => {
+        setChatRoom(cr => ({
+          ...(cr || {}),
+          ...value.data.onUpdateChatRoom,
+        }));
+      },
+      error: err => console.warn(err),
+    });
+
+    return () => subscription.unsubscribe();
   }, [chatroomID]);
 
   //   // fetch Messages
   useEffect(() => {
-    // New
     API.graphql(
       graphqlOperation(listMessagesByChatRoom, {
         chatroomID,
@@ -71,33 +71,30 @@ const ChatScreen = () => {
     ).then(result => {
       setMessages(result.data?.listMessagesByChatRoom?.items);
     });
-    console.log('chatroomID', chatroomID);
 
     // Subscribe to new messages
-    // const subscription = API.graphql(
-    //   graphqlOperation(onCreateMessage),
-    // ).subscribe({
-    //   next: value => {
-    //     console.log('onCreateMessage%%%%%%%%%%% ', value);
-    //   },
-    //   error: err => console.warn(err),
-    // });
+    const subscription = API.graphql(
+      graphqlOperation(onCreateMessage, {
+        filter: {chatroomID: {eq: chatroomID}},
+      }),
+    ).subscribe({
+      next: ({value}) => {
+        setMessages(m => [value.data.onCreateMessage, ...m]);
+      },
+      error: err => console.warn(err),
+    });
 
-    // const subscription = client.graphql({query: onCreateMessage}).subscribe({
-    //   next: ({data}) => console.log('onCreateMessage$$$$$$$$$', data),
-    //   error: error => console.warn(error),
-    // });
     // Subscribe to new attachments
     // const subscriptionAttachments = API.graphql(
     //   graphqlOperation(onCreateAttachment, {
-    //     filter: {chatroomID: {eq: chatroomID}},
-    //   }),
+    //     filter: { chatroomID: { eq: chatroomID } },
+    //   })
     // ).subscribe({
-    //   next: ({value}) => {
+    //   next: ({ value }) => {
     //     const newAttachment = value.data.onCreateAttachment;
-    //     setMessages(existingMessages => {
+    //     setMessages((existingMessages) => {
     //       const messageToUpdate = existingMessages.find(
-    //         em => em.id === newAttachment.messageID,
+    //         (em) => em.id === newAttachment.messageID
     //       );
     //       if (!messageToUpdate) {
     //         return existingMessages;
@@ -107,17 +104,17 @@ const ChatScreen = () => {
     //       }
     //       messageToUpdate.Attachments.items.push(newAttachment);
 
-    //       return existingMessages.map(m =>
-    //         m.id === messageToUpdate.id ? messageToUpdate : m,
+    //       return existingMessages.map((m) =>
+    //         m.id === messageToUpdate.id ? messageToUpdate : m
     //       );
     //     });
     //   },
-    //   error: err => console.warn(err),
+    //   error: (err) => console.warn(err),
     // });
 
     return () => {
-      // subscription?.unsubscribe();
-      //   subscriptionAttachments.unsubscribe();
+      subscription.unsubscribe();
+      // subscriptionAttachments.unsubscribe();
     };
   }, [chatroomID]);
 
@@ -141,19 +138,19 @@ const ChatScreen = () => {
   if (!chatRoom) {
     return <ActivityIndicator />;
   }
-  const updateMessage = async data => {
-    let result = await API.graphql(
-      graphqlOperation(listMessagesByChatRoom, {
-        chatroomID,
-        sortDirection: 'DESC',
-      }),
-    );
-    setMessages([...result.data?.listMessagesByChatRoom?.items]);
-  };
+  // const updateMessage = async data => {
+  //   let result = await API.graphql(
+  //     graphqlOperation(listMessagesByChatRoom, {
+  //       chatroomID,
+  //       sortDirection: 'DESC',
+  //     }),
+  //   );
+  //   setMessages([...result.data?.listMessagesByChatRoom?.items]);
+  // };
 
   return (
     <SafeAreaView
-      key={messages.length}
+      // key={messages.length}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 90}
       style={styles.bg}>
@@ -164,12 +161,16 @@ const ChatScreen = () => {
           keyExtractor={(item, index) => index}
           data={messages || []}
           renderItem={({item, index}) => (
-            <Message index={index} key={index} message={item} />
+            <Message
+              isMe={item.userID === attributes.sub}
+              key={index}
+              message={item}
+            />
           )}
           style={styles.list}
           inverted
         />
-        <InputBox chatroom={chatRoom} updateMessage={updateMessage} />
+        <InputBox chatroom={chatRoom} />
       </ImageBackground>
     </SafeAreaView>
   );

@@ -11,7 +11,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 import awsconfig from './src/aws-exports';
-// import amplifyconfiguration from './src/amplifyconfiguration.json';
+import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
 // Register background handler
@@ -57,15 +57,15 @@ const AppConfig = () => {
 
       const newUser = {
         id: authUser?.attributes.sub,
-        name: '1234567890',
-        status: 'Pandey, I am using WhatsApp',
+        name: '9193364313',
+        status: 'Sonu, I am using WhatsApp',
       };
       let result = await API.graphql(
         graphqlOperation(createUser, {input: newUser}),
       );
       console.log('newUser@@@@@@@@@@@@@@@@@', newUser);
     };
-    // syncUser();
+    syncUser();
   }, []);
 
   return (

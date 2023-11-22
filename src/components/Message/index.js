@@ -7,48 +7,19 @@ import { useEffect, useState } from "react";
 import ImageAttachments from "./ImageAttachments";
 import VideoAttachments from "./VideoAttachments";
 
-const Message = ({ message,index }) => {
-  const [isMe, setIsMe] = useState(false);
+const Message = ({ isMe,message }) => {
   const [downloadAttachments, setDownloadedAttachments] = useState([]);
-console.log("setDownloadedAttachments",message)
+
   const { width } = useWindowDimensions();
 
-  useEffect(() => {
-    const isMyMessage = async () => {
-      const authUser = await Auth.currentAuthenticatedUser();
+  const imageContainerWidth = width * 0.8 - 30;
 
-      setIsMe(message?.userID === authUser.attributes.sub);
-    };
-
-    isMyMessage();
-  }, []);
-
-  useEffect(() => {
-    const downloadAttachments = async () => {
-      if (message?.Attachments.items) {
-        const downloadedAttachments = await Promise.all(
-          message.Attachments.items.map((attachment) =>
-            Storage.get(attachment.storageKey).then((uri) => ({
-              ...attachment,
-              uri,
-            }))
-          )
-        );
-
-        // setDownloadedAttachments(downloadedAttachments);
-      }
-    };
-    // downloadAttachments();
-  }, [JSON.stringify(message?.Attachments?.items)]);
-
-  // const imageContainerWidth = width * 0.8 - 30;
-
-  // const imageAttachments = downloadAttachments.filter(
-  //   (at) => at.type === "IMAGE"
-  // );
-  // const videoAttachments = downloadAttachments.filter(
-  //   (at) => at.type === "VIDEO"
-  // );
+  const imageAttachments = downloadAttachments.filter(
+    (at) => at.type === "IMAGE"
+  );
+  const videoAttachments = downloadAttachments.filter(
+    (at) => at.type === "VIDEO"
+  );
 
   return (
     <View
@@ -71,7 +42,7 @@ console.log("setDownloadedAttachments",message)
         </View>
       )} */}
       <Text>{message?.text}</Text>
-      <Text style={styles.time}>{dayjs(message?.createdAt).fromNow(true)}</Text>
+      <Text style={styles.time}>{dayjs(message.createdAt).fromNow(true)}</Text>
     </View>
   );
 };
