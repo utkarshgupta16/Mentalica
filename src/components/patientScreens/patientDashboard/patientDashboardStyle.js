@@ -137,6 +137,10 @@ export const styles = StyleSheet.create({
   appointmentDetails: {
     flex: 1,
   },
-  reloadButton: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  reloadText: {color: '#33A3DC', paddingBottom: 10},
+  reloadButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reloadText: {color: Colors.darkPaleMintColor, paddingBottom: 10},
 });

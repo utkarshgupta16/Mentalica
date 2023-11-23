@@ -183,7 +183,7 @@ const AppoinmentsList = ({navigation}) => {
             }}
             style={styles.reloadButton}>
             <Text style={styles.reloadText}>{RELOAD}</Text>
-            <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
+            <AIcon name="refresh" size={35} color={Colors.darkPaleMintColor} />
           </Pressable>
         )}
         renderItem={item => {

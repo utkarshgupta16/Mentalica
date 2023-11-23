@@ -58,7 +58,6 @@ const MentorsList = () => {
           <FlatList
             data={data}
             style={{flex: 0.8}}
-            horizontal
             // horizontal
             numColumns={3}
             columnWrapperStyle={{flexWrap: 'wrap'}}

@@ -21,8 +21,10 @@ import {useDispatch} from 'react-redux';
 import {singUpSlice} from '../redux/AuthSlice';
 import AddSlotsComponent from './signUp/AddSlots';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {configureAws, signUp} from '../AWS/AWSConfiguration';
+import {useTranslation} from 'react-i18next';
 
-const MentorSignUp = ({navigation}) => {
+const SignUp = ({navigation}) => {
   const typeOfItems = [
     {
       label: 'Patient',
@@ -33,10 +35,6 @@ const MentorSignUp = ({navigation}) => {
       value: MENTOR,
     },
   ];
-import {configureAws, signUp} from '../AWS/AWSConfiguration';
-import { useTranslation } from 'react-i18next';
-
-const SignupScreen = ({navigation}) => {
   const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -527,7 +525,7 @@ const SignupScreen = ({navigation}) => {
   );
 };
 
-export default MentorSignUp;
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {

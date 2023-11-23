@@ -47,7 +47,7 @@ const Profile = ({navigation}) => {
     YES,
     RESTART_APP,
     CHANGE_LANG,
-    OKAY
+    OKAY,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
@@ -106,6 +106,7 @@ const Profile = ({navigation}) => {
       </View>
     );
   }
+
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.topPartContainer}>
@@ -225,9 +226,9 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    backgroundColor: Colors.paleMintColor,
   },
   topPartContainer: {
-    backgroundColor: Colors.white,
     paddingTop: 15,
   },
   imageContainer: {
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.dune,
+    color: Colors.darkPaleMintColor,
   },
   emailText: {
     fontWeight: '500',
@@ -290,16 +291,17 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   logoutTitle: {
-    color: Colors.black,
+    color: Colors.darkPaleMintColor,
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
   },
   dropdown: {
     backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    borderWidth: 1,
     alignSelf: 'center',
+    borderColor: Colors.darkPaleMintColor,
     width: widthPercentageToDP(36),
   },
 });

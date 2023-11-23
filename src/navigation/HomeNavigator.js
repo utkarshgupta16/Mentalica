@@ -95,12 +95,7 @@ const HomeNavigator = () => {
   const {type} = useSelector(state => state.auth);
   return (
     <Tab.Navigator
-      screenOptions={{
-        // tabBarActiveTintColor: Colors.darkPaleMintColor,
-        tabBarInactiveTintColor: Colors.darkPaleMintColor,
-      }}>
-      screenOptions=
-      {({route}) => ({
+      screenOptions={({route}) => ({
         unmountOnBlur: true,
         headerShown: false,
         tabBarStyle:
@@ -111,9 +106,9 @@ const HomeNavigator = () => {
               }
             : null,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Colors.accentColor,
-      })}
-      >
+        tabBarActiveTintColor: Colors.primaryBlue,
+        tabBarInactiveTintColor: Colors.darkPaleMintColor,
+      })}>
       {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
