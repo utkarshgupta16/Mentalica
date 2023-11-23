@@ -408,6 +408,7 @@ const SignUp = ({navigation}) => {
       />
     </>
   );
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -439,7 +440,10 @@ const SignUp = ({navigation}) => {
           {renderInput({placeholder: 'First Name', field: 'firstName'})}
           {renderInput({placeholder: 'Last Name', field: 'lastName'})}
           {renderInput({placeholder: 'City', field: 'city'})}
-          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+          {renderInput({
+            placeholder: 'Temporary city',
+            field: 'temporaryCity',
+          })}
           {renderInput({
             placeholder: 'Phone Number',
             field: 'phoneNumber',
@@ -627,7 +631,8 @@ const styles = StyleSheet.create({
   },
   slotsText: {
     fontSize: 17,
-    color: '#33A3DC',
+    // color: '#33A3DC',
+    color: 'red',
     fontWeight: 'bold',
   },
   signUpButtonContainer: {

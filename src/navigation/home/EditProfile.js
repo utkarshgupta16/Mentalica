@@ -5,13 +5,29 @@ import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
 import {PATIENT} from '../../utils/Strings';
+import Colors from '../../customs/Colors';
 
-const EditProfile = ({route}) => {
+const EditProfile = ({route, navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
   const {data} = route?.params || {};
-  const {email_id, fcmToken, deviceType, duty, gender, feel, age, ...restData} =
-    data;
+  const {
+    email_id,
+    fcmToken,
+    slots,
+    experience,
+    language,
+    temporaryCity,
+    city,
+    fees,
+    deviceType,
+    duty,
+    gender,
+    feel,
+    age,
+    expertise,
+    ...restData
+  } = data;
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
   const {type} = useSelector(state => state.auth);
@@ -25,7 +41,8 @@ const EditProfile = ({route}) => {
           style={{
             padding: 8,
             borderRadius: 4,
-            borderWidth: 1,
+            // borderWidth: 1,
+            borderBottomWidth: 1,
             borderColor: 'lightgray',
           }}
           placeholder={placeholder}
@@ -49,6 +66,7 @@ const EditProfile = ({route}) => {
         }),
       );
       setLoading(false);
+      navigation.goBack();
     } catch (err) {
       setLoading(false);
     }
@@ -59,15 +77,15 @@ const EditProfile = ({route}) => {
       {renderInput({placeholder: 'First Name', field: 'firstName'})}
       {renderInput({placeholder: 'Last Name', field: 'lastName'})}
       {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-      
+
       <TouchableOpacity
         onPress={onSave}
         style={{
+          marginTop: 10,
           justifyContent: 'center',
           alignItems: 'center',
-          borderWidth: 1,
           padding: 8,
-          backgroundColor: 'green',
+          backgroundColor: Colors.darkPaleMintColor,
           borderColor: 'white',
           borderRadius: 6,
         }}>

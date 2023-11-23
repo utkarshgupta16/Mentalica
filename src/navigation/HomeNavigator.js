@@ -18,15 +18,16 @@ import PatientDashboard from '../components/patientScreens/patientDashboard/Pati
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
-import {PROFILE_TAB_ROUTE} from '../utils/route';
+import {MESSAGES_TAB_ROUTE, PROFILE_TAB_ROUTE} from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
+import MessagesStackNavigator from './home/MessagesStackNavigator';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const renderTabTitle = (isFocused, tabName) => {
-  const color = isFocused ? Colors.accentColor : Colors.dustyGray;
+  const color = isFocused ? 'teal' : '#89B9AD';
   const title = isFocused ? (
     <Text
       style={{
@@ -106,8 +107,8 @@ const HomeNavigator = () => {
               }
             : null,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Colors.primaryBlue,
-        tabBarInactiveTintColor: Colors.darkPaleMintColor,
+        tabBarActiveTintColor: 'teal',
+        tabBarInactiveTintColor: '#89B9AD',
       })}>
       {type === MENTOR ? (
         <Tab.Screen
@@ -168,7 +169,7 @@ const HomeNavigator = () => {
         />
       )}
       <Tab.Screen
-        name={t(MESSAGES)}
+        name={MESSAGES_TAB_ROUTE}
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => (
@@ -178,7 +179,7 @@ const HomeNavigator = () => {
             return renderTabTitle(focused, 'Messages');
           },
         }}
-        component={Messages}
+        component={MessagesStackNavigator}
       />
       <Tab.Screen
         options={{

@@ -5,23 +5,10 @@ import Colors from '../customs/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 
-const ProfileDetailsItem = ({title, screen, navigation, data}) => {
+const ProfileDetailsItem = ({title, screen, navigation, data,onPress}) => {
   const {t} = useTranslation();
   return (
-    <Pressable
-      style={styles.mainContainer}
-      onPress={() => {
-        if (title == 'Contact details') {
-          Alert.alert(
-            'Contact Details',
-            `Phone Number : ${data?.phoneNumber}  
-             Email Id : ${data?.email_id}`,
-            [{text: 'OK', onPress: () => null}],
-          );
-        } else {
-          screen && navigation && navigation.navigate(screen, {data});
-        }
-      }}>
+    <Pressable style={styles.mainContainer} onPress={onPress}>
       <Text style={styles.title}>{t(title)}</Text>
       <MaterialIcons
         name="arrow-forward-ios"

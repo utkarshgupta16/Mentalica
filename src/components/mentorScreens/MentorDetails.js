@@ -102,14 +102,29 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
 
           {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
             <FlatList
-              data={selectedMentorData?.slots}
-              horizontal
+              columnWrapperStyle={{flexWrap: 'wrap'}}
+              scrollEventThrottle={1900}
               showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              data={selectedMentorData?.slots}
+              numColumns={2}
+              // horizontal
+              // showsHorizontalScrollIndicator={false}
               style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
                 let slot = `${item?.startTime}-${item?.endTime}`;
                 let check = bookSlots && bookSlots?.includes(slot);
+                let [startH, startM] = item?.startTime.split(':');
+                let [endH, endM] = item?.endTime.split(':');
+                let AM_PM = startH >= 12 ? 'PM' : 'AM';
+                let startTime = `${
+                  startH > 12 ? startH - 12 : startH
+                }:${startM} ${AM_PM}`;
+                let endTime = `${
+                  endH > 12 ? endH - 12 : endH
+                }:${endM} ${AM_PM}`;
+                let shwSlot = `${startTime}-${endTime}`;
                 return (
                   <TouchableOpacity
                     key={index}
@@ -184,7 +199,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 );
               }}
               style={{
-                backgroundColor: 'green',
+                backgroundColor: Colors.darkPaleMintColor,
                 paddingVertical: 8,
                 borderRadius: 4,
               }}>

@@ -175,6 +175,7 @@ const App = () => {
       });
     };
   }
+
   return (
     <>
       <AppContext.Provider value={{props, setProps}}>

@@ -59,8 +59,8 @@ const MentorsList = () => {
             data={data}
             style={{flex: 0.8}}
             // horizontal
-            numColumns={3}
-            columnWrapperStyle={{flexWrap: 'wrap'}}
+            // numColumns={3}
+            // columnWrapperStyle={{flexWrap: 'wrap'}}
             scrollEventThrottle={1900}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {

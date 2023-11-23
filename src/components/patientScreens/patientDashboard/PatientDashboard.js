@@ -24,6 +24,7 @@ const PatientDashboard = ({navigation}) => {
     NO_DATA_FOUND,
     SAVED,
   } = convertLang(t);
+
   const components = {
     [ALL]: <AllTabComponent />,
     [APPOINTMENTS]: <AppointmentList navigation={navigation} />,
