@@ -61,7 +61,6 @@ const LoginScreen = ({navigation}) => {
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
-
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
@@ -100,7 +99,7 @@ const LoginScreen = ({navigation}) => {
   const submitCodeHandler = async () => {
     try {
       console.log('res:', res);
-      const res = await confirmSignUp(enteredEmail, enteredCode);
+      const res = await Auth.confirmSignUp(enteredEmail, enteredCode);
       console.log('res:', res);
       setShowEnterCodeModal(false);
       setEnteredEmail('');

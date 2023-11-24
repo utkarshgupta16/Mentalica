@@ -1,36 +1,37 @@
-import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import {View, Text, StyleSheet, useWindowDimensions} from 'react-native';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-import { Auth, JS, Storage } from "aws-amplify";
-import { useEffect, useState } from "react";
-import ImageAttachments from "./ImageAttachments";
-import VideoAttachments from "./VideoAttachments";
+import {Auth, JS, Storage} from 'aws-amplify';
+import {useEffect, useState} from 'react';
+import ImageAttachments from './ImageAttachments';
+import VideoAttachments from './VideoAttachments';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIconsDone from '../../icons/delivered.svg';
+import MaterialIconsRead from '../../icons/read.svg';
 
-const Message = ({ isMe,message }) => {
+const Message = ({isMe, message}) => {
   const [downloadAttachments, setDownloadedAttachments] = useState([]);
 
-  const { width } = useWindowDimensions();
+  const {width} = useWindowDimensions();
 
   const imageContainerWidth = width * 0.8 - 30;
 
   const imageAttachments = downloadAttachments.filter(
-    (at) => at.type === "IMAGE"
+    at => at.type === 'IMAGE',
   );
   const videoAttachments = downloadAttachments.filter(
-    (at) => at.type === "VIDEO"
+    at => at.type === 'VIDEO',
   );
-
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: isMe ? "#DCF8C5" : "white",
-          alignSelf: isMe ? "flex-end" : "flex-start",
+          backgroundColor: isMe ? '#DCF8C5' : 'white',
+          alignSelf: isMe ? 'flex-end' : 'flex-start',
         },
-      ]}
-    >
+      ]}>
       {/* {downloadAttachments.length > 0 && (
         <View style={[{ width: imageContainerWidth }, styles.images]}>
           <ImageAttachments attachments={imageAttachments} />
@@ -41,7 +42,16 @@ const Message = ({ isMe,message }) => {
           />
         </View>
       )} */}
-      <Text>{message?.text}</Text>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={{paddingRight: 5}}>{message?.text}</Text>
+        {isMe ? (
+          message.status == 'READ' ? (
+            <MaterialIconsRead width={25} height={25} color="blue" />
+          ) : (
+            <MaterialIconsDone width={25} height={25} />
+          )
+        ) : null}
+      </View>
       <Text style={styles.time}>{dayjs(message.createdAt).fromNow(true)}</Text>
     </View>
   );
@@ -52,10 +62,10 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     borderRadius: 10,
-    maxWidth: "80%",
+    maxWidth: '80%',
 
     // Shadows
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
@@ -66,21 +76,21 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   time: {
-    color: "gray",
-    alignSelf: "flex-end",
+    color: 'gray',
+    alignSelf: 'flex-end',
   },
   images: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   imageContainer: {
-    width: "50%",
+    width: '50%',
     aspectRatio: 1,
     padding: 3,
   },
   image: {
     flex: 1,
-    borderColor: "white",
+    borderColor: 'white',
     borderWidth: 1,
     borderRadius: 5,
   },

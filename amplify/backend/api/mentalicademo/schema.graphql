@@ -22,6 +22,7 @@ type ChatRoom @model @auth(rules: [{allow: public}]) {
   users: [User] @manyToMany(relationName: "UserChatRoom")
   LastMessage: Message @hasOne
   Attachments: [Attachment] @hasMany(indexName: "byChatRoom", fields: ["id"])
+  lastTypingAt: AWSTimestamp
 }
 
 type Message @model @auth(rules: [{allow: public}]) {
@@ -32,6 +33,8 @@ type Message @model @auth(rules: [{allow: public}]) {
   userID: ID! @index(name: "byUser")
   images: [String]
   Attachments: [Attachment] @hasMany(indexName: "byMessage", fields: ["id"])
+  status: String
+  replyToMessageID: ID
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -41,4 +44,6 @@ type User @model @auth(rules: [{allow: public}]) {
   image: String
   Messages: [Message] @hasMany(indexName: "byUser", fields: ["id"])
   ChatRooms: [ChatRoom] @manyToMany(relationName: "UserChatRoom")
+  lastOnlineAt: AWSTimestamp
 }
+ 

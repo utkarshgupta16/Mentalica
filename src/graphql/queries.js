@@ -303,6 +303,7 @@ export const listMessagesByChatRoom = /* GraphQL */ `
         chatroomID
         userID
         images
+        status
         Attachments {
           nextToken
           __typename

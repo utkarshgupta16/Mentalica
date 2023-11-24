@@ -187,6 +187,13 @@ export const schema = {
                         "targetName": "chatRoomLastMessageId"
                     }
                 },
+                "lastTypingAt": {
+                    "name": "lastTypingAt",
+                    "isArray": false,
+                    "type": "AWSTimestamp",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "Attachments": {
                     "name": "Attachments",
                     "isArray": true,
@@ -296,6 +303,22 @@ export const schema = {
                     "attributes": [],
                     "isArrayNullable": true
                 },
+                "status": {
+                    "name": "status",
+                    "isArray": false,
+                    "type": {
+                        "enum": "MessageStatus"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "replyToMessageID": {
+                    "name": "replyToMessageID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "Attachments": {
                     "name": "Attachments",
                     "isArray": true,
@@ -392,6 +415,13 @@ export const schema = {
                     "name": "image",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "lastOnlineAt": {
+                    "name": "lastOnlineAt",
+                    "isArray": false,
+                    "type": "AWSTimestamp",
                     "isRequired": false,
                     "attributes": []
                 },

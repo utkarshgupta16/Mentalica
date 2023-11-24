@@ -3,8 +3,8 @@ import {
   FlatList,
   Image,
   Pressable,
-  Text,
-  View,
+  // Text,
+  // View,
   TouchableOpacity,
   Alert,
   RefreshControl,
@@ -34,6 +34,8 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
+import Text from "../../../components/TextWrapper"
+import View from "../../../components/ViewWrapper"
 const AppoinmentsList = ({navigation}) => {
   const {t} = useTranslation();
   const {

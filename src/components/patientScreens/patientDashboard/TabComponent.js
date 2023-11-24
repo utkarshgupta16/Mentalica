@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {styles} from './patientDashboardStyle';
-import {View} from 'react-native';
+// import {View} from 'react-native';
 import convertLang from '../../../utils/Strings';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
 import {useTranslation} from 'react-i18next';
+import View from "../../../components/ViewWrapper"
 const TabComponent = ({selectedTab, setSelectedTab}) => {
   const {t} = useTranslation();
     const {

@@ -134,6 +134,7 @@ export const onUpdateChatRoom = /* GraphQL */ `
       id
       name
       image
+      lastTypingAt
       Messages {
         items {
           id

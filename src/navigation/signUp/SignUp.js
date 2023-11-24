@@ -16,7 +16,6 @@ import Button from '../../components/Button';
 import Loader from '../../customs/Loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Auth} from 'aws-amplify';
-// import {signUp, confirmSignUp} from '@aws-amplify/auth';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, languageList} from '../../utils/default';
@@ -82,15 +81,15 @@ const MentorSignUp = ({navigation}) => {
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: 'Sonu Patel',
+    firstName: 'Testing',
     lastName: 'Patient',
     city: 'Varanasi',
     temporaryCity: 'Varanasi',
     phoneNumber: '1234567890',
-    emailId: 'patel.sonu@thinksys.com',
+    emailId: 'sonu.sp905@gmail.com',
     password: 'Password@123',
     confirmPassword: 'Password@123',
-    age: "29",
+    age: '29',
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -186,31 +185,20 @@ const MentorSignUp = ({navigation}) => {
       // });
       const {password, confirmPassword, ...restData} = finalSignupData;
 
-      // const resp = await signUp({
-      //   username: state.emailId,
-      //   password,
-      //   // attributes: {
-      //   //   'custom:type': typeValue,
-      //   // },
-      //   options: {
-      //     userAttributes: {
-      //       'custom:type': typeValue,
-      //     },
-      //   },
-      // });
       const resp = await Auth.signUp({
         username: state.emailId,
         password,
         attributes: {
-          'custom:type': typeValue,
+          'custom:type': 'Patient',
         },
       });
+      
       const attRes = await dispatch(
         singUpSlice({
           ...restData,
           fcmToken: fcmToken ? fcmToken : '',
           deviceType: Platform.OS,
-          type: typeValue,
+          // type: 'Patient',
         }),
       );
       setShowEnterCodeModal(true);
@@ -243,12 +231,9 @@ const MentorSignUp = ({navigation}) => {
   const submitCodeHandler = async enteredOtp => {
     try {
       const enteredCode = enteredOtp.join('');
-      // const res = await confirmSignUp({
-      //   username: state.emailId,
-      //   confirmationCode: enteredCode,
-      // });
-      // console.log('submitCodeHandler=======:', res);
-      const res = await Auth.confirmSignUp(state.emailId, enteredCode);
+      console.log('res:', enteredCode);
+
+      const res = await Auth.confirmSignUp("sonu.sp905@gmail.com", enteredCode);
       console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);

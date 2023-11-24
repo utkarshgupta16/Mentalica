@@ -1,10 +1,10 @@
 import React from 'react';
-import {Alert, Pressable, StyleSheet, Text} from 'react-native';
+import {Alert, Pressable, StyleSheet} from 'react-native';
 import Colors from '../customs/Colors';
 // import ArrowRight from '../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
-
+import Text from '../components/TextWrapper';
 const ProfileDetailsItem = ({title, screen, navigation, data,onPress}) => {
   const {t} = useTranslation();
   return (

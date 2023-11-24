@@ -7,24 +7,31 @@ import {
   FlatList,
   Text,
   Pressable,
+  Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {API, graphqlOperation, Auth, Storage} from 'aws-amplify';
+import {API, graphqlOperation, Auth, Storage, DataStore} from 'aws-amplify';
 import {
   createMessage,
   updateChatRoom,
   createAttachment,
+  updateUser,
 } from '../../graphql/mutations';
 // import * as ImagePicker from "expo-image-picker";
 
 import 'react-native-get-random-values';
 import {v4 as uuidv4} from 'uuid';
+import {Message} from '../../models';
+import {onUpdateChatRoom, onUpdateUser} from '../../graphql/subscriptions';
+import {useSelector} from 'react-redux';
 
-const InputBox = ({chatroom,}) => {
+const InputBox = ({chatroom, isTyping, userItemCurrent}) => {
   const [text, setText] = useState('');
   const [files, setFiles] = useState([]);
   const [progresses, setProgresses] = useState({});
+  const {attributes} = useSelector(state => state.home);
   const onSend = async () => {
     const authUser = await Auth.currentAuthenticatedUser();
 
@@ -32,11 +39,21 @@ const InputBox = ({chatroom,}) => {
       chatroomID: chatroom?.id,
       text,
       userID: authUser.attributes.sub,
+      status: 'DELIVERED',
     };
 
+    // const newMessage = await DataStore.save(
+    //   new Message({
+    //     text, // <- this messages should be encrypted
+    //     userID: authUser.attributes.sub,
+    //     chatroomID: chatroom?.id,
+    //     status:"SENT"
+    //   })
+    // );
     const newMessageData = await API.graphql(
       graphqlOperation(createMessage, {input: newMessage}),
     );
+
     setText('');
     // updateMessage &&
     //   newMessageData &&
@@ -120,6 +137,33 @@ const InputBox = ({chatroom,}) => {
     }
   };
 
+  const onFocus = async () => {
+    console.log('newMessage onFocus');
+    if (attributes.sub == userItemCurrent) {
+      const newMessage = {
+        id: chatroom?.id,
+        lastTypingAt: 1,
+      };
+      const newMessageData = await API.graphql(
+        graphqlOperation(updateChatRoom, {input: newMessage}),
+      );
+    }
+  };
+  const onBlur = async () => {
+    if (attributes.sub == userItemCurrent) {
+      const newMessage = {
+        id: chatroom?.id,
+        lastTypingAt: 2,
+      };
+      const newMessageData = await API.graphql(
+        graphqlOperation(updateChatRoom, {input: newMessage}),
+      );
+    }
+  };
+  console.log(
+    'attributes.sub != userItemCurrent',
+    attributes.sub != userItemCurrent,
+  );
   return (
     <>
       {files.length > 0 ? (
@@ -168,21 +212,41 @@ const InputBox = ({chatroom,}) => {
         </View>
       ) : null}
 
-      <View style={styles.container}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          style={styles.input}
-          placeholder="Type your message..."
-        />
-        {/* Icon */}
-        <MaterialIcons
-          onPress={onSend}
-          style={styles.send}
-          name="send"
-          size={14}
-          color="white"
-        />
+      <View
+        style={{
+          backgroundColor: 'whitesmoke',
+          paddingHorizontal: 10,
+          paddingBottom: isTyping && attributes.sub != userItemCurrent ? 0 : 10,
+        }}>
+        <View style={styles.container}>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            style={styles.input}
+            placeholder="Type your message..."
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onSubmitEditing={Keyboard.dismiss}
+          />
+          {/* Icon */}
+          <MaterialIcons
+            onPress={onSend}
+            style={styles.send}
+            name="send"
+            size={14}
+            color="white"
+          />
+        </View>
+        {isTyping && attributes.sub != userItemCurrent ? (
+          <Text
+            style={{
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              color: '#9090e4',
+            }}>
+            Typing Message....
+          </Text>
+        ) : null}
       </View>
     </>
   );
@@ -191,9 +255,7 @@ const InputBox = ({chatroom,}) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: 'whitesmoke',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
+    paddingTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

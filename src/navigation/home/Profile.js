@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Text,
-  View,
+  // Text,
+  // View,
   StyleSheet,
   ScrollView,
   Pressable,
@@ -10,7 +10,10 @@ import {
   Alert,
   TouchableOpacity,
   I18nManager,
+  Switch,
 } from 'react-native';
+import Text from '../../components/TextWrapper';
+import View from '../../components/ViewWrapper';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
@@ -31,7 +34,11 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
+import {useTheme} from '@react-navigation/native';
+import {setTheme} from '../../redux/HomeSlice';
+
 const Profile = ({navigation}) => {
+  const colors = useTheme().colors;
   const {t} = useTranslation();
   const {
     ACCOUNT_DETAILS,
@@ -51,11 +58,20 @@ const Profile = ({navigation}) => {
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
-  const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const {
+    profileData = {},
+    isProfileLoading,
+    theme,
+  } = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
   const [showSlots, setShowSlots] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(theme);
+  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = () => {
+    dispatch(setTheme(!theme));
+  };
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? HEBREW : ENGLISH,
   );
@@ -134,7 +150,9 @@ const Profile = ({navigation}) => {
     );
   }
   return (
-    <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.mainContainer}
+      showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
           <View style={styles.imageContainer}>
@@ -178,6 +196,24 @@ const Profile = ({navigation}) => {
               onPress={item.onPress}
             />
           ))}
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Switch
+              trackColor={{false: '#767577', true: 'white'}}
+              thumbColor={theme ? '#3e3e3e' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={theme}
+            />
+            <Text
+              style={{
+                paddingLeft: 8,
+                fontSize: 16,
+                fontWeight: '600',
+                color: Colors.primaryDarkBlue,
+              }}>
+              Change Theme
+            </Text>
+          </View>
         </View>
         <View style={styles.paymentDetailsCont}>
           <Text style={styles.accDetailsTitle}>{PAYMENT}</Text>

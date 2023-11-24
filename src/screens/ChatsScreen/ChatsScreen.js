@@ -16,45 +16,56 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {listUsers} from '../../graphql/queries';
 import {getCommonChatRoomWithUser} from '../../services/chatRoomService';
 import {CHATS_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
-import {createChatRoom, createUserChatRoom} from '../../graphql/mutations';
+import {
+  createChatRoom,
+  createUserChatRoom,
+  updateUser,
+} from '../../graphql/mutations';
 import ScreenLoading from '../../components/ScreenLoading';
 import {useIsFocused} from '@react-navigation/native';
+import {
+  onCreateMessage,
+  onUpdateUserChatRoom,
+} from '../../graphql/subscriptions';
+import {useSelector} from 'react-redux';
 
 const ChatsScreen = ({navigation}) => {
   const [chatRooms, setChatRooms] = useState([]);
+  const {attributes} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [roomChatLoading, setRoomChatLoading] = useState(false);
   const [isOpen, setOpenDropdown] = useState(false);
   const [users, setUsers] = useState([]);
+  const [newChats, setNewChats] = useState({});
   const [selectedUser, selectUserToChat] = useState({});
   const isFocus = useIsFocused();
 
-  const fetchChatRooms = async () => {
-    setLoading(true);
-
+  const fetchChatRooms = async (isLoading = true) => {
+    isLoading && setLoading(true);
     const authUser = await Auth.currentAuthenticatedUser();
     const response = await API.graphql(
       graphqlOperation(listChatRooms, {id: authUser?.attributes?.sub}),
     );
-console.log("chatRooms",authUser?.attributes?.sub)
-
-    
     const sortedRooms =
       response?.data?.getUser?.ChatRooms?.items.sort(
-        (r1, r2) => new Date(r2?.updatedAt) - new Date(r1?.updatedAt),
+        (r1, r2) =>
+          new Date(r2?.chatRoom?.updatedAt) - new Date(r1?.chatRoom?.updatedAt),
       ) || [];
+    // const sortedRooms = response?.data?.getUser?.ChatRooms?.items.sort(
+    //   (r1, r2) =>
+    //     new Date(r2.chatRoom.updatedAt) - new Date(r1.chatRoom.updatedAt),
+    // );
     setChatRooms([...sortedRooms]);
-    setLoading(false);
+    isLoading && setLoading(false);
   };
 
   useEffect(() => {
     fetchChatRooms();
-  }, [isFocus]);
+  }, []);
 
   useEffect(() => {
     (async () => {
       const authUser = await Auth.currentAuthenticatedUser();
-
       API.graphql(graphqlOperation(listUsers)).then(result => {
         let arr =
           result.data?.listUsers?.items &&
@@ -69,10 +80,9 @@ console.log("chatRooms",authUser?.attributes?.sub)
         setUsers(arr);
       });
     })();
-  }, [isFocus]);
+  }, []);
 
   const onPress = async user => {
-    // console.log('newChatRoom==============', user.name,user.id);
     selectUserToChat(user);
     setOpenDropdown(!isOpen);
     const existingChatRoom = await getCommonChatRoomWithUser(user.id);
@@ -86,7 +96,6 @@ console.log("chatRooms",authUser?.attributes?.sub)
       });
       return;
     }
-
     // Create a new Chatroom
     try {
       setRoomChatLoading(true);
@@ -122,6 +131,72 @@ console.log("chatRooms",authUser?.attributes?.sub)
       setRoomChatLoading(false);
     }
   };
+
+  const updateMessage = id => {
+    setNewChats({...newChats, [id]: []});
+  };
+
+  useEffect(() => {
+    let subscriptionArr = [];
+    for (let room of chatRooms) {
+      const subscription = API.graphql(
+        graphqlOperation(onCreateMessage, {
+          filter: {chatroomID: {eq: room?.chatRoom?.id},userID:{ne:attributes.sub}},
+        }),
+      ).subscribe({
+        next: ({value}) => {
+          // console.log('chatRoom======', value);
+          if (value.data.onCreateMessage.userID != attributes.sub) {
+            let data =
+              (newChats &&
+                Object.keys(newChats).length &&
+                newChats[room?.chatRoom?.id]) ||
+              [];
+            data.push(value?.data?.onCreateMessage?.text);
+            setNewChats({...newChats, [room?.chatRoom?.id]: data});
+            fetchChatRooms(false);
+          }
+        },
+        error: err => console.warn(err),
+      });
+      subscriptionArr.push(subscription);
+    }
+    if (chatRooms && chatRooms[0]?.chatRoom?.id) {
+      return () => {
+        for (let room of subscriptionArr) {
+          room.unsubscribe();
+        }
+        // subscriptionAttachments.unsubscribe();
+      };
+    }
+  }, [chatRooms, newChats]);
+
+  useEffect(() => {
+    (async () => {
+      const newMessage1 = {
+        id: attributes.sub,
+        lastOnlineAt: new Date().valueOf(),
+        status: 'online',
+      };
+      const newMessageData1 = await API.graphql(
+        graphqlOperation(updateUser, {input: newMessage1}),
+      );
+      console.log('newMessage', newMessageData1);
+    })();
+
+    return async () => {
+      const newMessage1 = {
+        id: attributes.sub,
+        lastOnlineAt: new Date().valueOf(),
+        status: 'offline',
+      };
+      const newMessageData1 = await API.graphql(
+        graphqlOperation(updateUser, {input: newMessage1}),
+      );
+    };
+  }, []);
+  // console.log("chatRooms",JSON.stringify(chatRooms))
+
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       {roomChatLoading ? <ScreenLoading /> : null}
@@ -195,9 +270,34 @@ console.log("chatRooms",authUser?.attributes?.sub)
         <FlatList
           data={chatRooms}
           keyExtractor={(item, index) => index}
-          renderItem={({item, index}) => (
-            <ChatListItem key={index} chat={item.chatRoom} />
-          )}
+          renderItem={({item, index}) => {
+            let userItem =
+              item.chatRoom?.users &&
+              item.chatRoom?.users?.items?.find(
+                item => item?.user?.id !== attributes.sub,
+              );
+              let userItemCurrent =
+              item.chatRoom?.users &&
+              item.chatRoom?.users?.items?.find(
+                item => item?.user?.id == attributes.sub,
+              );
+            return (
+              <ChatListItem
+                newChats={
+                  (newChats &&
+                    Object.keys(newChats).length &&
+                    newChats[item?.chatRoom?.id]) ||
+                  []
+                }
+                updateMessage={updateMessage}
+                key={index}
+                roomId={item.chatRoom.id}
+                userItemCurrent={userItemCurrent.user.id}
+                chat={item.chatRoom}
+                user={userItem.user}
+              />
+            );
+          }}
           style={{backgroundColor: 'white', marginTop: 50}}
           refreshing={loading}
           onRefresh={fetchChatRooms}

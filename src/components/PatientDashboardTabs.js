@@ -1,6 +1,8 @@
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import { Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import Colors from '../customs/Colors';
+import View from "../components/ViewWrapper"
+import Text from "../components/TextWrapper"
 
 export default function PatientDashboardTabs({
   onPress,

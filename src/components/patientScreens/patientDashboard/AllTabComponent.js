@@ -1,15 +1,19 @@
 import React from 'react';
 import {styles} from './patientDashboardStyle';
-import {View, Text, FlatList, Image} from 'react-native';
+import {FlatList,
+  //  Text,
+   View as View1,
+  Image} from 'react-native';
 import {articlesData} from '../../../utils/default';
-
+import Text from '../../../components/TextWrapper';
+import View from '../../../components/ViewWrapper';
 const AllTabComponent = () => {
   return (
     <>
       <View style={styles.belowTabsContainer}>
         <Text style={styles.headingText}>Next Appointments</Text>
-        <View style={styles.nextAppointmentCont}>
-          <View style={styles.leftCont}>
+        <View isCard style={styles.nextAppointmentCont}>
+          <View  style={styles.leftCont}>
             <Text style={{marginBottom: 9, fontWeight: 'bold', fontSize: 14}}>
               Tomorrow
             </Text>
@@ -27,7 +31,7 @@ const AllTabComponent = () => {
         </View>
         {/* Recommended Articles */}
         <Text style={styles.headingText}>Recommended articles</Text>
-        <View style={styles.recommendedArticlesCont}>
+        <View  style={styles.recommendedArticlesCont}>
           <FlatList
             data={articlesData}
             renderItem={renderItem}
@@ -63,6 +67,7 @@ const renderItem = ({item}) => {
       /> */}
 
       <View
+        isCard={true}
         style={{
           width: '90%',
           paddingVertical: 10,

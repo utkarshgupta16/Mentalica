@@ -2,9 +2,10 @@ import {
   Alert,
   FlatList,
   Image,
-  Text,
+  Pressable,
+  // Text,
   TouchableOpacity,
-  View,
+  // View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
@@ -19,9 +20,10 @@ import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
 import ContactsScreen from '../../../screens/ContactScreen';
-
+import {singUpSlice} from '../../../redux/AuthSlice';
+import Text from "../../../components/TextWrapper"
+import View from "../../../components/ViewWrapper"
 const PatientDashboard = ({navigation}) => {
-
   const {t} = useTranslation();
   const {
     ALL,
@@ -69,6 +71,7 @@ const PatientDashboard = ({navigation}) => {
       <Text style={styles.helloText}>
         {HELLO} {patientName}
       </Text>
+     
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
       <TabComponent selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
