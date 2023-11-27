@@ -27,6 +27,7 @@ import {
   onCreateAttachment,
   onCreateMessage,
   onUpdateChatRoom,
+  onUpdateChatRoom1,
   onUpdateMessage,
   onUpdateUser,
 } from '../../graphql/subscriptions';
@@ -130,7 +131,7 @@ const ChatScreen = () => {
       }),
     ).subscribe({
       next: ({value}) => {
-        console.log('fetchMessage#########', value);
+        // console.log('fetchMessage#########', value);
         // fetchMessage();
         setOnline(value.data.onUpdateUser.status);
       },
@@ -138,12 +139,12 @@ const ChatScreen = () => {
     });
 
     const subscriptionTyping = API.graphql(
-      graphqlOperation(onUpdateChatRoom, {
+      graphqlOperation(onUpdateChatRoom1, {
         filter: {id: {eq: chatroomID}},
       }),
     ).subscribe({
       next: ({value}) => {
-        console.log('fetchMessage#########', value);
+        // console.log('fetchMessage#########', JSON.stringify(value.data.onUpdateChatRoom.LastMessage));
         // fetchMessage();
         setTyping(
           value.data?.onUpdateChatRoom?.lastTypingAt == 1 ? true : false,

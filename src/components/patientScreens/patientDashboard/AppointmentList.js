@@ -34,8 +34,8 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-import Text from "../../../components/TextWrapper"
-import View from "../../../components/ViewWrapper"
+import Text from '../../../components/TextWrapper';
+import View from '../../../components/ViewWrapper';
 const AppoinmentsList = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -182,7 +182,7 @@ const AppoinmentsList = ({navigation}) => {
             <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
           </Pressable>
         )}
-        renderItem={item => {
+        renderItem={(item, index) => {
           let name = type == MENTOR ? item?.patientName : item?.mentorName;
           let {endTime} = (item.slots && item.slots[0]) || {};
           const [hours, minutes] = endTime.split(':');
@@ -192,6 +192,7 @@ const AppoinmentsList = ({navigation}) => {
           let checkExpired = true;
           return (
             <TouchableOpacity
+              key={index}
               style={{opacity: checkExpired ? 1 : 0.5}}
               onPress={() => {
                 if (checkExpired) {

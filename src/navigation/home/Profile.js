@@ -211,7 +211,7 @@ const Profile = ({navigation}) => {
                 fontWeight: '600',
                 color: Colors.primaryDarkBlue,
               }}>
-              Change Theme
+              {theme ? "Light Theme":"Dark Theme"}
             </Text>
           </View>
         </View>

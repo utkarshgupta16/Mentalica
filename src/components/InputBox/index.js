@@ -160,10 +160,6 @@ const InputBox = ({chatroom, isTyping, userItemCurrent}) => {
       );
     }
   };
-  console.log(
-    'attributes.sub != userItemCurrent',
-    attributes.sub != userItemCurrent,
-  );
   return (
     <>
       {files.length > 0 ? (
@@ -237,7 +233,7 @@ const InputBox = ({chatroom, isTyping, userItemCurrent}) => {
             color="white"
           />
         </View>
-        {isTyping && attributes.sub != userItemCurrent ? (
+        {isTyping  ? (
           <Text
             style={{
               paddingHorizontal: 10,

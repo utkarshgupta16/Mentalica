@@ -17,7 +17,7 @@ import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
-import {Auth} from "aws-amplify"
+import {Auth} from 'aws-amplify';
 // import {
 //   signIn,
 //   confirmSignUp,
@@ -54,7 +54,9 @@ const LoginScreen = ({navigation}) => {
   // );
   // patel.sonu@thinksys.com
   //pandey.kaushiki@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'patel.sonu@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -72,8 +74,17 @@ const LoginScreen = ({navigation}) => {
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
+      console.log('currentUserInfo', user);
       dispatch(setAttributes(attributes));
-      dispatch(login(enteredEmail));
+      dispatch(
+        login({
+          email: enteredEmail,
+          userToken: {
+            jwtToken: user?.signInUserSession?.idToken?.jwtToken,
+            refreshToken: user?.signInUserSession?.refreshToken?.token,
+          },
+        }),
+      );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {

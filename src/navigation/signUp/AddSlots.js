@@ -188,6 +188,7 @@ const AddSlot = ({
       <DateTimePickerModal
         date={new Date()}
         // minuteInterval={30}
+        // mode="datetime"
         mode="time"
         is24Hour={false}
         locale="en-US"
