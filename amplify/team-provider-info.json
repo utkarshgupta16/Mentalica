@@ -1,0 +1,28 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mentalicademo-dev-00648-authRole",
+      "UnauthRoleArn": "arn:aws:iam::453967416739:role/amplify-mentalicademo-dev-00648-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::453967416739:role/amplify-mentalicademo-dev-00648-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-mentalicademo-dev-00648-deployment",
+      "UnauthRoleName": "amplify-mentalicademo-dev-00648-unauthRole",
+      "StackName": "amplify-mentalicademo-dev-00648",
+      "StackId": "arn:aws:cloudformation:ap-south-1:453967416739:stack/amplify-mentalicademo-dev-00648/49ae88b0-7753-11ee-ac89-0635929eabd8",
+      "AmplifyAppId": "d1qgsdyxgs3hlb"
+    },
+    "categories": {
+      "auth": {
+        "mentalicademo": {
+          "userPoolId": "ap-south-1_jJotJ6a8q",
+          "userPoolName": "mentalica-demo",
+          "webClientId": "38f1s3300nblraet06642nuvrh",
+          "nativeClientId": "38f1s3300nblraet06642nuvrh"
+        }
+      },
+      "api": {
+        "mentalicademo": {}
+      }
+    }
+  }
+}
