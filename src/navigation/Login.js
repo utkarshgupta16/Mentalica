@@ -66,7 +66,15 @@ const LoginScreen = ({navigation}) => {
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
-      dispatch(login(enteredEmail));
+      dispatch(
+        login({
+          email: enteredEmail,
+          userToken: {
+            jwtToken: user?.signInUserSession?.idToken?.jwtToken,
+            refreshToken: user?.signInUserSession?.refreshToken?.token,
+          },
+        }),
+      );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {
