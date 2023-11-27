@@ -43,6 +43,7 @@ const initialState = {
   loginFrom: null,
   email: '',
   type: '',
+  userToken: {},
 };
 const Authslice = createSlice({
   name: 'auth',
@@ -50,7 +51,8 @@ const Authslice = createSlice({
   reducers: {
     login: (state, action) => {
       state.isLoggedIn = true;
-      state.email = action.payload;
+      state.email = action.payload.email;
+      state.userToken = action.payload.userToken;
     },
     getType: (state, action) => {
       state.type = action.payload;
