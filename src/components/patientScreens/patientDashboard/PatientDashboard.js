@@ -1,4 +1,6 @@
-import {FlatList, Image, Text, View} from 'react-native';
+import {FlatList, Image} from 'react-native';
+import Text from '../../wrapperComponent/TextWrapper.js';
+import View from '../../wrapperComponent/ViewWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
@@ -49,18 +51,25 @@ const PatientDashboard = ({navigation}) => {
   const {email, type} = useSelector(state => state.auth);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [patientName, setPatientName] = useState('');
+
+  const {jwtToken} = useSelector(state => state.auth);
+
   const dispatch = useDispatch();
   useEffect(() => {
     (async () => {
-      const res = await dispatch(getProfileSlice({email, type: type}));
+      const res = await dispatch(
+        getProfileSlice({email, type: type, jwtToken}),
+      );
       setPatientName(res?.payload?.Items[0]?.firstName);
     })();
   }, [email, type, dispatch]);
 
+  const {darkMode} = useSelector(state => state.home);
+
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {patientName}
+        {HELLO}, {patientName}
       </Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}

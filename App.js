@@ -15,6 +15,7 @@ import {localNotificationService} from './src/utils/localPushNotification';
 import PushNotification from 'react-native-push-notification';
 import {androidPlatform} from './src/utils/config';
 import Colors from './src/customs/Colors';
+import {useSelector} from 'react-redux';
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
@@ -123,6 +124,8 @@ const registerNotification = () => {
 const App = () => {
   const [props, setProps] = useState(initialState);
 
+  const {darkMode} = useSelector(state => state.home);
+
   useEffect(() => {
     if (androidPlatform) {
       const requestPushNotificationPermission = async () => {
@@ -180,14 +183,14 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{props, setProps}}>
-      {/* <I18nextProvider i18n={i18n}> */}
-      <StatusBar
-        backgroundColor="black" // Set the background color
-        barStyle="light-content" // Set the text color (light content for white text)
-      />
-      <SafeAreaView style={styles.safeAreaViewStyle} />
-      <MainNavigator style={styles.mainNavigator} />
-      {/* </I18nextProvider> */}
+      <I18nextProvider i18n={i18n}>
+        <StatusBar
+          backgroundColor="black" // Set the background color
+          barStyle="light-content" // Set the text color (light content for white text)
+        />
+        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <MainNavigator style={styles.mainNavigator} />
+      </I18nextProvider>
     </AppContext.Provider>
   );
 };

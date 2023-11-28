@@ -20,16 +20,10 @@ const Button = ({title, onPress, disabled = false}) => {
 export default Button;
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  container: {},
   pressable: {
-    paddingHorizontal: 50,
     paddingVertical: 10,
     backgroundColor: Colors.darkPaleMintColor,
-    // backgroundColor: Colors.primaryBlue,
     borderRadius: 4,
   },
   lessOpacity: {
@@ -37,6 +31,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: '700',
+    textAlign: 'center',
     color: Colors.white,
   },
 });

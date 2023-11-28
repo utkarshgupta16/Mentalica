@@ -1,6 +1,7 @@
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import Colors from '../customs/Colors';
+import {useSelector} from 'react-redux';
 
 export default function PatientDashboardTabs({
   onPress,
@@ -8,6 +9,8 @@ export default function PatientDashboardTabs({
   selectedTab,
   tab,
 }) {
+  const {darkMode} = useSelector(state => state.home);
+
   return (
     <Pressable onPress={onPress}>
       <View
@@ -22,7 +25,9 @@ export default function PatientDashboardTabs({
         <Text
           style={[
             styles.tabText,
-            {color: selectedTab.tabStr == tab ? Colors.white : Colors.black},
+            {
+              color: darkMode ? 'white' : 'black',
+            },
           ]}>
           {title}
         </Text>
@@ -35,5 +40,6 @@ const styles = StyleSheet.create({
   tabText: {
     fontWeight: 'bold',
     fontSize: 14,
+    fontFamily: 'Roboto Black',
   },
 });

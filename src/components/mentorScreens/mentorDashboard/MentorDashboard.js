@@ -1,6 +1,6 @@
 import {
-  Text,
-  View,
+  // Text,
+  // View,
   FlatList,
   Pressable,
   ScrollView,
@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import Text from '../../wrapperComponent/TextWrapper.js';
+import View from '../../wrapperComponent/ViewWrapper.js';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
 import {
@@ -34,7 +36,7 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import convertLang,{MENTOR} from '../../../utils/Strings';
+import convertLang, {MENTOR} from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
@@ -71,21 +73,28 @@ const MentorDashboard = ({navigation}) => {
     return now;
   };
 
+  const {jwtToken} = useSelector(state => state.auth);
+  const {darkMode} = useSelector(state => state.home);
+
   useEffect(() => {
     (async () => {
-      const res = await dispatch(getProfileSlice({email, type}));
+      const res = await dispatch(getProfileSlice({email, type, jwtToken}));
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
   }, []);
 
   const updateData = async () => {
     let res = await dispatch(
-      getScheduledAppointmentsSlice({email, fieldName: MENTOR_EMAIL_ID}),
+      getScheduledAppointmentsSlice({
+        email,
+        fieldName: MENTOR_EMAIL_ID,
+        jwtToken,
+      }),
     );
     const appointments = res.payload;
     const newDate = new Date();
     const formattedAppointments = {};
-    appointments.forEach(appointment => {
+    appointments?.forEach(appointment => {
       const date =
         newDate?.getFullYear() +
         '-' +
@@ -136,6 +145,7 @@ const MentorDashboard = ({navigation}) => {
       try {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
+            jwtToken,
             roomId: data?.roomId,
             userName: data?.mentor_email_id,
           }),
@@ -173,7 +183,7 @@ const MentorDashboard = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {mentorName && mentorName}
+        {HELLO}, {mentorName && mentorName}
       </Text>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
@@ -187,6 +197,22 @@ const MentorDashboard = ({navigation}) => {
             }}
           />
         }
+        theme={{
+          // calendarBackground: darkMode ? '#000000' : '#ffff',
+          // agendaKnobColor: '#ffffff',
+          // todayTextColor: '#000',
+          // agendaTodayColor: '#00adf5',
+
+          agendaKnobColor: '#283747',
+          agendaDayTextColor: '#283747',
+          agendaDayNumColor: '#283747',
+          agendaTodayColor: '#283747',
+          agendaKnobColor: '#283747',
+          indicatorColor: '#283747',
+          textSectionTitleColor: '#283747',
+          dotColor: '#283747',
+          selectedDayBackgroundColor: '#283747',
+        }}
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}

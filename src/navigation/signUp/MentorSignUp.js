@@ -405,6 +405,7 @@ const MentorSignUp = ({navigation}) => {
       />
     </>
   );
+  return null;
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader

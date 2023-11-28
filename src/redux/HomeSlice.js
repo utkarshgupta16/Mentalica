@@ -239,6 +239,7 @@ const initialState = {
   isScheduleLoading: false,
   isEditProfileLoading: false,
   type: '',
+  darkMode: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -246,6 +247,9 @@ const HomeSlice = createSlice({
   reducers: {
     setAttributes: (state, action) => {
       state.attributes = action.payload;
+    },
+    changeTheme: (state, action) => {
+      state.darkMode = action.payload;
     },
   },
   extraReducers: builder => {
@@ -291,5 +295,5 @@ const HomeSlice = createSlice({
   },
 });
 
-export const {setAttributes} = HomeSlice.actions;
+export const {setAttributes, changeTheme} = HomeSlice.actions;
 export default HomeSlice.reducer;

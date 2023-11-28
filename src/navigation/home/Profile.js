@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {
-  Text,
-  View,
+  // Text,
+  // View,
   StyleSheet,
   ScrollView,
   Pressable,
@@ -10,7 +10,10 @@ import {
   Alert,
   I18nManager,
   FlatList,
+  Switch,
 } from 'react-native';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
@@ -31,6 +34,7 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
+import {changeTheme} from '../../redux/HomeSlice';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -50,12 +54,14 @@ const Profile = ({navigation}) => {
     OKAY,
   } = convertLang(t);
   const dispatch = useDispatch();
-  const {loginFrom, type} = useSelector(state => state.auth);
+  const {loginFrom, email, type} = useSelector(state => state.auth);
+  const {darkMode} = useSelector(state => state.home);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
   const [showSlots, setShowSlots] = useState(false);
+  const [isSwitchEnabled, setIsSwitchEnabled] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? HEBREW : ENGLISH,
   );
@@ -71,6 +77,8 @@ const Profile = ({navigation}) => {
 
   const DUMMY_ISSUES =
     type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
+
+  console.log('darkMode ------> ', darkMode);
 
   const profileDetailsItems = [
     {
@@ -108,6 +116,11 @@ const Profile = ({navigation}) => {
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
+  const toggleSwitch = () => {
+    setIsSwitchEnabled(previousState => !previousState);
+    dispatch(changeTheme(!isSwitchEnabled));
+  };
+
   const logoutPressHandler = () => {
     Alert.alert(LOGOUT, ARE_YOU_LOGOUT, [
       {
@@ -141,12 +154,22 @@ const Profile = ({navigation}) => {
             />
           </View>
           <View style={styles.details}>
-            <Text style={{...styles.nameText, width: screenWidth - 100}}>
-              {firstName + ' ' + lastName}
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                ...styles.nameText,
+                width: screenWidth - 100,
+                // borderWidth: 1,
+              }}>
+              {/* {firstName + ' ' + lastName} */}
+              {(firstName + ' ' + lastName).length > 10
+                ? (firstName + ' ' + lastName).substring(0, 21 - 3) + '...'
+                : firstName + ' ' + lastName}
             </Text>
-            <Text style={styles.emailText}>{email_id}</Text>
           </View>
         </View>
+
         <View style={styles.issuesContainer}>
           <Text style={styles.issuesTitleText}>
             {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
@@ -166,6 +189,10 @@ const Profile = ({navigation}) => {
         </View>
       </View>
       <View style={styles.settingsContainer}>
+        <View style={styles.switchContaimer}>
+          <Text style={styles.accDetailsTitle}>Dark mode</Text>
+          <Switch onValueChange={toggleSwitch} value={darkMode} />
+        </View>
         <View style={styles.profDetailsCont}>
           <Text style={styles.accDetailsTitle}>{ACCOUNT_DETAILS}</Text>
           {profileDetailsItems.map(item => (
@@ -292,7 +319,7 @@ const styles = StyleSheet.create({
     height: 56,
   },
   details: {
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   nameText: {
     fontSize: 22,
@@ -308,6 +335,7 @@ const styles = StyleSheet.create({
   },
   profileDetailsContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 17,
     marginBottom: 36,
   },
@@ -353,5 +381,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.darkPaleMintColor,
     width: widthPercentageToDP(36),
     paddingHorizontal: 10,
+  },
+  switchContaimer: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
 });

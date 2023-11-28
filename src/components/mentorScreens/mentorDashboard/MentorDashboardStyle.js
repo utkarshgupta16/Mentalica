@@ -9,8 +9,10 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
+
     // backgroundColor: 'white',
-    backgroundColor: '#F5F7F8',
+    // backgroundColor: '#F5F7F8',
+
     // marginHorizontal: 8,
   },
   helloCont: {
@@ -85,6 +87,8 @@ export const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#E4D0D0',
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'red',
   },
   itemText: {
     color: '#888',
@@ -95,8 +99,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderRadius: 8,
+    marginTop: 10,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    borderColor: '#ffff',
+    borderWidth: 2,
   },
   timeColumn: {
     width: 100, // Adjust the width as needed
@@ -117,5 +134,5 @@ export const styles = StyleSheet.create({
     color: '#33A3DC',
   },
   reloadButton: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  reloadText:{color: '#33A3DC', paddingBottom: 10}
+  reloadText: {color: '#33A3DC', paddingBottom: 10},
 });

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {
-  View,
-  Text,
+  // View,
+  // Text,
   TextInput,
   StyleSheet,
   Pressable,
@@ -11,6 +11,8 @@ import {
   I18nManager,
   Alert,
 } from 'react-native';
+import View from '../components/wrapperComponent/ViewWrapper.js';
+import Text from '../components/wrapperComponent/TextWrapper.js';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
@@ -26,7 +28,7 @@ import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
 import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
-import {widthPercentageToDP} from '../utils/Responsive';
+import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
 // import Logo from '../icons/logo-black.svg';
@@ -52,11 +54,16 @@ const LoginScreen = ({navigation}) => {
 
   const dispatch = useDispatch();
 
+  const {darkMode} = useSelector(state => state.home);
+
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
+
+      dispatch(getAccessToken(user?.signInUserSession?.accessToken?.jwtToken));
+
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
@@ -153,21 +160,36 @@ const LoginScreen = ({navigation}) => {
           <TextInput
             textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredEmail}
-            style={styles.input}
+            style={{
+              borderColor: darkMode ? Colors.white : Colors.black,
+              borderBottomWidth: 1,
+              paddingBottom: 8,
+              marginBottom: 32,
+              paddingLeft: 10,
+              color: darkMode ? Colors.white : Colors.black,
+            }}
             placeholder={t('E-mail')}
             keyboardType="email-address"
             value={enteredEmail}
           />
+
           <TextInput
             textAlign={i18n.language === 'he' ? 'right' : 'left'}
             onChangeText={handleEnteredPassword}
-            style={styles.input}
+            style={{
+              borderColor: darkMode ? Colors.white : Colors.black,
+              borderBottomWidth: 1,
+              paddingBottom: 8,
+              marginBottom: 32,
+              paddingLeft: 10,
+              color: darkMode ? Colors.white : Colors.black,
+            }}
             placeholder={t('Password')}
             secureTextEntry={true}
             value={enteredPassword}
           />
           <View style={styles.checkBoxSignUpContainer}>
-            <View style={styles.checkboxContainer}>
+            {/* <View style={styles.checkboxContainer}>
               <CheckBox
                 disabled={false}
                 value={rememberMe}
@@ -176,7 +198,7 @@ const LoginScreen = ({navigation}) => {
                 boxType="square"
               />
               <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
-            </View>
+            </View> */}
             <Button
               disabled={!enteredEmail.trim() || !enteredPassword.trim()}
               title={t('Login')}
@@ -184,6 +206,7 @@ const LoginScreen = ({navigation}) => {
             />
           </View>
         </View>
+
         <View style={styles.buttonContainerView}>
           <Text style={styles.askSignup}>
             {t("Don't have an account? Wanna")}
@@ -195,6 +218,22 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.signUpText}> {t('Sign Up')}</Text>
           </Pressable>
         </View>
+
+        {error ? (
+          <View style={styles.buttonContainerView}>
+            <Pressable
+              style={styles.signUpContainer}
+              title={t('Enter Code')}
+              onPress={() => {
+                setShowEnterCodeModal(true);
+              }}>
+              <Text style={styles.signUpText}>
+                {t('Confirm Verification Code')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
         <DropDownPicker
           dropDownDirection="TOP"
           listMode="SCROLLVIEW"
@@ -237,27 +276,13 @@ const LoginScreen = ({navigation}) => {
             backgroundColor: Colors.white,
             borderWidth: 0,
             alignSelf: 'center',
-            width: widthPercentageToDP(30),
+            width: '100%',
           }}
           items={langOptions}
           placeholder={t('Select Language')}
           containerStyle={{borderBottomColor: 'gray'}}
           style={styles.dropdown}
         />
-        {error ? (
-          <View style={styles.buttonContainerView}>
-            <Pressable
-              style={styles.signUpContainer}
-              title={t('Enter Code')}
-              onPress={() => {
-                setShowEnterCodeModal(true);
-              }}>
-              <Text style={styles.signUpText}>
-                {t('Confirm Verification Code')}
-              </Text>
-            </Pressable>
-          </View>
-        ) : null}
       </View>
     </SafeAreaView>
   );
@@ -268,7 +293,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.paleMintColor,
 
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   imageContainer: {
     alignItems: 'center',
@@ -293,6 +318,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingVertical: 32,
+    justifyContent: 'space-between',
   },
   logo: {
     width: 120,
@@ -316,11 +343,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 32,
     paddingLeft: 10,
+    color: 'white',
   },
   checkBoxSignUpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // width: 500,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -361,7 +390,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.paleMintColor,
     borderWidth: 0,
     alignSelf: 'center',
-    width: widthPercentageToDP(30),
+    width: widthPercentageToDP(35),
+    // marginTop: heightPercentageToDP(10),
   },
 });
 

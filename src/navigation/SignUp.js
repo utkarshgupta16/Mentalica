@@ -4,10 +4,12 @@ import {
   Pressable,
   SafeAreaView,
   StyleSheet,
-  Text,
+  // Text,
   TextInput,
-  View,
+  // View,
 } from 'react-native';
+import View from '../components/wrapperComponent/ViewWrapper.js';
+import Text from '../components/wrapperComponent/TextWrapper.js';
 import CustomHeader from '../customs/Header';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
@@ -71,7 +73,7 @@ const SignUp = ({navigation}) => {
   ]);
   const [openDuty, setOpenDuty] = useState(false);
   const [feelOpen, setFeelOpen] = useState(false);
-  const [typeItems, setTypeItems] = useState(typeOfItems);
+  const [typeItems, setTypeItems] = useState();
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
@@ -475,7 +477,7 @@ const SignUp = ({navigation}) => {
             open={typeOpen}
             setOpen={setTypeOpen}
             value={typeValue}
-            setValue={setTypeValue}
+            // setValue={setTypeValue}
             items={typeItems}
             setItems={setTypeItems}
             placeholder={'Select Type.'}
