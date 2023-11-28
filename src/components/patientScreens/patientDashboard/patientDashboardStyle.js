@@ -118,8 +118,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderRadius: 8,
+    marginTop: 10,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    borderColor: '#ffff',
+    borderWidth: 2,
   },
   timeColumn: {
     width: 100, // Adjust the width as needed

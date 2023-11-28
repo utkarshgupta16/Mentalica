@@ -3,12 +3,14 @@ import {
   FlatList,
   Image,
   Pressable,
-  Text,
-  View,
+  // Text,
+  // View,
   TouchableOpacity,
   Alert,
   RefreshControl,
 } from 'react-native';
+import View from '../../wrapperComponent/ViewWrapper.js';
+import Text from '../../wrapperComponent/TextWrapper.js';
 import React, {useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import {useDispatch, useSelector} from 'react-redux';
@@ -165,6 +167,7 @@ const AppoinmentsList = ({navigation, darkMode}) => {
           selectedDayBackgroundColor: Colors.darkPaleMintColor,
           selectedDayTextColor: Colors.white,
           todayTextColor: Colors.darkPaleMintColor,
+          calendarBackground: darkMode ? '#000' : '#fff',
         }}
         // selected="2022-12-01"
         refreshControl={
@@ -177,6 +180,7 @@ const AppoinmentsList = ({navigation, darkMode}) => {
             }}
           />
         }
+        key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         items={appointmentList}
