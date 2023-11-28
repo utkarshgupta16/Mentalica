@@ -43,11 +43,13 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
+  const {jwtToken} = useSelector(state => state.auth);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
       let {payload = []} = await dispatch(
-        getBooksSlots({email: selectedMentorData?.email_id}),
+        getBooksSlots({email: selectedMentorData?.email_id, jwtToken}),
       );
       let data =
         payload &&
@@ -176,7 +178,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         try {
                           setLoading(true);
                           const resp = await dispatch(
-                            bookAppointmentSlice(state),
+                            bookAppointmentSlice({state, jwtToken}),
                           );
                           close && close();
                           setLoading(false);

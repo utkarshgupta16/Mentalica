@@ -31,46 +31,49 @@ const EditProfile = ({route, navigation}) => {
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
   const {type} = useSelector(state => state.auth);
-  const renderInput = ({placeholder, field}) => {
-    return (
-      <View style={{marginBottom: 20}}>
-        <Text style={{paddingBottom: 5, paddingLeft: 5, color: 'gray'}}>
-          {placeholder}
-        </Text>
-        <TextInput
-          style={{
-            padding: 8,
-            borderRadius: 4,
-            // borderWidth: 1,
-            borderBottomWidth: 1,
-            borderColor: 'lightgray',
-          }}
-          placeholder={placeholder}
-          value={state[field]}
-          onChangeText={e => {
-            setState({...state, [field]: e});
-          }}
-        />
-      </View>
-    );
-  };
+ const {jwtToken} = useSelector(state => state.auth);
 
-  const onSave = async () => {
-    try {
-      setLoading(true);
-      const resp = await dispatch(
-        editProfileSlice({
-          emailId: email_id,
-          type: type == PATIENT ? 'patient' : 'mentor',
-          ...state,
-        }),
-      );
-      setLoading(false);
-      navigation.goBack();
-    } catch (err) {
-      setLoading(false);
-    }
-  };
+ const renderInput = ({placeholder, field}) => {
+   return (
+     <View style={{marginBottom: 20}}>
+       <Text style={{paddingBottom: 5, paddingLeft: 5, color: 'gray'}}>
+         {placeholder}
+       </Text>
+       <TextInput
+         style={{
+           padding: 8,
+           borderRadius: 4,
+           // borderWidth: 1,
+           borderBottomWidth: 1,
+           borderColor: 'lightgray',
+         }}
+         placeholder={placeholder}
+         value={state[field]}
+         onChangeText={e => {
+           setState({...state, [field]: e});
+         }}
+       />
+     </View>
+   );
+ };
+
+ const onSave = async () => {
+   try {
+     setLoading(true);
+     const resp = await dispatch(
+       editProfileSlice({
+         jwtToken,
+         emailId: email_id,
+         type: type == PATIENT ? 'patient' : 'mentor',
+         ...state,
+       }),
+     );
+     setLoading(false);
+     navigation.goBack();
+   } catch (err) {
+     setLoading(false);
+   }
+ };
   return (
     <View style={{backgroundColor: 'white', padding: 10, flex: 1}}>
       {isLoading ? <ScreenLoading /> : null}

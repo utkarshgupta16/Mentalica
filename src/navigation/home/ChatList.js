@@ -1,8 +1,8 @@
 import {
   StyleSheet,
-  Text,
+  // Text,
   TouchableOpacity,
-  View,
+  // View,
   FlatList,
   Image,
   Pressable,
@@ -10,6 +10,8 @@ import {
 import React, {useCallback} from 'react';
 import {CHATS_SCREEN} from '../../utils/route';
 import Colors from '../../customs/Colors';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 
 const USER_ICON = require('../../assets/images/user-icon.webp');
 

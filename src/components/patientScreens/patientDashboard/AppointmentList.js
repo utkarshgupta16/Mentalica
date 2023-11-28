@@ -34,7 +34,7 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-const AppoinmentsList = ({navigation}) => {
+const AppoinmentsList = ({navigation, darkMode}) => {
   const {t} = useTranslation();
   const {
     ALL,
@@ -59,6 +59,7 @@ const AppoinmentsList = ({navigation}) => {
   const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const {jwtToken} = useSelector(state => state.auth);
 
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
@@ -70,7 +71,11 @@ const AppoinmentsList = ({navigation}) => {
   const updateData = async () => {
     try {
       let res = await dispatch(
-        getScheduledAppointmentsSlice({email, fieldName: PATIENT_EMAIL_ID}),
+        getScheduledAppointmentsSlice({
+          email,
+          fieldName: PATIENT_EMAIL_ID,
+          jwtToken,
+        }),
       );
       const appointments = res.payload;
       const newDate = new Date();
@@ -115,6 +120,7 @@ const AppoinmentsList = ({navigation}) => {
       try {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
+            jwtToken,
             roomId: data?.roomId,
             userName: data?.patient_email_Id,
           }),

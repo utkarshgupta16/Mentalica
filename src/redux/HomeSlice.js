@@ -4,14 +4,17 @@ import {endPoints} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
 import {FIREBASE_SERVER_KEY} from '@env';
+
+
+
 export const getAllMentorList = createAsyncThunk(
   'home/getAllMentorList',
-  async () => {
+  async ({jwtToken}) => {
     var config = {
       method: 'get',
       url: endPoints.getAllMentorList,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
     };
@@ -31,12 +34,12 @@ export const getAllMentorList = createAsyncThunk(
 
 export const getTwilloTokenSlice = createAsyncThunk(
   'home/getTwilloTokenSlice',
-  async ({roomId, userName}) => {
+  async ({roomId, userName, jwtToken}) => {
     var config = {
       method: 'get',
       url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=${userName}`,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
     };
@@ -56,13 +59,13 @@ export const getTwilloTokenSlice = createAsyncThunk(
 
 export const editProfileSlice = createAsyncThunk(
   'home/editProfileSlice',
-  async updateData => {
+  async ({updateData, jwtToken}) => {
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
       url: endPoints.editProfile,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
       data: updateData,
@@ -85,13 +88,13 @@ export const editProfileSlice = createAsyncThunk(
 
 export const bookAppointmentSlice = createAsyncThunk(
   'home/bookAppointmentSlice',
-  async bookData => {
+  async ({bookData, jwtToken}) => {
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
       url: endPoints.bookAppointment,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
       data: bookData,
@@ -146,7 +149,7 @@ export const sendNotificationSlice = createAsyncThunk(
 
 export const getProfileSlice = createAsyncThunk(
   'home/getProfileSlice',
-  async ({email, type}) => {
+  async ({email, type, jwtToken}) => {
     if (!type) {
       return;
     }
@@ -158,7 +161,7 @@ export const getProfileSlice = createAsyncThunk(
           ? endPoints.getPatientProfile
           : endPoints.getMentorProfile,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
       data: {emailId: email},
@@ -181,7 +184,7 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email, fieldName = 'mentorEmailId'}) => {
+  async ({email, fieldName = 'mentorEmailId', jwtToken}) => {
     // let token = await AsyncStorage.getItem('token');
     if (!email) {
       return;
@@ -190,7 +193,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
       method: 'post',
       url: endPoints.getScheduledAppointments,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
       data: {[fieldName]: email},
@@ -213,7 +216,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
 
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',
-  async ({email}) => {
+  async ({email, jwtToken}) => {
     if (!email) {
       return;
     }
@@ -222,7 +225,7 @@ export const getBooksSlots = createAsyncThunk(
       method: 'post',
       url: endPoints.getScheduledAppointments,
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
       },
       data: {mentorEmailId: email},
@@ -251,6 +254,7 @@ const initialState = {
   isScheduleLoading: false,
   isEditProfileLoading: false,
   type: '',
+  darkMode: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -258,6 +262,9 @@ const HomeSlice = createSlice({
   reducers: {
     setAttributes: (state, action) => {
       state.attributes = action.payload;
+    },
+    changeTheme: (state, action) => {
+      state.darkMode = action.payload;
     },
   },
   extraReducers: builder => {
@@ -303,5 +310,5 @@ const HomeSlice = createSlice({
   },
 });
 
-export const {setAttributes} = HomeSlice.actions;
+export const {setAttributes, changeTheme} = HomeSlice.actions;
 export default HomeSlice.reducer;

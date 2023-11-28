@@ -1,13 +1,15 @@
 import {
-  Text,
+  // Text,
   Image,
-  View,
+  // View,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
 } from 'react-native';
+import View from '../wrapperComponent/ViewWrapper.js';
+import Text from '../wrapperComponent/TextWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
@@ -22,13 +24,14 @@ import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
 import Colors from '../../customs/Colors';
 import ScreenLoading from '../ScreenLoading';
+import RenderHorizontalData from './RenderHorizontalData.js';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
 const greenText = '#618264';
 const lightBlack = '#45474B';
 
-const MentorsList = () => {
+const MentorsList = ({jwtToken}) => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
   const [isLoading, setLoading] = useState(true);
   const [allMentors, setAllMentors] = useState([]);
@@ -40,7 +43,7 @@ const MentorsList = () => {
     (async () => {
       try {
         setLoading(true);
-        const {payload} = await dispatch(getAllMentorList());
+        const {payload} = await dispatch(getAllMentorList({jwtToken}));
         setAllMentors(payload.Items);
         setLoading(false);
       } catch (err) {
@@ -50,49 +53,51 @@ const MentorsList = () => {
     })();
   }, []);
 
-  const renderExperties = ({data, label}) => {
-    return (
-      <View style={{flexDirection: 'row', flex: 1}}>
-        <Text style={styles.expertiesText}>{`${label} :`}</Text>
-        {data && data.length ? (
-          <FlatList
-            data={data}
-            style={{flex: 0.8}}
-            horizontal
-            // horizontal
-            // numColumns={3}
-            // columnWrapperStyle={{flexWrap: 'wrap'}}
-            scrollEventThrottle={1900}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    marginRight: 10,
-                    borderRadius: 13,
-                    paddingHorizontal: 8,
-                    paddingVertical: 3,
-                    backgroundColor: '#eab676',
-                    marginBottom: 10,
-                  }}>
-                  <Text
-                    style={{
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: '300',
-                      textAlign: 'center',
-                    }}>
-                    {item?.charAt(0).toUpperCase() + item?.slice(1)}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        ) : null}
-      </View>
-    );
-  };
+  // const renderExperties = ({data, label}) => {
+  //   return (
+  //     <View style={{flexDirection: 'row', flex: 1}}>
+  //       <Text style={styles.expertiesText}>{`${label} :`}</Text>
+  //       {data && data.length ? (
+  //         <FlatList
+  //           data={data}
+  //           style={{flex: 0.8}}
+  //           horizontal
+  //           // horizontal
+  //           // numColumns={3}
+  //           // columnWrapperStyle={{flexWrap: 'wrap'}}
+  //           scrollEventThrottle={1900}
+  //           showsHorizontalScrollIndicator={false}
+  //           renderItem={({item, index}) => {
+  //             return (
+  //               <View
+  //                 key={index}
+  //                 style={{
+  //                   borderWidth: 1,
+  //                   borderColor: 'gray',
+  //                   marginRight: 10,
+  //                   borderRadius: 13,
+  //                   paddingHorizontal: 8,
+  //                   paddingVertical: 3,
+  //                   backgroundColor: '#eab676',
+  //                   marginBottom: 10,
+  //                 }}>
+  //                 <Text
+  //                   style={{
+  //                     color: Colors.black,
+  //                     fontSize: 14,
+  //                     fontWeight: '300',
+  //                     textAlign: 'center',
+  //                   }}>
+  //                   {item?.charAt(0).toUpperCase() + item?.slice(1)}
+  //                 </Text>
+  //               </View>
+  //             );
+  //           }}
+  //         />
+  //       ) : null}
+  //     </View>
+  //   );
+  // };
 
   const renderItem = ({item, index}) => {
     const expertiseArr = item?.expertise?.split(',') || [];
@@ -125,8 +130,19 @@ const MentorsList = () => {
               </View>
             </View>
           </View>
-          {renderExperties({data: expertiseArr, label: 'Experties'})}
-          {renderExperties({data: languageArr, label: 'Speaks'})}
+          {/* {renderExperties({data: expertiseArr, label: 'Experties'})}
+          {renderExperties({data: languageArr, label: 'Speaks'})} */}
+
+          <RenderHorizontalData
+            styles={styles}
+            data={expertiseArr}
+            label={'Expertis'}
+          />
+          <RenderHorizontalData
+            styles={styles}
+            data={languageArr}
+            label={'Label'}
+          />
         </View>
       </Pressable>
     );
@@ -197,7 +213,7 @@ const styles = StyleSheet.create({
   flatListContainer: {
     borderWidth: 1,
     borderColor: '#D8D9DA',
-    borderRadius: 7,
+    borderRadius: 3,
     marginHorizontal: 10,
     marginBottom: 15,
     backgroundColor: 'white',

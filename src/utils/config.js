@@ -16,4 +16,23 @@ export const endPoints = {
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
 
+
+// export const axiosInstance = axios.create({
+//   baseURL: API_URL,
+//   headers: {
+//     'Content-Type': 'application/json',
+//     // Other common headers can be added here
+//   },
+// });
+
+// // Function to set authorization header
+// export const setAuthToken = token => {
+//   if (token) {
+//     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//   } else {
+//     delete axiosInstance.defaults.headers.common['Authorization'];
+//   }
+// };
+
+
 // https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId="75thbd"&userName="vhjadvc"

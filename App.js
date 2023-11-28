@@ -14,6 +14,7 @@ import {fcmService} from './src/utils/fcmServices';
 import {localNotificationService} from './src/utils/localPushNotification';
 import PushNotification from 'react-native-push-notification';
 import {androidPlatform} from './src/utils/config';
+import {useSelector} from 'react-redux';
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
@@ -121,6 +122,8 @@ const registerNotification = () => {
 
 const App = () => {
   const [props, setProps] = useState(initialState);
+
+  const {darkMode} = useSelector(state => state.home);
 
   useEffect(() => {
     if (androidPlatform) {

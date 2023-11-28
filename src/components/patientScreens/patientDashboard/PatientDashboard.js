@@ -1,4 +1,6 @@
-import {FlatList, Image, Text, View} from 'react-native';
+import {FlatList, Image} from 'react-native';
+import Text from '../../wrapperComponent/TextWrapper.js';
+import View from '../../wrapperComponent/ViewWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import PatientDashboardTabs from '../../PatientDashboardTabs';
@@ -49,18 +51,25 @@ const PatientDashboard = ({navigation}) => {
   const {email, type} = useSelector(state => state.auth);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
   const [patientName, setPatientName] = useState('');
+
+  const {jwtToken} = useSelector(state => state.auth);
+
   const dispatch = useDispatch();
   useEffect(() => {
     (async () => {
-      const res = await dispatch(getProfileSlice({email, type: type}));
+      const res = await dispatch(
+        getProfileSlice({email, type: type, jwtToken}),
+      );
       setPatientName(res?.payload?.Items[0]?.firstName);
     })();
   }, [email, type]);
 
+  const {darkMode} = useSelector(state => state.home);
+
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {patientName}
+        {HELLO}, {patientName}
       </Text>
       {/* <Text style={styles.dateText}>4th April overview</Text> */}
       {/* Tabs */}
@@ -151,7 +160,7 @@ const PatientDashboard = ({navigation}) => {
         </View>
       ) : null}
       {selectedTab.tabStr === APPOINTMENTS ? (
-        <AppointmentList navigation={navigation} />
+        <AppointmentList navigation={navigation} darkMode={darkMode} />
       ) : null}
       {selectedTab.tabStr == ARTICLES ? (
         <Text
@@ -171,7 +180,9 @@ const PatientDashboard = ({navigation}) => {
           No data found
         </Text>
       ) : null}
-      {selectedTab.tabStr === MENTORS_LIST ? <MentorsList /> : null}
+      {selectedTab.tabStr === MENTORS_LIST ? (
+        <MentorsList jwtToken={jwtToken} />
+      ) : null}
       {/* <TabComponent selectedTab={selectedTab} setSelectedTab={setSelectedTab} /> */}
       {/* {components[selectedTab.tabStr]} */}
     </View>
@@ -184,8 +195,20 @@ const renderItem = ({item}) => {
       style={{
         flexDirection: 'row',
         marginVertical: 9,
-        // borderWidth: 1,
+        borderWidth: 0.5,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
         borderColor: 'gray',
+        shadowColor: 'black',
+        shadowOffset: {
+          width: 0,
+          height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 3,
       }}>
       <Image
         source={{uri: item.image}}

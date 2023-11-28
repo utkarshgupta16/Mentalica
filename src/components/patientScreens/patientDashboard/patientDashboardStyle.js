@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
   helloText: {
+    // fontFamily: 'Fuzzy Bubbles Bold',
+    fontFamily: 'Montserrat',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: hp(1),
@@ -60,6 +62,8 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 3,
+    borderColor: 'gray',
+    borderRadius: 10,
   },
   leftCont: {
     width: wp(30),
@@ -90,13 +94,6 @@ export const styles = StyleSheet.create({
     marginTop: hp(1),
     height: hp(52),
     shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 3,
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),
