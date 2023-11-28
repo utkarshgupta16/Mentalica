@@ -15,7 +15,7 @@ import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';

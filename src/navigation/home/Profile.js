@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   Image,
   Alert,
-  TouchableOpacity,
   I18nManager,
+  FlatList,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
@@ -23,7 +23,7 @@ import ScreenLoading from '../../components/ScreenLoading';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
-  PROFILE_DETAILS,
+  // PROFILE_DETAILS,
   LANG_OPTION,
 } from '../../utils/default';
 import {useTranslation} from 'react-i18next';
@@ -50,7 +50,7 @@ const Profile = ({navigation}) => {
     OKAY,
   } = convertLang(t);
   const dispatch = useDispatch();
-  const {loginFrom, email, type} = useSelector(state => state.auth);
+  const {loginFrom, type} = useSelector(state => state.auth);
   const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
@@ -70,7 +70,7 @@ const Profile = ({navigation}) => {
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
 
   const DUMMY_ISSUES =
-    type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
+    type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
   const profileDetailsItems = [
     {
@@ -124,16 +124,6 @@ const Profile = ({navigation}) => {
     ]);
   };
 
-  if (loading) {
-    return (
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text>
-          <ActivityIndicator size={'large'} />
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <ScrollView
       style={styles.mainContainer}
@@ -143,7 +133,7 @@ const Profile = ({navigation}) => {
           <View style={styles.imageContainer}>
             <Image
               source={
-                loginFrom == PATIENT
+                loginFrom === PATIENT
                   ? require('../../icons/patient.jpg')
                   : require('../../icons/doctor.jpg')
               }
@@ -162,9 +152,16 @@ const Profile = ({navigation}) => {
             {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
-            {DUMMY_ISSUES.map(issue => (
+            {/* {DUMMY_ISSUES.map(issue => (
               <Issue key={issue} title={issue} />
-            ))}
+            ))} */}
+            <FlatList
+              data={DUMMY_ISSUES}
+              renderItem={({item}) => <Issue key={item} title={item} />}
+              keyExtractor={item => item}
+              horizontal={true} // Set to true for horizontal rendering
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
         </View>
       </View>
@@ -258,6 +255,14 @@ const Profile = ({navigation}) => {
         </Pressable>
       </View>
       {isProfileLoading ? <ScreenLoading /> : null}
+
+      {loading ? (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Text>
+            <ActivityIndicator size={'large'} />
+          </Text>
+        </View>
+      ) : null}
     </ScrollView>
   );
 };

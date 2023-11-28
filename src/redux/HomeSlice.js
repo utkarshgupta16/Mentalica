@@ -143,7 +143,7 @@ export const sendNotificationSlice = createAsyncThunk(
 
 export const getProfileSlice = createAsyncThunk(
   'home/getProfileSlice',
-  async ({email, type},{getState}) => {
+  async ({email, type}, {getState}) => {
     if (!type) {
       return;
     }
@@ -151,7 +151,7 @@ export const getProfileSlice = createAsyncThunk(
     var config = {
       method: 'post',
       url:
-        type == PATIENT
+        type === PATIENT
           ? endPoints.getPatientProfile
           : endPoints.getMentorProfile,
       headers: headerApi(getState),
@@ -175,7 +175,7 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email, fieldName = 'mentorEmailId'},{getState}) => {
+  async ({email, fieldName = 'mentorEmailId'}, {getState}) => {
     // let token = await AsyncStorage.getItem('token');
     if (!email) {
       return;
@@ -204,7 +204,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
 
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',
-  async ({email},{getState}) => {
+  async ({email}, {getState}) => {
     if (!email) {
       return;
     }

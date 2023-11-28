@@ -7,12 +7,14 @@ import {
   PermissionsAndroid,
   Platform,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
 } from 'react-native';
 import {fcmService} from './src/utils/fcmServices';
 import {localNotificationService} from './src/utils/localPushNotification';
 import PushNotification from 'react-native-push-notification';
 import {androidPlatform} from './src/utils/config';
+import Colors from './src/customs/Colors';
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
@@ -177,14 +179,16 @@ const App = () => {
   }
 
   return (
-    <>
-      <AppContext.Provider value={{props, setProps}}>
-        <I18nextProvider i18n={i18n}>
-          <SafeAreaView style={styles.safeAreaViewStyle} />
-          <MainNavigator style={styles.mainNavigator} />
-        </I18nextProvider>
-      </AppContext.Provider>
-    </>
+    <AppContext.Provider value={{props, setProps}}>
+      {/* <I18nextProvider i18n={i18n}> */}
+      <StatusBar
+        backgroundColor="black" // Set the background color
+        barStyle="light-content" // Set the text color (light content for white text)
+      />
+      <SafeAreaView style={styles.safeAreaViewStyle} />
+      <MainNavigator style={styles.mainNavigator} />
+      {/* </I18nextProvider> */}
+    </AppContext.Provider>
   );
 };
 
@@ -193,5 +197,7 @@ export default App;
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
     flex: 0,
+    // borderWidth: 1,
+    backgroundColor: Colors.black,
   },
 });
