@@ -66,6 +66,54 @@ const PatientDashboard = ({navigation}) => {
 
   const {darkMode} = useSelector(state => state.home);
 
+  const renderItem = ({item}) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          marginVertical: 9,
+          borderWidth: darkMode ? 1 : 0,
+          borderTopRightRadius: 10,
+          borderBottomRightRadius: 10,
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+          borderColor: 'gray',
+          shadowColor: 'black',
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.27,
+          shadowRadius: 4.65,
+          elevation: 3,
+        }}>
+        <Image
+          source={{uri: item.image}}
+          style={{
+            width: '30%',
+            height: 100,
+            resizeMode: 'cover',
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 10,
+          }}
+        />
+
+        <View
+          style={{
+            width: '69%',
+            paddingHorizontal: 10,
+            justifyContent: 'center',
+            backgroundColor: Colors.paleMintColor,
+            borderTopRightRadius: 10,
+            borderBottomRightRadius: 10,
+          }}>
+          <Text style={{fontSize: 16, fontWeight: '700'}}>{item.title}</Text>
+          <Text style={{marginTop: 10}}>{item.author}</Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
@@ -189,51 +237,5 @@ const PatientDashboard = ({navigation}) => {
   );
 };
 
-const renderItem = ({item}) => {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        marginVertical: 9,
-        borderWidth: 0.5,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
-        borderTopLeftRadius: 10,
-        borderBottomLeftRadius: 10,
-        borderColor: 'gray',
-        shadowColor: 'black',
-        shadowOffset: {
-          width: 0,
-          height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-        elevation: 3,
-      }}>
-      <Image
-        source={{uri: item.image}}
-        style={{
-          width: '30%',
-          height: 100,
-          resizeMode: 'cover',
-          borderTopLeftRadius: 10,
-          borderBottomLeftRadius: 10,
-        }}
-      />
 
-      <View
-        style={{
-          width: '69%',
-          paddingHorizontal: 10,
-          justifyContent: 'center',
-          backgroundColor: Colors.paleMintColor,
-          borderTopRightRadius: 10,
-          borderBottomRightRadius: 10,
-        }}>
-        <Text style={{fontSize: 16, fontWeight: '700'}}>{item.title}</Text>
-        <Text style={{marginTop: 10}}>{item.author}</Text>
-      </View>
-    </View>
-  );
-};
 export default PatientDashboard;

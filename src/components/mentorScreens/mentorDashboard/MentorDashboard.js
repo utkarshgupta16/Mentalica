@@ -198,7 +198,7 @@ const MentorDashboard = ({navigation}) => {
           />
         }
         theme={{
-          // calendarBackground: darkMode ? '#000000' : '#ffff',
+          calendarBackground: darkMode ? '#000000' : '#ffff',
           // agendaKnobColor: '#ffffff',
           // todayTextColor: '#000',
           // agendaTodayColor: '#00adf5',
@@ -213,6 +213,7 @@ const MentorDashboard = ({navigation}) => {
           dotColor: '#283747',
           selectedDayBackgroundColor: '#283747',
         }}
+        key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}

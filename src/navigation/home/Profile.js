@@ -78,8 +78,6 @@ const Profile = ({navigation}) => {
   const DUMMY_ISSUES =
     type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
-  console.log('darkMode ------> ', darkMode);
-
   const profileDetailsItems = [
     {
       label: 'Edit profile',
@@ -117,8 +115,10 @@ const Profile = ({navigation}) => {
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
   const toggleSwitch = () => {
+    setLoading(true);
     setIsSwitchEnabled(previousState => !previousState);
     dispatch(changeTheme(!isSwitchEnabled));
+    setLoading(false);
   };
 
   const logoutPressHandler = () => {

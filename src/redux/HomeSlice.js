@@ -4,19 +4,24 @@ import {endPoints} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
 import {FIREBASE_SERVER_KEY} from '@env';
+import {Auth} from 'aws-amplify';
 
-
+const headerApi = getState => {
+  const {userToken: {jwtToken} = {}} = getState().auth;
+  Auth.currentUserCredentials;
+  return {
+    Authorization: `Bearer ${jwtToken}`,
+    'Content-Type': 'application/json',
+  };
+};
 
 export const getAllMentorList = createAsyncThunk(
   'home/getAllMentorList',
-  async ({jwtToken}) => {
+  async (data, {getState}) => {
     var config = {
       method: 'get',
       url: endPoints.getAllMentorList,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
     };
     try {
       const {data, status} = (await axios(config)) || {};
@@ -34,14 +39,11 @@ export const getAllMentorList = createAsyncThunk(
 
 export const getTwilloTokenSlice = createAsyncThunk(
   'home/getTwilloTokenSlice',
-  async ({roomId, userName, jwtToken}) => {
+  async ({roomId, userName}, {getState}) => {
     var config = {
       method: 'get',
       url: `${endPoints.getTwilloToken}?roomId=${roomId}&userName=${userName}`,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
     };
     try {
       const {data, status} = (await axios(config)) || {};
@@ -59,15 +61,12 @@ export const getTwilloTokenSlice = createAsyncThunk(
 
 export const editProfileSlice = createAsyncThunk(
   'home/editProfileSlice',
-  async ({updateData, jwtToken}) => {
+  async (updateData, {getState}) => {
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
       url: endPoints.editProfile,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
       data: updateData,
     };
     return axios(config)
@@ -88,15 +87,12 @@ export const editProfileSlice = createAsyncThunk(
 
 export const bookAppointmentSlice = createAsyncThunk(
   'home/bookAppointmentSlice',
-  async ({bookData, jwtToken}) => {
+  async (bookData, {getState}) => {
     // let token = await AsyncStorage.getItem('token');
     var config = {
       method: 'post',
       url: endPoints.bookAppointment,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
       data: bookData,
     };
     return axios(config)
@@ -149,7 +145,7 @@ export const sendNotificationSlice = createAsyncThunk(
 
 export const getProfileSlice = createAsyncThunk(
   'home/getProfileSlice',
-  async ({email, type, jwtToken}) => {
+  async ({email, type}, {getState}) => {
     if (!type) {
       return;
     }
@@ -160,10 +156,7 @@ export const getProfileSlice = createAsyncThunk(
         type == PATIENT
           ? endPoints.getPatientProfile
           : endPoints.getMentorProfile,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
       data: {emailId: email},
     };
     return axios(config)
@@ -184,7 +177,7 @@ export const getProfileSlice = createAsyncThunk(
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email, fieldName = 'mentorEmailId', jwtToken}) => {
+  async ({email, fieldName = 'mentorEmailId'}, {getState}) => {
     // let token = await AsyncStorage.getItem('token');
     if (!email) {
       return;
@@ -192,10 +185,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
       data: {[fieldName]: email},
     };
     return axios(config)
@@ -216,7 +206,7 @@ export const getScheduledAppointmentsSlice = createAsyncThunk(
 
 export const getBooksSlots = createAsyncThunk(
   'home/getBooksSlots',
-  async ({email, jwtToken}) => {
+  async ({email}, {getState}) => {
     if (!email) {
       return;
     }
@@ -224,10 +214,7 @@ export const getBooksSlots = createAsyncThunk(
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headerApi(getState),
       data: {mentorEmailId: email},
     };
     return axios(config)

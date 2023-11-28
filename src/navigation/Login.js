@@ -51,10 +51,10 @@ const LoginScreen = ({navigation}) => {
   //   'bhandari.tribhuwan@thinksys.com',
   // );
   // patel.sonu@thinksys.com
-  // const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
-  const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'pandey.kaushiki@thinksys.com',
+  // );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -76,7 +76,15 @@ const LoginScreen = ({navigation}) => {
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
-      dispatch(login(enteredEmail));
+      dispatch(
+        login({
+          email: enteredEmail,
+          userToken: {
+            jwtToken: user?.signInUserSession?.idToken?.jwtToken,
+            refreshToken: user?.signInUserSession?.refreshToken?.token,
+          },
+        }),
+      );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
     } catch (err) {
@@ -272,12 +280,11 @@ const LoginScreen = ({navigation}) => {
               },
             ]);
           }}
-          dropDownContainerStyle={{
-            backgroundColor: Colors.white,
-            borderWidth: 0,
-            alignSelf: 'center',
-            width: '100%',
-          }}
+          dropDownContainerStyle={
+            {
+              // width: '100%',z
+            }
+          }
           items={langOptions}
           placeholder={t('Select Language')}
           containerStyle={{borderBottomColor: 'gray'}}
@@ -319,7 +326,6 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 32,
-    justifyContent: 'space-between',
   },
   logo: {
     width: 120,
@@ -387,11 +393,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    // backgroundColor: Colors.black,
+
+    borderWidth: 1,
+    borderColor: 'white',
     alignSelf: 'center',
-    width: widthPercentageToDP(35),
-    // marginTop: heightPercentageToDP(10),
+    width: widthPercentageToDP(27),
+    marginTop: heightPercentageToDP(13),
   },
 });
 
