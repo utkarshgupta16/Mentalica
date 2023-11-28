@@ -153,7 +153,7 @@ export const getProfileSlice = createAsyncThunk(
     var config = {
       method: 'post',
       url:
-        type == PATIENT
+        type === PATIENT
           ? endPoints.getPatientProfile
           : endPoints.getMentorProfile,
       headers: headerApi(getState),

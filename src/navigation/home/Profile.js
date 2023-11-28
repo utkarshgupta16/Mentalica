@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   // Text,
   // View,
@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   Image,
   Alert,
-  TouchableOpacity,
   I18nManager,
+  FlatList,
   Switch,
 } from 'react-native';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
@@ -26,7 +26,7 @@ import ScreenLoading from '../../components/ScreenLoading';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
-  PROFILE_DETAILS,
+  // PROFILE_DETAILS,
   LANG_OPTION,
 } from '../../utils/default';
 import {useTranslation} from 'react-i18next';
@@ -76,7 +76,7 @@ const Profile = ({navigation}) => {
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
 
   const DUMMY_ISSUES =
-    type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
+    type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
   const profileDetailsItems = [
     {
@@ -137,15 +137,6 @@ const Profile = ({navigation}) => {
     ]);
   };
 
-  if (loading) {
-    return (
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text>
-          <ActivityIndicator size={'large'} />
-        </Text>
-      </View>
-    );
-  }
   return (
     <ScrollView
       style={styles.mainContainer}
@@ -155,7 +146,7 @@ const Profile = ({navigation}) => {
           <View style={styles.imageContainer}>
             <Image
               source={
-                loginFrom == PATIENT
+                loginFrom === PATIENT
                   ? require('../../icons/patient.jpg')
                   : require('../../icons/doctor.jpg')
               }
@@ -184,9 +175,16 @@ const Profile = ({navigation}) => {
             {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
-            {DUMMY_ISSUES.map(issue => (
+            {/* {DUMMY_ISSUES.map(issue => (
               <Issue key={issue} title={issue} />
-            ))}
+            ))} */}
+            <FlatList
+              data={DUMMY_ISSUES}
+              renderItem={({item}) => <Issue key={item} title={item} />}
+              keyExtractor={item => item}
+              horizontal={true} // Set to true for horizontal rendering
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
         </View>
       </View>
@@ -284,6 +282,14 @@ const Profile = ({navigation}) => {
         </Pressable>
       </View>
       {isProfileLoading ? <ScreenLoading /> : null}
+
+      {loading ? (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Text>
+            <ActivityIndicator size={'large'} />
+          </Text>
+        </View>
+      ) : null}
     </ScrollView>
   );
 };
@@ -293,6 +299,7 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    backgroundColor: Colors.paleMintColor,
   },
   topPartContainer: {
     backgroundColor: Colors.paleMintColor,
@@ -317,7 +324,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.dune,
+    color: Colors.darkPaleMintColor,
   },
   emailText: {
     fontWeight: '500',
@@ -361,16 +368,17 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   logoutTitle: {
-    color: Colors.black,
+    color: Colors.darkPaleMintColor,
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
   },
   dropdown: {
     backgroundColor: Colors.paleMintColor,
     borderWidth: 1,
     alignSelf: 'center',
+    borderColor: Colors.darkPaleMintColor,
     width: widthPercentageToDP(36),
     paddingHorizontal: 10,
   },

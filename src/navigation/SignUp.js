@@ -26,7 +26,17 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {configureAws, signUp} from '../AWS/AWSConfiguration';
 import {useTranslation} from 'react-i18next';
 
-const SignupScreen = ({navigation}) => {
+const SignUp = ({navigation}) => {
+  const typeOfItems = [
+    {
+      label: 'Patient',
+      value: PATIENT,
+    },
+    {
+      label: 'Mentor',
+      value: MENTOR,
+    },
+  ];
   const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -521,7 +531,7 @@ const SignupScreen = ({navigation}) => {
   );
 };
 
-export default SignupScreen;
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
@@ -631,4 +641,3 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 });
-

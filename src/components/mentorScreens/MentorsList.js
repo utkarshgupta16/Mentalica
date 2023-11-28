@@ -28,7 +28,6 @@ import RenderHorizontalData from './RenderHorizontalData.js';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
-const greenText = '#618264';
 const lightBlack = '#45474B';
 
 const MentorsList = ({jwtToken}) => {
@@ -51,7 +50,7 @@ const MentorsList = ({jwtToken}) => {
       }
       // console.log('getAllMentorList', payload.Items);
     })();
-  }, []);
+  }, [dispatch, jwtToken]);
 
   // const renderExperties = ({data, label}) => {
   //   return (
@@ -61,7 +60,6 @@ const MentorsList = ({jwtToken}) => {
   //         <FlatList
   //           data={data}
   //           style={{flex: 0.8}}
-  //           horizontal
   //           // horizontal
   //           // numColumns={3}
   //           // columnWrapperStyle={{flexWrap: 'wrap'}}
@@ -72,8 +70,6 @@ const MentorsList = ({jwtToken}) => {
   //               <View
   //                 key={index}
   //                 style={{
-  //                   borderWidth: 1,
-  //                   borderColor: 'gray',
   //                   marginRight: 10,
   //                   borderRadius: 13,
   //                   paddingHorizontal: 8,

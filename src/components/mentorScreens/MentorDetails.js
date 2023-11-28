@@ -43,7 +43,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
-  const {jwtToken} = useSelector(state => state.auth);
+  const {jwtToken} = useSelector(reduxState => reduxState.auth);
 
   useEffect(() => {
     (async () => {
@@ -60,7 +60,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       setBookSlots(data);
       setLoading(false);
     })();
-  }, [dispatch, selectedMentorData?.email_id]);
+  }, [dispatch, selectedMentorData?.email_id, jwtToken]);
 
   return (
     <>

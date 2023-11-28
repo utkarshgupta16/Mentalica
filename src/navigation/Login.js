@@ -36,25 +36,16 @@ import ConvertLang from '../utils/Strings';
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
-  const {loginFrom} = useSelector(state => state.auth);
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
+
   const langOptions = LANG_OPTION;
 
-  // guptagaurav9566+1@gmail.com
-
-  // bhandari.tribhuwan@thinksys.com
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'bhandari.tribhuwan@thinksys.com',
-  // );
-  // patel.sonu@thinksys.com
   const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'pandey.kaushiki@thinksys.com',
-  // );
+  // const [enteredEmail, setEnteredEmail] = useState('pandey.kaushiki@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -254,7 +245,8 @@ const LoginScreen = ({navigation}) => {
           setValue={props => {
             Alert.alert(CHANGE_LANG, RESTART_APP, [
               {
-                text: NO_CANCEL,
+                text: 'Cancel',
+                // text: NO_CANCEL,
                 onPress: () => null,
               },
               {

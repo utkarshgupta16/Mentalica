@@ -96,24 +96,20 @@ const HomeNavigator = () => {
   const {type} = useSelector(state => state.auth);
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({route}) => ({
+        unmountOnBlur: true,
+        headerShown: false,
+        tabBarStyle:
+          Platform.OS === 'android'
+            ? {
+                height: hp(7),
+                paddingBottom: hp(1),
+              }
+            : null,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: 'teal',
         tabBarInactiveTintColor: '#89B9AD',
-      }}
-      // screenOptions={({route}) => ({
-      //   unmountOnBlur: true,
-      //   headerShown: false,
-      //   tabBarStyle:
-      //     Platform.OS === 'android'
-      //       ? {
-      //           height: hp(7),
-      //           paddingBottom: hp(1),
-      //         }
-      //       : null,
-      //   tabBarHideOnKeyboard: true,
-      //   tabBarActiveTintColor: Colors.accentColor,
-      // })}
-    >
+      })}>
       {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
