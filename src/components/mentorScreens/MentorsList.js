@@ -28,7 +28,6 @@ import RenderHorizontalData from './RenderHorizontalData.js';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
-const greenText = '#618264';
 const lightBlack = '#45474B';
 
 const MentorsList = ({jwtToken}) => {
@@ -51,50 +50,50 @@ const MentorsList = ({jwtToken}) => {
       }
       // console.log('getAllMentorList', payload.Items);
     })();
-  }, []);
+  }, [dispatch, jwtToken]);
 
-  const renderExperties = ({data, label}) => {
-    return (
-      <View style={{flexDirection: 'row', flex: 1}}>
-        <Text style={styles.expertiesText}>{`${label} :`}</Text>
-        {data && data.length ? (
-          <FlatList
-            data={data}
-            style={{flex: 0.8}}
-            // horizontal
-            // numColumns={3}
-            // columnWrapperStyle={{flexWrap: 'wrap'}}
-            scrollEventThrottle={1900}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    marginRight: 10,
-                    borderRadius: 13,
-                    paddingHorizontal: 8,
-                    paddingVertical: 3,
-                    backgroundColor: '#eab676',
-                    marginBottom: 10,
-                  }}>
-                  <Text
-                    style={{
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: '300',
-                      textAlign: 'center',
-                    }}>
-                    {item?.charAt(0).toUpperCase() + item?.slice(1)}
-                  </Text>
-                </View>
-              );
-            }}
-          />
-        ) : null}
-      </View>
-    );
-  };
+  // const renderExperties = ({data, label}) => {
+  //   return (
+  //     <View style={{flexDirection: 'row', flex: 1}}>
+  //       <Text style={styles.expertiesText}>{`${label} :`}</Text>
+  //       {data && data.length ? (
+  //         <FlatList
+  //           data={data}
+  //           style={{flex: 0.8}}
+  //           // horizontal
+  //           // numColumns={3}
+  //           // columnWrapperStyle={{flexWrap: 'wrap'}}
+  //           scrollEventThrottle={1900}
+  //           showsHorizontalScrollIndicator={false}
+  //           renderItem={({item, index}) => {
+  //             return (
+  //               <View
+  //                 key={index}
+  //                 style={{
+  //                   marginRight: 10,
+  //                   borderRadius: 13,
+  //                   paddingHorizontal: 8,
+  //                   paddingVertical: 3,
+  //                   backgroundColor: '#eab676',
+  //                   marginBottom: 10,
+  //                 }}>
+  //                 <Text
+  //                   style={{
+  //                     color: Colors.black,
+  //                     fontSize: 14,
+  //                     fontWeight: '300',
+  //                     textAlign: 'center',
+  //                   }}>
+  //                   {item?.charAt(0).toUpperCase() + item?.slice(1)}
+  //                 </Text>
+  //               </View>
+  //             );
+  //           }}
+  //         />
+  //       ) : null}
+  //     </View>
+  //   );
+  // };
 
   const renderItem = ({item, index}) => {
     const expertiseArr = item?.expertise?.split(',') || [];

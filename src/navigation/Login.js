@@ -17,8 +17,8 @@ import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
-import {useDispatch} from 'react-redux';
-import {login, getType} from '../redux/AuthSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {login, getType, getAccessToken} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
@@ -36,16 +36,15 @@ import ConvertLang from '../utils/Strings';
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
+
   const langOptions = LANG_OPTION;
 
-  const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);

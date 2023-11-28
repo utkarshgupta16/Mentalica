@@ -1,15 +1,12 @@
-import {FlatList, Image} from 'react-native';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
-import PatientDashboardTabs from '../../PatientDashboardTabs';
 import convertLang from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProfileSlice} from '../../../redux/HomeSlice';
-import Colors from '../../../customs/Colors';
-import {articlesData} from '../../../utils/default';
+
 import TabComponent from './TabComponent';
 import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
@@ -62,7 +59,7 @@ const PatientDashboard = ({navigation}) => {
       );
       setPatientName(res?.payload?.Items[0]?.firstName);
     })();
-  }, [email, type, dispatch]);
+  }, [email, type, dispatch, jwtToken]);
 
   const {darkMode} = useSelector(state => state.home);
 

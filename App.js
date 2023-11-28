@@ -185,10 +185,12 @@ const App = () => {
     <AppContext.Provider value={{props, setProps}}>
       <I18nextProvider i18n={i18n}>
         <StatusBar
-          backgroundColor="black" // Set the background color
-          barStyle="light-content" // Set the text color (light content for white text)
+          backgroundColor={darkMode ? Colors.black : Colors.white} // Set the background color
+          barStyle={darkMode ? 'light-content' : 'dark-content'} // Set the text color (light content for white text)
         />
-        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <SafeAreaView
+          style={[styles.safeAreaViewStyle, darkMode && styles.backgroundBlack]}
+        />
         <MainNavigator style={styles.mainNavigator} />
       </I18nextProvider>
     </AppContext.Provider>
@@ -201,6 +203,8 @@ const styles = StyleSheet.create({
   safeAreaViewStyle: {
     flex: 0,
     // borderWidth: 1,
+  },
+  backgroundBlack: {
     backgroundColor: Colors.black,
   },
 });
