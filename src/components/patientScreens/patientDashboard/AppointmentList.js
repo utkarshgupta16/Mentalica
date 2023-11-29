@@ -119,7 +119,7 @@ const AppoinmentsList = ({navigation}) => {
             userName: data?.patient_email_Id,
           }),
         );
-        const token = payload?.token;
+        const token = payload?.accessToken;
         setProps({
           ...props,
           token,

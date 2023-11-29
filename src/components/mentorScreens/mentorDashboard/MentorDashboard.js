@@ -142,7 +142,7 @@ const MentorDashboard = ({navigation}) => {
             userName: data?.mentor_email_id,
           }),
         );
-        const token = payload?.token;
+        const token = payload?.accessToken;
         setProps({
           ...props,
           token,
