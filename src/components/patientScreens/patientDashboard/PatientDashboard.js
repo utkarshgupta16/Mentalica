@@ -11,6 +11,7 @@ import TabComponent from './TabComponent';
 import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
+import ArticlesList from './ArticlesList.js';
 
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();
@@ -24,17 +25,13 @@ const PatientDashboard = ({navigation}) => {
     SAVED,
   } = convertLang(t);
 
+  const {userToken} = useSelector(state => state.home);
+
   const components = {
     [ALL]: <AllTabComponent />,
     [APPOINTMENTS]: <AppointmentList navigation={navigation} />,
-    [ARTICLES]: (
-      <Text
-        style={{
-          textAlign: 'center',
-        }}>
-        {NO_DATA_FOUND}
-      </Text>
-    ),
+    [ARTICLES]: <ArticlesList navigation={navigation} />,
+
     [SAVED]: (
       <Text
         style={{

@@ -36,7 +36,7 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-const AppoinmentsList = ({navigation, darkMode}) => {
+const AppoinmentsList = ({navigation}) => {
   const {t} = useTranslation();
   const {
     ALL,
@@ -62,6 +62,8 @@ const AppoinmentsList = ({navigation, darkMode}) => {
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const {jwtToken} = useSelector(state => state.auth);
+
+  const {darkMode} = useSelector(state => state.home);
 
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
@@ -159,15 +161,24 @@ const AppoinmentsList = ({navigation, darkMode}) => {
     }, t);
   };
 
+  console.log('===== dark mode ======', darkMode);
+
   return (
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
         theme={{
+          calendarBackground: darkMode ? '#000000' : '#ffff',
+          agendaKnobColor: '#283747',
+          agendaDayTextColor: darkMode ? '#fff' : '#000',
+          agendaDayNumColor: '#00adf5',
+          agendaTodayColor: darkMode ? '#fff' : '#000',
+          agendaKnobColor: '#283747',
+          indicatorColor: '#283747',
+          textSectionTitleColor: darkMode ? '#fff' : '#000',
+          dotColor: '#283747',
           selectedDayBackgroundColor: Colors.darkPaleMintColor,
-          selectedDayTextColor: Colors.white,
-          todayTextColor: Colors.darkPaleMintColor,
-          calendarBackground: darkMode ? '#000' : '#fff',
+          reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
         }}
         // selected="2022-12-01"
         refreshControl={
@@ -233,7 +244,7 @@ const AppoinmentsList = ({navigation, darkMode}) => {
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
                   </Text>
-                  <Text style={[styles.timeText]}>-</Text>
+                  <Text style={styles.timeText}>-</Text>
                   <Text style={styles.timeText}>
                     {moment(item?.end).format('LT')}
                   </Text>

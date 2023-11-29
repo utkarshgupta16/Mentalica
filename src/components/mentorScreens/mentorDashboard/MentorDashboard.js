@@ -42,6 +42,7 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
+import Shimmer from '../../Shimmer.js';
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -66,6 +67,8 @@ const MentorDashboard = ({navigation}) => {
   const [mentorName, setMentorName] = useState('');
 
   const [appointmentList, setAppointmentList] = useState({});
+  const [shimmerVisible, setShimmerVisible] = useState(false);
+
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
     const now = new Date();
@@ -81,6 +84,12 @@ const MentorDashboard = ({navigation}) => {
       const res = await dispatch(getProfileSlice({email, type, jwtToken}));
       setMentorName(res?.payload?.Items[0]?.firstName);
     })();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShimmerVisible(true);
+    }, 5000);
   }, []);
 
   const updateData = async () => {
@@ -199,19 +208,16 @@ const MentorDashboard = ({navigation}) => {
         }
         theme={{
           calendarBackground: darkMode ? '#000000' : '#ffff',
-          // agendaKnobColor: '#ffffff',
-          // todayTextColor: '#000',
-          // agendaTodayColor: '#00adf5',
-
           agendaKnobColor: '#283747',
-          agendaDayTextColor: '#283747',
-          agendaDayNumColor: '#283747',
-          agendaTodayColor: '#283747',
+          agendaDayTextColor: darkMode ? '#fff' : '#000',
+          agendaDayNumColor: '#00adf5',
+          agendaTodayColor: darkMode ? '#fff' : '#000',
           agendaKnobColor: '#283747',
           indicatorColor: '#283747',
-          textSectionTitleColor: '#283747',
+          textSectionTitleColor: darkMode ? '#fff' : '#000',
           dotColor: '#283747',
-          selectedDayBackgroundColor: '#283747',
+          selectedDayBackgroundColor: Colors.darkPaleMintColor,
+          reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
         }}
         key={darkMode}
         scrollEnabled
@@ -251,13 +257,21 @@ const MentorDashboard = ({navigation}) => {
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
                   </Text>
-                  <Text style={[styles.timeText]}>-</Text>
+
+                  <Text style={styles.timeText}>-</Text>
                   <Text style={styles.timeText}>
                     {moment(item?.end).format('LT')}
                   </Text>
                 </View>
                 <View style={styles.appointmentDetails}>
-                  <Text style={styles.mentorTextStyle}>{name}</Text>
+                  <Shimmer
+                    pauseDuration={400}
+                    direction={'right'}
+                    autoRun={true}
+                    style={styles.mentorTextStyle}
+                    visible={shimmerVisible}>
+                    <Text style={styles.mentorTextStyle}>{name}</Text>
+                  </Shimmer>
                 </View>
               </View>
             </TouchableOpacity>

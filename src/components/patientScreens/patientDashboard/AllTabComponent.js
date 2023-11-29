@@ -1,9 +1,65 @@
 import React from 'react';
 import {styles} from './patientDashboardStyle';
-import {View, Text, FlatList, Image} from 'react-native';
+import {FlatList, Image} from 'react-native';
+import View from '../../wrapperComponent/ViewWrapper.js';
+import Text from '../../wrapperComponent/TextWrapper.js';
 import {articlesData} from '../../../utils/default';
+import {useSelector} from 'react-redux';
 
 const AllTabComponent = () => {
+  const {darkMode} = useSelector(state => state.home);
+  const renderItem = ({item}) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          marginVertical: 9,
+          shadowColor: 'black',
+
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.47,
+          shadowRadius: 2.65,
+          elevation: 3,
+
+          borderTopRightRadius: 10,
+          borderBottomRightRadius: 10,
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+          borderWidth: darkMode ? 1 : 0,
+          borderColor: darkMode ? '#fff' : null,
+          width: '100%',
+        }}>
+        <Image
+          source={{uri: item.image}}
+          style={{
+            width: '30%',
+            height: 100,
+            resizeMode: 'cover',
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 10,
+          }}
+        />
+
+        <View
+          style={{
+            width: '70%',
+            // borderWidth: 1,
+            paddingVertical: 10,
+            paddingHorizontal: 10,
+            justifyContent: 'center',
+            backgroundColor: '#F5F7F8',
+            borderTopRightRadius: 10,
+            borderBottomRightRadius: 10,
+          }}>
+          <Text style={{fontSize: 16, fontWeight: '700'}}>{item?.title}</Text>
+          <Text style={{marginTop: 10}}>{item?.author}</Text>
+        </View>
+      </View>
+    );
+  };
   return (
     <>
       <View style={styles.belowTabsContainer}>
@@ -42,39 +98,4 @@ const AllTabComponent = () => {
 
 export default React.memo(AllTabComponent);
 
-const renderItem = ({item}) => {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        marginVertical: 9,
-        // borderWidth: 1,
-        // borderColor: 'gray',
-      }}>
-      {/* <Image
-        source={{uri: item.image}}
-        style={{
-          width: '30%',
-          height: 100,
-          resizeMode: 'cover',
-          borderTopLeftRadius: 10,
-          borderBottomLeftRadius: 10,
-        }}
-      /> */}
 
-      <View
-        style={{
-          width: '90%',
-          paddingVertical: 10,
-          paddingHorizontal: 10,
-          justifyContent: 'center',
-          backgroundColor: '#F5F7F8',
-          borderTopRightRadius: 10,
-          borderBottomRightRadius: 10,
-        }}>
-        <Text style={{fontSize: 16, fontWeight: '700'}}>{item?.title}</Text>
-        <Text style={{marginTop: 10}}>{item?.author}</Text>
-      </View>
-    </View>
-  );
-};

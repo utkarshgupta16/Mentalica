@@ -1,4 +1,6 @@
-import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
+import {StyleSheet, Pressable, FlatList} from 'react-native';
+import View from '../../wrapperComponent/ViewWrapper';
+import Text from '../../wrapperComponent/TextWrapper';
 import React from 'react';
 import {styles} from './PatientStatsStyle';
 import {useTranslation} from 'react-i18next';

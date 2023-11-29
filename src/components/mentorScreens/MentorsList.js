@@ -207,12 +207,14 @@ const styles = StyleSheet.create({
     height: '82%',
   },
   flatListContainer: {
-    borderWidth: 1,
-    borderColor: '#D8D9DA',
-    borderRadius: 3,
     marginHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: 'white',
+  },
+  cardContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#D8D9DA',
+    borderRadius: 8,
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
@@ -221,9 +223,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 3,
-  },
-  cardContainer: {
-    padding: 10,
+    backgroundColor: '#fff',
   },
   imageAndNameCont: {
     flexDirection: 'row',

@@ -9,11 +9,6 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
-
-    // backgroundColor: 'white',
-    // backgroundColor: '#F5F7F8',
-
-    // marginHorizontal: 8,
   },
   helloCont: {
     flexDirection: 'row',
@@ -109,11 +104,11 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
-    elevation: 3,
+    elevation: 5,
     marginHorizontal: 10,
     paddingHorizontal: 10,
     borderColor: '#ffff',
-    borderWidth: 2,
+    borderWidth: 1,
   },
   timeColumn: {
     width: 100, // Adjust the width as needed

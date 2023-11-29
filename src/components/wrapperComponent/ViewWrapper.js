@@ -1,7 +1,6 @@
 import {View} from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import {styles} from '../mentorScreens/mentorDashboard/MentorDashboardStyle';
 export const ViewWrapper = props => {
   const {style, isCard = false} = props || {};
   const colors = useTheme().colors;

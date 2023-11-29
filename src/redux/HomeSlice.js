@@ -37,6 +37,28 @@ export const getAllMentorList = createAsyncThunk(
   },
 );
 
+export const getAllArticles = createAsyncThunk(
+  'home/getAllArticles',
+  async (data, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.getArticles,
+      headers: headerApi(getState),
+    };
+    try {
+      const {data, status} = (await axios(config)) || {};
+      if (status === 200) {
+        return Promise.resolve(data);
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
+  },
+);
+
 export const getTwilloTokenSlice = createAsyncThunk(
   'home/getTwilloTokenSlice',
   async ({roomId, userName}, {getState}) => {
@@ -253,6 +275,7 @@ const HomeSlice = createSlice({
     changeTheme: (state, action) => {
       state.darkMode = action.payload;
     },
+
   },
   extraReducers: builder => {
     builder.addCase(getProfileSlice.pending, state => {
