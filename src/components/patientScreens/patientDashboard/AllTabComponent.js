@@ -5,8 +5,9 @@ import View from '../../wrapperComponent/ViewWrapper.js';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import {articlesData} from '../../../utils/default';
 import {useSelector} from 'react-redux';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-const AllTabComponent = () => {
+const AllTabComponent = ({handleShadowVisible}) => {
   const {darkMode} = useSelector(state => state.home);
   const renderItem = ({item}) => {
     return (
@@ -14,28 +15,29 @@ const AllTabComponent = () => {
         style={{
           flexDirection: 'row',
           marginVertical: 9,
-          shadowColor: 'black',
+          marginHorizontal: 9,
+          shadowColor: darkMode ? 'white' : 'gray',
 
           shadowOffset: {
             width: 0,
-            height: 2,
+            height: 1,
           },
-          shadowOpacity: 0.47,
-          shadowRadius: 2.65,
+          shadowOpacity: 0.87,
+          shadowRadius: 4,
           elevation: 3,
 
           borderTopRightRadius: 10,
           borderBottomRightRadius: 10,
           borderTopLeftRadius: 10,
           borderBottomLeftRadius: 10,
-          borderWidth: darkMode ? 1 : 0,
+          // borderWidth: darkMode ? 1 : 0,
           borderColor: darkMode ? '#fff' : null,
-          width: '100%',
+          width: '95%',
         }}>
         <Image
           source={{uri: item.image}}
           style={{
-            width: '30%',
+            width: '25%',
             height: 100,
             resizeMode: 'cover',
             borderTopLeftRadius: 10,
@@ -45,8 +47,8 @@ const AllTabComponent = () => {
 
         <View
           style={{
-            width: '70%',
-            // borderWidth: 1,
+            width: '75%',
+
             paddingVertical: 10,
             paddingHorizontal: 10,
             justifyContent: 'center',
@@ -60,6 +62,16 @@ const AllTabComponent = () => {
       </View>
     );
   };
+
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
+
   return (
     <>
       <View style={styles.belowTabsContainer}>
@@ -89,6 +101,7 @@ const AllTabComponent = () => {
             renderItem={renderItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
+            onScroll={handleOnScroll}
           />
         </View>
       </View>

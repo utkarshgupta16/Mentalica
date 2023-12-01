@@ -34,7 +34,7 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
-import {changeTheme} from '../../redux/HomeSlice';
+import {changeTheme, updateOnLogout} from '../../redux/HomeSlice';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -115,10 +115,8 @@ const Profile = ({navigation}) => {
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
 
   const toggleSwitch = () => {
-    setLoading(true);
-    setIsSwitchEnabled(previousState => !previousState);
-    dispatch(changeTheme(!isSwitchEnabled));
-    setLoading(false);
+    // setIsSwitchEnabled(previousState => !previousState);
+    dispatch(changeTheme(!darkMode));
   };
 
   const logoutPressHandler = () => {
@@ -132,6 +130,7 @@ const Profile = ({navigation}) => {
         onPress: async () => {
           signOut();
           dispatch(logout());
+          dispatch(updateOnLogout());
         },
       },
     ]);

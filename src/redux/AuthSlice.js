@@ -60,9 +60,8 @@ const Authslice = createSlice({
     getAccessToken: (state, action) => {
       state.jwtToken = action.payload;
     },
-    logout: state => {
-      state.isLoggedIn = false;
-    },
+    logout: (state, payload) => initialState,
+
     loginClient: (state, action) => {
       state.loginFrom = action.payload;
     },

@@ -17,7 +17,7 @@ import {
   screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getAllMentorList} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
@@ -30,27 +30,35 @@ const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
 const lightBlack = '#45474B';
 
-const MentorsList = ({jwtToken}) => {
+const MentorsList = ({handleShadowVisible}) => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
-  const [isLoading, setLoading] = useState(true);
-  const [allMentors, setAllMentors] = useState([]);
+  const [isRefreshing, setIsrefreshing] = useState(false);
   const [modifiedData, setModifiedData] = useState([]);
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
+
+  const {
+    isMentorsDataLoading,
+    mentorsData = {},
+    darkMode,
+  } = useSelector(state => state.home);
+
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
-        const {payload} = await dispatch(getAllMentorList({jwtToken}));
-        setAllMentors(payload.Items);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-      // console.log('getAllMentorList', payload.Items);
+        if (Object.keys(mentorsData).length == 0) {
+          await dispatch(getAllMentorList());
+        }
+      } catch (err) {}
     })();
-  }, [dispatch, jwtToken]);
+  }, [dispatch]);
+
+  const onRefresh = async () => {
+    setIsrefreshing(true);
+    await dispatch(getAllMentorList());
+    setIsrefreshing(false);
+  };
 
   // const renderExperties = ({data, label}) => {
   //   return (
@@ -95,6 +103,15 @@ const MentorsList = ({jwtToken}) => {
   //   );
   // };
 
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
+
   const renderItem = ({item, index}) => {
     const expertiseArr = item?.expertise?.split(',') || [];
     const languageArr = item?.language?.split(',') || [];
@@ -106,7 +123,21 @@ const MentorsList = ({jwtToken}) => {
           setShowDetails(!showDetails);
         }}
         style={styles.flatListContainer}>
-        <View style={styles.cardContainer}>
+        <View
+          style={{
+            marginTop: 10,
+            padding: 10,
+            borderRadius: 10,
+            shadowColor: darkMode ? 'white' : Colors.darkPaleMintColor,
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.87,
+            shadowRadius: 4,
+            elevation: 3,
+            backgroundColor: '#fff',
+          }}>
           <View style={styles.imageAndNameCont}>
             <Image
               source={require('../../icons/doctor.jpg')}
@@ -147,11 +178,14 @@ const MentorsList = ({jwtToken}) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={allMentors}
+        data={mentorsData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
+        onScroll={handleOnScroll}
+        refreshing={isRefreshing}
+        onRefresh={onRefresh}
       />
       {showDetails ? (
         <MentorDetails
@@ -160,46 +194,46 @@ const MentorsList = ({jwtToken}) => {
           selectedMentorData={selectedMentorData}
         />
       ) : null}
-      {isLoading ? <ScreenLoading /> : null}
+      {isMentorsDataLoading ? <ScreenLoading /> : null}
     </View>
   );
 };
 
-const renderExpertiesItem = ({item}) => {
-  return (
-    <View
-      style={{
-        marginRight: 10,
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        backgroundColor: '#F0F0F0',
-        marginBottom: 10,
-      }}>
-      <Text
-        style={{
-          color: lightBlack,
-        }}>
-        {item}
-      </Text>
-    </View>
-  );
-};
+// const renderExpertiesItem = ({item}) => {
+//   return (
+//     <View
+//       style={{
+//         marginRight: 10,
+//         borderRadius: 8,
+//         paddingHorizontal: 8,
+//         backgroundColor: '#F0F0F0',
+//         marginBottom: 10,
+//       }}>
+//       <Text
+//         style={{
+//           color: lightBlack,
+//         }}>
+//         {item}
+//       </Text>
+//     </View>
+//   );
+// };
 
-const renderLaunguageItem = ({item}) => {
-  return (
-    <Text style={{marginRight: 10, color: lightBlack, marginBottom: 10}}>
-      {item}
-    </Text>
-  );
-};
+// const renderLaunguageItem = ({item}) => {
+//   return (
+//     <Text style={{marginRight: 10, color: lightBlack, marginBottom: 10}}>
+//       {item}
+//     </Text>
+//   );
+// };
 
-const renderSessionModeItem = ({item}) => {
-  return (
-    <Text style={{marginRight: 10, fontWeight: '600', color: lightBlack}}>
-      {item}
-    </Text>
-  );
-};
+// const renderSessionModeItem = ({item}) => {
+//   return (
+//     <Text style={{marginRight: 10, fontWeight: '600', color: lightBlack}}>
+//       {item}
+//     </Text>
+//   );
+// };
 
 const styles = StyleSheet.create({
   container: {
@@ -212,15 +246,13 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: 10,
-    borderWidth: 1,
-    borderColor: '#D8D9DA',
     borderRadius: 8,
-    shadowColor: 'black',
+    shadowColor: 'white',
     shadowOffset: {
       width: 0,
       height: 3,
     },
-    shadowOpacity: 0.27,
+    shadowOpacity: 0.57,
     shadowRadius: 4.65,
     elevation: 3,
     backgroundColor: '#fff',
@@ -245,6 +277,9 @@ const styles = StyleSheet.create({
     color: Colors.darkPaleMintColor,
     marginBottom: 10,
     width: wp(50),
+    // textShadowColor: 'rgba(25, 25, 250, 10)',
+    // textShadowOffset: {width: -1, height: 1},
+    // textShadowRadius: 15,
   },
   experienceText: {
     fontSize: 14,

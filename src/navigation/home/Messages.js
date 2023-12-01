@@ -3,10 +3,8 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import {useTranslation} from 'react-i18next';
 import {View, Text, ImageBackground} from 'react-native';
 
-const Messages = ({route}) => {
+const Messages = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
-
-  console.log('route', route);
 
   useEffect(() => {
     setMessages([
@@ -42,7 +40,7 @@ const Messages = ({route}) => {
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: 'teal'}}>
+    <View style={{flex: 1, backgroundColor: 'teal', marginBottom: 5}}>
       <ImageBackground
         source={require('../../assets/images/watsapp-background.png')}
         style={{flex: 1, justifyContent: 'center'}}>

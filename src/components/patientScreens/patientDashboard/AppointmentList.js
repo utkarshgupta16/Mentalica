@@ -1,14 +1,4 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Pressable,
-  // Text,
-  // View,
-  TouchableOpacity,
-  Alert,
-  RefreshControl,
-} from 'react-native';
+import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import React, {useContext, useEffect, useState} from 'react';
@@ -18,15 +8,7 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import axios from 'axios';
 import Colors from '../../../customs/Colors';
-import {
-  checkMultiple,
-  request,
-  requestMultiple,
-  PERMISSIONS,
-  RESULTS,
-} from 'react-native-permissions';
 import convertLang, {MENTOR} from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
@@ -36,7 +18,8 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-const AppoinmentsList = ({navigation}) => {
+import {useIsFocused} from '@react-navigation/native';
+const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {
     ALL,
@@ -55,7 +38,6 @@ const AppoinmentsList = ({navigation}) => {
   } = convertLang(t);
   const {props, setProps} = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
-  const [appointmentList, setAppointmentList] = useState({});
   const [refreshing, onRefresh] = useState(false);
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email, type = ''} = useSelector(state => state.auth);
@@ -64,6 +46,7 @@ const AppoinmentsList = ({navigation}) => {
   const {jwtToken} = useSelector(state => state.auth);
 
   const {darkMode} = useSelector(state => state.home);
+  const isFocus = useIsFocused();
 
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
@@ -72,52 +55,106 @@ const AppoinmentsList = ({navigation}) => {
     return now;
   };
 
-  const updateData = async () => {
-    try {
-      let res = await dispatch(
-        getScheduledAppointmentsSlice({
-          email,
-          fieldName: PATIENT_EMAIL_ID,
-          jwtToken,
-        }),
-      );
-      const appointments = res.payload;
-      const newDate = new Date();
-      const formattedAppointments = {};
-      appointments.forEach(appointment => {
-        const date =
-          newDate.getFullYear() +
-          '-' +
-          `${newDate.getMonth() + 1}` +
-          '-' +
-          `${
-            newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()
-          }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
+  const formatSheduleAppointmentData = appointments => {
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments?.forEach(appointment => {
+      const date =
+        newDate?.getFullYear() +
+        '-' +
+        `${newDate?.getMonth() + 1}` +
+        '-' +
+        `${
+          newDate?.getDate() < 10
+            ? `0${newDate?.getDate()}`
+            : newDate?.getDate()
+        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
 
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
-        });
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
       });
-      setAppointmentList(formattedAppointments);
-    } catch (err) {}
+    });
+    return formattedAppointments;
   };
+
+  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+
+  const [appointmentList, setAppointmentList] = useState(formatedData);
+
+  const handleOnScroll = event => {
+    handleShadowVisible(true);
+  };
+
+  const updateData = async () => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({
+        email,
+        fieldName: PATIENT_EMAIL_ID,
+      }),
+    );
+    const appointments = res.payload;
+    const formattedAppointments = formatSheduleAppointmentData(appointments);
+    setAppointmentList(formattedAppointments);
+  };
+
+  // const updateData = async () => {
+  //   try {
+  //     let res = await dispatch(
+  //       getScheduledAppointmentsSlice({
+  //         email,
+  //         fieldName: PATIENT_EMAIL_ID,
+  //         jwtToken,
+  //       }),
+  //     );
+  //     const appointments = res.payload;
+  //     const newDate = new Date();
+  //     const formattedAppointments = {};
+  //     appointments.forEach(appointment => {
+  //       const date =
+  //         newDate.getFullYear() +
+  //         '-' +
+  //         `${newDate.getMonth() + 1}` +
+  //         '-' +
+  //         `${
+  //           newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()
+  //         }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+  //       if (!formattedAppointments[date]) {
+  //         formattedAppointments[date] = [];
+  //       }
+
+  //       formattedAppointments[date].push({
+  //         start: setDateTime(appointment.slots[0].startTime),
+  //         end: setDateTime(appointment.slots[0].endTime),
+  //         ...appointment,
+  //       });
+  //     });
+  //     setAppointmentList(formattedAppointments);
+  //   } catch (err) {}
+  // };
 
   useEffect(() => {
     (async () => {
-      try {
-        setLoading(true);
-        await updateData();
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
+      updateData();
     })();
-  }, []);
+  }, [dispatch, email, isFocus]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       setLoading(true);
+  //       await updateData();
+  //       setLoading(false);
+  //     } catch (err) {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
 
   const videoCallAction = data => {
     _checkPermissions(async () => {
@@ -161,8 +198,6 @@ const AppoinmentsList = ({navigation}) => {
     }, t);
   };
 
-  console.log('===== dark mode ======', darkMode);
-
   return (
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
@@ -191,7 +226,7 @@ const AppoinmentsList = ({navigation}) => {
             }}
           />
         }
-        key={darkMode}
+        // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         items={appointmentList}
@@ -207,6 +242,7 @@ const AppoinmentsList = ({navigation}) => {
             <AIcon name="refresh" size={35} color={Colors.darkPaleMintColor} />
           </Pressable>
         )}
+        onScroll={handleOnScroll}
         renderItem={item => {
           let name = type === MENTOR ? item?.patientName : item?.mentorName;
           let {endTime} = (item.slots && item.slots[0]) || {};
@@ -239,7 +275,25 @@ const AppoinmentsList = ({navigation}) => {
                   ]);
                 }
               }}>
-              <View style={styles.itemContainer}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  shadowColor: darkMode ? '#fff' : 'gray',
+                  shadowOffset: {
+                    width: 0,
+                    height: 3,
+                  },
+                  shadowOpacity: 0.27,
+                  shadowRadius: 4.65,
+                  elevation: 3,
+                  marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                }}>
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}

@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     // backgroundColor: 'white',
     backgroundColor: Colors.paleMintColor,
     flex: 1,
-    paddingTop: hp(2),
+    // paddingTop: hp(2),
     position: 'relative',
   },
   helloText: {

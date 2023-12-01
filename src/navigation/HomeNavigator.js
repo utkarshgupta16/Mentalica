@@ -18,9 +18,15 @@ import PatientDashboard from '../components/patientScreens/patientDashboard/Pati
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
-import {MESSAGES_TAB_ROUTE, PROFILE_TAB_ROUTE} from '../utils/route';
+import {
+  CHATS_SCREEN,
+  MESSAGES,
+  MESSAGES_TAB_ROUTE,
+  PROFILE_TAB_ROUTE,
+} from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
@@ -170,15 +176,15 @@ const HomeNavigator = () => {
       )}
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
-        options={{
-          headerShown: false,
+        options={({route}) => ({
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="message" size={25} color={color} />
+            <MaterialIcons name={'message'} size={26} color={color} />
           ),
-          tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Messages');
+          tabBarLabel: MESSAGES,
+          tabBarStyle: {
+            display: getRouteName(route) === 'none' ? 'none' : 'flex',
           },
-        }}
+        })}
         component={MessagesStackNavigator}
       />
       <Tab.Screen
@@ -197,5 +203,14 @@ const HomeNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+const getRouteName = route => {
+  const routeName = getFocusedRouteNameFromRoute(route);
+  if (routeName?.includes(CHATS_SCREEN)) {
+    return 'none';
+  }
+  return 'flex';
+};
+
 
 export default HomeNavigator;

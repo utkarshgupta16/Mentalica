@@ -1,34 +1,12 @@
-import {
-  // Text,
-  // View,
-  FlatList,
-  Pressable,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-  Platform,
-  RefreshControl,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from '../../../utils/Responsive';
 import {styles} from './MentorDashboardStyle';
-import axios from 'axios';
 import {AppContext, setProps, props} from '../../../../App';
 import Colors from '../../../customs/Colors';
 import {Agenda} from 'react-native-calendars';
-import Timetable from 'react-native-calendar-timetable';
-// import AppointmentList from './AppointmentList';
-import EventCalendar from 'react-native-events-calendar';
-import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -37,12 +15,12 @@ import {
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
 import convertLang, {MENTOR} from '../../../utils/Strings';
-import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
 import Shimmer from '../../Shimmer.js';
+import {useIsFocused} from '@react-navigation/native';
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -57,17 +35,13 @@ const MentorDashboard = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
-  const isFocused = useIsFocused();
+
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
-  // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [isLoading, setLoading] = useState(false);
-  const [mentorName, setMentorName] = useState('');
-
-  const [appointmentList, setAppointmentList] = useState({});
-  const [shimmerVisible, setShimmerVisible] = useState(false);
+  // const [shimmerVisible, setShimmerVisible] = useState(false);
 
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
@@ -76,31 +50,13 @@ const MentorDashboard = ({navigation}) => {
     return now;
   };
 
-  const {jwtToken} = useSelector(state => state.auth);
-  const {darkMode} = useSelector(state => state.home);
+  const {
+    darkMode,
+    profileData = {},
+    scheduledAppointmentsData = [],
+  } = useSelector(state => state.home);
 
-  useEffect(() => {
-    (async () => {
-      const res = await dispatch(getProfileSlice({email, type, jwtToken}));
-      setMentorName(res?.payload?.Items[0]?.firstName);
-    })();
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShimmerVisible(true);
-    }, 5000);
-  }, []);
-
-  const updateData = async () => {
-    let res = await dispatch(
-      getScheduledAppointmentsSlice({
-        email,
-        fieldName: MENTOR_EMAIL_ID,
-        jwtToken,
-      }),
-    );
-    const appointments = res.payload;
+  const formatSheduleAppointmentData = appointments => {
     const newDate = new Date();
     const formattedAppointments = {};
     appointments?.forEach(appointment => {
@@ -125,8 +81,38 @@ const MentorDashboard = ({navigation}) => {
         // Other appointment data
       });
     });
+    return formattedAppointments;
+  };
+
+  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+
+  const [appointmentList, setAppointmentList] = useState(formatedData);
+  useEffect(() => {
+    (async () => {
+      if (Object.keys(profileData).length == 0) {
+        await dispatch(getProfileSlice({email, type}));
+      }
+    })();
+  }, [profileData]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setShimmerVisible(true);
+  //   }, 5000);
+  // }, []);
+
+  const updateData = async () => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({
+        email,
+        fieldName: MENTOR_EMAIL_ID,
+      }),
+    );
+    const appointments = res.payload;
+    const formattedAppointments = formatSheduleAppointmentData(appointments);
     setAppointmentList(formattedAppointments);
   };
+
   useEffect(() => {
     (async () => {
       updateData();
@@ -154,7 +140,6 @@ const MentorDashboard = ({navigation}) => {
       try {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
-            jwtToken,
             roomId: data?.roomId,
             userName: data?.mentor_email_id,
           }),
@@ -192,7 +177,7 @@ const MentorDashboard = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO}, {mentorName && mentorName}
+        {HELLO}, {profileData?.firstName}
       </Text>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
@@ -219,7 +204,7 @@ const MentorDashboard = ({navigation}) => {
           selectedDayBackgroundColor: Colors.darkPaleMintColor,
           reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
         }}
-        key={darkMode}
+        // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}
@@ -252,7 +237,25 @@ const MentorDashboard = ({navigation}) => {
                   },
                 ]);
               }}>
-              <View style={styles.itemContainer}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  shadowColor: darkMode ? '#fff' : 'gray',
+                  shadowOffset: {
+                    width: 0,
+                    height: 3,
+                  },
+                  shadowOpacity: 0.27,
+                  shadowRadius: 4.65,
+                  elevation: 5,
+                  marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                }}>
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
@@ -264,14 +267,14 @@ const MentorDashboard = ({navigation}) => {
                   </Text>
                 </View>
                 <View style={styles.appointmentDetails}>
-                  <Shimmer
+                  {/* <Shimmer
                     pauseDuration={400}
                     direction={'right'}
                     autoRun={true}
                     style={styles.mentorTextStyle}
-                    visible={shimmerVisible}>
-                    <Text style={styles.mentorTextStyle}>{name}</Text>
-                  </Shimmer>
+                    visible={shimmerVisible}> */}
+                  <Text style={styles.mentorTextStyle}>{name}</Text>
+                  {/* </Shimmer> */}
                 </View>
               </View>
             </TouchableOpacity>

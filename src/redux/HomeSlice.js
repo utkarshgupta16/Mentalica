@@ -264,6 +264,11 @@ const initialState = {
   isEditProfileLoading: false,
   type: '',
   darkMode: false,
+  isArticleDataLoading: false,
+  articleData: [],
+
+  isMentorsDataLoading: false,
+  mentorsData: [],
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -276,6 +281,7 @@ const HomeSlice = createSlice({
       state.darkMode = action.payload;
     },
 
+    updateOnLogout: (state, action) => initialState,
   },
   extraReducers: builder => {
     builder.addCase(getProfileSlice.pending, state => {
@@ -289,8 +295,35 @@ const HomeSlice = createSlice({
       state.isProfileLoading = false;
       state.profileData = {};
     });
+
+    builder.addCase(getAllArticles.pending, state => {
+      state.isArticleDataLoading = true;
+    });
+
+    builder.addCase(getAllArticles.fulfilled, (state, action) => {
+      state.isArticleDataLoading = false;
+      state.articleData = action.payload;
+    });
+
+    builder.addCase(getAllArticles.rejected, (state, action) => {
+      state.isArticleDataLoading = false;
+      state.articleData = [];
+    });
+
+    builder.addCase(getAllMentorList.pending, (state, action) => {
+      state.isMentorsDataLoading = true;
+    });
+    builder.addCase(getAllMentorList.fulfilled, (state, action) => {
+      state.isMentorsDataLoading = false;
+      state.mentorsData = action.payload.Items;
+    });
+    builder.addCase(getAllMentorList.rejected, (state, action) => {
+      state.isMentorsDataLoading = false;
+    });
+
     builder.addCase(getScheduledAppointmentsSlice.pending, state => {
       state.isScheduleLoading = true;
+      state.scheduledAppointmentsData = state.scheduledAppointmentsData;
     });
     builder.addCase(
       getScheduledAppointmentsSlice.fulfilled,
@@ -320,5 +353,5 @@ const HomeSlice = createSlice({
   },
 });
 
-export const {setAttributes, changeTheme} = HomeSlice.actions;
+export const {setAttributes, changeTheme, updateOnLogout} = HomeSlice.actions;
 export default HomeSlice.reducer;

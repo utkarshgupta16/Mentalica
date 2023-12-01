@@ -1,8 +1,8 @@
-import {StyleSheet, FlatList, Pressable, Image} from 'react-native';
+import {StyleSheet, FlatList, Pressable, ActivityIndicator} from 'react-native';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getAllArticles, isArticle} from '../../../redux/HomeSlice';
 import Modal from 'react-native-modal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -11,30 +11,53 @@ import {
   widthPercentageToDP,
 } from '../../../utils/Responsive.js';
 import Colors from '../../../customs/Colors.js';
+import ScreenLoading from '../../ScreenLoading.js';
 
-const ArticlesList = () => {
+const ArticlesList = ({handleShadowVisible}) => {
   const dispatch = useDispatch();
   const [articlesData, setArticlesData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [modalData, setModalData] = useState({});
+  const [isRefreshing, setRefreshing] = useState(false);
+
+  const {isArticleDataLoading, articleData, darkMode} = useSelector(
+    state => state.home,
+  );
 
   useEffect(() => {
     (async () => {
-      const alrticlesList = await dispatch(getAllArticles());
-      setArticlesData(alrticlesList?.payload);
+      if (Object.keys(articleData).length == 0) {
+        await dispatch(getAllArticles());
+      }
     })();
   }, []);
 
-  console.log('articlesData====>>>>>', articlesData);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(getAllArticles());
+    setRefreshing(false);
+  };
 
   const renderItem = ({item}) => {
     return (
       <Pressable
         onPress={() => {
-          setArticlesData(item);
           setModalVisible(true);
         }}>
-        <View style={styles.flatlistContainer}>
+        <View
+          style={{
+            margin: 10,
+            padding: 10,
+            borderRadius: 8,
+            shadowColor: darkMode ? 'white' : 'gray',
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.87,
+            shadowRadius: 4,
+            elevation: 3,
+            backgroundColor: '#fff',
+          }}>
           <View style={styles.titleCont}>
             <Text style={styles.title}>{item?.title}</Text>
             <Pressable onPress={() => {}}>
@@ -56,10 +79,18 @@ const ArticlesList = () => {
     );
   };
 
-  console.log();
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
+      {isArticleDataLoading ? <ScreenLoading /> : null}
       <Modal
         hasBackdrop={true}
         isVisible={isModalVisible}
@@ -81,10 +112,10 @@ const ArticlesList = () => {
               fontWeight: '600',
               fontSize: 18,
             }}>
-            {articlesData?.title}ss
+            {articleData?.title}
           </Text>
 
-          <Text>{articlesData?.body}</Text>
+          <Text>{articleData?.body}</Text>
           <View style={styles.closeBtn}>
             <Pressable onPress={() => setModalVisible(false)}>
               <Text style={{fontWeight: '600'}}>Close</Text>
@@ -92,12 +123,36 @@ const ArticlesList = () => {
           </View>
         </View>
       </Modal>
+      {/* <View
+        style={{
+          height: 40,
+          backgroundColor: 'white',
+          width: '100%',
+          marginBottom: 20,
+          shadowColor: isShadowVisible ? '#000' : '#fff',
+          shadowOffset: isShadowVisible
+            ? {
+                width: 0,
+                height: 5,
+              }
+            : {
+                width: 2,
+                height: 2,
+              },
+          shadowOpacity: isShadowVisible ? 0.3 : 0,
+          shadowRadius: isShadowVisible ? 3 : 0,
+          elevation: isShadowVisible ? 2 : 0,
+        }}></View> */}
       <FlatList
         key={new Date()}
-        data={articlesData}
+        data={articleData}
         renderItem={renderItem}
         keyExtractor={() => Math.random() * 73}
         showsVerticalScrollIndicator={false}
+        onScroll={handleOnScroll}
+        scrollEventThrottle={16}
+        onRefresh={onRefresh}
+        refreshing={isRefreshing}
       />
     </View>
   );
@@ -167,5 +222,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 5,
+  },
+  shadowView: {
+    width: '100%',
+    height: 40,
+    marginBottom: 20,
+    borderWidth: 1,
+  },
+  headerWithShadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2, // For Android
   },
 });
