@@ -124,6 +124,7 @@ const MentorsList = ({handleShadowVisible}) => {
         }}
         style={styles.flatListContainer}>
         <View
+          isCard={true}
           style={{
             marginTop: 10,
             padding: 10,
@@ -138,20 +139,20 @@ const MentorsList = ({handleShadowVisible}) => {
             elevation: 3,
             backgroundColor: '#fff',
           }}>
-          <View style={styles.imageAndNameCont}>
+          <View isCard={true} style={styles.imageAndNameCont}>
             <Image
               source={require('../../icons/doctor.jpg')}
               style={styles.profilePic}
             />
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
-            <View>
+            <View isCard={true}>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
                 {`${item?.firstName} ${item?.lastName}`}
               </Text>
               <Text style={styles.experienceText}>
                 {item?.experience}+ years of experience
               </Text>
-              <View style={{flexDirection: 'row'}}>
+              <View isCard={true} style={{flexDirection: 'row'}}>
                 <Text>starts @</Text>
                 <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
               </View>

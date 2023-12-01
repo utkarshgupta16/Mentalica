@@ -44,6 +44,7 @@ const ArticlesList = ({handleShadowVisible}) => {
           setModalVisible(true);
         }}>
         <View
+          isCard={true}
           style={{
             margin: 10,
             padding: 10,
@@ -58,7 +59,7 @@ const ArticlesList = ({handleShadowVisible}) => {
             elevation: 3,
             backgroundColor: '#fff',
           }}>
-          <View style={styles.titleCont}>
+          <View isCard={true} style={styles.titleCont}>
             <Text style={styles.title}>{item?.title}</Text>
             <Pressable onPress={() => {}}>
               <MaterialIcons

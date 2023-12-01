@@ -46,6 +46,7 @@ const AllTabComponent = ({handleShadowVisible}) => {
         />
 
         <View
+          isCard={true}
           style={{
             width: '75%',
 
@@ -77,17 +78,17 @@ const AllTabComponent = ({handleShadowVisible}) => {
       <View style={styles.belowTabsContainer}>
         <Text style={styles.headingText}>Next Appointments</Text>
         <View style={styles.nextAppointmentCont}>
-          <View style={styles.leftCont}>
+          <View isCard={true} style={styles.leftCont}>
             <Text style={{marginBottom: 9, fontWeight: 'bold', fontSize: 14}}>
               Tomorrow
             </Text>
             <Text style={{fontWeight: 'bold', fontSize: 14}}>10:00</Text>
           </View>
-          <View style={styles.rightCont}>
+          <View isCard={true} style={styles.rightCont}>
             <Text style={{marginBottom: 9, fontWeight: 'bold', fontSize: 16}}>
               Raqual Almeida
             </Text>
-            <View style={styles.rightContVideoCall}>
+            <View isCard={true} style={styles.rightContVideoCall}>
               <Text style={{fontWeight: 'bold'}}>Video call</Text>
               <Text style={{fontWeight: 'bold'}}>50 min</Text>
             </View>
