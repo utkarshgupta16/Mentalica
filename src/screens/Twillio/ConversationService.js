@@ -50,7 +50,7 @@ export class TwilioService {
   parseChannel(channel) {
     return {
       id: channel?.sid,
-      isOnline: channel?.isOnline,
+      // isOnline: channel?.isOnline,
       name: channel?.friendlyName,
       lastMessageText: channel?.attributes?.lastMessageText || '',
       attributes: channel?.attributes,

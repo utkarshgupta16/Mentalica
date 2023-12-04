@@ -58,6 +58,7 @@ const MentorDashboard = ({navigation}) => {
   const [refreshing, onRefresh] = useState(false);
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
+  const [selectedDay, setDay] = useState(new Date());
   // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
@@ -79,12 +80,12 @@ const MentorDashboard = ({navigation}) => {
     })();
   }, []);
 
-  const updateData = async () => {
+  const updateData = async date => {
     let res = await dispatch(
-      getScheduledAppointmentsSlice({date: moment().format('YYYY-MM-DD')}),
+      getScheduledAppointmentsSlice({date: moment(date).format('YYYY-MM-DD')}),
     );
     const appointments = res.payload;
-    const newDate = new Date();
+    const newDate = new Date(date);
     const formattedAppointments = {};
     appointments &&
       appointments.forEach(appointment => {
@@ -113,7 +114,7 @@ const MentorDashboard = ({navigation}) => {
   };
   useEffect(() => {
     (async () => {
-      updateData();
+      updateData(new Date());
     })();
   }, [dispatch, email, isFocus]);
 
@@ -184,27 +185,38 @@ const MentorDashboard = ({navigation}) => {
             refreshing={refreshing}
             onRefresh={async () => {
               onRefresh(true);
-              await updateData();
+              await updateData(selectedDay);
               onRefresh(false);
             }}
           />
         }
+        onDayPress={async ({dateString}) => {
+          setLoading(true);
+          await updateData(dateString);
+          setLoading(false);
+          setDay(dateString);
+        }}
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}
         items={appointmentList}
-        renderEmptyData={() => (
-          <Pressable
-            onPress={async () => {
-              setLoading(true);
-              await updateData();
-              setLoading(false);
-            }}
-            style={styles.reloadButton}>
-            <Text style={styles.reloadText}>{RELOAD}</Text>
-            <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
-          </Pressable>
-        )}
+        renderEmptyData={() => {
+          if (isLoading) {
+            return null;
+          }
+          return (
+            <Pressable
+              onPress={async () => {
+                setLoading(true);
+                await updateData(selectedDay);
+                setLoading(false);
+              }}
+              style={styles.reloadButton}>
+              <Text style={styles.reloadText}>{RELOAD}</Text>
+              <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
+            </Pressable>
+          );
+        }}
         renderItem={item => {
           let name = type == MENTOR ? item?.patientName : item?.mentorName;
           return (

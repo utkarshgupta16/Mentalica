@@ -67,11 +67,11 @@ const MentorsList = ({navigation}) => {
       .then(() => TwilioService.getInstance().addTokenListener(getTokenNew))
       .then(client => {
         client
-          .getUser(mentorData?.email_id)
+          .getUser(mentorData?.emailId)
           .then(res => {
             client
               .createConversation({
-                friendlyName: `${mentorData?.email_id}-${username}`,
+                friendlyName: `${mentorData?.emailId}-${username}`,
                 attributes: {
                   participants: [
                     {
@@ -79,7 +79,7 @@ const MentorsList = ({navigation}) => {
                       username: `${profileData?.firstName} ${profileData?.lastName}`,
                     },
                     {
-                      identity: mentorData?.email_id,
+                      identity: mentorData?.emailId,
                       username: `${mentorData?.firstName} ${mentorData?.lastName}`,
                     },
                   ],
@@ -88,7 +88,7 @@ const MentorsList = ({navigation}) => {
               .then(async channel => {
                 channel.join().then(async () => {
                   await channel.setAllMessagesUnread();
-                  channel.add(mentorData?.email_id).then(() => {
+                  channel.add(mentorData?.emailId).then(() => {
                     setLoading(false);
                     navigation.navigate(MESSAGES_TAB_ROUTE, {
                       screen: CHAT_ROOM_SCREEN,

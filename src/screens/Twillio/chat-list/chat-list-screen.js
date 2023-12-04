@@ -49,7 +49,6 @@ const ChatListScreens = ({navigation, route}) => {
   );
   const channelPaginator = useRef();
   const [message, showMessage] = useState({message: ''});
-  console.log('participants$$$$$$$$$$$$', participantObj);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -256,7 +255,6 @@ const ChatListScreens = ({navigation, route}) => {
   //   return channelsNew;
   // }, [channels]);
 
-  console.log('typingStarted############ New  ', channels);
 
   return (
     <View style={styles.screen}>
