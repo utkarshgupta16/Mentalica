@@ -35,6 +35,7 @@ import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
 import {changeTheme, updateOnLogout} from '../../redux/HomeSlice';
+import {Auth} from 'aws-amplify';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -101,7 +102,14 @@ const Profile = ({navigation}) => {
         );
       },
     },
-    {label: 'Password', screen: ''},
+    {
+      label: 'Change Password',
+      screen: '',
+      props: profileData || {},
+      onPress: () => {
+        navigation.navigate('changePassword');
+      },
+    },
   ];
   if (type === MENTOR) {
     profileDetailsItems.push({

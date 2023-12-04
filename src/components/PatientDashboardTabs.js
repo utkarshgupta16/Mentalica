@@ -17,8 +17,8 @@ export default function PatientDashboardTabs({
         style={{
           backgroundColor:
             selectedTab.tabStr == tab ? Colors.darkPaleMintColor : null,
-          paddingHorizontal: 6,
-          paddingVertical: 5,
+          paddingHorizontal: 9,
+          paddingVertical: 6,
           borderRadius: 50,
           // flex: 1
         }}>

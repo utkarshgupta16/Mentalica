@@ -11,6 +11,7 @@ import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
 import ArticlesList from './ArticlesList.js';
+import {Auth} from 'aws-amplify';
 
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();

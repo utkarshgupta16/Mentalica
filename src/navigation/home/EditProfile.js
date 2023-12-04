@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, Text, TextInput, Button, TouchableOpacity} from 'react-native';
+import {TextInput, Button, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
 import {PATIENT} from '../../utils/Strings';
 import Colors from '../../customs/Colors';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
 
 const EditProfile = ({route, navigation}) => {
   const dispatch = useDispatch();
@@ -30,50 +32,50 @@ const EditProfile = ({route, navigation}) => {
   } = data;
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
-  const {type} = useSelector(state => state.auth);
- const {jwtToken} = useSelector(state => state.auth);
+  const {type, jwtToken} = useSelector(state => state.auth);
+  const {darkMode} = useSelector(state => state.home);
 
- const renderInput = ({placeholder, field}) => {
-   return (
-     <View style={{marginBottom: 20}}>
-       <Text style={{paddingBottom: 5, paddingLeft: 5, color: 'gray'}}>
-         {placeholder}
-       </Text>
-       <TextInput
-         style={{
-           padding: 8,
-           borderRadius: 4,
-           // borderWidth: 1,
-           borderBottomWidth: 1,
-           borderColor: 'lightgray',
-         }}
-         placeholder={placeholder}
-         value={state[field]}
-         onChangeText={e => {
-           setState({...state, [field]: e});
-         }}
-       />
-     </View>
-   );
- };
+  const renderInput = ({placeholder, field}) => {
+    return (
+      <View style={{marginBottom: 20}}>
+        <Text style={{paddingBottom: 5, paddingLeft: 5, color: 'gray'}}>
+          {placeholder}
+        </Text>
+        <TextInput
+          style={{
+            padding: 8,
+            borderRadius: 4,
+            borderBottomWidth: 1,
+            borderColor: 'lightgray',
+            color: darkMode ? '#fff' : 'gray',
+          }}
+          placeholder={placeholder}
+          value={state[field]}
+          onChangeText={e => {
+            setState({...state, [field]: e});
+          }}
+        />
+      </View>
+    );
+  };
 
- const onSave = async () => {
-   try {
-     setLoading(true);
-     const resp = await dispatch(
-       editProfileSlice({
-         jwtToken,
-         emailId: email_id,
-         type: type == PATIENT ? 'patient' : 'mentor',
-         ...state,
-       }),
-     );
-     setLoading(false);
-     navigation.goBack();
-   } catch (err) {
-     setLoading(false);
-   }
- };
+  const onSave = async () => {
+    try {
+      setLoading(true);
+      await dispatch(
+        editProfileSlice({
+          jwtToken,
+          emailId: email_id,
+          type: type == PATIENT ? 'patient' : 'mentor',
+          ...state,
+        }),
+      );
+      setLoading(false);
+      navigation.goBack();
+    } catch (err) {
+      setLoading(false);
+    }
+  };
   return (
     <View style={{backgroundColor: 'white', padding: 10, flex: 1}}>
       {isLoading ? <ScreenLoading /> : null}

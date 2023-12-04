@@ -6,9 +6,12 @@ import {heightPercentageToDP as hp} from '../../utils/Responsive';
 import {PROFILE} from '../../utils/route';
 import Profile from './Profile';
 import EditProfile from './EditProfile';
+import {useSelector} from 'react-redux';
+import ChangePassword from './ChangePassword';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
 const ProfileStackNavigator = () => {
+  const {darkMode} = useSelector(state => state.home);
   return (
     // <NavigationContainer>
     <Stack.Navigator initialRouteName={PROFILE}>
@@ -30,9 +33,34 @@ const ProfileStackNavigator = () => {
               <MaterialIcons
                 name="arrow-back-ios"
                 size={16}
-                color={Colors.grey}
+                color={darkMode ? Colors.white : Colors.grey}
               />
-              <Text>Edit Profile</Text>
+              <Text style={{color: darkMode ? '#fff' : '#000'}}>
+                Edit Profile
+              </Text>
+            </TouchableOpacity>
+          ),
+          headerShadowVisible: false,
+        })}
+      />
+
+      <Stack.Screen
+        name="changePassword"
+        component={ChangePassword}
+        options={({navigation}) => ({
+          title: '',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{flexDirection: 'row'}}>
+              <MaterialIcons
+                name="arrow-back-ios"
+                size={16}
+                color={darkMode ? Colors.white : Colors.grey}
+              />
+              <Text style={{color: darkMode ? '#fff' : '#000'}}>
+                Change Password
+              </Text>
             </TouchableOpacity>
           ),
           headerShadowVisible: false,

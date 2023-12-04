@@ -1,5 +1,6 @@
 import React from 'react';
-import {Alert, Pressable, StyleSheet, Text} from 'react-native';
+import {Alert, Pressable, StyleSheet} from 'react-native';
+import Text from './wrapperComponent/TextWrapper.js';
 import Colors from '../customs/Colors';
 // import ArrowRight from '../icons/rightArrow.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
