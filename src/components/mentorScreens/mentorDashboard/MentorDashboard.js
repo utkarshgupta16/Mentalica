@@ -34,7 +34,7 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import convertLang,{MENTOR} from '../../../utils/Strings';
+import convertLang, {MENTOR} from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
@@ -43,7 +43,6 @@ import {AV_CHAT_SCREEN} from '../../../utils/route';
 import ContactsScreen from '../../../screens/ContactScreen';
 
 const MentorDashboard = ({navigation}) => {
-
   const {t} = useTranslation();
   const {
     ARE_YOU_JOIN,
@@ -82,7 +81,7 @@ const MentorDashboard = ({navigation}) => {
 
   const updateData = async () => {
     let res = await dispatch(
-      getScheduledAppointmentsSlice({email, fieldName: MENTOR_EMAIL_ID}),
+      getScheduledAppointmentsSlice({date: moment().format('YYYY-MM-DD')}),
     );
     const appointments = res.payload;
     const newDate = new Date();

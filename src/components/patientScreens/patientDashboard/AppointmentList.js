@@ -70,7 +70,7 @@ const AppoinmentsList = ({navigation}) => {
   const updateData = async () => {
     try {
       let res = await dispatch(
-        getScheduledAppointmentsSlice({email, fieldName: PATIENT_EMAIL_ID}),
+        getScheduledAppointmentsSlice({date: moment().format('YYYY-MM-DD')}),
       );
       const appointments = res.payload;
       const newDate = new Date();

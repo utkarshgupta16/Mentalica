@@ -2,16 +2,20 @@
 import {Platform} from 'react-native';
 const API_URL = 'https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com';
 export const endPoints = {
-  singUpMentorProfile: `${API_URL}/setMentorProfile`,
-  singUpPatientProfile: `${API_URL}/setPatientProfile`,
-  getAllMentorList: `${API_URL}/getAllMentorList`,
-  bookAppointment: `${API_URL}/bookMentorPatientSlot`,
-  getPatientProfile: `${API_URL}/getMePatient`,
-  getMentorProfile: `${API_URL}/getMeMentor`,
-  getScheduledAppointments: `${API_URL}/getMentorAppointmentSlot`,
+  // singUpMentorProfile: `${API_URL}/setMentorProfile`,
+  // singUpPatientProfile: `${API_URL}/setPatientProfile`,
+  signUpUserProfile: `${API_URL}/setUserProfile`,
+  getAllMentorList: `${API_URL}/getMentorList`,
+  bookAppointment: `${API_URL}/scheduleAppointment`,
+  // getPatientProfile: `${API_URL}/getMe`,
+  // getMentorProfile: `${API_URL}/getMe`,
+  getProfile: `${API_URL}/getMe`,
+  getScheduledAppointments: `${API_URL}/getAppointments`,
   getTwilloToken: `${API_URL}/getTwilloToken`,
-  sendNotification: "https://fcm.googleapis.com/fcm/send",
-  editProfile:`${API_URL}/updateProfile`
+  sendNotification: 'https://fcm.googleapis.com/fcm/send',
+  editProfile: `${API_URL}/updateUserProfile`,
+  getMentorAvailableSlots: `${API_URL}/getAvailableSlot`,
+  getArticleList: `${API_URL}/articleList`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

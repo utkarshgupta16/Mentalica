@@ -17,7 +17,7 @@ import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
-import {Auth} from "aws-amplify"
+import {Auth} from 'aws-amplify';
 // import {
 //   signIn,
 //   confirmSignUp,
@@ -28,7 +28,7 @@ import {Auth} from "aws-amplify"
 import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
-import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
 import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
@@ -54,13 +54,23 @@ const LoginScreen = ({navigation}) => {
   // );
   // patel.sonu@thinksys.com
   //pandey.kaushiki@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  //'gauravatlive+3@gmail.com' //patient
+  //'gauravatlive+2@gmail.com' //mentor
+  const [enteredEmail, setEnteredEmail] = useState(
+    'gauravatlive+2@gmail.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
+
+  const resendCode = async () => {
+    // console.log('enteredEmail', enteredEmail);
+    const response = await Auth.resendSignUp(enteredEmail);
+    // console.log('response:', response);
+  };
 
   const loginHandler = async () => {
     try {
@@ -156,6 +166,7 @@ const LoginScreen = ({navigation}) => {
           <View style={styles.codeContainer}>
             <Text>{`${t('Enter Email')}:`}</Text>
             <TextInput
+              value={enteredEmail}
               onChangeText={text => setEnteredEmail(text)}
               style={styles.modalTextInput}
             />
@@ -271,6 +282,7 @@ const LoginScreen = ({navigation}) => {
               style={styles.signUpContainer}
               title={t('Enter Code')}
               onPress={() => {
+                resendCode();
                 setShowEnterCodeModal(true);
               }}>
               <Text style={styles.signUpText}>

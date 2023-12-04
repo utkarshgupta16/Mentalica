@@ -13,10 +13,7 @@ export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
   // let token = await AsyncStorage.getItem('token');
   var config = {
     method: 'post',
-    url:
-      type === PATIENT
-        ? endPoints.singUpPatientProfile
-        : endPoints.singUpMentorProfile,
+    url: endPoints.signUpUserProfile, // single endpoint used for both mentor and patient
     headers: {
       // Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

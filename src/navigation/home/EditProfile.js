@@ -54,13 +54,14 @@ const EditProfile = ({route, navigation}) => {
   };
 
   const onSave = async () => {
+    const {email_id, ...fields} = state;
     try {
       setLoading(true);
       const resp = await dispatch(
         editProfileSlice({
-          emailId: email_id,
+          // emailId: email_id,
           type: type == PATIENT ? 'patient' : 'mentor',
-          ...state,
+          ...fields,
         }),
       );
       setLoading(false);
@@ -75,7 +76,7 @@ const EditProfile = ({route, navigation}) => {
       {renderInput({placeholder: 'First Name', field: 'firstName'})}
       {renderInput({placeholder: 'Last Name', field: 'lastName'})}
       {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-      
+
       <TouchableOpacity
         onPress={onSave}
         style={{

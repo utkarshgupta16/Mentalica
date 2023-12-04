@@ -11,7 +11,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 import awsconfig from './src/aws-exports';
-import amplifyconfiguration from './src/amplifyconfiguration.json';
+// import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
 // Register background handler

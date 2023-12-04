@@ -559,7 +559,7 @@ const AddSlot = ({
                   setLoading(true);
                   const resp = await dispatch(
                     editProfileSlice({
-                      emailId: email_id,
+                      // emailId: email_id,
                       type: type == PATIENT ? 'patient' : 'mentor',
                       slots,
                     }),

@@ -24,10 +24,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   bookAppointmentSlice,
   getBooksSlots,
+  getMentorAllSlots,
   getScheduledAppointmentsSlice,
   sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
+import moment from 'moment';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
   const {profileData} = useSelector(state => state.home);
@@ -45,19 +47,30 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
+  // useEffect(() => {
+  //   (async () => {
+  //     setLoading(true);
+  //     let {payload = []} = await dispatch(
+  //       getBooksSlots({email: selectedMentorData?.email_id}),
+  //     );
+  //     let data =
+  //       payload &&
+  //       payload.map(val => {
+  //         const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
+  //         return `${startTime}-${endTime}`;
+  //       });
+  //     setBookSlots(data);
+  //     setLoading(false);
+  //   })();
+  // }, [dispatch, selectedMentorData?.email_id]);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
       let {payload = []} = await dispatch(
-        getBooksSlots({email: selectedMentorData?.email_id}),
+        getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
-      let data =
-        payload &&
-        payload.map(val => {
-          const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
-          return `${startTime}-${endTime}`;
-        });
-      setBookSlots(data);
+      setBookSlots(payload);
       setLoading(false);
     })();
   }, [dispatch, selectedMentorData?.email_id]);
@@ -110,13 +123,13 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               Today's Available Slots
             </Text>
           </View>
-          {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
+          {bookSlots && bookSlots.length ? (
             <FlatList
               columnWrapperStyle={{flexWrap: 'wrap'}}
               scrollEventThrottle={1900}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              data={selectedMentorData?.slots}
+              data={bookSlots}
               numColumns={2}
               // horizontal
               // showsHorizontalScrollIndicator={false}
@@ -167,7 +180,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         style={{
                           color: 'white',
                         }}>
-                        {shwSlot || ""}
+                        {shwSlot || ''}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -178,8 +191,11 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             <View
               style={{
                 flex: 1,
-              }}
-            />
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text>{`No Slots Available to Book`}</Text>
+            </View>
           )}
           {selectedSlot ? (
             <Pressable
@@ -197,8 +213,15 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       onPress: async () => {
                         try {
                           setLoading(true);
+                          const {patientEmailId, patientName, ...payload} =
+                            state;
                           const resp = await dispatch(
-                            bookAppointmentSlice(state),
+                            bookAppointmentSlice({
+                              ...payload,
+                              mentorEmailId: selectedMentorData.emailId,
+                              mentorName: selectedMentorData.firstName,
+                              date: moment().format('YYYY-MM-DD'),
+                            }),
                           );
                           close && close();
                           setLoading(false);
