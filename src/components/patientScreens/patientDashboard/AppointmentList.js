@@ -75,25 +75,28 @@ const AppoinmentsList = ({navigation}) => {
       const appointments = res.payload;
       const newDate = new Date();
       const formattedAppointments = {};
-      appointments.forEach(appointment => {
-        const date =
-          newDate.getFullYear() +
-          '-' +
-          `${newDate.getMonth() + 1}` +
-          '-' +
-          `${
-            newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()
-          }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
+      appointments &&
+        appointments.forEach(appointment => {
+          const date =
+            newDate.getFullYear() +
+            '-' +
+            `${newDate.getMonth() + 1}` +
+            '-' +
+            `${
+              newDate.getDate() < 10
+                ? `0${newDate.getDate()}`
+                : newDate.getDate()
+            }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+          if (!formattedAppointments[date]) {
+            formattedAppointments[date] = [];
+          }
 
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
+          formattedAppointments[date].push({
+            start: setDateTime(appointment.slots[0].startTime),
+            end: setDateTime(appointment.slots[0].endTime),
+            ...appointment,
+          });
         });
-      });
       setAppointmentList(formattedAppointments);
     } catch (err) {}
   };

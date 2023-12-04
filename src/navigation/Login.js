@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
-import {setAttributes} from '../redux/HomeSlice';
+import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
@@ -48,7 +48,7 @@ const LoginScreen = ({navigation}) => {
   //   'bhandari.tribhuwan@thinksys.com',
   // );
   // patel.sonu@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState('pandey.kaushiki@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -57,7 +57,6 @@ const LoginScreen = ({navigation}) => {
   const [currentUserInfo, setCurrentUserInfo] = useState({str: ''});
 
   const dispatch = useDispatch();
-
   const loginHandler = async () => {
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
@@ -76,6 +75,7 @@ const LoginScreen = ({navigation}) => {
         }),
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
+       dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
       setError(err);

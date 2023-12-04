@@ -11,7 +11,11 @@ export const endPoints = {
   getScheduledAppointments: `${API_URL}/getMentorAppointmentSlot`,
   getTwilloToken: `${API_URL}/getTwilloToken`,
   sendNotification: "https://fcm.googleapis.com/fcm/send",
-  editProfile:`${API_URL}/updateProfile`
+  editProfile:`${API_URL}/updateProfile`,
+  getTwillioChatAPI:`${API_URL}/chatToken?identity=`,
+  deleteConversation:`${API_URL}/deleteConversation`,
+  fetchConversation:`${API_URL}/fetchConversation`,
+  updateConversation:`${API_URL}/updateConversation`
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

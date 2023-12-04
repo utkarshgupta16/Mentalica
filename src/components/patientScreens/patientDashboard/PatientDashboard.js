@@ -49,7 +49,7 @@ const PatientDashboard = ({navigation}) => {
         {NO_DATA_FOUND}
       </Text>
     ),
-    [MENTORS_LIST]: <MentorsList />,
+    [MENTORS_LIST]: <MentorsList navigation={navigation} />,
   };
   const {email, type} = useSelector(state => state.auth);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});

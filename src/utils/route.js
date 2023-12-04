@@ -2,6 +2,7 @@ export const HOME = 'Home';
 export const INVOICING = 'Invoicing';
 export const STATS = 'Stats';
 export const MESSAGES = 'Messages';
+export const CHAT_ROOM_SCREEN = 'ChatRoomScreen';
 export const MESSAGES_TAB_ROUTE = 'MessageTabRoute';
 export const PROFILE = 'Profile';
 export const PROFILE_TAB_ROUTE = 'ProfileTabRoute';

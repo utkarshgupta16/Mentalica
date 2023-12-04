@@ -15,12 +15,15 @@ import {
   screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
-import {useDispatch} from 'react-redux';
-import {getAllMentorList} from '../../redux/HomeSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllMentorList, getTwilloChatTokenSlice} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
 import ScreenLoading from '../ScreenLoading';
+import {Client, User} from '@twilio/conversations';
+import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
+import {TwilioService} from '../../screens/Twillio/ConversationService';
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
@@ -28,8 +31,10 @@ const lightRed = '#E76161';
 const greenText = '#618264';
 const lightBlack = '#45474B';
 
-const MentorsList = () => {
+const MentorsList = ({navigation}) => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
+  const {email: username} = useSelector(state => state.auth);
+  const profileData = useSelector(state => state.home.profileData);
   const [isLoading, setLoading] = useState(true);
   const [allMentors, setAllMentors] = useState([]);
   const [modifiedData, setModifiedData] = useState([]);
@@ -49,6 +54,68 @@ const MentorsList = () => {
       // console.log('getAllMentorList', payload.Items);
     })();
   }, []);
+
+  const getTokenNew = async username => {
+    let {payload} = await dispatch(getTwilloChatTokenSlice(username));
+    return payload?.accessToken;
+  };
+
+  const createNewConversation = async mentorData => {
+    setLoading(true);
+    getTokenNew(username)
+      .then(token => TwilioService.getInstance().getChatClient(token))
+      .then(() => TwilioService.getInstance().addTokenListener(getTokenNew))
+      .then(client => {
+        client
+          .getUser(mentorData?.email_id)
+          .then(res => {
+            client
+              .createConversation({
+                friendlyName: `${mentorData?.email_id}-${username}`,
+                attributes: {
+                  participants: [
+                    {
+                      identity: username,
+                      username: `${profileData?.firstName} ${profileData?.lastName}`,
+                    },
+                    {
+                      identity: mentorData?.email_id,
+                      username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                    },
+                  ],
+                },
+              })
+              .then(async channel => {
+                channel.join().then(async () => {
+                  await channel.setAllMessagesUnread();
+                  channel.add(mentorData?.email_id).then(() => {
+                    setLoading(false);
+                    navigation.navigate(MESSAGES_TAB_ROUTE, {
+                      screen: CHAT_ROOM_SCREEN,
+                      params: {
+                        channelId: channel?.sid,
+                        identity: username,
+                        otherUser: {
+                          username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                        },
+                      },
+                    });
+                  });
+                });
+              })
+              .catch(error => {
+                console.log(error);
+                setLoading(false);
+              });
+          })
+          .catch(err => {
+            setLoading(false);
+            console.log('Error=============', err);
+          });
+      });
+
+    return;
+  };
 
   const renderExperties = ({data, label}) => {
     return (
@@ -97,15 +164,14 @@ const MentorsList = () => {
     const expertiseArr = item?.expertise?.split(',') || [];
     const languageArr = item?.language?.split(',') || [];
     return (
-      <Pressable
-        key={index}
-        onPress={() => {
-          setMentor(item);
-          setShowDetails(!showDetails);
-        }}
-        style={styles.flatListContainer}>
+      <View key={index} style={styles.flatListContainer}>
         <View style={styles.cardContainer}>
-          <View style={styles.imageAndNameCont}>
+          <Pressable
+            onPress={async () => {
+              setMentor(item);
+              setShowDetails(!showDetails);
+            }}
+            style={styles.imageAndNameCont}>
             <Image
               source={require('../../icons/doctor.jpg')}
               style={styles.profilePic}
@@ -123,9 +189,18 @@ const MentorsList = () => {
                 <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
               </View>
             </View>
-          </View>
+          </Pressable>
           {renderExperties({data: expertiseArr, label: 'Experties'})}
           {renderExperties({data: languageArr, label: 'Speaks'})}
+          <Pressable
+            style={{flexDirection: 'row', alignItems: 'center'}}
+            onPress={() => createNewConversation(item)}>
+            <Image
+              source={require('../../icons/chat.png')}
+              style={{width: 30, height: 30, objectFit: 'contain'}}
+            />
+            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>Chat</Text>
+          </Pressable>
         </View>
         {/* <View style={styles.bookBtnCont}>
           {showAppointmentBtn ? (
@@ -149,7 +224,7 @@ const MentorsList = () => {
             </View>
           )}
         </View> */}
-      </Pressable>
+      </View>
     );
   };
 

@@ -22,6 +22,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
     "@reduxjs/toolkit": "^1.9.7",
+    "@twilio/conversations": "^2.5.0",
     "amazon-cognito-identity-js": "^6.3.6",
     "aws-amplify": "^5.3.11",
     "aws-sdk": "^2.1486.0",
@@ -64,7 +65,9 @@
     "reactotron-redux": "^3.1.3",
     "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "twilio-chat": "^6.0.0",
+    "jwt-decode": "^3.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
