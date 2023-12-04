@@ -16,6 +16,10 @@ export const endPoints = {
   editProfile: `${API_URL}/updateUserProfile`,
   getMentorAvailableSlots: `${API_URL}/getAvailableSlot`,
   getArticleList: `${API_URL}/articleList`,
+  getTwillioChatAPI:`${API_URL}/chatToken?identity=`,
+  deleteConversation:`${API_URL}/deleteConversation`,
+  fetchConversation:`${API_URL}/fetchConversation`,
+  updateConversation:`${API_URL}/updateConversation`
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

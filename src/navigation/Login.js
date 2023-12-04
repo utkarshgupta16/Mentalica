@@ -18,14 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
-// import {
-//   signIn,
-//   confirmSignUp,
-//   autoSignIn,
-//   confirmSignIn,
-//   signOut,
-// } from '@aws-amplify/auth';
-import {setAttributes} from '../redux/HomeSlice';
+import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
@@ -57,7 +50,7 @@ const LoginScreen = ({navigation}) => {
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
   const [enteredEmail, setEnteredEmail] = useState(
-    'gauravatlive+2@gmail.com',
+    'pandey.kaushiki@thinksys.com',
   );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -94,6 +87,7 @@ const LoginScreen = ({navigation}) => {
         }),
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
+       dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
       console.log('getCurrentUserInfo Error', err);

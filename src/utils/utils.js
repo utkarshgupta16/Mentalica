@@ -7,17 +7,18 @@ import {
 } from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
 import convertLang from './Strings';
+import moment from 'moment';
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
 
-export const _checkPermissions = (callback,useTranslation) => {
-    const {
-        ERROR,
-        HARDWARE_SUPPORT,
-        ONE_GRANTED,
-        PERMISSIONS_ACCESS,
-        PERMISSIONS_GRANTED,
-      } = convertLang(useTranslation);
+export const _checkPermissions = (callback, useTranslation) => {
+  const {
+    ERROR,
+    HARDWARE_SUPPORT,
+    ONE_GRANTED,
+    PERMISSIONS_ACCESS,
+    PERMISSIONS_GRANTED,
+  } = convertLang(useTranslation);
   const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
   const androidPermissions = [
     PERMISSIONS.ANDROID.CAMERA,
@@ -75,4 +76,28 @@ export const _checkPermissions = (callback,useTranslation) => {
       }
     },
   );
+};
+
+export const twilioStatus = {
+  connecting: 'Connecting to Twilio…',
+  connected: 'You are connected.',
+  disconnecting: 'Disconnecting from Twilio…',
+  disconnected: 'Disconnected',
+  denied: 'Failed to connect.',
+};
+
+export const dateFormat = lastMessageTime => {
+  let tomorrow = moment().add(1, 'day').endOf('day');
+  let yesterday = moment().subtract(1, 'day').endOf('day');
+  let date=moment(lastMessageTime)
+  if (date.isSame(new Date(), 'day')) {
+    return moment(date).fromNow()
+  }
+  if (date.isSame(tomorrow, 'day')) {
+    return 'Tomorrow';
+  }
+  if (date.isSame(yesterday, 'day')) {
+    return 'Yesterday';
+  }
+  return '';
 };

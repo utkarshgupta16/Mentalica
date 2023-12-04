@@ -134,6 +134,7 @@ export const onUpdateChatRoom = /* GraphQL */ `
       id
       name
       image
+      lastTypingAt
       Messages {
         items {
           id
@@ -148,6 +149,63 @@ export const onUpdateChatRoom = /* GraphQL */ `
         nextToken
         __typename
       }
+      users {
+        items {
+          id
+          chatRoomId
+          userId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LastMessage {
+        id
+        createdAt
+        text
+        chatroomID
+        userID
+        images
+        Attachments {
+          nextToken
+          __typename
+        }
+        updatedAt
+        __typename
+      }
+      Attachments {
+        items {
+          id
+          storageKey
+          type
+          width
+          height
+          duration
+          messageID
+          chatroomID
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      chatRoomLastMessageId
+      __typename
+    }
+  }
+`;
+export const onUpdateChatRoom1 = /* GraphQL */ `
+  subscription OnUpdateChatRoom($filter: ModelSubscriptionChatRoomFilterInput) {
+    onUpdateChatRoom(filter: $filter) {
+      id
+      name
+      image
+      lastTypingAt
       users {
         items {
           id

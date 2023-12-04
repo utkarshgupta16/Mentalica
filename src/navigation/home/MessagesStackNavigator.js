@@ -2,29 +2,26 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
-import {
-  CHATS_SCREEN,
-  CHATS_SCREENS,
-  MESSAGES,
-  MESSAGES_TAB_ROUTE,
-} from '../../utils/route';
-import ChatList from './ChatList';
-import Messages from '../../screens/ChatScreen/ChatScreen';
-import ChatsScreen from '../../screens/ChatsScreen/ChatsScreen';
-import ContactsScreen from '../../screens/ContactScreen';
-
-// import Messages from './Messages';
+import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
+import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
+import {ChatRoomScreen} from '../../screens/Twillio/chat-room/chat-room-screen';
+import Messages from './Messages';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
 
 const MessagesStackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName={CHATS_SCREENS}>
+    <Stack.Navigator initialRouteName={MESSAGES}>
       <Stack.Screen
-        name={CHATS_SCREENS}
-        // component={ChatList}
-        component={ChatsScreen}
-        // options={{headerShown: false}}
+        name={MESSAGES}
+        component={ChatListScreen}
+        options={{title: 'Chat Conversation'}}
+      />
+
+      <Stack.Screen
+        name={CHAT_ROOM_SCREEN}
+        component={ChatRoomScreen}
+        options={{title: ''}}
       />
 
       <Stack.Screen

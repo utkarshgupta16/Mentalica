@@ -199,6 +199,12 @@ const HomeNavigator = () => {
             return renderTabTitle(focused, 'Messages');
           },
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+              e.preventDefault();
+              navigation.navigate(MESSAGES_TAB_ROUTE);
+          },
+      })}
         component={MessagesStackNavigator}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
