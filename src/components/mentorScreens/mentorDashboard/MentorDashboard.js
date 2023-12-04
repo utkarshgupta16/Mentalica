@@ -86,7 +86,7 @@ const MentorDashboard = ({navigation}) => {
     const appointments = res.payload;
     const newDate = new Date();
     const formattedAppointments = {};
-    appointments.forEach(appointment => {
+    appointments && appointments.forEach(appointment => {
       const date =
         newDate?.getFullYear() +
         '-' +
