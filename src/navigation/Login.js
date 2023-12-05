@@ -19,7 +19,7 @@ import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType, getAccessToken} from '../redux/AuthSlice';
-import {MENTOR_SIGN_UP} from '../utils/route';
+import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
@@ -111,6 +111,10 @@ const LoginScreen = ({navigation}) => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    navigation.navigate(FORGOT_PASSWORD, {email: enteredEmail});
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       {isLoading ? <Loader /> : null}
@@ -190,6 +194,11 @@ const LoginScreen = ({navigation}) => {
             secureTextEntry={true}
             value={enteredPassword}
           />
+          <Pressable
+            onPress={handleForgotPassword}
+            style={styles.forgotPassword}>
+            <Text>Forgot your password?</Text>
+          </Pressable>
           <View style={styles.checkBoxSignUpContainer}>
             {/* <View style={styles.checkboxContainer}>
               <CheckBox
@@ -293,8 +302,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: Colors.paleMintColor,
-
-    // justifyContent: 'space-between',
   },
   imageContainer: {
     alignItems: 'center',
@@ -344,6 +351,11 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     paddingLeft: 10,
     color: 'white',
+  },
+  forgotPassword: {
+    marginBottom: 10,
+    alignItems: 'flex-end',
+    marginTop: -20,
   },
   checkBoxSignUpContainer: {
     // flexDirection: 'row',

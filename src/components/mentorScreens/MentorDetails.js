@@ -12,6 +12,7 @@ import {
 import Colors from '../../customs/Colors';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
+
 import {
   heightPercentageToDP as hp,
   screenHeight,

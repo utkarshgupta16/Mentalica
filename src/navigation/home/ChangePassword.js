@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TextInput, Button, TouchableOpacity, Alert} from 'react-native';
+import {
+  TextInput,
+  Button,
+  TouchableOpacity,
+  Alert,
+  Pressable,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
@@ -9,6 +15,7 @@ import Colors from '../../customs/Colors';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import {Auth} from 'aws-amplify';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ChangePassword = ({navigation}) => {
   const [isLoading, setLoading] = useState(false);
@@ -16,6 +23,9 @@ const ChangePassword = ({navigation}) => {
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassowrd] = useState('');
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
   const {t} = useTranslation();
 
   const onUpdate = () => {
@@ -66,20 +76,52 @@ const ChangePassword = ({navigation}) => {
           }}>
           Old Password
         </Text>
-        <TextInput
+        <View
           style={{
-            padding: 8,
-            borderRadius: 4,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             borderBottomWidth: 1,
             borderColor: 'lightgray',
-            color: darkMode ? 'gray' : '#000',
-          }}
-          placeholder={'Please Enter Old Password..'}
-          value={oldPassword}
-          onChangeText={text => {
-            setOldPassword(text);
-          }}
-        />
+            alignItems: 'center',
+          }}>
+          <TextInput
+            style={{
+              padding: 8,
+              borderRadius: 4,
+              color: darkMode ? 'gray' : '#000',
+              width: '80%',
+            }}
+            placeholder={'Please Enter Old Password..'}
+            value={oldPassword}
+            onChangeText={text => {
+              setOldPassword(text);
+            }}
+            secureTextEntry={!showOldPassword}
+          />
+          {showOldPassword ? (
+            <Pressable onPress={() => setShowOldPassword(!showOldPassword)}>
+              <MaterialIcons
+                name="visibility"
+                size={16}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => setShowOldPassword(!showOldPassword)}>
+              <MaterialIcons
+                name="visibility-off"
+                size={16}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          )}
+        </View>
       </View>
 
       <View style={{marginBottom: 20}}>
@@ -89,23 +131,54 @@ const ChangePassword = ({navigation}) => {
             paddingLeft: 5,
             color: darkMode ? '#fff' : '#000',
           }}>
-          {' '}
           New Password
         </Text>
-        <TextInput
+        <View
           style={{
-            padding: 8,
-            borderRadius: 4,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             borderBottomWidth: 1,
             borderColor: 'lightgray',
-            color: darkMode ? 'gray' : '#000',
-          }}
-          placeholder={'Please Enter New Password..'}
-          value={newPassword}
-          onChangeText={text => {
-            setNewPassowrd(text);
-          }}
-        />
+            alignItems: 'center',
+          }}>
+          <TextInput
+            style={{
+              padding: 8,
+              borderRadius: 4,
+              color: darkMode ? 'gray' : '#000',
+              width: '80%',
+            }}
+            placeholder={'Please Enter Old Password..'}
+            value={newPassword}
+            onChangeText={text => {
+              setNewPassowrd(text);
+            }}
+            secureTextEntry={!showNewPassword}
+          />
+          {showNewPassword ? (
+            <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
+              <MaterialIcons
+                name="visibility"
+                size={16}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
+              <MaterialIcons
+                name="visibility-off"
+                size={16}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          )}
+        </View>
       </View>
 
       <TouchableOpacity

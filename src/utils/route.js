@@ -11,3 +11,4 @@ export const LOGIN = 'Login';
 export const ASK_CLIENT = '"AskClient"';
 export const AV_CHAT_SCREEN="AVChatScreen"
 export const CHATS_SCREEN="Chats"
+export const FORGOT_PASSWORD = 'ForgotPassword';

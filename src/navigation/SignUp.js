@@ -411,6 +411,7 @@ const SignUp = ({navigation}) => {
     </>
   );
 
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -428,14 +429,14 @@ const SignUp = ({navigation}) => {
         style={{flex: 1, backgroundColor: Colors.paleMintColor}}
         contentContainerStyle={{flexGrow: 1}}>
         {/* =================================MODAL START================================= */}
-        <EnterOtpModal
+        {/* <EnterOtpModal
           state={state}
           submitCodeHandler={submitCodeHandler}
           resendCode={resendCode}
           showEnterCodeModal={showEnterCodeModal}
           setShowEnterCodeModal={setShowEnterCodeModal}
           otpError={otpError}
-        />
+        /> */}
         {/* =================================MODAL END================================= */}
 
         <View style={styles.mainContainer}>
@@ -446,7 +447,7 @@ const SignUp = ({navigation}) => {
             placeholder: 'Temporary city',
             field: 'temporaryCity',
           })}
-          {renderInput({
+          {/* {renderInput({
             placeholder: 'Phone Number',
             field: 'phoneNumber',
             keyBoardType: 'number-pad',
@@ -466,7 +467,7 @@ const SignUp = ({navigation}) => {
             placeholder: 'Confirm password',
             field: 'confirmPassword',
             //   secureTextEntry: true,
-          })}
+          })} */}
           {/* CHECK FOR THE TYPE: */}
 
           <DropDownPicker
