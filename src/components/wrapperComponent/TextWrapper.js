@@ -1,16 +1,23 @@
 import {Text} from 'react-native';
 import {useTheme} from '@react-navigation/native';
+import Colors from '../../customs/Colors';
 
 export const TextWrapper = props => {
-  const {style} = props || {};
+  const {style, warning, signUpbutton, button, tab} = props || {};
   const colors = useTheme().colors;
 
   return (
     <Text
       style={{
         ...style,
-        color: colors.text,
-        fontFamily: 'Montserrat',
+        color: warning
+          ? 'red'
+          : button
+          ? 'white'
+          : signUpbutton
+          ? Colors.darkPaleMintColor
+          : colors.text,
+        fontFamily: tab ? 'Roboto Black' : 'Montserrat',
       }}>
       {props?.children}
     </Text>

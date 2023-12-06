@@ -200,6 +200,7 @@ const ChangePassword = ({navigation}) => {
           borderRadius: 6,
         }}>
         <Text
+          button
           style={{
             color:
               oldPassword.length == 0 || newPassword.length == 0

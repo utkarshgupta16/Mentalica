@@ -31,7 +31,7 @@ import RNRestart from 'react-native-restart';
 import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
-// import Logo from '../icons/logo-black.svg';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -44,23 +44,26 @@ const LoginScreen = ({navigation}) => {
 
   const langOptions = LANG_OPTION;
 
-  const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'pandey.kaushiki@thinksys.com',
-  // );
+  // const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'pandey.kaushiki@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailWarning, setEmailWarning] = useState(false);
 
   const dispatch = useDispatch();
 
   const {darkMode} = useSelector(state => state.home);
 
   const loginHandler = async () => {
+    console.log('Call loginahandler');
     try {
-      // console.log('Auth', await Auth.currentAuthenticatedUser());
+      // console.log('Auth======>>>>>>>>', await Auth.currentAuthenticatedUser());
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
 
@@ -115,6 +118,14 @@ const LoginScreen = ({navigation}) => {
     navigation.navigate(FORGOT_PASSWORD, {email: enteredEmail});
   };
 
+  const validateEmail = email => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      );
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       {isLoading ? <Loader /> : null}
@@ -163,41 +174,71 @@ const LoginScreen = ({navigation}) => {
       </Modal>
       <View style={styles.container}>
         <View style={styles.inputContainer}>
-          <TextInput
-            textAlign={i18n.language === 'he' ? 'right' : 'left'}
-            onChangeText={handleEnteredEmail}
-            style={{
-              borderColor: darkMode ? Colors.white : Colors.black,
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-              marginBottom: 32,
-              paddingLeft: 10,
-              color: darkMode ? Colors.white : Colors.black,
-            }}
-            placeholder={t('E-mail')}
-            keyboardType="email-address"
-            value={enteredEmail}
-          />
+          <Text warning style={styles.emailWarningTxt}>
+            {emailWarning && '*Invalid email'}
+          </Text>
+          <View style={styles.inputParentCont}>
+            <TextInput
+              textAlign={i18n.language === 'he' ? 'right' : 'left'}
+              onChangeText={handleEnteredEmail}
+              style={{
+                borderColor: darkMode ? Colors.white : Colors.black,
+                width: '100%',
+                paddingBottom: 8,
 
-          <TextInput
-            textAlign={i18n.language === 'he' ? 'right' : 'left'}
-            onChangeText={handleEnteredPassword}
-            style={{
-              borderColor: darkMode ? Colors.white : Colors.black,
-              borderBottomWidth: 1,
-              paddingBottom: 8,
-              marginBottom: 32,
-              paddingLeft: 10,
-              color: darkMode ? Colors.white : Colors.black,
-            }}
-            placeholder={t('Password')}
-            secureTextEntry={true}
-            value={enteredPassword}
-          />
+                paddingLeft: 10,
+                color: darkMode ? Colors.white : Colors.black,
+              }}
+              placeholder={t('E-mail')}
+              keyboardType="email-address"
+              value={enteredEmail}
+            />
+          </View>
+          <View style={styles.inputParentCont}>
+            <TextInput
+              textAlign={i18n.language === 'he' ? 'right' : 'left'}
+              onChangeText={handleEnteredPassword}
+              style={{
+                borderColor: darkMode ? Colors.white : Colors.black,
+                width: '80%',
+                paddingBottom: 8,
+
+                paddingLeft: 10,
+
+                color: darkMode ? Colors.white : Colors.black,
+              }}
+              placeholder={t('Password')}
+              secureTextEntry={!showPassword}
+              value={enteredPassword}
+            />
+            {showPassword ? (
+              <Pressable onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons
+                  name="visibility"
+                  size={16}
+                  color={Colors.grayishBlue}
+                  style={{
+                    marginRight: 20,
+                  }}
+                />
+              </Pressable>
+            ) : (
+              <Pressable onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons
+                  name="visibility-off"
+                  size={16}
+                  color={Colors.grayishBlue}
+                  style={{
+                    marginRight: 20,
+                  }}
+                />
+              </Pressable>
+            )}
+          </View>
           <Pressable
             onPress={handleForgotPassword}
             style={styles.forgotPassword}>
-            <Text>Forgot your password?</Text>
+            <Text>Forgot password?</Text>
           </Pressable>
           <View style={styles.checkBoxSignUpContainer}>
             {/* <View style={styles.checkboxContainer}>
@@ -226,7 +267,10 @@ const LoginScreen = ({navigation}) => {
             style={styles.signUpContainer}
             title={t('Sign Up')}
             onPress={signUpClickHandler}>
-            <Text style={styles.signUpText}> {t('Sign Up')}</Text>
+            <Text signUpbutton style={styles.signUpText}>
+              {' '}
+              {t('Sign Up')}
+            </Text>
           </Pressable>
         </View>
 
@@ -290,7 +334,7 @@ const LoginScreen = ({navigation}) => {
           }
           items={langOptions}
           placeholder={t('Select Language')}
-          containerStyle={{borderBottomColor: 'gray'}}
+          containerStyle={{width: '100%'}}
           style={styles.dropdown}
         />
       </View>
@@ -343,6 +387,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginHorizontal: 20,
   },
+  inputParentCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     borderColor: Colors.black,
@@ -355,7 +406,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     marginBottom: 10,
     alignItems: 'flex-end',
-    marginTop: -20,
+    marginTop: 8,
   },
   checkBoxSignUpContainer: {
     // flexDirection: 'row',
@@ -399,13 +450,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   dropdown: {
-    // backgroundColor: Colors.black,
-
-    borderWidth: 1,
-    borderColor: 'white',
+    backgroundColor: Colors.paleMintColor,
+    borderColor: Colors.paleMintColor,
     alignSelf: 'center',
     width: widthPercentageToDP(27),
     marginTop: heightPercentageToDP(13),
+  },
+  emailWarningTxt: {
+    fontSize: 12,
   },
 });
 

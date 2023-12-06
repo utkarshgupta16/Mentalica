@@ -94,7 +94,7 @@ const EditProfile = ({route, navigation}) => {
           borderColor: 'white',
           borderRadius: 6,
         }}>
-        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>
+        <Text button style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>
           Save
         </Text>
       </TouchableOpacity>

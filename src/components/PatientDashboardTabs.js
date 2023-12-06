@@ -1,7 +1,9 @@
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import Colors from '../customs/Colors';
 import {useSelector} from 'react-redux';
+// import View from '../components/wrapperComponent/ViewWrapper.js';
+import Text from '../components/wrapperComponent/TextWrapper.js';
 
 export default function PatientDashboardTabs({
   onPress,
@@ -22,13 +24,7 @@ export default function PatientDashboardTabs({
           borderRadius: 50,
           // flex: 1
         }}>
-        <Text
-          style={[
-            styles.tabText,
-            {
-              color: darkMode ? 'white' : 'black',
-            },
-          ]}>
+        <Text tab style={styles.tabText}>
           {title}
         </Text>
       </View>

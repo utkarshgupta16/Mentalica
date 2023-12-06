@@ -411,7 +411,6 @@ const SignUp = ({navigation}) => {
     </>
   );
 
-
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -470,7 +469,7 @@ const SignUp = ({navigation}) => {
           })} */}
           {/* CHECK FOR THE TYPE: */}
 
-          <DropDownPicker
+          {/* <DropDownPicker
             nestedScrollEnabled={true}
             listMode="SCROLLVIEW"
             autoScroll={true}
@@ -484,7 +483,7 @@ const SignUp = ({navigation}) => {
             placeholder={'Select Type.'}
             style={styles.dropdown}
             containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
-          />
+          /> */}
 
           {/* CHECK FOR THE TYPE: */}
 
