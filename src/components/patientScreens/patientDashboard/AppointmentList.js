@@ -339,10 +339,10 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
                   shadowColor: darkMode ? '#fff' : 'gray',
                   shadowOffset: {
                     width: 0,
-                    height: 3,
+                    height: 1,
                   },
-                  shadowOpacity: 0.27,
-                  shadowRadius: 4.65,
+                  shadowOpacity: 0.37,
+                  shadowRadius: 5.65,
                   elevation: 3,
                   marginHorizontal: 10,
                   paddingHorizontal: 10,

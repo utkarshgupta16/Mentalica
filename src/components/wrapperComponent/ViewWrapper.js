@@ -14,7 +14,7 @@ export const ViewWrapper = props => {
         ...style,
         backgroundColor: isCard
           ? colors.card
-          : slideHorizontal
+          : darkMode && slideHorizontal
           ? Colors.darkPaleMintColor
           : darkMode
           ? colors.background

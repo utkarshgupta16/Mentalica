@@ -16,6 +16,8 @@ import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import {Auth} from 'aws-amplify';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {styles} from '../../components/mentorScreens/mentorDashboard/MentorDashboardStyle';
+import {PROFILE} from '../../utils/route';
 
 const ChangePassword = ({navigation}) => {
   const [isLoading, setLoading] = useState(false);
@@ -23,8 +25,10 @@ const ChangePassword = ({navigation}) => {
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassowrd] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [confirmPasswordWarning, setConfirmPasswordWarning] = useState(false);
 
   const {t} = useTranslation();
 
@@ -33,7 +37,13 @@ const ChangePassword = ({navigation}) => {
       {
         text: 'Update Now',
         onPress: () => {
-          updatePassword();
+          console.log(
+            'Update',
+            handleConfirmPassword(newPassword, confirmPassword),
+          );
+          handleConfirmPassword(newPassword, confirmPassword)
+            ? updatePassword()
+            : setConfirmPasswordWarning(true);
         },
       },
       {
@@ -53,8 +63,9 @@ const ChangePassword = ({navigation}) => {
       .then(data => {
         console.log('success with data: ' + data);
         Alert.alert('Successfully updated password', '', '', [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
+          {text: 'OK', onPress: () => null},
         ]);
+        navigation.navigate(PROFILE);
       })
       .catch(e => {
         console.log(e);
@@ -62,6 +73,10 @@ const ChangePassword = ({navigation}) => {
           {text: 'OK', onPress: () => console.log('OK Pressed')},
         ]);
       });
+  };
+
+  const handleConfirmPassword = (password1, password2) => {
+    return password1 === password2;
   };
 
   return (
@@ -102,7 +117,7 @@ const ChangePassword = ({navigation}) => {
             <Pressable onPress={() => setShowOldPassword(!showOldPassword)}>
               <MaterialIcons
                 name="visibility"
-                size={16}
+                size={21}
                 color={Colors.grayishBlue}
                 style={{
                   marginRight: 20,
@@ -113,7 +128,7 @@ const ChangePassword = ({navigation}) => {
             <Pressable onPress={() => setShowOldPassword(!showOldPassword)}>
               <MaterialIcons
                 name="visibility-off"
-                size={16}
+                size={21}
                 color={Colors.grayishBlue}
                 style={{
                   marginRight: 20,
@@ -148,7 +163,7 @@ const ChangePassword = ({navigation}) => {
               color: darkMode ? 'gray' : '#000',
               width: '80%',
             }}
-            placeholder={'Please Enter Old Password..'}
+            placeholder={'Please Enter new Password..'}
             value={newPassword}
             onChangeText={text => {
               setNewPassowrd(text);
@@ -159,7 +174,7 @@ const ChangePassword = ({navigation}) => {
             <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
               <MaterialIcons
                 name="visibility"
-                size={16}
+                size={21}
                 color={Colors.grayishBlue}
                 style={{
                   marginRight: 20,
@@ -170,7 +185,70 @@ const ChangePassword = ({navigation}) => {
             <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
               <MaterialIcons
                 name="visibility-off"
-                size={16}
+                size={21}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          )}
+        </View>
+      </View>
+
+      <View style={{marginBottom: 20}}>
+        <View style={{flexDirection: 'row'}}>
+          <Text
+            style={{
+              paddingBottom: 5,
+              paddingLeft: 5,
+              color: darkMode ? '#fff' : '#000',
+            }}>
+            Confirm New Password
+          </Text>
+          {confirmPasswordWarning && (
+            <Text warning style={{fontSize: 12, marginLeft: 5}}>
+              {confirmPasswordWarning && '*Password not matched'}
+            </Text>
+          )}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            borderBottomWidth: 1,
+            borderColor: 'lightgray',
+            alignItems: 'center',
+          }}>
+          <TextInput
+            style={{
+              padding: 8,
+              color: darkMode ? 'white' : '#000',
+              width: '80%',
+            }}
+            placeholder={'Please confirm new Password..'}
+            value={confirmPassword}
+            onChangeText={text => {
+              setConfirmPassword(text);
+            }}
+            secureTextEntry={!showNewPassword}
+          />
+          {showNewPassword ? (
+            <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
+              <MaterialIcons
+                name="visibility"
+                size={21}
+                color={Colors.grayishBlue}
+                style={{
+                  marginRight: 20,
+                }}
+              />
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
+              <MaterialIcons
+                name="visibility-off"
+                size={21}
                 color={Colors.grayishBlue}
                 style={{
                   marginRight: 20,

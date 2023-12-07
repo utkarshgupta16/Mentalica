@@ -77,7 +77,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await dispatch(getAllArticles());
+    await dispatch(getAllMentorList());
     setRefreshing(false);
   };
 
@@ -190,7 +190,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
         <View
           isCard
           style={{
-            margin: 10,
+            marginTop: 2,
             padding: 10,
             borderRadius: 8,
             shadowColor: darkMode ? 'white' : 'gray',
@@ -239,28 +239,6 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
             <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>Chat</Text>
           </Pressable>
         </View>
-        {/* <View style={styles.bookBtnCont}>
-          {showAppointmentBtn ? (
-            <Pressable onPress={() => setShowAppointmentBtn(false)}>
-              <View style={styles.bookBtn}>
-                <Text style={styles.bookBtnText}>Select and book slot</Text>
-              </View>
-            </Pressable>
-          ) : (
-            <View style={styles.slotListCont}>
-              <Text style={{fontSize: 15}}>Available slots: </Text>
-              <View style={styles.slotList}>
-                <FlatList
-                  data={item?.slots}
-                  renderItem={renderSlotsItem}
-                  keyExtractor={key => key}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                />
-              </View>
-            </View>
-          )}
-        </View> */}
       </View>
     );
   };

@@ -58,9 +58,7 @@ const ProfileStackNavigator = () => {
                 size={16}
                 color={darkMode ? Colors.white : Colors.grey}
               />
-              <Text style={{color: darkMode ? '#fff' : '#000'}}>
-                Change Password
-              </Text>
+              {/* <Text style={{color: darkMode ? '#fff' : '#000'}}></Text> */}
             </TouchableOpacity>
           ),
           headerShadowVisible: false,

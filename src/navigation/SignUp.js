@@ -407,6 +407,7 @@ const SignUp = ({navigation}) => {
         placeholder={'Choose How do you feel.'}
         style={styles.dropdown}
         containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        multiple={true}
       />
     </>
   );

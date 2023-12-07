@@ -429,6 +429,7 @@ const MentorSignUp = ({navigation}) => {
         setValue={props => {
           handleInput({field: 'feel', value: props()});
         }}
+        multiple={true}
         items={feelItems}
         setItems={setFeelItems}
         placeholder={'Choose How do you feel.'}

@@ -8,6 +8,7 @@ import {LOGIN} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {heightPercentageToDP} from '../utils/Responsive.js';
+import {validateEmail} from '../utils/emailValidation.js';
 
 const ForgotPassword = ({navigation}) => {
   const [userName, setUserName] = useState('');
@@ -60,14 +61,6 @@ const ForgotPassword = ({navigation}) => {
 
     !checkConfirmPassword(password, confirmPassword) &&
       setConfirmPasswordWarning(true);
-  };
-
-  const validateEmail = email => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      );
   };
 
   const checkConfirmPassword = (password1, password2) => {
@@ -201,7 +194,7 @@ const ForgotPassword = ({navigation}) => {
       <View style={styles.warningMsgCont}>
         <Text>Enter your username</Text>
         <Text warning style={styles.warningMsg}>
-          {emailWarning && '*Invalid emial'}
+          {emailWarning && '*Invalid email'}
         </Text>
       </View>
 

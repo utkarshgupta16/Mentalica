@@ -7,7 +7,6 @@ import {useSelector} from 'react-redux';
 import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
-// import {MaterialIcons} from '@expo/vector-icons';
 import convertLang, {MENTOR} from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';

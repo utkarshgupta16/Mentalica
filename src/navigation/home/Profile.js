@@ -74,7 +74,10 @@ const Profile = ({navigation}) => {
     lastName = '',
     expertise = '',
   } = profileData || {};
+  console.log('profileData =======>>>>>>>', profileData);
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
+
+  console.log('profileData experties =======>>>>>>>', feel, type);
 
   const DUMMY_ISSUES =
     type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
