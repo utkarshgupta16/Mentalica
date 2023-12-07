@@ -23,10 +23,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   bookAppointmentSlice,
   getBooksSlots,
+  getMentorAllSlots,
   getScheduledAppointmentsSlice,
   sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
+import moment from 'moment';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
   const {profileData} = useSelector(state => state.home);
@@ -45,20 +47,30 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   });
 
   const {jwtToken} = useSelector(reduxState => reduxState.auth);
+  // useEffect(() => {
+  //   (async () => {
+  //     setLoading(true);
+  //     let {payload = []} = await dispatch(
+  //       getBooksSlots({email: selectedMentorData?.email_id}),
+  //     );
+  //     let data =
+  //       payload &&
+  //       payload.map(val => {
+  //         const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
+  //         return `${startTime}-${endTime}`;
+  //       });
+  //     setBookSlots(data);
+  //     setLoading(false);
+  //   })();
+  // }, [dispatch, selectedMentorData?.email_id]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       let {payload = []} = await dispatch(
-        getBooksSlots({email: selectedMentorData?.email_id, jwtToken}),
+        getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
-      let data =
-        payload &&
-        payload.map(val => {
-          const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
-          return `${startTime}-${endTime}`;
-        });
-      setBookSlots(data);
+      setBookSlots(payload);
       setLoading(false);
     })();
   }, [dispatch, selectedMentorData?.email_id, jwtToken]);
@@ -95,21 +107,29 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               style={{marginLeft: -3}}
             />
           </Pressable>
-          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
-            Email : {selectedMentorData?.email_id}
-          </Text>
-          <Text style={{textAlign: 'left', fontSize: 18, marginVertical: 10}}>
-            Full Name :{' '}
-            {`${selectedMentorData?.firstName} ${selectedMentorData?.lastName}`}
-          </Text>
-
-          {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
+          <View
+            style={{
+              borderBottomWidth: 1,
+              paddingBottom: 5,
+              borderColor: 'lightgray',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 17,
+                fontWeight: '600',
+                color: 'gray',
+              }}>
+              Today's Available Slots
+            </Text>
+          </View>
+          {bookSlots && bookSlots.length ? (
             <FlatList
               columnWrapperStyle={{flexWrap: 'wrap'}}
               scrollEventThrottle={1900}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              data={selectedMentorData?.slots}
+              data={bookSlots}
               numColumns={2}
               // horizontal
               // showsHorizontalScrollIndicator={false}
@@ -147,20 +167,35 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       });
                     }}>
                     <View
-                      style={[
-                        styles.slotContainer,
-                        slot === selectedSlot
-                          ? styles.backgroundGreen
-                          : styles.backgroundSaffron,
-                      ]}>
-                      <Text style={styles.slotText}>{slot}</Text>
+                      style={{
+                        marginRight: 10,
+                        borderRadius: 13,
+                        paddingHorizontal: 8,
+                        paddingVertical: 3,
+                        backgroundColor:
+                          slot == selectedSlot ? 'green' : 'gray',
+                        marginBottom: 10,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                        }}>
+                        {shwSlot || ''}
+                      </Text>
                     </View>
                   </TouchableOpacity>
                 );
               }}
             />
           ) : (
-            <View style={styles.bookSlotContainer} />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text>{`No Slots Available to Book`}</Text>
+            </View>
           )}
           {selectedSlot ? (
             <Pressable
@@ -178,8 +213,15 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       onPress: async () => {
                         try {
                           setLoading(true);
+                          const {patientEmailId, patientName, ...payload} =
+                            state;
                           const resp = await dispatch(
-                            bookAppointmentSlice({state, jwtToken}),
+                            bookAppointmentSlice({
+                              ...payload,
+                              mentorEmailId: selectedMentorData.emailId,
+                              mentorName: selectedMentorData.firstName,
+                              date: moment().format('YYYY-MM-DD'),
+                            }),
                           );
                           close && close();
                           setLoading(false);

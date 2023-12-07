@@ -15,12 +15,13 @@ import {
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
 import convertLang, {MENTOR} from '../../../utils/Strings';
+import {useIsFocused} from '@react-navigation/native';
 import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-import Shimmer from '../../Shimmer.js';
-import {useIsFocused} from '@react-navigation/native';
+import ContactsScreen from '../../../screens/ContactScreen';
+
 const MentorDashboard = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -35,9 +36,10 @@ const MentorDashboard = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const [refreshing, onRefresh] = useState(false);
-
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
+  const [selectedDay, setDay] = useState(new Date());
+  // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [isLoading, setLoading] = useState(false);
@@ -73,7 +75,6 @@ const MentorDashboard = ({navigation}) => {
       if (!formattedAppointments[date]) {
         formattedAppointments[date] = [];
       }
-
       formattedAppointments[date].push({
         start: setDateTime(appointment.slots[0].startTime),
         end: setDateTime(appointment.slots[0].endTime),
@@ -81,6 +82,40 @@ const MentorDashboard = ({navigation}) => {
         // Other appointment data
       });
     });
+    return formattedAppointments;
+  };
+
+  const updateData = async date => {
+    let res = await dispatch(
+      getScheduledAppointmentsSlice({date: moment(date).format('YYYY-MM-DD')}),
+    );
+    const appointments = res.payload;
+    const newDate = new Date(date);
+    const formattedAppointments = {};
+    appointments &&
+      appointments.forEach(appointment => {
+        const date =
+          newDate?.getFullYear() +
+          '-' +
+          `${newDate?.getMonth() + 1}` +
+          '-' +
+          `${
+            newDate?.getDate() < 10
+              ? `0${newDate?.getDate()}`
+              : newDate?.getDate()
+          }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+        if (!formattedAppointments[date]) {
+          formattedAppointments[date] = [];
+        }
+
+        formattedAppointments[date].push({
+          start: setDateTime(appointment.slots[0].startTime),
+          end: setDateTime(appointment.slots[0].endTime),
+          ...appointment,
+          // Other appointment data
+        });
+      });
+    // });
     return formattedAppointments;
   };
 
@@ -101,21 +136,21 @@ const MentorDashboard = ({navigation}) => {
   //   }, 5000);
   // }, []);
 
-  const updateData = async () => {
-    let res = await dispatch(
-      getScheduledAppointmentsSlice({
-        email,
-        fieldName: MENTOR_EMAIL_ID,
-      }),
-    );
-    const appointments = res.payload;
-    const formattedAppointments = formatSheduleAppointmentData(appointments);
-    setAppointmentList(formattedAppointments);
-  };
+  // const updateData = async () => {
+  //   let res = await dispatch(
+  //     getScheduledAppointmentsSlice({
+  //       email,
+  //       fieldName: MENTOR_EMAIL_ID,
+  //     }),
+  //   );
+  //   const appointments = res.payload;
+  //   const formattedAppointments = formatSheduleAppointmentData(appointments);
+  //   setAppointmentList(formattedAppointments);
+  // };
 
   useEffect(() => {
     (async () => {
-      updateData();
+      updateData(new Date());
     })();
   }, [dispatch, email, isFocus]);
 
@@ -144,7 +179,7 @@ const MentorDashboard = ({navigation}) => {
             userName: data?.mentor_email_id,
           }),
         );
-        const token = payload?.token;
+        const token = payload?.accessToken;
         setProps({
           ...props,
           token,
@@ -186,7 +221,7 @@ const MentorDashboard = ({navigation}) => {
             refreshing={refreshing}
             onRefresh={async () => {
               onRefresh(true);
-              await updateData();
+              await updateData(selectedDay);
               onRefresh(false);
             }}
           />
@@ -205,22 +240,33 @@ const MentorDashboard = ({navigation}) => {
           reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
         }}
         // key={darkMode}
+        onDayPress={async ({dateString}) => {
+          setLoading(true);
+          await updateData(dateString);
+          setLoading(false);
+          setDay(dateString);
+        }}
         scrollEnabled
         showOnlySelectedDayItems
         showClosingKnob={true}
         items={appointmentList}
-        renderEmptyData={() => (
-          <Pressable
-            onPress={async () => {
-              setLoading(true);
-              await updateData();
-              setLoading(false);
-            }}
-            style={styles.reloadButton}>
-            <Text style={styles.reloadText}>{RELOAD}</Text>
-            <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
-          </Pressable>
-        )}
+        renderEmptyData={() => {
+          if (isLoading) {
+            return null;
+          }
+          return (
+            <Pressable
+              onPress={async () => {
+                setLoading(true);
+                await updateData(selectedDay);
+                setLoading(false);
+              }}
+              style={styles.reloadButton}>
+              <Text style={styles.reloadText}>{RELOAD}</Text>
+              <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
+            </Pressable>
+          );
+        }}
         renderItem={item => {
           let name = type == MENTOR ? item?.patientName : item?.mentorName;
           return (
@@ -267,14 +313,7 @@ const MentorDashboard = ({navigation}) => {
                   </Text>
                 </View>
                 <View style={styles.appointmentDetails}>
-                  {/* <Shimmer
-                    pauseDuration={400}
-                    direction={'right'}
-                    autoRun={true}
-                    style={styles.mentorTextStyle}
-                    visible={shimmerVisible}> */}
                   <Text style={styles.mentorTextStyle}>{name}</Text>
-                  {/* </Shimmer> */}
                 </View>
               </View>
             </TouchableOpacity>

@@ -12,6 +12,7 @@ import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
 import ArticlesList from './ArticlesList.js';
 import {Auth} from 'aws-amplify';
+import ContactsScreen from '../../../screens/ContactScreen';
 
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();
@@ -54,7 +55,12 @@ const PatientDashboard = ({navigation}) => {
         {NO_DATA_FOUND}
       </Text>
     ),
-    [MENTORS_LIST]: <MentorsList handleShadowVisible={handleShadowVisible} />,
+    [MENTORS_LIST]: (
+      <MentorsList
+        handleShadowVisible={handleShadowVisible}
+        navigation={navigation}
+      />
+    ),
   };
   const {email, type} = useSelector(state => state.auth);
   const {darkMode, profileData = {}} = useSelector(state => state.home);

@@ -21,10 +21,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, getType, getAccessToken} from '../redux/AuthSlice';
 import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
-import {setAttributes} from '../redux/HomeSlice';
+import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
-import {getCurrentUserInfo} from '../AWS/AWSConfiguration';
+import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
 import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
@@ -43,11 +43,19 @@ const LoginScreen = ({navigation}) => {
   );
 
   const langOptions = LANG_OPTION;
-
-  // const [enteredEmail, setEnteredEmail] = useState('patel.sonu@thinksys.com');
-  const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
-  );
+  // guptagaurav9566+1@gmail.com
+  // bhandari.tribhuwan@thinksys.com
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'bhandari.tribhuwan@thinksys.com',
+  // );
+  // patel.sonu@thinksys.com
+  //pandey.kaushiki@thinksys.com
+  //'gauravatlive+3@gmail.com' //patient
+  //'gauravatlive+2@gmail.com' //mentor
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'pandey.kaushiki@thinksys.com',
+  // );
+  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -60,10 +68,19 @@ const LoginScreen = ({navigation}) => {
 
   const {darkMode} = useSelector(state => state.home);
 
+  const resendCode = async () => {
+    // console.log('enteredEmail', enteredEmail);
+    const response = await Auth.resendSignUp(enteredEmail);
+    // console.log('response:', response);
+  };
+
   const loginHandler = async () => {
-    console.log('Call loginahandler');
     try {
-      // console.log('Auth======>>>>>>>>', await Auth.currentAuthenticatedUser());
+      // console.log('Auth', await Auth.currentAuthenticatedUser());
+      // const user1 = await signIn({
+      //   username: enteredEmail,
+      //   password: enteredPassword,
+      // });
       setLoading(true);
       const user = await Auth.signIn(enteredEmail, enteredPassword);
 
@@ -82,8 +99,11 @@ const LoginScreen = ({navigation}) => {
         }),
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
+      dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
+      console.log('getCurrentUserInfo Error', err);
+
       setError(err);
       setLoading(false);
     }
@@ -103,7 +123,8 @@ const LoginScreen = ({navigation}) => {
 
   const submitCodeHandler = async () => {
     try {
-      const res = await Auth.confirmSignUp(enteredEmail, enteredCode);
+      console.log('res:', res);
+      const res = await confirmSignUp(enteredEmail, enteredCode);
       console.log('res:', res);
       setShowEnterCodeModal(false);
       setEnteredEmail('');
@@ -158,6 +179,7 @@ const LoginScreen = ({navigation}) => {
           <View style={styles.codeContainer}>
             <Text>{`${t('Enter Email')}:`}</Text>
             <TextInput
+              value={enteredEmail}
               onChangeText={text => setEnteredEmail(text)}
               style={styles.modalTextInput}
             />
@@ -280,6 +302,22 @@ const LoginScreen = ({navigation}) => {
               style={styles.signUpContainer}
               title={t('Enter Code')}
               onPress={() => {
+                setShowEnterCodeModal(true);
+              }}>
+              <Text style={styles.signUpText}>
+                {t('Confirm Verification Code')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {error ? (
+          <View style={styles.buttonContainerView}>
+            <Pressable
+              style={styles.signUpContainer}
+              title={t('Enter Code')}
+              onPress={() => {
+                resendCode();
                 setShowEnterCodeModal(true);
               }}>
               <Text style={styles.signUpText}>
@@ -452,9 +490,9 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: Colors.paleMintColor,
     borderColor: Colors.paleMintColor,
-    alignSelf: 'center',
     width: widthPercentageToDP(27),
-    marginTop: heightPercentageToDP(13),
+    marginTop: heightPercentageToDP(16),
+    alignSelf: 'flex-end',
   },
   emailWarningTxt: {
     fontSize: 12,

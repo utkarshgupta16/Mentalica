@@ -23,6 +23,8 @@ const ArticlesList = ({handleShadowVisible}) => {
     state => state.home,
   );
 
+  console.log('articleData ===>>>>>>', articleData);
+
   useEffect(() => {
     (async () => {
       if (Object.keys(articleData).length == 0) {

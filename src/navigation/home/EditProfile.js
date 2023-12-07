@@ -60,14 +60,14 @@ const EditProfile = ({route, navigation}) => {
   };
 
   const onSave = async () => {
+    const {email_id, ...fields} = state;
     try {
       setLoading(true);
       await dispatch(
         editProfileSlice({
-          jwtToken,
-          emailId: email_id,
+          // emailId: email_id,
           type: type == PATIENT ? 'patient' : 'mentor',
-          ...state,
+          ...fields,
         }),
       );
       setLoading(false);

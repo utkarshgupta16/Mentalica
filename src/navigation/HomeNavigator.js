@@ -19,10 +19,11 @@ import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
 import {
-  CHATS_SCREEN,
-  MESSAGES,
   MESSAGES_TAB_ROUTE,
   PROFILE_TAB_ROUTE,
+  CHATS_SCREENS,
+  MESSAGES,
+  CHATS_SCREEN,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
@@ -31,6 +32,27 @@ const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+const resetSubmitStackOnTabPress = ({navigation, route}) => ({
+  tabPress: e => {
+    const state = navigation.getState();
+
+    if (state) {
+      const nonTargetTabs = state.routes.filter(r => r.key !== e.target);
+
+      nonTargetTabs.forEach(tab => {
+        const tabName = tab?.name;
+        const stackKey = tab?.state?.key;
+
+        if (stackKey && tabName === MESSAGES_TAB_ROUTE) {
+          navigation.dispatch({
+            ...StackActions.popToTop(),
+            target: stackKey,
+          });
+        }
+      });
+    }
+  },
+});
 
 const renderTabTitle = (isFocused, tabName) => {
   const color = isFocused ? 'teal' : '#89B9AD';
@@ -97,7 +119,7 @@ const PatientDashboardStack = () => {
 const HomeNavigator = () => {
   const {t} = useTranslation();
 
-  const {HOME, INVOICING, MESSAGES, PROFILE, STATS} = convertLang(t);
+  const {HOME, INVOICING, PROFILE, STATS} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
   return (
@@ -147,7 +169,7 @@ const HomeNavigator = () => {
       )}
       {type === MENTOR ? (
         <Tab.Screen
-          name={t(INVOICING)}
+          name={INVOICING}
           component={Invoicing}
           options={{
             headerShown: false,
@@ -161,7 +183,7 @@ const HomeNavigator = () => {
         />
       ) : (
         <Tab.Screen
-          name={t(STATS)}
+          name={STATS}
           component={PatientStats}
           options={{
             headerShown: false,
@@ -186,6 +208,12 @@ const HomeNavigator = () => {
           },
         })}
         component={MessagesStackNavigator}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate(MESSAGES_TAB_ROUTE);
+          },
+        })}
       />
       <Tab.Screen
         options={{
@@ -211,6 +239,5 @@ const getRouteName = route => {
   }
   return 'flex';
 };
-
 
 export default HomeNavigator;

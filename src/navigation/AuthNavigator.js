@@ -4,6 +4,7 @@ import Login from './Login';
 import MentorSignUp from './SignUp';
 import {FORGOT_PASSWORD, LOGIN, MENTOR_SIGN_UP} from '../utils/route';
 import ForgotPassword from './ForgotPassword';
+import SignUp from './signUp/SignUp.js';
 
 const Auth = createNativeStackNavigator();
 
@@ -22,7 +23,7 @@ export default function AuthNavigator() {
       />
       <Auth.Screen
         name={MENTOR_SIGN_UP}
-        component={MentorSignUp}
+        component={SignUp}
         options={{header: () => false}}
       />
     </Auth.Navigator>

@@ -88,7 +88,6 @@ export default convertString = convertLang => {
     HOME_TAB_ROUTE,
     INVOICING,
     STATS,
-    STATS,
     PROFILE,
     ALL,
     APPOINTMENTS,

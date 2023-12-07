@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
 import {FIREBASE_SERVER_KEY} from '@env';
 import {Auth} from 'aws-amplify';
+import {apiMiddleware} from './service';
 
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
@@ -21,6 +22,54 @@ export const getAllMentorList = createAsyncThunk(
     var config = {
       method: 'get',
       url: endPoints.getAllMentorList,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getTwilloChatTokenSlice = createAsyncThunk(
+  'home/getTwilloChatTokenSlice',
+  async (email, {getState}) => {
+    const {email: username} = getState().auth;
+    var config = {
+      method: 'get',
+      url: `${endPoints.getTwillioChatAPI}${email || username}`,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getMentorAllSlots = createAsyncThunk(
+  'home/getMentorAllSlots',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.getMentorAvailableSlots,
+      headers: headerApi(getState),
+      data: data,
+    };
+    try {
+      const {data, status} = (await axios(config)) || {};
+      if (status === 200) {
+        return Promise.resolve(data);
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
+  },
+);
+
+export const getAllArticlesList = createAsyncThunk(
+  'home/getAllArticlesList',
+  async (data, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.getArticleList,
       headers: headerApi(getState),
     };
     try {
@@ -42,7 +91,7 @@ export const getAllArticles = createAsyncThunk(
   async (data, {getState}) => {
     var config = {
       method: 'get',
-      url: endPoints.getArticles,
+      url: endPoints.getArticleList,
       headers: headerApi(getState),
     };
     try {
@@ -81,6 +130,32 @@ export const getTwilloTokenSlice = createAsyncThunk(
   },
 );
 
+export const deleteConversationSlice = createAsyncThunk(
+  'home/deleteConversationSlice',
+  async (conversationId, {getState}) => {
+    var config = {
+      method: 'delete',
+      url: endPoints.deleteConversation,
+      headers: headerApi(getState),
+      data: {conversationId},
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const updateConversationSlice = createAsyncThunk(
+  'home/updateConversationSlice',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.updateConversation,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
 export const editProfileSlice = createAsyncThunk(
   'home/editProfileSlice',
   async (updateData, {getState}) => {
@@ -91,19 +166,7 @@ export const editProfileSlice = createAsyncThunk(
       headers: headerApi(getState),
       data: updateData,
     };
-    return axios(config)
-      .then(async response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        } else {
-          return Promise.reject(new Error('Server Error!'));
-        }
-      })
-      .catch(err => {
-        console.log('err', err);
-        return Promise.reject(new Error(err));
-      });
+    return apiMiddleware(config);
   },
 );
 
@@ -117,19 +180,8 @@ export const bookAppointmentSlice = createAsyncThunk(
       headers: headerApi(getState),
       data: bookData,
     };
-    return axios(config)
-      .then(async response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        } else {
-          return Promise.reject(new Error('Server Error!'));
-        }
-      })
-      .catch(err => {
-        console.log('err', err);
-        return Promise.reject(new Error(err));
-      });
+
+    return apiMiddleware(config);
   },
 );
 
@@ -173,56 +225,29 @@ export const getProfileSlice = createAsyncThunk(
     }
     // let token = await AsyncStorage.getItem('token');
     var config = {
-      method: 'post',
-      url:
-        type === PATIENT
-          ? endPoints.getPatientProfile
-          : endPoints.getMentorProfile,
+      method: 'get',
+      url: endPoints.getProfile,
       headers: headerApi(getState),
-      data: {emailId: email},
+      // data: {emailId: email},
     };
-    return axios(config)
-      .then(async response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        } else {
-          return Promise.reject(new Error('Server Error!'));
-        }
-      })
-      .catch(err => {
-        console.log('err', err);
-        return Promise.reject(new Error(err));
-      });
+    return apiMiddleware(config);
   },
 );
 
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
-  async ({email, fieldName = 'mentorEmailId'}, {getState}) => {
+  async (data, {getState}) => {
     // let token = await AsyncStorage.getItem('token');
-    if (!email) {
-      return;
-    }
+    // if (!email) {
+    //   return;
+    // }
     var config = {
       method: 'post',
       url: endPoints.getScheduledAppointments,
       headers: headerApi(getState),
-      data: {[fieldName]: email},
+      data: data,
     };
-    return axios(config)
-      .then(async response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        } else {
-          return Promise.reject(new Error('Server Error!'));
-        }
-      })
-      .catch(err => {
-        console.log('err', err);
-        return Promise.reject(new Error(err));
-      });
+    return apiMiddleware(config);
   },
 );
 
@@ -239,19 +264,7 @@ export const getBooksSlots = createAsyncThunk(
       headers: headerApi(getState),
       data: {mentorEmailId: email},
     };
-    return axios(config)
-      .then(async response => {
-        const {data, status} = response;
-        if (status === 200) {
-          return Promise.resolve(data);
-        } else {
-          return Promise.reject(new Error('Server Error!'));
-        }
-      })
-      .catch(err => {
-        console.log('err', err);
-        return Promise.reject(new Error(err));
-      });
+    return apiMiddleware(config);
   },
 );
 
@@ -269,6 +282,9 @@ const initialState = {
 
   isMentorsDataLoading: false,
   mentorsData: [],
+  channels: [],
+  chatToken: '',
+  isChatTokenLoading: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -282,6 +298,9 @@ const HomeSlice = createSlice({
     },
 
     updateOnLogout: (state, action) => initialState,
+    updateChannels: (state, action) => {
+      state.channels = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(getProfileSlice.pending, state => {
@@ -350,8 +369,20 @@ const HomeSlice = createSlice({
       state.isEditProfileLoading = false;
       state.profileData = state.profileData?.Items[0];
     });
+    builder.addCase(getTwilloChatTokenSlice.pending, state => {
+      state.isChatTokenLoading = true;
+    });
+    builder.addCase(getTwilloChatTokenSlice.fulfilled, (state, action) => {
+      state.isChatTokenLoading = false;
+      state.chatToken = action?.payload?.accessToken;
+    });
+    builder.addCase(getTwilloChatTokenSlice.rejected, (state, action) => {
+      state.isChatTokenLoading = false;
+      state.chatToken = '';
+    });
   },
 });
 
-export const {setAttributes, changeTheme, updateOnLogout} = HomeSlice.actions;
+export const {setAttributes, updateChannels, changeTheme, updateOnLogout} =
+  HomeSlice.actions;
 export default HomeSlice.reducer;

@@ -18,24 +18,31 @@ import {
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllMentorList} from '../../redux/HomeSlice';
+import {getAllMentorList, getTwilloChatTokenSlice} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
 import Colors from '../../customs/Colors';
 import ScreenLoading from '../ScreenLoading';
 import RenderHorizontalData from './RenderHorizontalData.js';
+import {Client, User} from '@twilio/conversations';
+import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
+import {TwilioService} from '../../screens/Twillio/ConversationService';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
 const lightBlack = '#45474B';
 
-const MentorsList = ({handleShadowVisible}) => {
+const MentorsList = ({navigation, handleShadowVisible}) => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
-  const [isRefreshing, setIsrefreshing] = useState(false);
+  const {email: username} = useSelector(state => state.auth);
+  const profileData = useSelector(state => state.home.profileData);
+  const [isLoading, setLoading] = useState(true);
+  const [allMentors, setAllMentors] = useState([]);
   const [modifiedData, setModifiedData] = useState([]);
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
+  const [isRefreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
   const {
@@ -54,54 +61,10 @@ const MentorsList = ({handleShadowVisible}) => {
     })();
   }, [dispatch]);
 
-  const onRefresh = async () => {
-    setIsrefreshing(true);
-    await dispatch(getAllMentorList());
-    setIsrefreshing(false);
+  const getTokenNew = async username => {
+    let {payload} = await dispatch(getTwilloChatTokenSlice(username));
+    return payload?.accessToken;
   };
-
-  // const renderExperties = ({data, label}) => {
-  //   return (
-  //     <View style={{flexDirection: 'row', flex: 1}}>
-  //       <Text style={styles.expertiesText}>{`${label} :`}</Text>
-  //       {data && data.length ? (
-  //         <FlatList
-  //           data={data}
-  //           style={{flex: 0.8}}
-  //           // horizontal
-  //           // numColumns={3}
-  //           // columnWrapperStyle={{flexWrap: 'wrap'}}
-  //           scrollEventThrottle={1900}
-  //           showsHorizontalScrollIndicator={false}
-  //           renderItem={({item, index}) => {
-  //             return (
-  //               <View
-  //                 key={index}
-  //                 style={{
-  //                   marginRight: 10,
-  //                   borderRadius: 13,
-  //                   paddingHorizontal: 8,
-  //                   paddingVertical: 3,
-  //                   backgroundColor: '#eab676',
-  //                   marginBottom: 10,
-  //                 }}>
-  //                 <Text
-  //                   style={{
-  //                     color: Colors.black,
-  //                     fontSize: 14,
-  //                     fontWeight: '300',
-  //                     textAlign: 'center',
-  //                   }}>
-  //                   {item?.charAt(0).toUpperCase() + item?.slice(1)}
-  //                 </Text>
-  //               </View>
-  //             );
-  //           }}
-  //         />
-  //       ) : null}
-  //     </View>
-  //   );
-  // };
 
   const handleOnScroll = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
@@ -112,24 +75,125 @@ const MentorsList = ({handleShadowVisible}) => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(getAllArticles());
+    setRefreshing(false);
+  };
+
+  const createNewConversation = async mentorData => {
+    setLoading(true);
+    getTokenNew(username)
+      .then(token => TwilioService.getInstance().getChatClient(token))
+      .then(() => TwilioService.getInstance().addTokenListener(getTokenNew))
+      .then(client => {
+        client
+          .getUser(mentorData?.emailId)
+          .then(res => {
+            client
+              .createConversation({
+                friendlyName: `${mentorData?.emailId}-${username}`,
+                attributes: {
+                  participants: [
+                    {
+                      identity: username,
+                      username: `${profileData?.firstName} ${profileData?.lastName}`,
+                    },
+                    {
+                      identity: mentorData?.emailId,
+                      username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                    },
+                  ],
+                },
+              })
+              .then(async channel => {
+                channel.join().then(async () => {
+                  await channel.setAllMessagesUnread();
+                  channel.add(mentorData?.emailId).then(() => {
+                    setLoading(false);
+                    navigation.navigate(MESSAGES_TAB_ROUTE, {
+                      screen: CHAT_ROOM_SCREEN,
+                      params: {
+                        channelId: channel?.sid,
+                        identity: username,
+                        otherUser: {
+                          username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                        },
+                      },
+                    });
+                  });
+                });
+              })
+              .catch(error => {
+                console.log(error);
+                setLoading(false);
+              });
+          })
+          .catch(err => {
+            setLoading(false);
+            console.log('Error=============', err);
+          });
+      });
+
+    return;
+  };
+
+  const renderExperties = ({data, label}) => {
+    return (
+      <View isCard style={{flexDirection: 'row', flex: 1}}>
+        <Text style={styles.expertiesText}>{`${label} :`}</Text>
+        {data && data.length ? (
+          <FlatList
+            data={data}
+            style={{flex: 1}}
+            horizontal
+            // numColumns={3}
+            // columnWrapperStyle={{flexWrap: 'wrap'}}
+            // scrollEventThrottle={1900}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => {
+              return (
+                <View
+                  slideHorizontal
+                  key={index}
+                  style={{
+                    marginRight: 10,
+                    borderRadius: 13,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    backgroundColor: Colors.saffron,
+                    marginBottom: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 14,
+                      fontWeight: '500',
+                      textAlign: 'center',
+                    }}>
+                    {item?.charAt(0).toUpperCase() + item?.slice(1)}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        ) : null}
+      </View>
+    );
+  };
+
   const renderItem = ({item, index}) => {
     const expertiseArr = item?.expertise?.split(',') || [];
     const languageArr = item?.language?.split(',') || [];
     return (
-      <Pressable
-        key={index}
-        onPress={() => {
-          setMentor(item);
-          setShowDetails(!showDetails);
-        }}
-        style={styles.flatListContainer}>
+      <View key={index} style={styles.flatListContainer}>
         <View
-          isCard={true}
+          isCard
           style={{
-            marginTop: 10,
+            margin: 10,
             padding: 10,
-            borderRadius: 10,
-            shadowColor: darkMode ? 'white' : Colors.darkPaleMintColor,
+            borderRadius: 8,
+            shadowColor: darkMode ? 'white' : 'gray',
             shadowOffset: {
               width: 0,
               height: 1,
@@ -139,13 +203,18 @@ const MentorsList = ({handleShadowVisible}) => {
             elevation: 3,
             backgroundColor: '#fff',
           }}>
-          <View isCard={true} style={styles.imageAndNameCont}>
+          <Pressable
+            onPress={async () => {
+              setMentor(item);
+              setShowDetails(!showDetails);
+            }}
+            style={styles.imageAndNameCont}>
             <Image
               source={require('../../icons/doctor.jpg')}
               style={styles.profilePic}
             />
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
-            <View isCard={true}>
+            <View isCard>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
                 {`${item?.firstName} ${item?.lastName}`}
               </Text>
@@ -157,22 +226,42 @@ const MentorsList = ({handleShadowVisible}) => {
                 <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
               </View>
             </View>
-          </View>
-          {/* {renderExperties({data: expertiseArr, label: 'Experties'})}
-          {renderExperties({data: languageArr, label: 'Speaks'})} */}
-
-          <RenderHorizontalData
-            styles={styles}
-            data={expertiseArr}
-            label={'Expertis'}
-          />
-          <RenderHorizontalData
-            styles={styles}
-            data={languageArr}
-            label={'Label'}
-          />
+          </Pressable>
+          {renderExperties({data: expertiseArr, label: 'Experties'})}
+          {renderExperties({data: languageArr, label: 'Speaks'})}
+          <Pressable
+            style={{flexDirection: 'row', alignItems: 'center'}}
+            onPress={() => createNewConversation(item)}>
+            <Image
+              source={require('../../icons/chat.png')}
+              style={{width: 30, height: 30, objectFit: 'contain'}}
+            />
+            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>Chat</Text>
+          </Pressable>
         </View>
-      </Pressable>
+        {/* <View style={styles.bookBtnCont}>
+          {showAppointmentBtn ? (
+            <Pressable onPress={() => setShowAppointmentBtn(false)}>
+              <View style={styles.bookBtn}>
+                <Text style={styles.bookBtnText}>Select and book slot</Text>
+              </View>
+            </Pressable>
+          ) : (
+            <View style={styles.slotListCont}>
+              <Text style={{fontSize: 15}}>Available slots: </Text>
+              <View style={styles.slotList}>
+                <FlatList
+                  data={item?.slots}
+                  renderItem={renderSlotsItem}
+                  keyExtractor={key => key}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
+            </View>
+          )}
+        </View> */}
+      </View>
     );
   };
 
