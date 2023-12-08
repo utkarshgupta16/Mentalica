@@ -77,9 +77,7 @@ const LoginScreen = ({navigation}) => {
   const {darkMode} = useSelector(state => state.home);
 
   const resendCode = async () => {
-    // console.log('enteredEmail', enteredEmail);
     const response = await Auth.resendSignUp(enteredEmail);
-    // console.log('response:', response);
   };
 
   const loginHandler = async () => {
@@ -114,7 +112,6 @@ const LoginScreen = ({navigation}) => {
       dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
-      console.log('getCurrentUserInfo Error', err);
       setError(err);
       setLoading(false);
       setWrongCredentials(true);
@@ -135,9 +132,7 @@ const LoginScreen = ({navigation}) => {
 
   const submitCodeHandler = async () => {
     try {
-      console.log('res:', res);
-      const res = await confirmSignUp(enteredEmail, enteredCode);
-      console.log('res:', res);
+      await confirmSignUp(enteredEmail, enteredCode);
       setShowEnterCodeModal(false);
       setEnteredEmail('');
       setError('');
@@ -335,7 +330,6 @@ const LoginScreen = ({navigation}) => {
           </View>
         ) : null} */}
         </View>
-
         <DropDownPicker
           dropDownDirection="TOP"
           listMode="SCROLLVIEW"

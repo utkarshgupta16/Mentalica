@@ -2,9 +2,10 @@ import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import Colors from './Colors';
 import backArrow from '../icons/backArrowS.png';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // import BackArrow from '../icons/leftArrow.svg';
 
-const CustomHeader = ({showBackArrow, title, navigation}) => {
+const CustomHeader = ({showBackArrow, title, navigation, isShadowVisible}) => {
   return (
     <View style={styles.mainContainer}>
       {showBackArrow ? (
@@ -12,7 +13,31 @@ const CustomHeader = ({showBackArrow, title, navigation}) => {
           <Image source={backArrow} style={styles.backArrowIcon} />
         </Pressable>
       ) : null}
-      <Text style={styles.titleText}>{title}</Text>
+      {isShadowVisible && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%',
+            paddingBottom: 10,
+            shadowColor: 'black',
+            shadowOffset: isShadowVisible && {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: isShadowVisible ? 1 : 0,
+            shadowRadius: isShadowVisible ? 3 : 0,
+            elevation: isShadowVisible ? 4 : 0,
+          }}>
+          <Text style={styles.createAccountTxt}>Create Account </Text>
+          <MaterialIcons
+            name="person-add"
+            size={30}
+            color={Colors.white}
+            style={styles.icon}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -29,7 +54,8 @@ const styles = StyleSheet.create({
   backArrowIcon: {
     height: 24,
     width: 24,
-    marginRight: '37%',
+    marginRight: '-10%',
+    marginLeft: '16%',
   },
   titleText: {
     color: Colors.white,
@@ -37,5 +63,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     // flex: 1,
     // textAlign: 'center',
+  },
+  createAccountTxt: {
+    fontSize: 25,
+    color: Colors.white,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    marginTop: 10,
+  },
+  icon: {
+    marginTop: 10,
   },
 });

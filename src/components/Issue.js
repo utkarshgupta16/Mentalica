@@ -3,7 +3,6 @@ import {Pressable, StyleSheet, Text} from 'react-native';
 import Colors from '../customs/Colors';
 
 const Issue = ({title}) => {
-  console.log('title ======>>>>>>>>>', title);
   return (
     <Pressable style={styles.mainContainer}>
       <Text style={styles.titleText}>

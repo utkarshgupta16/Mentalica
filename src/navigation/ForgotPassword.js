@@ -25,12 +25,10 @@ const ForgotPassword = ({navigation}) => {
     validateEmail(userName) &&
       Auth.forgotPassword(userName)
         .then(data => {
-          console.log('Forgot password data ==========>>>>>>>>>', data),
-            setVisible(true);
+          setVisible(true);
           setEmailWarning(false);
         })
         .catch(err => {
-          console.log('Forgot password error ===============>>>>>>>>>>', err);
           Alert.alert('Alert', 'User not found', [
             {
               text: 'Ok',
@@ -51,11 +49,9 @@ const ForgotPassword = ({navigation}) => {
             navigation.navigate(LOGIN);
           } else {
             setCodeWarning(true);
-            console.log('Error ==============()()()()()>>>>>>>>>>>>>>');
           }
         })
         .catch(err => {
-          console.log('Error ==============>>>>>>>>>>>>>>', err);
           setCodeWarning(true);
         });
 

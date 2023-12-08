@@ -45,7 +45,23 @@ export default function AuthNavigator() {
       <Auth.Screen
         name={MENTOR_SIGN_UP}
         component={SignUp}
-        options={{header: () => false}}
+        options={({navigation}) => ({
+          title: '',
+          headerShown: false,
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{flexDirection: 'row'}}>
+              <MaterialIcons
+                name="arrow-back-ios"
+                size={16}
+                color={darkMode ? Colors.white : Colors.grey}
+              />
+              <Text style={{color: darkMode ? '#fff' : '#000'}}>Login</Text>
+            </TouchableOpacity>
+          ),
+          headerShadowVisible: true,
+        })}
       />
     </Auth.Navigator>
   );

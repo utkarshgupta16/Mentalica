@@ -6,10 +6,11 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  View,
+  Text,
 } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 import CustomHeader from '../../customs/Header';
 import Colors from '../../customs/Colors';
 import Button from '../../components/Button';
@@ -80,17 +81,19 @@ const MentorSignUp = ({navigation}) => {
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
+  const [emailWarning, setEmailWarning] = useState(false);
+  const [compalsaryField, setCompalsaryField] = useState(false);
   const [slots, addSlots] = useState([]);
   const [state, setState] = useState({
-    firstName: 'Sonu Patel',
-    lastName: 'Patient',
-    city: 'Varanasi',
-    temporaryCity: 'Varanasi',
-    phoneNumber: '1234567890',
-    emailId: 'patel.sonu@thinksys.com',
+    firstName: '',
+    lastName: '',
+    city: '',
+    temporaryCity: '',
+    phoneNumber: '',
+    emailId: '',
     password: 'Password@123',
     confirmPassword: 'Password@123',
-    age: "29",
+    age: '',
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -100,16 +103,30 @@ const MentorSignUp = ({navigation}) => {
     // PATIENT:
     // type: PATIENT,
 
-    gender: 'male',
-    duty: 'soldier',
-    feel: 'anxiety',
+    gender: '',
+    duty: '',
+    feel: '',
   });
 
   const handleInput = ({field, value}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
 
+  const [isShadowVisible, setIsShadowVisible] = useState(false);
   const [specialistItems, setSpecialistItems] = useState(specialities);
+
+  const handleShadowVisible = isShadowVisible => {
+    setIsShadowVisible(isShadowVisible);
+  };
+
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
 
   const convertString = (arrData = []) => {
     let expertiseUpdated = '';
@@ -124,7 +141,24 @@ const MentorSignUp = ({navigation}) => {
     return expertiseUpdated;
   };
 
+  const validateEmail = email => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      );
+  };
+
   const handleSignup = async () => {
+    if (!validateEmail(state.emailId == '')) {
+      setEmailWarning(true);
+    }
+    if (validateInputs()) {
+      setCompalsaryField(true);
+      console.log('Please enter');
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -229,14 +263,32 @@ const MentorSignUp = ({navigation}) => {
 
   const renderInput = ({field, placeholder, keyBoardType, ...props}) => {
     return (
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        value={state[field]}
-        keyboardType={keyBoardType || 'default'}
-        {...props}
-        onChangeText={text => handleInput({value: text, field})}
-      />
+      <View style={{marginBottom: 10}}>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.inputLable}>
+            {' '}
+            {field ? convertFieldStringToCapitalized(field) : ''}
+          </Text>
+          <Text style={{color: 'red', fontSize: 17}}>
+            {!state[field] && compalsaryField
+              ? ' *'
+              : field == 'emailId' &&
+                compalsaryField &&
+                !validateEmail(state.emailId)
+              ? ' *Invalid email'
+              : null}
+          </Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder={`Enter ${placeholder}`}
+          placeholderTextColor={Colors.grayishBlue}
+          value={state[field]}
+          keyboardType={keyBoardType || 'default'}
+          {...props}
+          onChangeText={text => handleInput({value: text, field})}
+        />
+      </View>
     );
   };
 
@@ -323,6 +375,12 @@ const MentorSignUp = ({navigation}) => {
     console.log('response:', response);
   };
 
+  const convertFieldStringToCapitalized = str => {
+    let result = str.charAt(0).toUpperCase() + str.slice(1);
+    result = result.replace(/([A-Z])/g, ' $1');
+    return result;
+  };
+
   const mentorExtras = (
     <>
       <DropDownPicker
@@ -346,7 +404,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Speciality.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
         dropDownDirection="TOP"
@@ -368,7 +426,7 @@ const MentorSignUp = ({navigation}) => {
         placeholder={'Select Language.'}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       {renderInput({
         placeholder: 'Fees for 30 Mins',
@@ -397,7 +455,8 @@ const MentorSignUp = ({navigation}) => {
         items={genderItems}
         setItems={setGenderItems}
         placeholder={'Choose gender.'}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        colo
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
       />
       <DropDownPicker
@@ -415,7 +474,7 @@ const MentorSignUp = ({navigation}) => {
         setItems={setDutyItems}
         placeholder={'Choose Profession.'}
         style={styles.dropdown}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
 
       <DropDownPicker
@@ -429,30 +488,62 @@ const MentorSignUp = ({navigation}) => {
         setValue={props => {
           handleInput({field: 'feel', value: props()});
         }}
-        multiple={true}
         items={feelItems}
         setItems={setFeelItems}
         placeholder={'Choose How do you feel.'}
         style={styles.dropdown}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
     </>
   );
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
-        title={'Sign Up'}
+        isShadowVisible={isShadowVisible}
+        title={''}
         showBackArrow={true}
         navigation={navigation}
       />
+      {!isShadowVisible && (
+        <View
+          style={{
+            borderColor: Colors.white,
+            borderBottomWidth: 0.2,
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%',
+            paddingBottom: 10,
+            shadowColor: 'black',
+            shadowOffset: isShadowVisible && {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: isShadowVisible ? 1 : 0,
+            shadowRadius: isShadowVisible ? 3 : 0,
+            elevation: isShadowVisible ? 4 : 0,
+          }}>
+          <Text style={styles.createAccountTxt}>Create Account </Text>
+          <MaterialIcons
+            name="person-add"
+            size={30}
+            color={Colors.white}
+            style={styles.icon}
+          />
+        </View>
+      )}
+
       {/* <ScrollView
         style={{flex: 1}}
         contentContainerStyle={{flex: 1, flexGrow: 1}}
         nestedScrollEnabled={true}> */}
+      {/* {!isShadowVisible && ( */}
+
+      {/* )} */}
       <KeyboardAwareScrollView
+        onScroll={handleOnScroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        style={{flex: 1, backgroundColor: Colors.paleMintColor}}
+        style={{flex: 1, backgroundColor: Colors.darkPaleMintColor}}
         contentContainerStyle={{flexGrow: 1}}>
         {/* =================================MODAL START================================= */}
         <EnterOtpModal
@@ -510,7 +601,7 @@ const MentorSignUp = ({navigation}) => {
             setItems={setTypeItems}
             placeholder={'Select Type.'}
             style={styles.dropdown}
-            containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+            // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
           />
 
           {/* CHECK FOR THE TYPE: */}
@@ -538,12 +629,7 @@ const MentorSignUp = ({navigation}) => {
         {/* </ScrollView> */}
       </KeyboardAwareScrollView>
       <View style={styles.signUpButtonContainer}>
-        <Button
-          disabled={validateInputs()}
-          title="Sign Up"
-          onPress={handleSignup}
-          secureTextEntry={true}
-        />
+        <Button title="Sign Up" onPress={handleSignup} secureTextEntry={true} />
       </View>
       {isLoading ? <Loader /> : null}
       {showSlots ? (
@@ -562,8 +648,21 @@ const MentorSignUp = ({navigation}) => {
 export default MentorSignUp;
 
 const styles = StyleSheet.create({
+  headreView: {
+    width: '100%',
+    borderBottomWidth: 0.2,
+    borderColor: Colors.white,
+    paddingBottom: 10,
+  },
+  createAccountTxt: {
+    fontSize: 25,
+    color: Colors.white,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    marginHorizontal: 20,
+  },
   container: {
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.darkPaleMintColor,
     flex: 1,
   },
   modalContainer: {
@@ -624,23 +723,36 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     // flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: 25,
+    paddingTop: 15,
     justifyContent: 'center',
-    backgroundColor: Colors.paleMintColor,
+    // backgroundColor: Colors.paleMintColor,
     paddingBottom: 10,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderBottomWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 15,
     paddingLeft: 10,
+
+    fontSize: 15,
+
+    // borderWidth: 1,
+    // borderColor: Colors.,
+    backgroundColor: '#fff',
+  },
+  inputLable: {
+    color: '#fff',
+    fontFamily: 'Montserrat',
+    marginBottom: 10,
+    marginLeft: 5,
+    fontSize: 16,
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    marginBottom: 25,
+    borderColor: Colors.white,
+    backgroundColor: Colors.white,
+    color: Colors.white,
   },
   passwordNotMatchText: {
     color: Colors.red,
@@ -648,7 +760,7 @@ const styles = StyleSheet.create({
   slotContainer: {
     paddingVertical: 7,
     borderStyle: 'dashed',
-    borderColor: '#33A3DC',
+    borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 4,
     alignItems: 'center',
@@ -657,10 +769,12 @@ const styles = StyleSheet.create({
   },
   slotsText: {
     fontSize: 17,
-    color: '#33A3DC',
+    color: '#fff',
     fontWeight: 'bold',
   },
   signUpButtonContainer: {
     paddingBottom: 10,
+    borderTopWidth: 0.2,
+    borderColor: '#fff',
   },
 });

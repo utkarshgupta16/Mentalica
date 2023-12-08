@@ -37,10 +37,6 @@ const ChangePassword = ({navigation}) => {
       {
         text: 'Update Now',
         onPress: () => {
-          console.log(
-            'Update',
-            handleConfirmPassword(newPassword, confirmPassword),
-          );
           handleConfirmPassword(newPassword, confirmPassword)
             ? updatePassword()
             : setConfirmPasswordWarning(true);
@@ -57,11 +53,9 @@ const ChangePassword = ({navigation}) => {
   const updatePassword = () => {
     Auth.currentAuthenticatedUser()
       .then(user => {
-        console.log('User =======>>>>>>>>>>>>>', user);
         Auth.changePassword(user, oldPassword, newPassword);
       })
       .then(data => {
-        console.log('success with data: ' + data);
         Alert.alert('Successfully updated password', '', '', [
           {text: 'OK', onPress: () => null},
         ]);
