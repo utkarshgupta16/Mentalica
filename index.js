@@ -14,6 +14,10 @@ import awsconfig from './src/aws-exports';
 // import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
+
+import {enGB, registerTranslation} from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
+
 // Register background handler
 Platform.OS == 'android' &&
   messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -29,7 +33,7 @@ Platform.OS == 'android' &&
 //   },
 // };
 
-Amplify.configure({...awsconfig,Analytics: { disabled: true } });
+Amplify.configure({...awsconfig, Analytics: {disabled: true}});
 
 let persistor = persistStore(store);
 const AppConfig = () => {
@@ -65,7 +69,7 @@ const AppConfig = () => {
       );
       console.log('newUser@@@@@@@@@@@@@@@@@', newUser);
     };
-    syncUser();
+    // syncUser();
   }, []);
 
   return (

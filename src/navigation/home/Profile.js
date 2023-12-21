@@ -36,6 +36,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
 import {changeTheme, updateOnLogout} from '../../redux/HomeSlice';
 import {Auth} from 'aws-amplify';
+import {
+  ADD_SLOTS_PROFILE_SCREEN,
+  ADD_SLOTS_SCREEN,
+  PROFILE_TAB_ROUTE,
+} from '../../utils/route.js';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -76,7 +81,7 @@ const Profile = ({navigation}) => {
   } = profileData || {};
 
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
-
+  const isProfile = true;
   const DUMMY_ISSUES =
     type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
@@ -117,7 +122,7 @@ const Profile = ({navigation}) => {
       label: "Today's Slots",
       screen: '',
       props: profileData || {},
-      onPress: () => setShowSlots(true),
+      onPress: () => navigation.navigate(ADD_SLOTS_PROFILE_SCREEN, {isProfile}),
     });
   }
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
@@ -307,15 +312,16 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
   },
   topPartContainer: {
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
     paddingTop: 15,
     borderBottomWidth: 0.2,
   },
   imageContainer: {
     borderWidth: 1,
+    borderColor: Colors.grayishBlue,
     width: 56,
     height: 56,
     borderRadius: 8,
@@ -360,7 +366,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     paddingHorizontal: 32,
     paddingTop: 16,
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
   },
   profDetailsCont: {
     marginBottom: 24,

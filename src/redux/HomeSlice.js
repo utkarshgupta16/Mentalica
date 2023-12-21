@@ -9,7 +9,7 @@ import {apiMiddleware} from './service';
 
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
-  Auth.currentUserCredentials;
+  // Auth.currentUserCredentials;
   return {
     Authorization: `Bearer ${jwtToken}`,
     'Content-Type': 'application/json',
@@ -43,12 +43,11 @@ export const getTwilloChatTokenSlice = createAsyncThunk(
 
 export const getMentorAllSlots = createAsyncThunk(
   'home/getMentorAllSlots',
-  async (data, {getState}) => {
+  async ({uniqueId}, {getState}) => {
     var config = {
-      method: 'post',
-      url: endPoints.getMentorAvailableSlots,
+      method: 'get',
+      url: `${endPoints.getMentorAvailableSlots}${uniqueId}`,
       headers: headerApi(getState),
-      data: data,
     };
     try {
       const {data, status} = (await axios(config)) || {};
@@ -234,6 +233,31 @@ export const getProfileSlice = createAsyncThunk(
   },
 );
 
+export const getSlotsSlice = createAsyncThunk(
+  'home/getSlotsSlice',
+  async (date, {getState}) => {
+    var config = {
+      method: 'get',
+      url: `${endPoints.getSlots}${date}`,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const updateSlotsSlice = createAsyncThunk(
+  'home/updateSlotsSlice',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.updateSlots,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
   async (data, {getState}) => {
@@ -267,7 +291,7 @@ export const getBooksSlots = createAsyncThunk(
     return apiMiddleware(config);
   },
 );
-
+let timestamp = Date.now();
 const initialState = {
   attributes: {},
   profileData: {},
@@ -285,6 +309,15 @@ const initialState = {
   channels: [],
   chatToken: '',
   isChatTokenLoading: false,
+  rangeDate: {
+    startDate: timestamp,
+    endDate: timestamp,
+  },
+  slots: [],
+  slotsData: [],
+  isSlotsLoading: false,
+  threeDaysSlots: [],
+  threeDaysSlotLoading: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -301,6 +334,14 @@ const HomeSlice = createSlice({
     updateChannels: (state, action) => {
       state.channels = action.payload;
     },
+
+    setRangeDate: (state, action) => {
+      state.rangeDate = action.payload;
+    },
+
+    addSlots: (state, action) => {
+      state.slots = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(getProfileSlice.pending, state => {
@@ -313,6 +354,30 @@ const HomeSlice = createSlice({
     builder.addCase(getProfileSlice.rejected, (state, action) => {
       state.isProfileLoading = false;
       state.profileData = {};
+    });
+
+    builder.addCase(getMentorAllSlots.pending, state => {
+      state.threeDaysSlotLoading = true;
+    });
+    builder.addCase(getMentorAllSlots.fulfilled, (state, action) => {
+      state.threeDaysSlotLoading = false;
+      state.threeDaysSlots = action.payload?.Items;
+    });
+    builder.addCase(getMentorAllSlots.rejected, (state, action) => {
+      state.threeDaysSlotLoading = false;
+      state.threeDaysSlots = [];
+    });
+
+    builder.addCase(getSlotsSlice.pending, state => {
+      state.isSlotsLoading = true;
+    });
+    builder.addCase(getSlotsSlice.fulfilled, (state, action) => {
+      state.isSlotsLoading = false;
+      state.slots = action.payload?.Items[0]?.slots;
+    });
+    builder.addCase(getSlotsSlice.rejected, (state, action) => {
+      state.isSlotsLoading = false;
+      state.slots = [];
     });
 
     builder.addCase(getAllArticles.pending, state => {
@@ -383,6 +448,12 @@ const HomeSlice = createSlice({
   },
 });
 
-export const {setAttributes, updateChannels, changeTheme, updateOnLogout} =
-  HomeSlice.actions;
+export const {
+  setAttributes,
+  updateChannels,
+  changeTheme,
+  updateOnLogout,
+  setRangeDate,
+  addSlots,
+} = HomeSlice.actions;
 export default HomeSlice.reducer;

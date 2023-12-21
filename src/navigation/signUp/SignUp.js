@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Platform,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TextInput,
   Text,
+  Animated,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
@@ -21,13 +22,19 @@ import {Auth} from 'aws-amplify';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
 import {specialities, languageList} from '../../utils/default';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
 import {useTranslation} from 'react-i18next';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp} from '../../utils/Responsive';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import {
+  ADD_SLOTS_SCREEN,
+  ADD_SLOTS_SIGNUP_SCREEN,
+  PROFILE_TAB_ROUTE,
+} from '../../utils/route.js';
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
@@ -83,7 +90,21 @@ const MentorSignUp = ({navigation}) => {
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [emailWarning, setEmailWarning] = useState(false);
   const [compalsaryField, setCompalsaryField] = useState(false);
-  const [slots, addSlots] = useState([]);
+  // const [slots, addSlots] = useState([]);
+  // let timestamp = Date.now();
+  // const [rangeDate, setRangeDate] = useState({
+  //   startDate: timestamp,
+  //   endDate: timestamp,
+  // });
+  const timestamp = Date.now();
+  const {
+    slots = [],
+    rangeDate = {
+      startDate: timestamp,
+      endDate: timestamp,
+    },
+  } = useSelector(state => state.home);
+
   const [state, setState] = useState({
     firstName: '',
     lastName: '',
@@ -188,7 +209,7 @@ const MentorSignUp = ({navigation}) => {
           fees,
           experience,
           language: stringLanguageUpdated,
-          slots,
+          rangeDate: {...rangeDate, slots},
         };
       } else {
         finalSignupData = {
@@ -199,47 +220,26 @@ const MentorSignUp = ({navigation}) => {
         };
       }
 
-      // const {emailId, password} = state;
-      // const attributes = {
-      //   'custom:firstName': state.firstName,
-      //   'custom:lastName': state.lastName,
-      //   'custom:city': state.city,
-      //   'custom:phoneNumber': state.phoneNumber,
-      //   'custom:temporaryCity': state.temporaryCity,
-      //   'custom:expertise': state.expertise,
-      //   'custom:type': MENTOR,
-      //   'custom:fees': state.fees,
-      //   'custom:experience': state.experience,
-      //   'custom:language': state.language,
-      // };
-
-      // const resp = await Auth.signUp({
-      //   emailId,
-      //   password,
-      //   attributes: attributes,
-      // });
       const {password, confirmPassword, ...restData} = finalSignupData;
 
-      // const resp = await signUp({
-      //   username: state.emailId,
-      //   password,
-      //   // attributes: {
-      //   //   'custom:type': typeValue,
-      //   // },
-      //   options: {
-      //     userAttributes: {
-      //       'custom:type': typeValue,
-      //     },
-      //   },
-      // });
-      const resp = await Auth.signUp({
+      await Auth.signUp({
         username: state.emailId,
-        password,
+        password: state.password,
         attributes: {
           'custom:type': typeValue,
         },
       });
-      const attRes = await dispatch(
+
+      const ddd = {
+        ...restData,
+        fcmToken: fcmToken ? fcmToken : '',
+        deviceType: Platform.OS,
+        type: typeValue,
+      };
+
+      console.log('hello -> data', ddd);
+
+      await dispatch(
         singUpSlice({
           ...restData,
           fcmToken: fcmToken ? fcmToken : '',
@@ -255,7 +255,7 @@ const MentorSignUp = ({navigation}) => {
           onPress: () => null,
         },
       ]);
-      console.log('err:', err);
+      console.log('err=====>>>>:', err);
     } finally {
       setIsLoading(false);
     }
@@ -526,24 +526,17 @@ const MentorSignUp = ({navigation}) => {
           <MaterialIcons
             name="person-add"
             size={30}
-            color={Colors.white}
+            color={Colors.black}
             style={styles.icon}
           />
         </View>
       )}
 
-      {/* <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{flex: 1, flexGrow: 1}}
-        nestedScrollEnabled={true}> */}
-      {/* {!isShadowVisible && ( */}
-
-      {/* )} */}
       <KeyboardAwareScrollView
         onScroll={handleOnScroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        style={{flex: 1, backgroundColor: Colors.darkPaleMintColor}}
+        style={{flex: 1, backgroundColor: Colors.white}}
         contentContainerStyle={{flexGrow: 1}}>
         {/* =================================MODAL START================================= */}
         <EnterOtpModal
@@ -619,7 +612,10 @@ const MentorSignUp = ({navigation}) => {
           {typeValue === MENTOR ? (
             <Pressable
               style={styles.slotContainer}
-              onPress={() => setShowSlots(!showSlots)}>
+              onPress={() => {
+                navigation.navigate(ADD_SLOTS_SIGNUP_SCREEN);
+                // setShowSlots(!showSlots);
+              }}>
               <Text style={styles.slotsText}>
                 {slots.length ? UPDATE_SLOTS : ADD_SLOTS}
               </Text>
@@ -629,18 +625,25 @@ const MentorSignUp = ({navigation}) => {
         {/* </ScrollView> */}
       </KeyboardAwareScrollView>
       <View style={styles.signUpButtonContainer}>
-        <Button title="Sign Up" onPress={handleSignup} secureTextEntry={true} />
+        <Button
+          signup
+          title="Sign Up"
+          onPress={handleSignup}
+          secureTextEntry={true}
+        />
       </View>
       {isLoading ? <Loader /> : null}
-      {showSlots ? (
+      {/* {showSlots ? (
         <AddSlotsComponent
-          setState={setSlotState}
-          state={slotState}
-          addSlots={addSlots}
-          slots={slots}
+          // setState={setSlotState}
+          // state={slotState}
+          // addSlots={addSlots}
+          // slots={slots}
+          // setRangeDate={setRangeDate}
+          // rangeDate={rangeDate}
           close={() => setShowSlots(false)}
         />
-      ) : null}
+      ) : null} */}
     </SafeAreaView>
   );
 };
@@ -656,13 +659,13 @@ const styles = StyleSheet.create({
   },
   createAccountTxt: {
     fontSize: 25,
-    color: Colors.white,
+    color: Colors.black,
     fontWeight: '600',
     fontFamily: 'Montserrat',
-    marginHorizontal: 20,
+    marginLeft: 15,
   },
   container: {
-    backgroundColor: Colors.darkPaleMintColor,
+    backgroundColor: Colors.white,
     flex: 1,
   },
   modalContainer: {
@@ -734,15 +737,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     paddingLeft: 10,
-
-    fontSize: 15,
-
-    // borderWidth: 1,
-    // borderColor: Colors.,
-    backgroundColor: '#fff',
+    fontSize: 16,
+    backgroundColor: '#d3d3d3',
   },
   inputLable: {
-    color: '#fff',
+    color: '#000',
     fontFamily: 'Montserrat',
     marginBottom: 10,
     marginLeft: 5,
@@ -750,8 +749,8 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginBottom: 25,
-    borderColor: Colors.white,
-    backgroundColor: Colors.white,
+    borderColor: '#d3d3d3',
+    backgroundColor: '#d3d3d3',
     color: Colors.white,
   },
   passwordNotMatchText: {
@@ -760,7 +759,7 @@ const styles = StyleSheet.create({
   slotContainer: {
     paddingVertical: 7,
     borderStyle: 'dashed',
-    borderColor: '#fff',
+    borderColor: '#000',
     borderWidth: 1,
     borderRadius: 4,
     alignItems: 'center',
@@ -769,12 +768,12 @@ const styles = StyleSheet.create({
   },
   slotsText: {
     fontSize: 17,
-    color: '#fff',
+    color: '#000',
     fontWeight: 'bold',
   },
   signUpButtonContainer: {
     paddingBottom: 10,
     borderTopWidth: 0.2,
-    borderColor: '#fff',
+    borderColor: '#000',
   },
 });

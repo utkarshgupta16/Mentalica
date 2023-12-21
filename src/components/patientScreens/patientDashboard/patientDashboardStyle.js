@@ -8,10 +8,8 @@ import Colors from '../../../customs/Colors';
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(2),
-    // backgroundColor: 'white',
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
     flex: 1,
-    // paddingTop: hp(2),
     position: 'relative',
   },
   helloText: {
@@ -37,7 +35,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   belowTabsContainer: {
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
     // backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
     borderRadius: 6,

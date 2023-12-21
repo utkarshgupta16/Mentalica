@@ -14,3 +14,7 @@ export const ASK_CLIENT = '"AskClient"';
 export const AV_CHAT_SCREEN="AVChatScreen"
 export const CHATS_SCREEN="Chats"
 export const FORGOT_PASSWORD = 'Forgot Password';
+export const ADD_SLOTS_SIGNUP_SCREEN = 'AddSlotsSignupScreen';
+export const ADD_SLOTS_PROFILE_SCREEN = 'AddSlotsProfileScreen';
+
+

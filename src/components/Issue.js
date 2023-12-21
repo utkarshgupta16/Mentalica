@@ -17,15 +17,24 @@ export default Issue;
 const styles = StyleSheet.create({
   mainContainer: {
     paddingHorizontal: 14,
+    marginVertical: 5,
     borderRadius: 50,
     backgroundColor: Colors.saffron,
     paddingVertical: 8,
-    marginRight: 18,
+    marginHorizontal: 5,
     marginBottom: 20,
+    shadowColor: '#cc6600',
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
   titleText: {
     fontSize: 17,
     fontWeight: '600',
-    color: Colors.dune,
+    color: Colors.primaryDarkBlue,
   },
 });

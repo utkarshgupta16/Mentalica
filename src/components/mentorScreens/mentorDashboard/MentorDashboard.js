@@ -226,8 +226,10 @@ const MentorDashboard = ({navigation}) => {
             }}
           />
         }
+        style={{borderRadius: 10}}
         theme={{
-          calendarBackground: darkMode ? '#000000' : '#ffff',
+          calendarBackground: darkMode ? '#000000' : Colors.paleMintColor,
+          dayTextColor: darkMode ? Colors.white : Colors.black,
           agendaKnobColor: '#283747',
           agendaDayTextColor: darkMode ? '#fff' : '#000',
           agendaDayNumColor: '#00adf5',

@@ -3,11 +3,16 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../../utils/Responsive';
-import {PROFILE} from '../../utils/route';
+import {
+  ADD_SLOTS_PROFILE_SCREEN,
+  ADD_SLOTS_SCREEN,
+  PROFILE,
+} from '../../utils/route';
 import Profile from './Profile';
 import EditProfile from './EditProfile';
 import {useSelector} from 'react-redux';
 import ChangePassword from './ChangePassword';
+import AddSlotsMentor from '../signUp/AddSlotsMentor';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
 const ProfileStackNavigator = () => {
@@ -57,6 +62,28 @@ const ProfileStackNavigator = () => {
                 name="arrow-back-ios"
                 size={16}
                 color={darkMode ? Colors.white : Colors.grey}
+              />
+              {/* <Text style={{color: darkMode ? '#fff' : '#000'}}></Text> */}
+            </TouchableOpacity>
+          ),
+          headerShadowVisible: false,
+        })}
+      />
+
+      <Stack.Screen
+        name={ADD_SLOTS_PROFILE_SCREEN}
+        component={AddSlotsMentor}
+        options={({navigation}) => ({
+          // headerShown: false,
+          title: '',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{flexDirection: 'row'}}>
+              <MaterialIcons
+                name="arrow-back-ios"
+                size={16}
+                color={darkMode ? Colors.white : Colors.black}
               />
               {/* <Text style={{color: darkMode ? '#fff' : '#000'}}></Text> */}
             </TouchableOpacity>

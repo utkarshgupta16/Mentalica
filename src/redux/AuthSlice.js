@@ -41,6 +41,7 @@ const initialState = {
   email: '',
   type: '',
   userToken: {},
+  jwtToken: '',
 };
 const Authslice = createSlice({
   name: 'auth',

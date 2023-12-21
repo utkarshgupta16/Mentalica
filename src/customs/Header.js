@@ -20,20 +20,20 @@ const CustomHeader = ({showBackArrow, title, navigation, isShadowVisible}) => {
             alignItems: 'center',
             width: '100%',
             paddingBottom: 10,
-            shadowColor: 'black',
-            shadowOffset: isShadowVisible && {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: isShadowVisible ? 1 : 0,
-            shadowRadius: isShadowVisible ? 3 : 0,
-            elevation: isShadowVisible ? 4 : 0,
+            // shadowColor: 'black',
+            // shadowOffset: isShadowVisible && {
+            //   width: 0,
+            //   height: 2,
+            // },
+            // shadowOpacity: isShadowVisible ? 1 : 0,
+            // shadowRadius: isShadowVisible ? 3 : 0,
+            // elevation: isShadowVisible ? 4 : 0,
           }}>
           <Text style={styles.createAccountTxt}>Create Account </Text>
           <MaterialIcons
             name="person-add"
             size={30}
-            color={Colors.white}
+            color={Colors.black}
             style={styles.icon}
           />
         </View>
@@ -46,7 +46,7 @@ export default CustomHeader;
 const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.darkPaleMintColor,
+    backgroundColor: Colors.white,
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 8,
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     width: 24,
     marginRight: '-10%',
     marginLeft: '16%',
+    tintColor: '#000',
   },
   titleText: {
     color: Colors.white,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
   },
   createAccountTxt: {
     fontSize: 25,
-    color: Colors.white,
+    color: Colors.black,
     fontWeight: '600',
     fontFamily: 'Montserrat',
     marginTop: 10,

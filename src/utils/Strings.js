@@ -106,3 +106,10 @@ export default convertString = convertLang => {
 
 export const PATIENT = 'Patient';
 export const MENTOR = 'Mentor';
+export const FROM = 'From';
+export const TO = 'To';
+export const APPLY = 'Apply';
+export const TODAY = 'Today';
+export const TOMORROW = 'Tomorrow';
+export const DAY_AFTER_TOMORROW = 'Day After Tomorrow';
+export const ADD_SLOTS = 'Add Slots';

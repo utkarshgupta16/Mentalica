@@ -3,12 +3,25 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Colors from '../customs/Colors';
 import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 
-const Button = ({title, onPress, disabled = false}) => {
+const Button = ({title, onPress, disabled = false, signup = false}) => {
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          marginHorizontal: signup
+            ? widthPercentageToDP(30)
+            : widthPercentageToDP(5),
+          paddingTop: signup ? 10 : 0,
+        },
+      ]}>
       <Pressable
         disabled={disabled}
-        style={[styles.pressable, disabled && styles.lessOpacity]}
+        style={[
+          styles.pressable,
+          {paddingTop: 10},
+          disabled && styles.lessOpacity,
+        ]}
         onPress={onPress}>
         <Text style={styles.buttonText} numberOfLines={1}>
           {title}

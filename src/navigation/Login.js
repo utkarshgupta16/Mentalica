@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  // View,
-  // Text,
+  View,
+  Text,
   TextInput,
   StyleSheet,
   Pressable,
@@ -11,8 +11,7 @@ import {
   I18nManager,
   Alert,
 } from 'react-native';
-import View from '../components/wrapperComponent/ViewWrapper.js';
-import Text from '../components/wrapperComponent/TextWrapper.js';
+
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
@@ -52,17 +51,17 @@ const LoginScreen = ({navigation}) => {
   //pandey.kaushiki@thinksys.com
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
-  const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
-  );
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'pandey.kaushiki@thinksys.com',
+  // );
 
   // const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
 
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'roshanyjambhulkar1204@gmail.com',
-  // );
+  const [enteredEmail, setEnteredEmail] = useState(
+    'roshanyjambhulkar1204@gmail.com',
+  );
 
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -73,13 +72,9 @@ const LoginScreen = ({navigation}) => {
   const [wrongCredentials, setWrongCredentials] = useState(false);
 
   const dispatch = useDispatch();
-
-  const {darkMode} = useSelector(state => state.home);
-
   const resendCode = async () => {
     const response = await Auth.resendSignUp(enteredEmail);
   };
-
   const loginHandler = async () => {
     if (!validateEmail(enteredEmail)) {
       setEmailWarning(true);
@@ -95,7 +90,7 @@ const LoginScreen = ({navigation}) => {
 
       const user = await Auth.signIn(enteredEmail, enteredPassword);
 
-      dispatch(getAccessToken(user?.signInUserSession?.accessToken?.jwtToken));
+      dispatch(getAccessToken(user?.signInUserSession?.idToken?.jwtToken));
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
@@ -205,7 +200,7 @@ const LoginScreen = ({navigation}) => {
         <View>
           <View style={styles.inputContainer}>
             <View style={styles.inputHeadingCont}>
-              <Text>Email</Text>
+              <Text style={styles.inputsLables}>Email</Text>
               <Text warning style={styles.emailWarningTxt}>
                 {emailWarning
                   ? '*Invalid email'
@@ -219,14 +214,7 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 textAlign={i18n.language === 'he' ? 'right' : 'left'}
                 onChangeText={handleEnteredEmail}
-                style={{
-                  borderColor: darkMode ? Colors.white : Colors.black,
-                  width: '100%',
-                  paddingBottom: 8,
-                  fontSize: 15,
-                  paddingLeft: 10,
-                  color: darkMode ? Colors.white : Colors.black,
-                }}
+                style={styles.input}
                 placeholder={t('E-mail')}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -236,21 +224,13 @@ const LoginScreen = ({navigation}) => {
               />
             </View>
             <View style={styles.inputHeadingCont}>
-              <Text>Password</Text>
+              <Text style={styles.inputsLables}>Password</Text>
             </View>
             <View style={styles.inputParentCont}>
               <TextInput
                 textAlign={i18n.language === 'he' ? 'right' : 'left'}
                 onChangeText={handleEnteredPassword}
-                style={{
-                  borderColor: darkMode ? Colors.white : Colors.black,
-                  width: '80%',
-                  paddingBottom: 8,
-
-                  paddingLeft: 10,
-                  fontSize: 15,
-                  color: darkMode ? Colors.white : Colors.black,
-                }}
+                style={styles.input}
                 placeholder={t('Password')}
                 secureTextEntry={!showPassword}
                 value={enteredPassword}
@@ -260,7 +240,7 @@ const LoginScreen = ({navigation}) => {
                   <MaterialIcons
                     name="visibility"
                     size={21}
-                    color={Colors.grayishBlue}
+                    color={Colors.black}
                     style={{
                       marginRight: 20,
                     }}
@@ -271,7 +251,7 @@ const LoginScreen = ({navigation}) => {
                   <MaterialIcons
                     name="visibility-off"
                     size={21}
-                    color={Colors.grayishBlue}
+                    color={Colors.black}
                     style={{
                       marginRight: 20,
                     }}
@@ -386,15 +366,22 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
   },
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   image: {
-    width: 200,
+    width: 250,
     height: 300,
+    shadowColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
   },
   modalContainer: {
     backgroundColor: Colors.white,
@@ -437,28 +424,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
+    borderColor: Colors.black,
     alignItems: 'center',
     marginBottom: 20,
   },
+  inputsLables: {
+    fontSize: 16,
+    color: Colors.black,
+  },
   input: {
     height: 40,
-    borderColor: Colors.black,
-    borderBottomWidth: 1,
-    borderRadius: 8,
-    marginBottom: 32,
+    width: '90%',
     paddingLeft: 10,
-    color: 'white',
+    fontSize: 16,
+    color: Colors.black,
+    borderRadius: 8,
+    paddingLeft: 10,
   },
   forgotPassword: {
-    marginBottom: 10,
     alignItems: 'flex-end',
-    marginTop: 8,
+    marginTop: -10,
   },
   checkBoxSignUpContainer: {
     // flexDirection: 'row',
     // justifyContent: 'space-between',
     // alignItems: 'center',
     // width: 500,
+    marginTop: 20,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -480,13 +472,14 @@ const styles = StyleSheet.create({
   },
   askSignup: {
     fontSize: 14,
+    color: Colors.black,
   },
   signUpContainer: {
     // marginTop: 14,
   },
   signUpText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     textDecorationLine: 'none',
     color: Colors.darkPaleMintColor,
     // color: Colors.primaryBlue,
@@ -496,10 +489,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderColor: Colors.paleMintColor,
+    color: Colors.white,
+    backgroundColor: Colors.white,
+    borderColor: Colors.white,
     width: widthPercentageToDP(27),
-
     alignSelf: 'flex-end',
   },
   emailWarningTxt: {

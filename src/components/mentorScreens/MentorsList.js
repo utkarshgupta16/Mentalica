@@ -306,7 +306,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '82%',
+    flex: 1,
   },
   flatListContainer: {
     marginHorizontal: 10,
@@ -435,64 +435,3 @@ const styles = StyleSheet.create({
 
 export default MentorsList;
 
-const data = [
-  {
-    id: 1,
-    name: 'Trisha Trivedi',
-    experience: 2,
-    fees: 1500,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Marathi'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220523/ourmid/pngtree-female-employee-working-at-the-company-png-image_4719739.png',
-  },
-  {
-    id: 2,
-    name: 'Kaushiki Pandey',
-    experience: 2,
-    fees: 1500,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Gujrati'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
-  },
-  {
-    id: 3,
-    name: 'Roshan Jambhulkar',
-    experience: 2,
-    fees: 1800,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Marathi'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
-  },
-];
-
-const slots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:30 '];

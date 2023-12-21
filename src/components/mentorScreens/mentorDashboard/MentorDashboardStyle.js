@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(5),
     flex: 1,
+    backgroundColor: Colors.white,
   },
   helloCont: {
     flexDirection: 'row',

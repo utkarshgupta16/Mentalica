@@ -14,12 +14,14 @@ export const endPoints = {
   getTwilloToken: `${API_URL}/getTwilloToken`,
   sendNotification: 'https://fcm.googleapis.com/fcm/send',
   editProfile: `${API_URL}/updateUserProfile`,
-  getMentorAvailableSlots: `${API_URL}/getAvailableSlot`,
+  getMentorAvailableSlots: `${API_URL}/slots?uniqueId=`,
   getArticleList: `${API_URL}/articleList`,
   getTwillioChatAPI: `${API_URL}/chatToken?identity=`,
   deleteConversation: `${API_URL}/deleteConversation`,
   fetchConversation: `${API_URL}/fetchConversation`,
   updateConversation: `${API_URL}/updateConversation`,
+  updateSlots: `${API_URL}/slots`,
+  getSlots: `${API_URL}/slots?date=`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

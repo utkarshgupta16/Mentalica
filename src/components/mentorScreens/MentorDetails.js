@@ -29,12 +29,19 @@ import {
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
 import moment from 'moment';
+import {
+  AFTER_TOMORROW,
+  DAY_AFTER_TOMORROW,
+  TODAY,
+  TOMORROW,
+} from '../../utils/Strings';
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  const {profileData} = useSelector(state => state.home);
+  const {profileData, threeDaysSlots} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
-  const [bookSlots, setBookSlots] = useState([]);
+  const [bookSlots, setBookSlots] = useState(threeDaysSlots[0]?.slots);
   const [isLoading, setLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState({dayStr: ''});
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mentorEmailId: selectedMentorData?.email_id,
@@ -46,34 +53,54 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
-  const {jwtToken} = useSelector(reduxState => reduxState.auth);
-  // useEffect(() => {
-  //   (async () => {
-  //     setLoading(true);
-  //     let {payload = []} = await dispatch(
-  //       getBooksSlots({email: selectedMentorData?.email_id}),
-  //     );
-  //     let data =
-  //       payload &&
-  //       payload.map(val => {
-  //         const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
-  //         return `${startTime}-${endTime}`;
-  //       });
-  //     setBookSlots(data);
-  //     setLoading(false);
-  //   })();
-  // }, [dispatch, selectedMentorData?.email_id]);
-
   useEffect(() => {
     (async () => {
       setLoading(true);
-      let {payload = []} = await dispatch(
+      await dispatch(
         getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
-      setBookSlots(payload);
       setLoading(false);
     })();
-  }, [dispatch, selectedMentorData?.email_id, jwtToken]);
+  }, [dispatch, selectedMentorData?.emailId]);
+
+  const handleSelectday = day => {
+    if (day == TODAY) {
+      setSelectedDay({dayStr: TODAY});
+      setBookSlots(threeDaysSlots[0]?.slots);
+    } else if (day == TOMORROW) {
+      setSelectedDay({dayStr: TOMORROW});
+      setBookSlots(threeDaysSlots[1]?.slots);
+    } else if (day == DAY_AFTER_TOMORROW) {
+      setSelectedDay({dayStr: DAY_AFTER_TOMORROW});
+      setBookSlots(threeDaysSlots[2]?.slots);
+    }
+  };
+
+  console.log('selectedMentorData?.uniqueId', selectedMentorData);
+
+  const slotsDaysTab = day => {
+    return (
+      <Pressable onPress={() => handleSelectday(day)}>
+        <View
+          style={{
+            backgroundColor:
+              selectedDay.dayStr == day ? Colors.darkPaleMintColor : null,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            borderRadius: 4,
+          }}>
+          <Text
+            style={{
+              color: selectedDay.dayStr == day ? Colors.white : Colors.black,
+              fontWeight: selectedDay.dayStr == day ? '700' : '500',
+              fontSize: selectedDay.dayStr == day ? 16 : 15,
+            }}>
+            {day}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  };
 
   return (
     <>
@@ -120,8 +147,18 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 fontWeight: '600',
                 color: 'gray',
               }}>
-              Today's Available Slots
+              Available Slots
             </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginVertical: 10,
+            }}>
+            {slotsDaysTab(TODAY)}
+            {slotsDaysTab(TOMORROW)}
+            {slotsDaysTab(DAY_AFTER_TOMORROW)}
           </View>
           {bookSlots && bookSlots.length ? (
             <FlatList
@@ -173,7 +210,9 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         paddingHorizontal: 8,
                         paddingVertical: 3,
                         backgroundColor:
-                          slot == selectedSlot ? 'green' : 'gray',
+                          slot == selectedSlot
+                            ? Colors.darkPaleMintColor
+                            : 'gray',
                         marginBottom: 10,
                       }}>
                       <Text
@@ -303,5 +342,15 @@ const styles = StyleSheet.create({
   icon: {
     padding: 5,
     paddingRight: 20,
+  },
+  dayCont: {
+    borderWidth: 1,
+    borderColor: Colors.grayishBlue,
+    padding: 12,
+    borderRadius: 6,
+  },
+  dayText: {
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
