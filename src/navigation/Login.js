@@ -31,7 +31,7 @@ import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import validateEmail from '../utils/emailValidation';
+import {validateEmail} from '../utils/emailValidation';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();

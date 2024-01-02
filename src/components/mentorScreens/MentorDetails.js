@@ -60,8 +60,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     SCHEDULE_APPOINTMENT,
   } = t && convertLang(t);
 
-  console.log('threeDaysSlots ============>>>>>>>>>>>>>>>', threeDaysSlots);
-
   useEffect(() => {
     (async () => {
       setLoading(true);
