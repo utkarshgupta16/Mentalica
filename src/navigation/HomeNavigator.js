@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux';
 import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
-import convertLang, {MENTOR} from '../utils/Strings';
+import convertLang from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
@@ -21,7 +21,6 @@ import {
   MESSAGES_TAB_ROUTE,
   PROFILE_TAB_ROUTE,
   CHATS_SCREENS,
-  MESSAGES,
   CHATS_SCREEN,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
@@ -117,10 +116,12 @@ const PatientDashboardStack = () => {
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
+  const {MENTOR} = convertLang(t);
 
-  const {HOME, INVOICING, PROFILE, STATS} = convertLang(t);
+  const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -147,7 +148,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
@@ -161,7 +162,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
@@ -176,7 +177,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={26} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Invoice');
+              return renderTabTitle(focused, INVOICE);
             },
           }}
         />
@@ -190,7 +191,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={25} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Stats');
+              return renderTabTitle(focused, STATS);
             },
           }}
         />
@@ -221,7 +222,7 @@ const HomeNavigator = () => {
             <MaterialIcons name={'person'} size={30} color={color} />
           ),
           tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Profile');
+            return renderTabTitle(focused, PROFILE);
           },
         }}
         name={PROFILE_TAB_ROUTE}

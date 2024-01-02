@@ -28,6 +28,9 @@ import RenderHorizontalData from './RenderHorizontalData.js';
 import {Client, User} from '@twilio/conversations';
 import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
 import {TwilioService} from '../../screens/Twillio/ConversationService';
+import {useTranslation} from 'react-i18next';
+import convertLang from '../../utils/Strings.js';
+
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
@@ -44,6 +47,18 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const [showDetails, setShowDetails] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
+
+  const {t} = useTranslation();
+  const {
+    CHAT,
+    EXPERTIES,
+    SPEAKS,
+    YEARS_OF_EXPERIENCE,
+    FOR,
+    MINS_STARTS,
+    STARTS,
+    MINS,
+  } = t && convertLang(t);
 
   const {
     isMentorsDataLoading,
@@ -216,19 +231,20 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
             <View isCard>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
-                {`${item?.firstName} ${item?.lastName}`}
+                {`${t(item?.firstName)} ${t(item?.lastName)}`}
               </Text>
               <Text style={styles.experienceText}>
-                {item?.experience}+ years of experience
+                {item?.experience}+ {YEARS_OF_EXPERIENCE}
               </Text>
               <View isCard={true} style={{flexDirection: 'row'}}>
-                <Text>starts @</Text>
-                <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
+                <Text>
+                  {STARTS} @ ₹{item?.fees} {FOR} 50 {MINS}
+                </Text>
               </View>
             </View>
           </Pressable>
-          {renderExperties({data: expertiseArr, label: 'Experties'})}
-          {renderExperties({data: languageArr, label: 'Speaks'})}
+          {renderExperties({data: expertiseArr, label: EXPERTIES})}
+          {renderExperties({data: languageArr, label: SPEAKS})}
           <Pressable
             style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() => createNewConversation(item)}>
@@ -236,7 +252,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
               source={require('../../icons/chat.png')}
               style={{width: 30, height: 30, objectFit: 'contain'}}
             />
-            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>Chat</Text>
+            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>{CHAT}</Text>
           </Pressable>
         </View>
       </View>
@@ -344,10 +360,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.darkPaleMintColor,
     marginBottom: 10,
-    width: wp(50),
-    // textShadowColor: 'rgba(25, 25, 250, 10)',
-    // textShadowOffset: {width: -1, height: 1},
-    // textShadowRadius: 15,
+    width: wp(58),
   },
   experienceText: {
     fontSize: 14,

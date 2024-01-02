@@ -1,6 +1,8 @@
 import {View, Text} from 'react-native';
 import React, {useEffect} from 'react';
 import {Image} from 'react-native';
+import Colors from '../customs/Colors';
+
 
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
@@ -15,6 +17,7 @@ const SplashScreen = ({navigation}) => {
         justifyContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.white,
       }}>
       {/* <LottieView
                 // onAnimationFinish={onUplooadingDone}

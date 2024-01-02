@@ -21,7 +21,7 @@ import {Auth} from 'aws-amplify';
 // import {signUp, confirmSignUp} from '@aws-amplify/auth';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-import {specialities, languageList} from '../../utils/default';
+import {specialities} from '../../utils/default';
 import {useDispatch, useSelector} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
@@ -38,15 +38,72 @@ import {
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
-  const {PASSWORD_NOT_MATCH, ADD_SLOTS, UPDATE_SLOTS} = convertLang(t);
+  const {
+    PASSWORD_NOT_MATCH,
+    ADD_SLOTS,
+    UPDATE_SLOTS,
+    SIGN_UP,
+    FIRST_NAME,
+    LAST_NAME,
+    CITY,
+    TEMP_CITY,
+    PHONE_NO,
+    AGE,
+    EMAIL_ID,
+    CHOOSE_GENDER,
+    CONFIRM_PASSWORD,
+    CHOOSE_PROFESSION,
+    PASSWORD,
+    CHOOSE_HOW_DO_YOU_FEEL,
+    ENTER,
+    CREATE_ACCOUNT,
+    PATIENT,
+    MENTOR,
+    SELECT_SPECIALITY,
+    SELECT_LANGUAGE,
+    EXPERIENCE_IN_YEARS,
+    FEES_FOR_30_MINS,
+    STUDENT,
+    HATE,
+    ABANDONED,
+    MAlE,
+    FEMAlE,
+    CIVILIAN,
+    SOLDIER,
+    SADNESS,
+    DEPRESSED,
+    ANGER,
+    PAIN,
+    SHOCKED,
+    DANGER,
+    TRAUMA,
+    FEAR,
+    LONELINESS,
+    STUDENT_LIFE,
+    ANXIETY,
+    DISAAPOINTMENT,
+    ENGLISH,
+    HINDI,
+  } = convertLang(t);
   const typeOfItems = [
     {
-      label: 'Patient',
+      label: PATIENT,
       value: PATIENT,
     },
     {
-      label: 'Mentor',
+      label: MENTOR,
       value: MENTOR,
+    },
+  ];
+
+  const languageList = [
+    {
+      label: ENGLISH,
+      value: ENGLISH,
+    },
+    {
+      label: HINDI,
+      value: HINDI,
     },
   ];
   const [isLoading, setIsLoading] = useState(false);
@@ -59,28 +116,28 @@ const MentorSignUp = ({navigation}) => {
   const [typeValue, setTypeValue] = useState(PATIENT);
   const [openGender, setOpenGender] = useState(false);
   const [genderItems, setGenderItems] = useState([
-    {label: 'Male', value: 'male'},
-    {label: 'Female', value: 'female'},
+    {label: MAlE, value: 'male'},
+    {label: FEMAlE, value: 'female'},
   ]);
   const [dutyItems, setDutyItems] = useState([
-    {label: 'Civilian', value: 'civilian'},
-    {label: 'Soldier', value: 'soldier'},
-    {label: 'Student', value: 'student'},
+    {label: CIVILIAN, value: 'civilian'},
+    {label: SOLDIER, value: 'soldier'},
+    {label: STUDENT, value: 'student'},
   ]);
   const [feelItems, setFeelItems] = useState([
-    {label: 'Anxiety', value: 'anxiety'},
-    {label: 'Fear', value: 'fear'},
-    {label: 'Danger', value: 'danger'},
-    {label: 'Disappointment', value: 'disappointment'},
-    {label: 'Loneliness', value: 'loneliness'},
-    {label: 'Hate', value: 'hate'},
-    {label: 'Abandoned', value: 'abandoned'},
-    {label: 'Trauma', value: 'trauma'},
-    {label: 'Shocked', value: 'shocked'},
-    {label: 'Pain', value: 'pain'},
-    {label: 'Anger', value: 'anger'},
-    {label: 'Depressed', value: 'depressed'},
-    {label: 'Sadness', value: 'sadnesss'},
+    {label: ANXIETY, value: 'anxiety'},
+    {label: FEAR, value: 'fear'},
+    {label: DANGER, value: 'danger'},
+    {label: DISAAPOINTMENT, value: 'disappointment'},
+    {label: LONELINESS, value: 'loneliness'},
+    {label: HATE, value: 'hate'},
+    {label: ABANDONED, value: 'abandoned'},
+    {label: TRAUMA, value: 'trauma'},
+    {label: SHOCKED, value: 'shocked'},
+    {label: PAIN, value: 'pain'},
+    {label: ANGER, value: 'anger'},
+    {label: DEPRESSED, value: 'depressed'},
+    {label: SADNESS, value: 'sadnesss'},
   ]);
   const [openDuty, setOpenDuty] = useState(false);
   const [feelOpen, setFeelOpen] = useState(false);
@@ -267,7 +324,8 @@ const MentorSignUp = ({navigation}) => {
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.inputLable}>
             {' '}
-            {field ? convertFieldStringToCapitalized(field) : ''}
+            {/* {field ? t(convertFieldStringToCapitalized(field)) : ''} */}
+            {placeholder}
           </Text>
           <Text style={{color: 'red', fontSize: 17}}>
             {!state[field] && compalsaryField
@@ -280,8 +338,11 @@ const MentorSignUp = ({navigation}) => {
           </Text>
         </View>
         <TextInput
+          maxLength={
+            placeholder == 'Phone Number' ? 10 : placeholder == 'Age' ? 3 : null
+          }
           style={styles.input}
-          placeholder={`Enter ${placeholder}`}
+          placeholder={`${ENTER} ${placeholder}`}
           placeholderTextColor={Colors.grayishBlue}
           value={state[field]}
           keyboardType={keyBoardType || 'default'}
@@ -378,6 +439,7 @@ const MentorSignUp = ({navigation}) => {
   const convertFieldStringToCapitalized = str => {
     let result = str.charAt(0).toUpperCase() + str.slice(1);
     result = result.replace(/([A-Z])/g, ' $1');
+
     return result;
   };
 
@@ -399,9 +461,9 @@ const MentorSignUp = ({navigation}) => {
             value: labels,
           });
         }}
-        items={specialistItems}
-        setItems={setSpecialistItems}
-        placeholder={'Select Speciality.'}
+        items={feelItems}
+        setItems={setFeelItems}
+        placeholder={SELECT_SPECIALITY}
         style={styles.dropdown}
         multiple={true}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
@@ -423,17 +485,17 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={languageList}
         // setItems={setSpecialistItems}
-        placeholder={'Select Language.'}
+        placeholder={SELECT_LANGUAGE}
         style={styles.dropdown}
         multiple={true}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       {renderInput({
-        placeholder: 'Fees for 30 Mins',
+        placeholder: FEES_FOR_30_MINS,
         field: 'fees',
       })}
       {renderInput({
-        placeholder: 'Experience in Years',
+        placeholder: EXPERIENCE_IN_YEARS,
         field: 'experience',
       })}
     </>
@@ -454,7 +516,7 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={genderItems}
         setItems={setGenderItems}
-        placeholder={'Choose gender.'}
+        placeholder={CHOOSE_GENDER}
         colo
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
@@ -472,7 +534,7 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={dutyItems}
         setItems={setDutyItems}
-        placeholder={'Choose Profession.'}
+        placeholder={CHOOSE_PROFESSION}
         style={styles.dropdown}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
@@ -490,7 +552,7 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={feelItems}
         setItems={setFeelItems}
-        placeholder={'Choose How do you feel.'}
+        placeholder={CHOOSE_HOW_DO_YOU_FEEL}
         style={styles.dropdown}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
@@ -522,7 +584,7 @@ const MentorSignUp = ({navigation}) => {
             shadowRadius: isShadowVisible ? 3 : 0,
             elevation: isShadowVisible ? 4 : 0,
           }}>
-          <Text style={styles.createAccountTxt}>Create Account </Text>
+          <Text style={styles.createAccountTxt}>{CREATE_ACCOUNT}</Text>
           <MaterialIcons
             name="person-add"
             size={30}
@@ -550,28 +612,28 @@ const MentorSignUp = ({navigation}) => {
         {/* =================================MODAL END================================= */}
 
         <View style={styles.mainContainer}>
-          {renderInput({placeholder: 'First Name', field: 'firstName'})}
-          {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-          {renderInput({placeholder: 'City', field: 'city'})}
-          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+          {renderInput({placeholder: FIRST_NAME, field: 'firstName'})}
+          {renderInput({placeholder: LAST_NAME, field: 'lastName'})}
+          {renderInput({placeholder: CITY, field: 'city'})}
+          {renderInput({placeholder: TEMP_CITY, field: 'temporaryCity'})}
           {renderInput({
-            placeholder: 'Phone Number',
+            placeholder: PHONE_NO,
             field: 'phoneNumber',
             keyBoardType: 'number-pad',
           })}
           {renderInput({
-            placeholder: 'Age',
+            placeholder: AGE,
             field: 'age',
             keyBoardType: 'number-pad',
           })}
-          {renderInput({placeholder: 'Email', field: 'emailId'})}
+          {renderInput({placeholder: EMAIL_ID, field: 'emailId'})}
           {renderInput({
-            placeholder: 'Password',
+            placeholder: PASSWORD,
             field: 'password',
             //   secureTextEntry: true,
           })}
           {renderInput({
-            placeholder: 'Confirm password',
+            placeholder: CONFIRM_PASSWORD,
             field: 'confirmPassword',
             //   secureTextEntry: true,
           })}
@@ -627,7 +689,7 @@ const MentorSignUp = ({navigation}) => {
       <View style={styles.signUpButtonContainer}>
         <Button
           signup
-          title="Sign Up"
+          title={SIGN_UP}
           onPress={handleSignup}
           secureTextEntry={true}
         />
@@ -732,11 +794,14 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.paleMintColor,
     paddingBottom: 10,
   },
+  icon: {
+    marginHorizontal: 5,
+  },
   input: {
     height: 40,
     borderRadius: 8,
     marginBottom: 15,
-    paddingLeft: 10,
+    paddingHorizontal: 10,
     fontSize: 16,
     backgroundColor: '#d3d3d3',
   },

@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: hp(1),
+    marginVertical: hp(1),
     marginLeft: wp(2),
     color: Colors.black,
   },
@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   belowTabsContainer: {
+    flex: 1,
     backgroundColor: Colors.white,
     // backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
@@ -73,22 +74,23 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
     backgroundColor: '#eab676',
-    borderBottomLeftRadius: 8,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
+    borderLeftWidth: 0.3,
+    borderLeftColor: Colors.dustyGray,
   },
   rightContVideoCall: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   headingText: {
-    marginTop: hp(2),
+    marginTop: hp(1),
     fontWeight: 'bold',
     color: Colors.black,
   },
   recommendedArticlesCont: {
     marginTop: hp(1),
-    height: hp(52),
+    flex: 1,
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),

@@ -4,7 +4,7 @@ import {TextInput, Button, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
-import {PATIENT} from '../../utils/Strings';
+import convertLang, {PATIENT} from '../../utils/Strings';
 import Colors from '../../customs/Colors';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
@@ -30,10 +30,13 @@ const EditProfile = ({route, navigation}) => {
     expertise,
     ...restData
   } = data;
+
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
   const {type, jwtToken} = useSelector(state => state.auth);
   const {darkMode} = useSelector(state => state.home);
+
+  const {SAVE, FIRST_NAME, LAST_NAME, PHONE_NO} = convertLang(t);
 
   const renderInput = ({placeholder, field}) => {
     return (
@@ -79,9 +82,9 @@ const EditProfile = ({route, navigation}) => {
   return (
     <View style={{backgroundColor: 'white', padding: 10, flex: 1}}>
       {isLoading ? <ScreenLoading /> : null}
-      {renderInput({placeholder: 'First Name', field: 'firstName'})}
-      {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-      {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
+      {renderInput({placeholder: FIRST_NAME, field: 'firstName'})}
+      {renderInput({placeholder: LAST_NAME, field: 'lastName'})}
+      {renderInput({placeholder: PHONE_NO, field: 'phoneNumber'})}
 
       <TouchableOpacity
         onPress={onSave}
@@ -95,7 +98,7 @@ const EditProfile = ({route, navigation}) => {
           borderRadius: 6,
         }}>
         <Text button style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>
-          Save
+          {SAVE}
         </Text>
       </TouchableOpacity>
     </View>

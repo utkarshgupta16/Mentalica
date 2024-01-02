@@ -12,6 +12,7 @@ import {
 import Colors from '../../customs/Colors';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
+import convertLang, {PATIENT, MENTOR} from '../../utils/Strings';
 
 import {
   heightPercentageToDP as hp,
@@ -29,19 +30,15 @@ import {
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
 import moment from 'moment';
-import {
-  AFTER_TOMORROW,
-  DAY_AFTER_TOMORROW,
-  TODAY,
-  TOMORROW,
-} from '../../utils/Strings';
+import {useTranslation} from 'react-i18next';
+
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
   const {profileData, threeDaysSlots} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
   const [bookSlots, setBookSlots] = useState(threeDaysSlots[0]?.slots);
   const [isLoading, setLoading] = useState(false);
-  const [selectedDay, setSelectedDay] = useState({dayStr: ''});
+  const [selectedDay, setSelectedDay] = useState({dayStr: TODAY});
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mentorEmailId: selectedMentorData?.email_id,
@@ -53,6 +50,18 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
+  const {t} = useTranslation();
+  const {
+    DAY_AFTER_TOMORROW,
+    TODAY,
+    TOMORROW,
+    AVAILABLE_SLOTS,
+    NO_SLOTS_AVAILABLE_TO_BOOK,
+    SCHEDULE_APPOINTMENT,
+  } = t && convertLang(t);
+
+  console.log('threeDaysSlots ============>>>>>>>>>>>>>>>', threeDaysSlots);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -61,7 +70,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       );
       setLoading(false);
     })();
-  }, [dispatch, selectedMentorData?.emailId]);
+  }, [dispatch, selectedMentorData?.uniqueId]);
 
   const handleSelectday = day => {
     if (day == TODAY) {
@@ -75,8 +84,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       setBookSlots(threeDaysSlots[2]?.slots);
     }
   };
-
-  console.log('selectedMentorData?.uniqueId', selectedMentorData);
 
   const slotsDaysTab = day => {
     return (
@@ -147,7 +154,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 fontWeight: '600',
                 color: 'gray',
               }}>
-              Available Slots
+              {AVAILABLE_SLOTS}
             </Text>
           </View>
           <View
@@ -233,7 +240,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text>{`No Slots Available to Book`}</Text>
+              <Text>{NO_SLOTS_AVAILABLE_TO_BOOK}</Text>
             </View>
           )}
           {selectedSlot ? (
@@ -293,7 +300,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                   color: 'white',
                   fontWeight: 'bold',
                 }}>
-                Schedule Appointment
+                {SCHEDULE_APPOINTMENT}
               </Text>
             </Pressable>
           ) : null}

@@ -58,6 +58,11 @@ const MentorDashboard = ({navigation}) => {
     scheduledAppointmentsData = [],
   } = useSelector(state => state.home);
 
+  console.log(
+    'scheduledAppointmentsData ========>>>>>',
+    scheduledAppointmentsData,
+  );
+
   const formatSheduleAppointmentData = appointments => {
     const newDate = new Date();
     const formattedAppointments = {};
@@ -116,6 +121,7 @@ const MentorDashboard = ({navigation}) => {
         });
       });
     // });
+    setAppointmentList(formattedAppointments);
     return formattedAppointments;
   };
 
@@ -171,19 +177,20 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const videoCallAction = data => {
+    console.log('Data =========================>>>>>>>>>>>>>>>>>>>>>>>.', data);
     _checkPermissions(async () => {
       try {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
             roomId: data?.roomId,
-            userName: data?.mentor_email_id,
+            userName: data?.mentorEmailId,
           }),
         );
         const token = payload?.accessToken;
         setProps({
           ...props,
           token,
-          userName: data?.mentor_email_id,
+          userName: data?.mentorEmailId,
           roomName: data?.roomId,
         });
         token && navigation.navigate(AV_CHAT_SCREEN);
@@ -287,6 +294,7 @@ const MentorDashboard = ({navigation}) => {
               }}>
               <View
                 style={{
+                  marginBottom: 3,
                   alignItems: 'center',
                   flexDirection: 'row',
                   padding: 10,
@@ -300,7 +308,7 @@ const MentorDashboard = ({navigation}) => {
                   },
                   shadowOpacity: 0.27,
                   shadowRadius: 4.65,
-                  elevation: 5,
+                  elevation: 15,
                   marginHorizontal: 10,
                   paddingHorizontal: 10,
                 }}>

@@ -3,16 +3,33 @@ import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import Colors from './Colors';
 import backArrow from '../icons/backArrowS.png';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import convertLang, {EN} from '../utils/Strings';
+import {useTranslation} from 'react-i18next';
+import {useSelector} from 'react-redux';
 // import BackArrow from '../icons/leftArrow.svg';
 
 const CustomHeader = ({showBackArrow, title, navigation, isShadowVisible}) => {
+  const {t} = useTranslation();
+  const {ENTER, CREATE_ACCOUNT} = convertLang(t);
+  const {currentLanguage} = useSelector(state => state.home);
+
   return (
     <View style={styles.mainContainer}>
-      {showBackArrow ? (
+      {currentLanguage == 'en' ? (
         <Pressable onPress={navigation.goBack}>
           <Image source={backArrow} style={styles.backArrowIcon} />
         </Pressable>
-      ) : null}
+      ) : (
+        <Pressable onPress={navigation.goBack}>
+          <MaterialIcons
+            name="arrow-forword"
+            size={30}
+            color={Colors.black}
+            style={styles.icon}
+          />
+        </Pressable>
+      )}
+
       {isShadowVisible && (
         <View
           style={{
@@ -29,7 +46,7 @@ const CustomHeader = ({showBackArrow, title, navigation, isShadowVisible}) => {
             // shadowRadius: isShadowVisible ? 3 : 0,
             // elevation: isShadowVisible ? 4 : 0,
           }}>
-          <Text style={styles.createAccountTxt}>Create Account </Text>
+          <Text style={styles.createAccountTxt}>{CREATE_ACCOUNT}</Text>
           <MaterialIcons
             name="person-add"
             size={30}
@@ -74,5 +91,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginTop: 10,
+    marginHorizontal: 5,
   },
 });

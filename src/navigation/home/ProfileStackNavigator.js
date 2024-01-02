@@ -13,10 +13,11 @@ import EditProfile from './EditProfile';
 import {useSelector} from 'react-redux';
 import ChangePassword from './ChangePassword';
 import AddSlotsMentor from '../signUp/AddSlotsMentor';
+import {EN} from '../../utils/Strings';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
 const ProfileStackNavigator = () => {
-  const {darkMode} = useSelector(state => state.home);
+  const {darkMode, currentLanguage} = useSelector(state => state.home);
   return (
     // <NavigationContainer>
     <Stack.Navigator initialRouteName={PROFILE}>
@@ -35,14 +36,22 @@ const ProfileStackNavigator = () => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
-              <Text style={{color: darkMode ? '#fff' : '#000'}}>
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
+              {/* <Text style={{color: darkMode ? '#fff' : '#000'}}>
                 Edit Profile
-              </Text>
+              </Text> */}
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
@@ -58,11 +67,19 @@ const ProfileStackNavigator = () => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               {/* <Text style={{color: darkMode ? '#fff' : '#000'}}></Text> */}
             </TouchableOpacity>
           ),
@@ -80,11 +97,19 @@ const ProfileStackNavigator = () => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.black}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               {/* <Text style={{color: darkMode ? '#fff' : '#000'}}></Text> */}
             </TouchableOpacity>
           ),

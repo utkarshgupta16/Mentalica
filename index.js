@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React, {useEffect, useLayoutEffect} from 'react';
 import {Amplify, Auth, API, graphqlOperation} from 'aws-amplify';
 import {AppRegistry, Platform} from 'react-native';
@@ -67,7 +68,6 @@ const AppConfig = () => {
       let result = await API.graphql(
         graphqlOperation(createUser, {input: newUser}),
       );
-      console.log('newUser@@@@@@@@@@@@@@@@@', newUser);
     };
     // syncUser();
   }, []);

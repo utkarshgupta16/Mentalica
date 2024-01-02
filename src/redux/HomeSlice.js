@@ -9,6 +9,8 @@ import {apiMiddleware} from './service';
 
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
+
+  console.log('JWT token ====================>>>>>>>>>>>>>>>>>>>>>>', jwtToken);
   // Auth.currentUserCredentials;
   return {
     Authorization: `Bearer ${jwtToken}`,
@@ -25,6 +27,33 @@ export const getAllMentorList = createAsyncThunk(
       headers: headerApi(getState),
     };
     return apiMiddleware(config);
+  },
+);
+
+export const uploadProfilePhoto = createAsyncThunk(
+  'home/uploadProfilePhoto',
+
+  async ({formdata, url}, {getState}) => {
+    if (!url) return;
+    var requestOptions = {
+      method: 'PUT',
+      headers: headerApi(getState),
+      body: formdata,
+    };
+    return fetch(url, requestOptions)
+      .then(response => {
+        if (response.status == 200) {
+          return response.text();
+        }
+        return Promise.reject(response);
+      })
+      .then(result => {
+        let responseResult = result && JSON.parse(result);
+        return Promise.resolve(responseResult);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   },
 );
 
@@ -245,6 +274,31 @@ export const getSlotsSlice = createAsyncThunk(
   },
 );
 
+export const getUrlToUploadImage = createAsyncThunk(
+  'home/getUrlToUploadImage',
+  async (date, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.getUrlToUploadImage,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getUrlOfProfile = createAsyncThunk(
+  'home/getUrlOfProfile',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.getProfileUrl,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
 export const updateSlotsSlice = createAsyncThunk(
   'home/updateSlotsSlice',
   async (data, {getState}) => {
@@ -318,6 +372,12 @@ const initialState = {
   isSlotsLoading: false,
   threeDaysSlots: [],
   threeDaysSlotLoading: false,
+  currentLanguage: 'en',
+  urlForImageUpload: '',
+  loadingUploadUrl: false,
+  selectedProfileImagePath: '',
+  profileImageUrl: '',
+  loadingProfileImageUrl: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -329,12 +389,17 @@ const HomeSlice = createSlice({
     changeTheme: (state, action) => {
       state.darkMode = action.payload;
     },
+    languageChange: (state, action) => {
+      state.currentLanguage = action.payload;
+    },
 
     updateOnLogout: (state, action) => initialState,
     updateChannels: (state, action) => {
       state.channels = action.payload;
     },
-
+    setSelectedProfileImagePath: (state, action) => {
+      state.selectedProfileImagePath = action.payload;
+    },
     setRangeDate: (state, action) => {
       state.rangeDate = action.payload;
     },
@@ -344,6 +409,27 @@ const HomeSlice = createSlice({
     },
   },
   extraReducers: builder => {
+    builder.addCase(getUrlOfProfile.pending, state => {
+      state.loadingProfileImageUrl = true;
+    });
+    builder.addCase(getUrlOfProfile.fulfilled, (state, action) => {
+      state.loadingProfileImageUrl = false;
+      state.profileImageUrl = action.payload?.url;
+    });
+    builder.addCase(getUrlOfProfile.rejected, (state, action) => {
+      state.loadingProfileImageUrl = false;
+    });
+
+    builder.addCase(getUrlToUploadImage.pending, state => {
+      state.loadingUploadUrl = true;
+    });
+    builder.addCase(getUrlToUploadImage.fulfilled, (state, action) => {
+      state.loadingUploadUrl = false;
+      state.urlForImageUpload = action.payload?.url;
+    });
+    builder.addCase(getUrlToUploadImage.rejected, (state, action) => {
+      state.loadingUploadUrl = false;
+    });
     builder.addCase(getProfileSlice.pending, state => {
       state.isProfileLoading = true;
     });
@@ -455,5 +541,7 @@ export const {
   updateOnLogout,
   setRangeDate,
   addSlots,
+  languageChange,
+  setSelectedProfileImagePath,
 } = HomeSlice.actions;
 export default HomeSlice.reducer;

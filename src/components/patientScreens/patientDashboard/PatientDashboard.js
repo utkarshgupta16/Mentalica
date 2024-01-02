@@ -48,12 +48,14 @@ const PatientDashboard = ({navigation}) => {
     ),
 
     [SAVED]: (
-      <Text
-        style={{
-          textAlign: 'center',
-        }}>
-        {NO_DATA_FOUND}
-      </Text>
+      <View style={{flex: 1, justifyContent: 'center'}}>
+        <Text
+          style={{
+            textAlign: 'center',
+          }}>
+          {NO_DATA_FOUND}
+        </Text>
+      </View>
     ),
     [MENTORS_LIST]: (
       <MentorsList

@@ -39,8 +39,12 @@ import {ADD_SLOTS, APPLY, FROM, PATIENT, TO} from '../../utils/Strings';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import backArrow from '../../icons/backArrowS.png';
 import {populate} from 'dotenv';
+import convertLang from '../../utils/Strings';
 
 const AddSlotsMentor = ({navigation, route}) => {
+  const {t} = useTranslation();
+  const {SELECTED_DATE, DATE_FROM, TO, SELECT_TIME} = convertLang(t);
+
   const isProfile = route?.params?.isProfile || false;
   const timestamp = Date.now();
   const {
@@ -70,7 +74,6 @@ const AddSlotsMentor = ({navigation, route}) => {
     }
   }, [dateObj]);
 
-  const {t} = useTranslation();
   let slots1 = [];
   if (!isProfile) {
     slots1 =
@@ -344,10 +347,10 @@ const AddSlotsMentor = ({navigation, route}) => {
             <Text>
               {new Date(rangeDate.endDate)?.getDate() >
               new Date(rangeDate.startDate)?.getDate()
-                ? `Date from ${new Date(
+                ? `${DATE_FROM} ${new Date(
                     rangeDate.startDate,
-                  ).getDate()} to ${new Date(rangeDate.endDate).getDate()}`
-                : `Selected date  ${new Date(
+                  ).getDate()} ${TO} ${new Date(rangeDate.endDate).getDate()}`
+                : `${SELECTED_DATE} ${new Date(
                     rangeDate.startDate,
                   ).getDate()} ${months(
                     new Date(rangeDate.startDate).getMonth(),
@@ -357,10 +360,10 @@ const AddSlotsMentor = ({navigation, route}) => {
             <Text>
               {new Date(dateObj?.to)?.getDate() >
               new Date(dateObj?.from)?.getDate()
-                ? `Date from ${new Date(
+                ? `${DATE_FROM} ${new Date(
                     dateObj?.from,
-                  )?.getDate()} to ${new Date(dateObj?.to)?.getDate()}`
-                : `Selected date  ${new Date(
+                  )?.getDate()} ${TO} ${new Date(dateObj?.to)?.getDate()}`
+                : `${SELECTED_DATE} ${new Date(
                     dateObj?.from,
                   )?.getDate()} ${months(
                     new Date(dateObj?.from)?.getMonth(),
@@ -371,7 +374,11 @@ const AddSlotsMentor = ({navigation, route}) => {
         <MaterialIcons name="event" size={22} />
       </Pressable>
 
-      <Pressable onPress={setShowStartTime} style={styles.dateRange}>
+      <Pressable
+        onPress={() => {
+          setShowStartTime(true);
+        }}
+        style={styles.dateRange}>
         <View>
           {slots.length ? (
             <Text>{`${slots.length} ${
@@ -380,7 +387,7 @@ const AddSlotsMentor = ({navigation, route}) => {
                 : 'items have been selected'
             }`}</Text>
           ) : (
-            <Text>Select Time</Text>
+            <Text>{SELECT_TIME}</Text>
           )}
         </View>
         <MaterialIcons name="access-time" size={22} />

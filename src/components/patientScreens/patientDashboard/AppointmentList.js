@@ -206,14 +206,14 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
           getTwilloTokenSlice({
             jwtToken,
             roomId: data?.roomId,
-            userName: data?.patient_email_Id,
+            userName: data?.patientEmailId,
           }),
         );
         const token = payload?.accessToken;
         setProps({
           ...props,
           token,
-          userName: data?.patient_email_Id,
+          userName: data?.patientEmailId,
           roomName: data?.roomId,
         });
         navigation.navigate(AV_CHAT_SCREEN);

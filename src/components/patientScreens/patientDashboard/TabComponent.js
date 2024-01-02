@@ -21,10 +21,10 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         marginBottom: 10,
         borderRadius: 10,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
+
         paddingTop: 10,
-        paddingBottom: hp(2),
-        paddingHorizontal: wp(2),
+        paddingBottom: 10,
         backgroundColor: darkMode ? '#000' : '#fff',
         shadowColor:
           isShadowVisible && darkMode == false

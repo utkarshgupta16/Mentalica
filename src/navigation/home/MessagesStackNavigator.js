@@ -8,11 +8,12 @@ import {ChatRoomScreen} from '../../screens/Twillio/chat-room/chat-room-screen';
 import Messages from './Messages';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
+import {EN} from '../../utils/Strings';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
 
 const MessagesStackNavigator = ({navigation, route}) => {
-  const {darkMode} = useSelector(state => state.home);
+  const {darkMode, currentLanguage} = useSelector(state => state.home);
 
   return (
     <Stack.Navigator initialRouteName={MESSAGES}>
@@ -25,11 +26,19 @@ const MessagesStackNavigator = ({navigation, route}) => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               {/* <Text>Messages</Text> */}
             </TouchableOpacity>
           ),
@@ -52,11 +61,19 @@ const MessagesStackNavigator = ({navigation, route}) => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               <Text style={{color: darkMode ? Colors.white : Colors.grey}}>
                 Messages
               </Text>

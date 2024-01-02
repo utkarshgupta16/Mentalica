@@ -12,8 +12,11 @@ import {
 } from '../../../utils/Responsive.js';
 import Colors from '../../../customs/Colors.js';
 import ScreenLoading from '../../ScreenLoading.js';
+import {useTranslation} from 'react-i18next';
 
 const ArticlesList = ({handleShadowVisible}) => {
+  const {t} = useTranslation();
+
   const dispatch = useDispatch();
   const [articlesData, setArticlesData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -60,7 +63,7 @@ const ArticlesList = ({handleShadowVisible}) => {
             backgroundColor: '#fff',
           }}>
           <View isCard={true} style={styles.titleCont}>
-            <Text style={styles.title}>{item?.title}</Text>
+            <Text style={styles.title}>{t(item?.title)}</Text>
             <Pressable onPress={() => {}}>
               <MaterialIcons
                 name="save"

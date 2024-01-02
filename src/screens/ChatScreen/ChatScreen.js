@@ -40,6 +40,9 @@ const ChatScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const chatroomID = route?.params?.id;
+
+  const {currentLanguage} = useSelector(state => state.home);
+
   // fetch Chat Room
   useEffect(() => {
     API.graphql(graphqlOperation(getChatRoom, {id: chatroomID})).then(result =>
@@ -123,7 +126,19 @@ const ChatScreen = () => {
       title: route.params?.name,
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back-ios" size={16} color={Colors.grey} />
+          {currentLanguage == EN ? (
+            <MaterialIcons
+              name="arrow-back-ios"
+              size={16}
+              color={darkMode ? Colors.white : Colors.grey}
+            />
+          ) : (
+            <MaterialIcons
+              name="arrow-forward-ios"
+              size={16}
+              color={darkMode ? Colors.white : Colors.grey}
+            />
+          )}
         </TouchableOpacity>
       ),
       //   headerRight: () => (

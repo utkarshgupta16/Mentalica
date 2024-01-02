@@ -10,7 +10,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
-import {PATIENT} from '../../utils/Strings';
+import convertLang, {PATIENT} from '../../utils/Strings';
 import Colors from '../../customs/Colors';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
@@ -31,6 +31,15 @@ const ChangePassword = ({navigation}) => {
   const [confirmPasswordWarning, setConfirmPasswordWarning] = useState(false);
 
   const {t} = useTranslation();
+  const {
+    OLD_PASSWORD,
+    NEW_PASSWORD,
+    CONF_NEW_PASSWORD,
+    PLEASE_ENTER_OLD_PASSWORD,
+    PLEASE_ENTER_NEW_PASSWORD,
+    PLEASE_Confirm_NEW_PASSWORD,
+    UPDATE,
+  } = convertLang(t);
 
   const onUpdate = () => {
     Alert.alert('Are you sure you want to update password?', '', [
@@ -83,7 +92,7 @@ const ChangePassword = ({navigation}) => {
             paddingLeft: 5,
             color: darkMode ? '#fff' : '#000',
           }}>
-          Old Password
+          {OLD_PASSWORD}
         </Text>
         <View
           style={{
@@ -100,7 +109,7 @@ const ChangePassword = ({navigation}) => {
               color: darkMode ? 'gray' : '#000',
               width: '80%',
             }}
-            placeholder={'Please Enter Old Password..'}
+            placeholder={PLEASE_ENTER_OLD_PASSWORD}
             value={oldPassword}
             onChangeText={text => {
               setOldPassword(text);
@@ -140,7 +149,7 @@ const ChangePassword = ({navigation}) => {
             paddingLeft: 5,
             color: darkMode ? '#fff' : '#000',
           }}>
-          New Password
+          {NEW_PASSWORD}
         </Text>
         <View
           style={{
@@ -157,7 +166,7 @@ const ChangePassword = ({navigation}) => {
               color: darkMode ? 'gray' : '#000',
               width: '80%',
             }}
-            placeholder={'Please Enter new Password..'}
+            placeholder={PLEASE_ENTER_NEW_PASSWORD}
             value={newPassword}
             onChangeText={text => {
               setNewPassowrd(text);
@@ -198,7 +207,7 @@ const ChangePassword = ({navigation}) => {
               paddingLeft: 5,
               color: darkMode ? '#fff' : '#000',
             }}>
-            Confirm New Password
+            {CONF_NEW_PASSWORD}
           </Text>
           {confirmPasswordWarning && (
             <Text warning style={{fontSize: 12, marginLeft: 5}}>
@@ -220,7 +229,7 @@ const ChangePassword = ({navigation}) => {
               color: darkMode ? 'white' : '#000',
               width: '80%',
             }}
-            placeholder={'Please confirm new Password..'}
+            placeholder={PLEASE_Confirm_NEW_PASSWORD}
             value={confirmPassword}
             onChangeText={text => {
               setConfirmPassword(text);
@@ -254,7 +263,11 @@ const ChangePassword = ({navigation}) => {
       </View>
 
       <TouchableOpacity
-        disabled={oldPassword.length == 0 || newPassword.length == 0}
+        disabled={
+          oldPassword.length == 0 ||
+          newPassword.length == 0 ||
+          confirmPassword.length == 0
+        }
         activeOpacity={
           oldPassword.length == 0 || newPassword.length == 0 ? 0 : 1
         }
@@ -264,24 +277,23 @@ const ChangePassword = ({navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
           padding: 8,
-          backgroundColor:
-            oldPassword.length == 0 || newPassword.length == 0
-              ? Colors.grayishBlue
-              : Colors.darkPaleMintColor,
+          backgroundColor: Colors.darkPaleMintColor,
           borderColor: 'white',
           borderRadius: 6,
+          opacity:
+            oldPassword.length == 0 ||
+            newPassword.length == 0 ||
+            confirmPassword.length == 0
+              ? 0.5
+              : 1,
         }}>
         <Text
           button
           style={{
-            color:
-              oldPassword.length == 0 || newPassword.length == 0
-                ? 'white'
-                : 'white',
             fontWeight: 'bold',
             fontSize: 18,
           }}>
-          Update
+          {UPDATE}
         </Text>
       </TouchableOpacity>
     </View>

@@ -1,12 +1,15 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
 import Colors from '../customs/Colors';
+import {t} from 'i18next';
+import {useTranslation} from 'react-i18next';
 
 const Issue = ({title}) => {
+  const {t} = useTranslation();
   return (
     <Pressable style={styles.mainContainer}>
       <Text style={styles.titleText}>
-        {title?.charAt(0).toUpperCase() + title?.slice(1)}
+        {t(title?.charAt(0).toUpperCase() + title?.slice(1))}
       </Text>
     </Pressable>
   );

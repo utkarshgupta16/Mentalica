@@ -34,7 +34,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
+  const {RESTART_APP, CHANGE_LANG, FORGOT_PASSWORD, EMAIL, PASSWORD} =
+    t && ConvertLang(t);
   // const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
@@ -55,13 +56,13 @@ const LoginScreen = ({navigation}) => {
   //   'pandey.kaushiki@thinksys.com',
   // );
 
-  // const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
+  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
 
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
-  const [enteredEmail, setEnteredEmail] = useState(
-    'roshanyjambhulkar1204@gmail.com',
-  );
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'roshanyjambhulkar1204+4@gmail.com',
+  // );
 
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -138,7 +139,7 @@ const LoginScreen = ({navigation}) => {
   };
 
   const handleForgotPassword = async () => {
-    navigation.navigate(FORGOT_PASSWORD, {email: enteredEmail});
+    navigation.navigate('ForgotPasswordScreen', {email: enteredEmail});
   };
 
   const validateEmail = email => {
@@ -200,7 +201,7 @@ const LoginScreen = ({navigation}) => {
         <View>
           <View style={styles.inputContainer}>
             <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>Email</Text>
+              <Text style={styles.inputsLables}>{EMAIL}</Text>
               <Text warning style={styles.emailWarningTxt}>
                 {emailWarning
                   ? '*Invalid email'
@@ -214,7 +215,13 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 textAlign={i18n.language === 'he' ? 'right' : 'left'}
                 onChangeText={handleEnteredEmail}
-                style={styles.input}
+                style={{
+                  height: 40,
+                  width: '100%',
+                  fontSize: 16,
+                  color: Colors.black,
+                  paddingHorizontal: 10,
+                }}
                 placeholder={t('E-mail')}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -224,7 +231,7 @@ const LoginScreen = ({navigation}) => {
               />
             </View>
             <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>Password</Text>
+              <Text style={styles.inputsLables}>{PASSWORD}</Text>
             </View>
             <View style={styles.inputParentCont}>
               <TextInput
@@ -263,7 +270,7 @@ const LoginScreen = ({navigation}) => {
             <Pressable
               onPress={handleForgotPassword}
               style={styles.forgotPassword}>
-              <Text>Forgot password?</Text>
+              <Text>{FORGOT_PASSWORD}?</Text>
             </Pressable>
             <View style={styles.checkBoxSignUpContainer}>
               {/* <View style={styles.checkboxContainer}>
@@ -371,17 +378,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Colors.white,
   },
   image: {
     width: 250,
     height: 300,
-    shadowColor: 'white',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
   },
   modalContainer: {
     backgroundColor: Colors.white,
@@ -393,6 +394,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    borderWidth: 1,
   },
   container: {
     flex: 1,
@@ -418,7 +420,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     // width: '100%',
     marginBottom: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
   },
   inputParentCont: {
     flexDirection: 'row',
@@ -435,7 +437,6 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     width: '90%',
-    paddingLeft: 10,
     fontSize: 16,
     color: Colors.black,
     borderRadius: 8,

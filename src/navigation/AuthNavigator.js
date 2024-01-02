@@ -18,11 +18,12 @@ import {useSelector} from 'react-redux';
 import Colors from '../customs/Colors';
 import {Text, TouchableOpacity} from 'react-native';
 import AddSlotsMentor from './signUp/AddSlotsMentor';
+import {EN} from '../utils/Strings';
 
 const Auth = createNativeStackNavigator();
 
 export default function AuthNavigator() {
-  const {darkMode} = useSelector(state => state.home);
+  const {darkMode, currentLanguage} = useSelector(state => state.home);
   return (
     <Auth.Navigator initialRouteName={LOGIN}>
       <Auth.Screen
@@ -39,11 +40,19 @@ export default function AuthNavigator() {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               <Text style={{color: darkMode ? '#fff' : '#000'}}>Login</Text>
             </TouchableOpacity>
           ),
@@ -61,11 +70,19 @@ export default function AuthNavigator() {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.grey}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               <Text style={{color: darkMode ? '#fff' : '#000'}}>Login</Text>
             </TouchableOpacity>
           ),
@@ -83,11 +100,19 @@ export default function AuthNavigator() {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={darkMode ? Colors.white : Colors.black}
-              />
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
               {/* <Text style={{color: darkMode ? '#fff' : '#000'}}>Signup</Text> */}
             </TouchableOpacity>
           ),

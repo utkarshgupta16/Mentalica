@@ -11,7 +11,9 @@ import {
   I18nManager,
   FlatList,
   Switch,
+  Platform,
 } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Colors from '../../customs/Colors';
@@ -34,13 +36,26 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
-import {changeTheme, updateOnLogout} from '../../redux/HomeSlice';
+import {
+  changeTheme,
+  getUrlOfPrifile,
+  getUrlOfProfile,
+  getUrlToUploadImage,
+  languageChange,
+  setSelectedProfileImagePath,
+  updateOnLogout,
+  uploadProfilePhoto,
+} from '../../redux/HomeSlice';
 import {Auth} from 'aws-amplify';
+import {decode} from 'base-64';
+import RNFS from 'react-native-fs';
 import {
   ADD_SLOTS_PROFILE_SCREEN,
   ADD_SLOTS_SCREEN,
   PROFILE_TAB_ROUTE,
 } from '../../utils/route.js';
+import {changeLanguage} from 'i18next';
+import axios from 'axios';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -58,11 +73,26 @@ const Profile = ({navigation}) => {
     RESTART_APP,
     CHANGE_LANG,
     OKAY,
+    DARK_MODE,
+    CHANGE_PASSWORD,
+    CONTACT_DETAILS,
+    EMAIL_ADD,
+    PHONE_NO,
+    OK,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
-  const {darkMode} = useSelector(state => state.home);
-  const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const {
+    darkMode,
+    currentLanguage,
+    urlForImageUpload,
+    selectedProfileImagePath,
+  } = useSelector(state => state.home);
+  const {
+    profileData = {},
+    isProfileLoading,
+    profileImageUrl,
+  } = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
@@ -71,6 +101,7 @@ const Profile = ({navigation}) => {
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? HEBREW : ENGLISH,
   );
+
   const langOptions = LANG_OPTION;
   const {
     feel = '',
@@ -101,15 +132,15 @@ const Profile = ({navigation}) => {
       props: profileData || {},
       onPress: () => {
         Alert.alert(
-          'Contact Details',
-          `Phone Number : ${profileData?.phoneNumber}  
-       Email Id : ${profileData?.email_id}`,
-          [{text: 'OK', onPress: () => null}],
+          CONTACT_DETAILS,
+          `${PHONE_NO} : ${profileData?.phoneNumber}    
+            ${EMAIL_ADD}: ${profileData?.emailId}`,
+          [{text: OK, onPress: () => null}],
         );
       },
     },
     {
-      label: 'Change Password',
+      label: CHANGE_PASSWORD,
       screen: '',
       props: profileData || {},
       onPress: () => {
@@ -150,22 +181,75 @@ const Profile = ({navigation}) => {
     ]);
   };
 
+  const handleUploadImage = async () => {
+    launchImageLibrary({
+      mediaType: 'photo',
+      maxWidth: 150,
+      maxHeight: 150,
+      includeBase64: true,
+    }).then(result => {
+      dispatch(getUrlToUploadImage()).then(({payload}) => {
+        uploadImageToServer(result?.assets[0], payload.url);
+      });
+    });
+  };
+
+  const decodeBase64 = async data => {
+    try {
+      const decodedData = await decode(data);
+      const bytes = await new Uint8Array(decodedData.length);
+      for (let i = 0; i < decodedData.length; i++) {
+        bytes[i] = decodedData.charCodeAt(i);
+      }
+      return bytes.buffer;
+    } catch (e) {
+      // crashlyticsLogger(e,'screen:fileUtils.ts function:decodeBase64 lineno-31');
+      // analyticsLogger("error", { 'desc': "Error while decoding" });
+      console.log('Error while decoding:', e);
+    }
+  };
+
+  const uploadImageToServer = async (data, signedUrl) => {
+    if (signedUrl) {
+      const fileData = await RNFS.readFile(data?.uri, 'base64');
+      const _data = await decodeBase64(fileData);
+
+      try {
+        await fetch(signedUrl, {
+          method: 'PUT',
+          body: _data,
+          headers: {
+            'Content-Type': 'image/jpeg',
+          },
+        });
+
+        await dispatch(getUrlOfProfile());
+      } catch (e) {
+        console.log('Error while fetching', e);
+      }
+    }
+  };
+
   return (
     <ScrollView
-      style={styles.mainContainer}
+      style={{flex: 1, backgroundColor: darkMode ? '#000' : '#fff'}}
       showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={
-                loginFrom === PATIENT
-                  ? require('../../icons/patient.jpg')
-                  : require('../../icons/doctor.jpg')
-              }
-              style={styles.image}
-            />
-          </View>
+          <Pressable onPress={handleUploadImage}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={
+                  profileImageUrl
+                    ? {uri: profileImageUrl}
+                    : loginFrom === PATIENT
+                    ? require('../../icons/patient.jpg')
+                    : require('../../icons/doctor.jpg')
+                }
+                style={styles.image}
+              />
+            </View>
+          </Pressable>
           <View style={styles.details}>
             <Text
               numberOfLines={1}
@@ -203,7 +287,7 @@ const Profile = ({navigation}) => {
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.switchContaimer}>
-          <Text style={styles.accDetailsTitle}>Dark mode</Text>
+          <Text style={styles.accDetailsTitle}>{DARK_MODE}</Text>
           <Switch onValueChange={toggleSwitch} value={darkMode} />
         </View>
         <View style={styles.profDetailsCont}>
@@ -263,6 +347,7 @@ const Profile = ({navigation}) => {
                       I18nManager.allowRTL(i18n.language === 'he');
                       I18nManager.forceRTL(i18n.language === 'he');
                       setLanguage(props());
+                      dispatch(languageChange(i18n.language));
                       // RNRestart.Restart();
                       setTimeout(() => {
                         RNRestart.Restart();
@@ -312,7 +397,7 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
   topPartContainer: {
     backgroundColor: Colors.white,
@@ -320,7 +405,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
   },
   imageContainer: {
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: Colors.grayishBlue,
     width: 56,
     height: 56,
@@ -345,7 +430,9 @@ const styles = StyleSheet.create({
     color: Colors.grayishBlue,
   },
   issuesContainer: {
-    paddingHorizontal: 32,
+    marginHorizontal: 15,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
   profileDetailsContainer: {
     flexDirection: 'row',
@@ -354,14 +441,17 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   issuesTitleText: {
-    fontWeight: '500',
-    fontSize: 14,
+    fontWeight: '600',
+    fontSize: 15,
     color: Colors.grayishBlue,
     marginBottom: 20,
   },
   allIssues: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   settingsContainer: {
     paddingHorizontal: 32,
@@ -389,11 +479,11 @@ const styles = StyleSheet.create({
     // textDecorationLine: 'underline',
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 1,
+    // backgroundColor: Colors.paleMintColor,
+    // borderWidth: 1,
     alignSelf: 'center',
-    borderColor: Colors.darkPaleMintColor,
-    width: widthPercentageToDP(36),
+    borderColor: Colors.white,
+    width: widthPercentageToDP(27),
     paddingHorizontal: 10,
   },
   switchContaimer: {
