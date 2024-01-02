@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, Text, TextInput, Button, TouchableOpacity} from 'react-native';
+import {TextInput, Button, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
 import {editProfileSlice} from '../../redux/HomeSlice';
-import {PATIENT} from '../../utils/Strings';
+import convertLang, {PATIENT} from '../../utils/Strings';
+import Colors from '../../customs/Colors';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
 
 const EditProfile = ({route, navigation}) => {
   const dispatch = useDispatch();
@@ -27,9 +30,14 @@ const EditProfile = ({route, navigation}) => {
     expertise,
     ...restData
   } = data;
+
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
   const {type} = useSelector(state => state.auth);
+  const {darkMode} = useSelector(state => state.home);
+
+  const {SAVE, FIRST_NAME, LAST_NAME, PHONE_NO} = convertLang(t);
+
   const renderInput = ({placeholder, field}) => {
     return (
       <View style={{marginBottom: 20}}>
@@ -40,8 +48,9 @@ const EditProfile = ({route, navigation}) => {
           style={{
             padding: 8,
             borderRadius: 4,
-            borderWidth: 1,
+            borderBottomWidth: 1,
             borderColor: 'lightgray',
+            color: darkMode ? '#fff' : 'gray',
           }}
           placeholder={placeholder}
           value={state[field]}
@@ -54,13 +63,14 @@ const EditProfile = ({route, navigation}) => {
   };
 
   const onSave = async () => {
+    const {email_id, ...fields} = state;
     try {
       setLoading(true);
-      const resp = await dispatch(
+      await dispatch(
         editProfileSlice({
-          emailId: email_id,
+          // emailId: email_id,
           type: type == PATIENT ? 'patient' : 'mentor',
-          ...state,
+          ...fields,
         }),
       );
       setLoading(false);
@@ -72,23 +82,23 @@ const EditProfile = ({route, navigation}) => {
   return (
     <View style={{backgroundColor: 'white', padding: 10, flex: 1}}>
       {isLoading ? <ScreenLoading /> : null}
-      {renderInput({placeholder: 'First Name', field: 'firstName'})}
-      {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-      {renderInput({placeholder: 'Phone Number', field: 'phoneNumber'})}
-      
+      {renderInput({placeholder: FIRST_NAME, field: 'firstName'})}
+      {renderInput({placeholder: LAST_NAME, field: 'lastName'})}
+      {renderInput({placeholder: PHONE_NO, field: 'phoneNumber'})}
+
       <TouchableOpacity
         onPress={onSave}
         style={{
+          marginTop: 10,
           justifyContent: 'center',
           alignItems: 'center',
-          borderWidth: 1,
           padding: 8,
-          backgroundColor: 'green',
+          backgroundColor: Colors.darkPaleMintColor,
           borderColor: 'white',
           borderRadius: 6,
         }}>
-        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>
-          Save
+        <Text button style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>
+          {SAVE}
         </Text>
       </TouchableOpacity>
     </View>

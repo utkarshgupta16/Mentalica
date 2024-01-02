@@ -1,14 +1,17 @@
 import {
   StyleSheet,
-  Text,
+  // Text,
   TouchableOpacity,
-  View,
+  // View,
   FlatList,
   Image,
   Pressable,
 } from 'react-native';
 import React, {useCallback} from 'react';
 import {CHATS_SCREEN} from '../../utils/route';
+import Colors from '../../customs/Colors';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 
 const USER_ICON = require('../../assets/images/user-icon.webp');
 
@@ -44,14 +47,16 @@ const ChatList = ({navigation}) => {
               borderColor: 'gray',
             }}
           />
-          <Text style={{marginLeft: 20}}>{item?.name}</Text>
+          <Text style={{marginLeft: 20, fontWeight: '500', fontSize: 16}}>
+            {item?.name}
+          </Text>
         </View>
       </Pressable>
     );
   }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: Colors.paleMintColor}}>
       <FlatList data={chatListData} renderItem={renderItem} />
     </View>
   );

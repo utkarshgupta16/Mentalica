@@ -16,6 +16,7 @@
 import {configureStore} from '@reduxjs/toolkit';
 import authReducer from './AuthSlice';
 import homeReducer from './HomeSlice';
+import participatReducer from './ParticipatSlice';
 import logger from 'redux-logger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {combineReducers} from 'redux';
@@ -33,6 +34,7 @@ import {
 const reducers = combineReducers({
   auth: authReducer,
   home: homeReducer,
+  participants:participatReducer
 });
 
 const persistConfig = {

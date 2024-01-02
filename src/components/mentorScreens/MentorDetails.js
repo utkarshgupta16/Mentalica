@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Colors from '../../customs/Colors';
-// import ArrowRight from '../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
+import convertLang, {PATIENT, MENTOR} from '../../utils/Strings';
+
 import {
   heightPercentageToDP as hp,
   screenHeight,
@@ -24,16 +24,21 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   bookAppointmentSlice,
   getBooksSlots,
+  getMentorAllSlots,
   getScheduledAppointmentsSlice,
   sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
+import moment from 'moment';
+import {useTranslation} from 'react-i18next';
+
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
   const {email} = useSelector(state => state.auth);
-  const {profileData} = useSelector(state => state.home);
+  const {profileData, threeDaysSlots} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
-  const [bookSlots, setBookSlots] = useState([]);
+  const [bookSlots, setBookSlots] = useState(threeDaysSlots[0]?.slots);
   const [isLoading, setLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState({dayStr: TODAY});
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mentorEmailId: selectedMentorData?.email_id,
@@ -45,22 +50,64 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
+  const {t} = useTranslation();
+  const {
+    DAY_AFTER_TOMORROW,
+    TODAY,
+    TOMORROW,
+    AVAILABLE_SLOTS,
+    NO_SLOTS_AVAILABLE_TO_BOOK,
+    SCHEDULE_APPOINTMENT,
+  } = t && convertLang(t);
+
+  console.log('threeDaysSlots ============>>>>>>>>>>>>>>>', threeDaysSlots);
+
   useEffect(() => {
     (async () => {
       setLoading(true);
-      let {payload = []} = await dispatch(
-        getBooksSlots({email: selectedMentorData?.email_id}),
+      await dispatch(
+        getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
-      let data =
-        payload &&
-        payload.map(val => {
-          const {startTime, endTime} = (val?.slots && val?.slots[0]) || {};
-          return `${startTime}-${endTime}`;
-        });
-      setBookSlots(data);
       setLoading(false);
     })();
-  }, [dispatch, selectedMentorData?.email_id]);
+  }, [dispatch, selectedMentorData?.uniqueId]);
+
+  const handleSelectday = day => {
+    if (day == TODAY) {
+      setSelectedDay({dayStr: TODAY});
+      setBookSlots(threeDaysSlots[0]?.slots);
+    } else if (day == TOMORROW) {
+      setSelectedDay({dayStr: TOMORROW});
+      setBookSlots(threeDaysSlots[1]?.slots);
+    } else if (day == DAY_AFTER_TOMORROW) {
+      setSelectedDay({dayStr: DAY_AFTER_TOMORROW});
+      setBookSlots(threeDaysSlots[2]?.slots);
+    }
+  };
+
+  const slotsDaysTab = day => {
+    return (
+      <Pressable onPress={() => handleSelectday(day)}>
+        <View
+          style={{
+            backgroundColor:
+              selectedDay.dayStr == day ? Colors.darkPaleMintColor : null,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            borderRadius: 4,
+          }}>
+          <Text
+            style={{
+              color: selectedDay.dayStr == day ? Colors.white : Colors.black,
+              fontWeight: selectedDay.dayStr == day ? '700' : '500',
+              fontSize: selectedDay.dayStr == day ? 16 : 15,
+            }}>
+            {day}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  };
 
   return (
     <>
@@ -94,26 +141,57 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
               style={{marginLeft: -3}}
             />
           </Pressable>
-          <Text style={{textAlign:"center",fontSize:17,fontWeight:"600"}}>Today's Slots</Text>
-          {selectedMentorData?.slots && selectedMentorData?.slots.length ? (
+          <View
+            style={{
+              borderBottomWidth: 1,
+              paddingBottom: 5,
+              borderColor: 'lightgray',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 17,
+                fontWeight: '600',
+                color: 'gray',
+              }}>
+              {AVAILABLE_SLOTS}
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginVertical: 10,
+            }}>
+            {slotsDaysTab(TODAY)}
+            {slotsDaysTab(TOMORROW)}
+            {slotsDaysTab(DAY_AFTER_TOMORROW)}
+          </View>
+          {bookSlots && bookSlots.length ? (
             <FlatList
-              data={selectedMentorData?.slots}
-              horizontal
+              columnWrapperStyle={{flexWrap: 'wrap'}}
+              scrollEventThrottle={1900}
               showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              data={bookSlots}
+              numColumns={2}
+              // horizontal
+              // showsHorizontalScrollIndicator={false}
               style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap'}}
               keyExtractor={(item, index) => index}
               renderItem={({item, index}) => {
+                let slot = `${item?.startTime}-${item?.endTime}`;
                 let check = bookSlots && bookSlots?.includes(slot);
                 let [startH, startM] = item?.startTime.split(':');
                 let [endH, endM] = item?.endTime.split(':');
-                let AM_PM = startH > 12 ? 'PM' : 'AM';
+                let AM_PM = startH >= 12 ? 'PM' : 'AM';
                 let startTime = `${
                   startH > 12 ? startH - 12 : startH
                 }:${startM} ${AM_PM}`;
                 let endTime = `${
                   endH > 12 ? endH - 12 : endH
                 }:${endM} ${AM_PM}`;
-                let slot = `${startTime}-${endTime}`;
+                let shwSlot = `${startTime}-${endTime}`;
                 return (
                   <TouchableOpacity
                     key={index}
@@ -139,14 +217,16 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         paddingHorizontal: 8,
                         paddingVertical: 3,
                         backgroundColor:
-                          slot == selectedSlot ? 'green' : 'gray',
+                          slot == selectedSlot
+                            ? Colors.darkPaleMintColor
+                            : 'gray',
                         marginBottom: 10,
                       }}>
                       <Text
                         style={{
                           color: 'white',
                         }}>
-                        {slot}
+                        {shwSlot || ''}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -157,8 +237,11 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
             <View
               style={{
                 flex: 1,
-              }}
-            />
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text>{NO_SLOTS_AVAILABLE_TO_BOOK}</Text>
+            </View>
           )}
           {selectedSlot ? (
             <Pressable
@@ -176,8 +259,15 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                       onPress: async () => {
                         try {
                           setLoading(true);
+                          const {patientEmailId, patientName, ...payload} =
+                            state;
                           const resp = await dispatch(
-                            bookAppointmentSlice(state),
+                            bookAppointmentSlice({
+                              ...payload,
+                              mentorEmailId: selectedMentorData.emailId,
+                              mentorName: selectedMentorData.firstName,
+                              date: moment().format('YYYY-MM-DD'),
+                            }),
                           );
                           close && close();
                           setLoading(false);
@@ -200,7 +290,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 );
               }}
               style={{
-                backgroundColor: 'green',
+                backgroundColor: Colors.darkPaleMintColor,
                 paddingVertical: 8,
                 borderRadius: 4,
               }}>
@@ -210,7 +300,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                   color: 'white',
                   fontWeight: 'bold',
                 }}>
-                Schedule Appointment
+                {SCHEDULE_APPOINTMENT}
               </Text>
             </Pressable>
           ) : null}
@@ -229,6 +319,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  crossButton: {
+    marginBottom: 20,
+  },
+  slotContainer: {
+    marginRight: 10,
+    borderRadius: 13,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 10,
+  },
+  slotText: {
+    color: 'black',
+  },
+  backgroundGreen: {
+    backgroundColor: Colors.parrotGreen,
+  },
+  backgroundSaffron: {
+    backgroundColor: Colors.saffron,
+  },
+  bookSlotContainer: {
+    flex: 1,
+  },
   title: {
     fontSize: 16,
     fontWeight: '600',
@@ -237,5 +349,15 @@ const styles = StyleSheet.create({
   icon: {
     padding: 5,
     paddingRight: 20,
+  },
+  dayCont: {
+    borderWidth: 1,
+    borderColor: Colors.grayishBlue,
+    padding: 12,
+    borderRadius: 6,
+  },
+  dayText: {
+    fontSize: 15,
+    fontWeight: '500',
   },
 });

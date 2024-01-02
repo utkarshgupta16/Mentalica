@@ -1,3 +1,5 @@
+import convertLang from '../utils/Strings';
+
 export const specialities = [
   {label: 'Anxiety', value: 'anxiety'},
   {label: 'Fear', value: 'fear'},
@@ -156,3 +158,81 @@ export const LANG_OPTION = [
   {label: 'English', value: 'English'},
   {label: 'Hebrew', value: 'Hebrew'},
 ];
+
+export const FEEL_ITEMS = t => {
+  const {
+    HATE,
+    ABANDONED,
+    SADNESS,
+    DEPRESSED,
+    ANGER,
+    PAIN,
+    SHOCKED,
+    DANGER,
+    TRAUMA,
+    FEAR,
+    LONELINESS,
+    ANXIETY,
+    DISAAPOINTMENT,
+  } = convertLang(t);
+  return [
+    {label: ANXIETY, value: 'anxiety'},
+    {label: FEAR, value: 'fear'},
+    {label: DANGER, value: 'danger'},
+    {label: DISAAPOINTMENT, value: 'disappointment'},
+    {label: LONELINESS, value: 'loneliness'},
+    {label: HATE, value: 'hate'},
+    {label: ABANDONED, value: 'abandoned'},
+    {label: TRAUMA, value: 'trauma'},
+    {label: SHOCKED, value: 'shocked'},
+    {label: PAIN, value: 'pain'},
+    {label: ANGER, value: 'anger'},
+    {label: DEPRESSED, value: 'depressed'},
+    {label: SADNESS, value: 'sadnesss'},
+  ];
+};
+
+export const TYPE_OF_ITEMS = t => {
+  const {PATIENT, MENTOR} = convertLang(t);
+  return [
+    {
+      label: PATIENT,
+      value: PATIENT,
+    },
+    {
+      label: MENTOR,
+      value: MENTOR,
+    },
+  ];
+};
+
+export const LANGUAGE_LIST = t => {
+  const {ENGLISH, HINDI} = convertLang(t);
+  return [
+    {
+      label: ENGLISH,
+      value: ENGLISH,
+    },
+    {
+      label: HINDI,
+      value: HINDI,
+    },
+  ];
+};
+
+export const GENDER_ITEM = t => {
+  const {MAlE, FEMAlE} = convertLang(t);
+  return [
+    {label: MAlE, value: 'male'},
+    {label: FEMAlE, value: 'female'},
+  ];
+};
+
+export const DUTY_ITEM = t => {
+  const {CIVILIAN, SOLDIER, STUDENT} = convertLang(t);
+  return [
+    {label: CIVILIAN, value: 'civilian'},
+    {label: SOLDIER, value: 'soldier'},
+    {label: STUDENT, value: 'student'},
+  ];
+};

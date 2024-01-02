@@ -7,8 +7,7 @@ import {useSelector} from 'react-redux';
 import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
-// import {MaterialIcons} from '@expo/vector-icons';
-import convertLang, {MENTOR} from '../utils/Strings';
+import convertLang from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
@@ -18,16 +17,43 @@ import PatientDashboard from '../components/patientScreens/patientDashboard/Pati
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
-import {MESSAGES_TAB_ROUTE, PROFILE_TAB_ROUTE} from '../utils/route';
+import {
+  MESSAGES_TAB_ROUTE,
+  PROFILE_TAB_ROUTE,
+  CHATS_SCREENS,
+  CHATS_SCREEN,
+} from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+const resetSubmitStackOnTabPress = ({navigation, route}) => ({
+  tabPress: e => {
+    const state = navigation.getState();
+
+    if (state) {
+      const nonTargetTabs = state.routes.filter(r => r.key !== e.target);
+
+      nonTargetTabs.forEach(tab => {
+        const tabName = tab?.name;
+        const stackKey = tab?.state?.key;
+
+        if (stackKey && tabName === MESSAGES_TAB_ROUTE) {
+          navigation.dispatch({
+            ...StackActions.popToTop(),
+            target: stackKey,
+          });
+        }
+      });
+    }
+  },
+});
 
 const renderTabTitle = (isFocused, tabName) => {
-  const color = isFocused ? Colors.accentColor : Colors.dustyGray;
+  const color = isFocused ? 'teal' : '#89B9AD';
   const title = isFocused ? (
     <Text
       style={{
@@ -90,10 +116,12 @@ const PatientDashboardStack = () => {
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
+  const {MENTOR} = convertLang(t);
 
-  const {HOME, INVOICING, MESSAGES, PROFILE, STATS} = convertLang(t);
+  const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -107,7 +135,8 @@ const HomeNavigator = () => {
               }
             : null,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Colors.accentColor,
+        tabBarActiveTintColor: 'teal',
+        tabBarInactiveTintColor: '#89B9AD',
       })}>
       {type === MENTOR ? (
         <Tab.Screen
@@ -119,7 +148,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
@@ -133,14 +162,14 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
       )}
       {type === MENTOR ? (
         <Tab.Screen
-          name={t(INVOICING)}
+          name={INVOICING}
           component={Invoicing}
           options={{
             headerShown: false,
@@ -148,13 +177,13 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={26} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Invoice');
+              return renderTabTitle(focused, INVOICE);
             },
           }}
         />
       ) : (
         <Tab.Screen
-          name={t(STATS)}
+          name={STATS}
           component={PatientStats}
           options={{
             headerShown: false,
@@ -162,23 +191,29 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={25} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Stats');
+              return renderTabTitle(focused, STATS);
             },
           }}
         />
       )}
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
-        options={{
-          headerShown: false,
+        options={({route}) => ({
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="message" size={25} color={color} />
+            <MaterialIcons name={'message'} size={26} color={color} />
           ),
-          tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Messages');
+          tabBarLabel: MESSAGES,
+          tabBarStyle: {
+            display: getRouteName(route) === 'none' ? 'none' : 'flex',
           },
-        }}
+        })}
         component={MessagesStackNavigator}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate(MESSAGES_TAB_ROUTE);
+          },
+        })}
       />
       <Tab.Screen
         options={{
@@ -187,7 +222,7 @@ const HomeNavigator = () => {
             <MaterialIcons name={'person'} size={30} color={color} />
           ),
           tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Profile');
+            return renderTabTitle(focused, PROFILE);
           },
         }}
         name={PROFILE_TAB_ROUTE}
@@ -195,6 +230,14 @@ const HomeNavigator = () => {
       />
     </Tab.Navigator>
   );
+};
+
+const getRouteName = route => {
+  const routeName = getFocusedRouteNameFromRoute(route);
+  if (routeName?.includes(CHATS_SCREEN)) {
+    return 'none';
+  }
+  return 'flex';
 };
 
 export default HomeNavigator;

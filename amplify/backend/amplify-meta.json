@@ -1,0 +1,86 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mentalicademo-dev-00648-authRole",
+      "UnauthRoleArn": "arn:aws:iam::453967416739:role/amplify-mentalicademo-dev-00648-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::453967416739:role/amplify-mentalicademo-dev-00648-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-mentalicademo-dev-00648-deployment",
+      "UnauthRoleName": "amplify-mentalicademo-dev-00648-unauthRole",
+      "StackName": "amplify-mentalicademo-dev-00648",
+      "StackId": "arn:aws:cloudformation:ap-south-1:453967416739:stack/amplify-mentalicademo-dev-00648/49ae88b0-7753-11ee-ac89-0635929eabd8",
+      "AmplifyAppId": "d1qgsdyxgs3hlb"
+    }
+  },
+  "api": {
+    "mentalicademo": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            }
+          }
+        },
+        "GraphQLAPIIdOutput": "kc2wobzqyzcobifaizqdk776km",
+        "GraphQLAPIEndpointOutput": "https://tagbk66wjrcg5buq2dqjchibne.appsync-api.ap-south-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-e4zqilvywnc4dgexijgetkmvmq"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2023-11-23T05:29:37.333Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-mentalicademo-dev-00648-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apimentalicademo"
+      },
+      "lastPushDirHash": "gETcG2cBfzJ2ZexD46IRtr8l/5A="
+    }
+  },
+  "auth": {
+    "mentalicademo": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "UserPoolId": "ap-south-1_jJotJ6a8q",
+        "UserPoolName": "mentalica-demo",
+        "AppClientID": "38f1s3300nblraet06642nuvrh",
+        "AppClientIDWeb": "38f1s3300nblraet06642nuvrh"
+      },
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS"
+          ]
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "lastPushTimeStamp": "2023-11-18T07:59:04.573Z"
+    }
+  }
+}

@@ -1,9 +1,8 @@
 import {View, Text} from 'react-native';
 import React, {useEffect} from 'react';
-// import DWLogo from 'assets/mipmap/dwl_logo_white.svg';
-// import LottieView from 'lottie-react-native';
-// import DWLogo from "assets/mipmap/dwellworks_logo_white.svg";
 import {Image} from 'react-native';
+import Colors from '../customs/Colors';
+
 
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
@@ -18,6 +17,7 @@ const SplashScreen = ({navigation}) => {
         justifyContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.white,
       }}>
       {/* <LottieView
                 // onAnimationFinish={onUplooadingDone}

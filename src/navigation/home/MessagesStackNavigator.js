@@ -2,18 +2,54 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
-import {CHATS_SCREEN, MESSAGES} from '../../utils/route';
-import ChatList from './ChatList';
+import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
+import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
+import {ChatRoomScreen} from '../../screens/Twillio/chat-room/chat-room-screen';
 import Messages from './Messages';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {EN} from '../../utils/Strings';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 const Stack = createNativeStackNavigator();
-const MessagesStackNavigator = () => {
+
+const MessagesStackNavigator = ({navigation, route}) => {
+  const {darkMode, currentLanguage} = useSelector(state => state.home);
+
   return (
     <Stack.Navigator initialRouteName={MESSAGES}>
       <Stack.Screen
         name={MESSAGES}
-        component={ChatList}
-        // options={{headerShown: false}}
+        component={ChatListScreen}
+        options={({navigation}) => ({
+          title: 'Chat Conversation',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{flexDirection: 'row'}}>
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
+              {/* <Text>Messages</Text> */}
+            </TouchableOpacity>
+          ),
+          headerShadowVisible: false,
+        })}
+      />
+
+      <Stack.Screen
+        name={CHAT_ROOM_SCREEN}
+        component={ChatRoomScreen}
+        options={{title: ''}}
       />
 
       <Stack.Screen
@@ -25,12 +61,22 @@ const MessagesStackNavigator = () => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                size={16}
-                color={Colors.grey}
-              />
-              <Text>Messages</Text>
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
+              <Text style={{color: darkMode ? Colors.white : Colors.grey}}>
+                Messages
+              </Text>
             </TouchableOpacity>
           ),
           headerShadowVisible: false,

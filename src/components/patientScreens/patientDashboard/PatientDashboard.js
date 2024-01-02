@@ -1,23 +1,18 @@
-import {
-  Alert,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import Text from '../../wrapperComponent/TextWrapper.js';
+import View from '../../wrapperComponent/ViewWrapper.js';
+import React, {useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
-import PatientDashboardTabs from '../../PatientDashboardTabs';
 import convertLang from '../../../utils/Strings';
 import MentorsList from '../../mentorScreens/MentorsList';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProfileSlice} from '../../../redux/HomeSlice';
-import {articlesData} from '../../../utils/default';
 import TabComponent from './TabComponent';
 import AppointmentList from './AppointmentList';
 import AllTabComponent from './AllTabComponent';
 import {useTranslation} from 'react-i18next';
+import ArticlesList from './ArticlesList.js';
+import {Auth} from 'aws-amplify';
+import ContactsScreen from '../../../screens/ContactScreen';
 
 const PatientDashboard = ({navigation}) => {
   const {t} = useTranslation();
@@ -30,46 +25,69 @@ const PatientDashboard = ({navigation}) => {
     NO_DATA_FOUND,
     SAVED,
   } = convertLang(t);
+
+  const [isShadowVisible, setIsShadowVisible] = useState(false);
+
+  const handleShadowVisible = isShadowVisible => {
+    setIsShadowVisible(isShadowVisible);
+  };
+
   const components = {
-    [ALL]: <AllTabComponent />,
-    [APPOINTMENTS]: <AppointmentList navigation={navigation} />,
+    [ALL]: <AllTabComponent handleShadowVisible={handleShadowVisible} />,
+    [APPOINTMENTS]: (
+      <AppointmentList
+        handleShadowVisible={handleShadowVisible}
+        navigation={navigation}
+      />
+    ),
     [ARTICLES]: (
-      <Text
-        style={{
-          textAlign: 'center',
-        }}>
-        {NO_DATA_FOUND}
-      </Text>
+      <ArticlesList
+        handleShadowVisible={handleShadowVisible}
+        navigation={navigation}
+      />
     ),
+
     [SAVED]: (
-      <Text
-        style={{
-          textAlign: 'center',
-        }}>
-        {NO_DATA_FOUND}
-      </Text>
+      <View style={{flex: 1, justifyContent: 'center'}}>
+        <Text
+          style={{
+            textAlign: 'center',
+          }}>
+          {NO_DATA_FOUND}
+        </Text>
+      </View>
     ),
-    [MENTORS_LIST]: <MentorsList />,
+    [MENTORS_LIST]: (
+      <MentorsList
+        handleShadowVisible={handleShadowVisible}
+        navigation={navigation}
+      />
+    ),
   };
   const {email, type} = useSelector(state => state.auth);
+  const {darkMode, profileData = {}} = useSelector(state => state.home);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
-  const [patientName, setPatientName] = useState('');
+
   const dispatch = useDispatch();
+
   useEffect(() => {
     (async () => {
-      const res = await dispatch(getProfileSlice({email, type: type}));
-      setPatientName(res?.payload?.Items[0]?.firstName);
+      if (Object.keys(profileData).length == 0) {
+        await dispatch(getProfileSlice({email, type: type}));
+      }
     })();
-  }, [email, type]);
+  }, [profileData]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {patientName}
+        {HELLO}, {profileData?.firstName}
       </Text>
-      {/* <Text style={styles.dateText}>4th April overview</Text> */}
-      {/* Tabs */}
-      <TabComponent selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <TabComponent
+        isShadowVisible={isShadowVisible}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+      />
       {components[selectedTab.tabStr]}
     </View>
   );

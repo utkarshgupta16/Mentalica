@@ -1,4 +1,6 @@
-import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
+import {StyleSheet, Pressable, FlatList} from 'react-native';
+import View from '../../wrapperComponent/ViewWrapper.js';
+import Text from '../../wrapperComponent/TextWrapper.js';
 import React from 'react';
 import {
   heightPercentageToDP as hp,

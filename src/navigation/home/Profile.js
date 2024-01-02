@@ -1,16 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
-  Text,
-  View,
+  // Text,
+  // View,
   StyleSheet,
   ScrollView,
   Pressable,
   ActivityIndicator,
   Image,
   Alert,
-  TouchableOpacity,
   I18nManager,
+  FlatList,
+  Switch,
+  Platform,
 } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
@@ -23,7 +28,7 @@ import ScreenLoading from '../../components/ScreenLoading';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
-  PROFILE_DETAILS,
+  // PROFILE_DETAILS,
   LANG_OPTION,
 } from '../../utils/default';
 import {useTranslation} from 'react-i18next';
@@ -31,6 +36,26 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
+import {
+  changeTheme,
+  getUrlOfPrifile,
+  getUrlOfProfile,
+  getUrlToUploadImage,
+  languageChange,
+  setSelectedProfileImagePath,
+  updateOnLogout,
+  uploadProfilePhoto,
+} from '../../redux/HomeSlice';
+import {Auth} from 'aws-amplify';
+import {decode} from 'base-64';
+import RNFS from 'react-native-fs';
+import {
+  ADD_SLOTS_PROFILE_SCREEN,
+  ADD_SLOTS_SCREEN,
+  PROFILE_TAB_ROUTE,
+} from '../../utils/route.js';
+import {changeLanguage} from 'i18next';
+import axios from 'axios';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -48,17 +73,35 @@ const Profile = ({navigation}) => {
     RESTART_APP,
     CHANGE_LANG,
     OKAY,
+    DARK_MODE,
+    CHANGE_PASSWORD,
+    CONTACT_DETAILS,
+    EMAIL_ADD,
+    PHONE_NO,
+    OK,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
-  const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
+  const {
+    darkMode,
+    currentLanguage,
+    urlForImageUpload,
+    selectedProfileImagePath,
+  } = useSelector(state => state.home);
+  const {
+    profileData = {},
+    isProfileLoading,
+    profileImageUrl,
+  } = useSelector(state => state.home);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
   const [showSlots, setShowSlots] = useState(false);
+  const [isSwitchEnabled, setIsSwitchEnabled] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? HEBREW : ENGLISH,
   );
+
   const langOptions = LANG_OPTION;
   const {
     feel = '',
@@ -67,10 +110,11 @@ const Profile = ({navigation}) => {
     lastName = '',
     expertise = '',
   } = profileData || {};
-  const [slots, addSlots] = useState(profileData ? profileData.slots : []);
 
+  const [slots, addSlots] = useState(profileData ? profileData.slots : []);
+  const isProfile = true;
   const DUMMY_ISSUES =
-    type == PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
+    type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
   const profileDetailsItems = [
     {
@@ -88,25 +132,37 @@ const Profile = ({navigation}) => {
       props: profileData || {},
       onPress: () => {
         Alert.alert(
-          'Contact Details',
-          `Phone Number : ${profileData?.phoneNumber}  
-       Email Id : ${profileData?.email_id}`,
-          [{text: 'OK', onPress: () => null}],
+          CONTACT_DETAILS,
+          `${PHONE_NO} : ${profileData?.phoneNumber}    
+            ${EMAIL_ADD}: ${profileData?.emailId}`,
+          [{text: OK, onPress: () => null}],
         );
       },
     },
-    {label: 'Password', screen: ''},
+    {
+      label: CHANGE_PASSWORD,
+      screen: '',
+      props: profileData || {},
+      onPress: () => {
+        navigation.navigate('changePassword');
+      },
+    },
   ];
   if (type === MENTOR) {
     profileDetailsItems.push({
       label: "Today's Slots",
       screen: '',
       props: profileData || {},
-      onPress: () => setShowSlots(true),
+      onPress: () => navigation.navigate(ADD_SLOTS_PROFILE_SCREEN, {isProfile}),
     });
   }
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
+
+  const toggleSwitch = () => {
+    // setIsSwitchEnabled(previousState => !previousState);
+    dispatch(changeTheme(!darkMode));
+  };
 
   const logoutPressHandler = () => {
     Alert.alert(LOGOUT, ARE_YOU_LOGOUT, [
@@ -119,53 +175,121 @@ const Profile = ({navigation}) => {
         onPress: async () => {
           signOut();
           dispatch(logout());
+          dispatch(updateOnLogout());
         },
       },
     ]);
   };
 
-  if (loading) {
-    return (
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text>
-          <ActivityIndicator size={'large'} />
-        </Text>
-      </View>
-    );
-  }
+  const handleUploadImage = async () => {
+    launchImageLibrary({
+      mediaType: 'photo',
+      maxWidth: 150,
+      maxHeight: 150,
+      includeBase64: true,
+    }).then(result => {
+      dispatch(getUrlToUploadImage()).then(({payload}) => {
+        uploadImageToServer(result?.assets[0], payload.url);
+      });
+    });
+  };
+
+  const decodeBase64 = async data => {
+    try {
+      const decodedData = await decode(data);
+      const bytes = await new Uint8Array(decodedData.length);
+      for (let i = 0; i < decodedData.length; i++) {
+        bytes[i] = decodedData.charCodeAt(i);
+      }
+      return bytes.buffer;
+    } catch (e) {
+      // crashlyticsLogger(e,'screen:fileUtils.ts function:decodeBase64 lineno-31');
+      // analyticsLogger("error", { 'desc': "Error while decoding" });
+      console.log('Error while decoding:', e);
+    }
+  };
+
+  const uploadImageToServer = async (data, signedUrl) => {
+    if (signedUrl) {
+      const fileData = await RNFS.readFile(data?.uri, 'base64');
+      const _data = await decodeBase64(fileData);
+
+      try {
+        await fetch(signedUrl, {
+          method: 'PUT',
+          body: _data,
+          headers: {
+            'Content-Type': 'image/jpeg',
+          },
+        });
+
+        await dispatch(getUrlOfProfile());
+      } catch (e) {
+        console.log('Error while fetching', e);
+      }
+    }
+  };
+
   return (
-    <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={{flex: 1, backgroundColor: darkMode ? '#000' : '#fff'}}
+      showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={
-                loginFrom == PATIENT
-                  ? require('../../icons/patient.jpg')
-                  : require('../../icons/doctor.jpg')
-              }
-              style={styles.image}
-            />
-          </View>
+          <Pressable onPress={handleUploadImage}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={
+                  profileImageUrl
+                    ? {uri: profileImageUrl}
+                    : loginFrom === PATIENT
+                    ? require('../../icons/patient.jpg')
+                    : require('../../icons/doctor.jpg')
+                }
+                style={styles.image}
+              />
+            </View>
+          </Pressable>
           <View style={styles.details}>
-            <Text style={{...styles.nameText, width: screenWidth - 100}}>
-              {firstName + ' ' + lastName}
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                ...styles.nameText,
+                width: screenWidth - 100,
+                // borderWidth: 1,
+              }}>
+              {/* {firstName + ' ' + lastName} */}
+              {(firstName + ' ' + lastName).length > 10
+                ? (firstName + ' ' + lastName).substring(0, 21 - 3) + '...'
+                : firstName + ' ' + lastName}
             </Text>
-            <Text style={styles.emailText}>{email_id}</Text>
           </View>
         </View>
+
         <View style={styles.issuesContainer}>
           <Text style={styles.issuesTitleText}>
             {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
-            {DUMMY_ISSUES.map(issue => (
+            {/* {DUMMY_ISSUES.map(issue => (
               <Issue key={issue} title={issue} />
-            ))}
+            ))} */}
+            <FlatList
+              data={DUMMY_ISSUES}
+              renderItem={({item}) => <Issue key={item} title={item} />}
+              keyExtractor={item => item}
+              horizontal={true} // Set to true for horizontal rendering
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
         </View>
       </View>
       <View style={styles.settingsContainer}>
+        <View style={styles.switchContaimer}>
+          <Text style={styles.accDetailsTitle}>{DARK_MODE}</Text>
+          <Switch onValueChange={toggleSwitch} value={darkMode} />
+        </View>
         <View style={styles.profDetailsCont}>
           <Text style={styles.accDetailsTitle}>{ACCOUNT_DETAILS}</Text>
           {profileDetailsItems.map(item => (
@@ -223,6 +347,7 @@ const Profile = ({navigation}) => {
                       I18nManager.allowRTL(i18n.language === 'he');
                       I18nManager.forceRTL(i18n.language === 'he');
                       setLanguage(props());
+                      dispatch(languageChange(i18n.language));
                       // RNRestart.Restart();
                       setTimeout(() => {
                         RNRestart.Restart();
@@ -240,7 +365,7 @@ const Profile = ({navigation}) => {
           }}
           dropDownContainerStyle={{
             backgroundColor: Colors.white,
-            borderWidth: 0,
+            borderWidth: 1,
             alignSelf: 'center',
             width: widthPercentageToDP(36),
           }}
@@ -255,6 +380,14 @@ const Profile = ({navigation}) => {
         </Pressable>
       </View>
       {isProfileLoading ? <ScreenLoading /> : null}
+
+      {loading ? (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Text>
+            <ActivityIndicator size={'large'} />
+          </Text>
+        </View>
+      ) : null}
     </ScrollView>
   );
 };
@@ -264,13 +397,16 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    // backgroundColor: Colors.white,
   },
   topPartContainer: {
     backgroundColor: Colors.white,
     paddingTop: 15,
+    borderBottomWidth: 0.2,
   },
   imageContainer: {
-    borderWidth: 1,
+    // borderWidth: 1,
+    borderColor: Colors.grayishBlue,
     width: 56,
     height: 56,
     borderRadius: 8,
@@ -282,38 +418,45 @@ const styles = StyleSheet.create({
     height: 56,
   },
   details: {
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   nameText: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.dune,
+    color: Colors.darkPaleMintColor,
   },
   emailText: {
     fontWeight: '500',
     color: Colors.grayishBlue,
   },
   issuesContainer: {
-    paddingHorizontal: 32,
+    marginHorizontal: 15,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
   profileDetailsContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 17,
     marginBottom: 36,
   },
   issuesTitleText: {
-    fontWeight: '500',
-    fontSize: 14,
+    fontWeight: '600',
+    fontSize: 15,
     color: Colors.grayishBlue,
     marginBottom: 20,
   },
   allIssues: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   settingsContainer: {
     paddingHorizontal: 32,
     paddingTop: 16,
+    backgroundColor: Colors.white,
   },
   profDetailsCont: {
     marginBottom: 24,
@@ -329,16 +472,22 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   logoutTitle: {
-    color: Colors.black,
+    color: Colors.darkPaleMintColor,
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    // backgroundColor: Colors.paleMintColor,
+    // borderWidth: 1,
     alignSelf: 'center',
-    width: widthPercentageToDP(36),
+    borderColor: Colors.white,
+    width: widthPercentageToDP(27),
+    paddingHorizontal: 10,
+  },
+  switchContaimer: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
 });

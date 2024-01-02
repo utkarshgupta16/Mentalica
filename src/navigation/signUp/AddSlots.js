@@ -12,10 +12,8 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   heightPercentageToDP as hp,
   screenHeight,
@@ -23,6 +21,7 @@ import {
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {DatePickerModal} from 'react-native-paper-dates';
 import Close from '../../icons/icon_close.svg';
 import {slotsData} from '../../utils/default';
 import {useTranslation} from 'react-i18next';
@@ -31,16 +30,17 @@ import moment from 'moment';
 import {editProfileSlice} from '../../redux/HomeSlice';
 import {useDispatch} from 'react-redux';
 import ScreenLoading from '../../components/ScreenLoading';
-import {PATIENT} from '../../utils/Strings';
+import {APPLY, FROM, PATIENT, TO} from '../../utils/Strings';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 const AddSlot = ({
   close,
-  state,
+
   addSlots,
+  setRangeDate,
   slots = [],
-  setState,
+  rangeDate = {},
   isProfile = false,
-  email_id,
   type,
 }) => {
   const {t} = useTranslation();
@@ -58,6 +58,14 @@ const AddSlot = ({
   const [isLoading, setLoading] = useState(false);
   const [selectedDeleteIndex, setDelete] = useState(undefined);
   const [isUpdated, setUpdated] = useState(false);
+  const [showCalender, setShowCalender] = useState(false);
+
+  const [showCalendarModal, setCalendarModal] = useState(false);
+  const [showCalendarModalAndroid, setCalendarModalAndroid] = useState(false);
+  const [parentModal, setParentModal] = useState(true);
+  let timestamp = Date.now();
+  const [dateObj, setDateObj] = useState({from: timestamp, to: timestamp});
+
   const [time, setTime] = useState({
     startTime: `${
       new Date().getHours() < 10
@@ -69,9 +77,16 @@ const AddSlot = ({
         : new Date().getMinutes()
     }`,
     endTime: '',
-    notset: false,
   });
 
+  const onDateSelect = (event, selectedDate, key) => {
+    const copy = {...dateObj};
+    copy[key] = event.nativeEvent.timestamp;
+    // setDateObj(copy);
+    setRangeDate({...rangeDate, [key]: event.nativeEvent.timestamp});
+  };
+
+  const firstDay = new Date(moment().subtract(30, 'd'));
   const onChangeDate = (text, field) => {
     let hours = parseInt(JSON.stringify(text).slice(12, 14)) - 6;
     let minutes = parseInt(JSON.stringify(text).slice(15, 17)) - 30;
@@ -115,12 +130,6 @@ const AddSlot = ({
     }
   };
 
-  // let filterData = slotsData.filter(val => {
-  //   if (!slots1.includes(val?.value)) {
-  //     return true;
-  //   }
-  //   return false;
-  // });
   const addDateTime = field => {
     let isExit = false;
     for (let val of slots) {
@@ -171,6 +180,7 @@ const AddSlot = ({
       let selectedSlotData = [...selectedSlot];
       selectedSlotData.push(time1);
       setSlots(selectedSlotData);
+
       if (isProfile && !isUpdated) {
         setUpdated(true);
       }
@@ -241,6 +251,53 @@ const AddSlot = ({
     setSlotsData(slotsData);
   }, []);
 
+  const onDismiss = React.useCallback(() => {
+    setCalendarModalAndroid(false);
+    setParentModal(true);
+    setTimeout(() => {
+      setFilterModal(true);
+    }, 500);
+  }, [setCalendarModalAndroid]);
+
+  const onConfirm = React.useCallback(
+    ({startDate, endDate}) => {
+      // console.log('sart end', moment(startDate).format('x'), moment(endDate).format('x'));
+      if (new Date(startDate) > new Date(endDate)) {
+        Alert.alert('Invalid Date Range', 'Please enter a valid date range.');
+        return;
+      }
+      setDateObj({
+        from: Number(moment(startDate).format('x')),
+        to: Number(moment(endDate).format('x')),
+      });
+      setSelectedFilterIndex(customDateRangeIndex);
+      setCalendarModalAndroid(false);
+      setParentModal(true);
+      setTimeout(() => {
+        setFilterModal(true);
+      }, 500);
+    },
+    [showCalendarModalAndroid],
+  );
+
+  const handleDateRange = () => {
+    setParentModal(false);
+    setTimeout(() => {
+      if (Platform.OS === 'ios') {
+        setCalendarModal(true);
+      } else {
+        setCalendarModalAndroid(true);
+      }
+    }, 500);
+  };
+
+  const applyCalendarRange = () => {
+    setCalendarModal(false);
+    setTimeout(() => {
+      setParentModal(true);
+    }, 500);
+  };
+
   return (
     <View
       style={{
@@ -249,15 +306,41 @@ const AddSlot = ({
       <Modal
         animationType="slide"
         transparent={true}
-        isVisible={true}
+        isVisible={parentModal}
         style={{borderRadius: 10, position: 'relative'}}
         onBackdropPress={() => {
+          const startDate = new Date(dateObj.from);
+          const endDate = new Date(dateObj.to);
+          // setRangeDate({
+          //   startDate: startDate,
+          //   endDate: endDate,
+          //   slots,
+          // });
+          setCalendarModal(false);
           close && close();
         }}
         onBackButtonPress={() => {
+          const startDate = new Date(dateObj.from);
+          const endDate = new Date(dateObj.to);
+          // setRangeDate({
+          //   startDate: startDate,
+          //   endDate: endDate,
+          //   slots: [...slots, slots],
+          // });
+          setCalendarModal(false);
           close && close();
         }}
-        onRequestClose={() => close && close()}>
+        onRequestClose={() => {
+          const startDate = new Date(dateObj.from);
+          const endDate = new Date(dateObj.to);
+          // setRangeDate({
+          //   startDate: startDate,
+          //   endDate: endDate,
+          //   slots: [...slots],
+          // });
+          setCalendarModal(false);
+          close && close();
+        }}>
         <View
           style={{
             flex: 0.5,
@@ -341,20 +424,22 @@ const AddSlot = ({
               }}
               multiple={true}
             />
-          </View> */}
-          <Pressable
-            onPress={setShowStartTime}
-            style={{
-              borderWidth: 1,
-              borderRadius: 8,
-              borderColor: 'lightgray',
-              // backgroundColor: Colors.blueDarkColor,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: 10,
-              paddingVertical: 7,
-            }}>
+          </View>  */}
+          <Pressable onPress={handleDateRange} style={styles.dateRange}>
+            <View>
+              <Text>
+                {new Date(rangeDate.endDate)?.getDate() >
+                new Date(rangeDate.startDate)?.getDate()
+                  ? `Date from ${new Date(
+                      rangeDate.startDate,
+                    ).getDate()} to ${new Date(rangeDate.endDate).getDate()}`
+                  : 'Select Date Range'}
+              </Text>
+            </View>
+            <MaterialIcons name="event" size={22} />
+          </Pressable>
+
+          <Pressable onPress={setShowStartTime} style={styles.dateRange}>
             <View>
               {slots.length ? (
                 <Text>{`${slots.length} ${
@@ -370,6 +455,7 @@ const AddSlot = ({
           </Pressable>
           {showStartTime ? dateRenderItem({field: 'startTime'}) : null}
           {showEndTime ? dateRenderItem({field: 'endTime'}) : null}
+
           {/* <View style={{alignItems: 'center'}}>
             <Pressable
               onPress={() => {
@@ -399,7 +485,7 @@ const AddSlot = ({
               }}>
               <Text style={{color: 'white'}}>Add</Text>
             </Pressable>
-          </View> */}
+          </View>  */}
 
           {slots && slots.length && !isOpen ? (
             <FlatList
@@ -417,7 +503,7 @@ const AddSlot = ({
               renderItem={({item, index}) => {
                 let [startH, startM] = item?.startTime.split(':');
                 let [endH, endM] = item?.endTime.split(':');
-                let AM_PM = startH > 12 ? 'PM' : 'AM';
+                let AM_PM = startH >= 12 ? 'PM' : 'AM';
                 let startTime = `${
                   startH > 12 ? startH - 12 : startH
                 }:${startM} ${AM_PM}`;
@@ -559,7 +645,7 @@ const AddSlot = ({
                   setLoading(true);
                   const resp = await dispatch(
                     editProfileSlice({
-                      emailId: email_id,
+                      // emailId: email_id,
                       type: type == PATIENT ? 'patient' : 'mentor',
                       slots,
                     }),
@@ -587,6 +673,62 @@ const AddSlot = ({
           ) : null}
         </View>
       </Modal>
+      <Modal
+        isVisible={showCalendarModal}
+        style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={styles.calendarModalContainer}>
+          <View style={styles.calendarSubContainer}>
+            <Text style={styles.calendarTitleText}>{FROM}</Text>
+            <RNDateTimePicker
+              testID="dateTimePicker"
+              // value={new Date(dateObj?.from)}
+              value={new Date(rangeDate.startDate)}
+              mode="date"
+              display={'inline'}
+              minimumDate={firstDay}
+              // is24Hour={true}
+              // showTime={{ use12Hours: true, format: "HH:mm a" }}
+              onChange={(event, selectedDate) =>
+                onDateSelect(event, selectedDate, 'startDate')
+              }
+              // style={{height: hp(34), marginBottom: hp(-2)}}
+            />
+            <Text style={styles.calendarTitleText}>{TO}</Text>
+            <RNDateTimePicker
+              minimumDate={new Date(rangeDate.startDate)}
+              testID="dateTimePicker"
+              value={new Date(rangeDate.endDate)}
+              // maximumDate={new Date()}
+              mode={'date'}
+              display={'inline'}
+              // is24Hour={true}
+              // showTime={{ use12Hours: true, format: "HH:mm a" }}
+              onChange={(event, selectedDate) =>
+                onDateSelect(event, selectedDate, 'endDate')
+              }
+              // style={{height: hp(34)}}
+            />
+          </View>
+          <Pressable onPress={applyCalendarRange}>
+            <View style={styles.actionSheetBtnContainer}>
+              <Text style={styles.actionSheetBtnText}>{APPLY}</Text>
+            </View>
+          </Pressable>
+        </View>
+      </Modal>
+      <DatePickerModal
+        locale="en"
+        mode="range"
+        visible={showCalendarModalAndroid}
+        onDismiss={onDismiss}
+        dates={new Date()}
+        onConfirm={onConfirm}
+        inputFormat="DD/MM/YYYY"
+        saveLabel="Apply" // optional
+        label="Select range" // optional
+        startLabel="From" // optional
+        endLabel="To" // optional
+      />
     </View>
   );
 };
@@ -595,15 +737,52 @@ export default AddSlot;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // marginHorizontal: 10,
     marginBottom: 10,
     borderRadius: 8,
   },
   calendarModalContainer: {
-    // width: screenWidth,
-    // alignSelf: 'center',
     paddingHorizontal: wp(3),
     marginBottom: hp(2),
   },
+  dateRange: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: 'lightgray',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    width: '100%',
+    marginBottom: 10,
+  },
+  dateRangeCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginBottom: 10,
+  },
+  calendarSubContainer: {
+    backgroundColor: Colors.paleMintColor,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginTop: hp(5),
+  },
+  calendarTitleText: {
+    color: Colors.blueDarkColor,
+    fontSize: 24,
+    fontWeight: '600',
+    marginLeft: wp(1),
+    marginTop: hp(2),
+  },
+  actionSheetBtnContainer: {
+    height: hp(7),
+    backgroundColor: Colors.darkPaleMintColor,
+    marginTop: hp(1),
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionSheetBtnText: {fontSize: 20, color: Colors.white, fontWeight: '500'},
 });

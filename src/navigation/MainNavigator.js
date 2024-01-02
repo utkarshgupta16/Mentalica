@@ -1,5 +1,10 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {useColorScheme} from 'react-native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeNavigator from './HomeNavigator';
 import {useSelector} from 'react-redux';
@@ -10,8 +15,13 @@ const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const {darkMode} = useSelector(state => state.home);
+  const theme = darkMode ? 'dark' : 'light';
+
+  const scheme = useColorScheme();
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator initialRouteName="SplashScreen">
         <Stack.Screen
           name="SplashScreen"

@@ -1,10 +1,14 @@
-import {View, Text, StyleSheet, Pressable, FlatList} from 'react-native';
+import {StyleSheet, Pressable, FlatList} from 'react-native';
+import View from '../../wrapperComponent/ViewWrapper';
+import Text from '../../wrapperComponent/TextWrapper';
 import React from 'react';
 import {styles} from './PatientStatsStyle';
 import {useTranslation} from 'react-i18next';
+import {t} from 'i18next';
 
 const PatientStats = () => {
   const {t} = useTranslation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>{t('My Mood')}</Text>
@@ -45,7 +49,7 @@ const renderItem = ({item}) => {
           marginBottom: 15,
           paddingVertical: 10,
         }}>
-        {item.problem}
+        {t(item.problem)}
       </Text>
       <FlatList
         data={days}
@@ -60,8 +64,8 @@ const renderItem = ({item}) => {
 
 const renderDaysItem = ({item}) => {
   return (
-    <View style={{marginRight: 25, alignItems: 'center'}}>
-      <Text style={{marginBottom: 15}}>{item}</Text>
+    <View style={{marginRight: 14, alignItems: 'center'}}>
+      <Text style={{marginBottom: 15}}>{t(item)}</Text>
       <View
         style={{
           width: 8,
@@ -73,6 +77,7 @@ const renderDaysItem = ({item}) => {
     </View>
   );
 };
+
 
 export default PatientStats;
 
