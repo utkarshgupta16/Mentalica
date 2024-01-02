@@ -49,16 +49,16 @@ const ConversationsSlice = createSlice({
     },
     updateConversation: (state, action) => {
       const stateCopy = [...state];
-      const target = stateCopy.find(
+
+      const index = stateCopy.findIndex(
         convo => convo.sid === action.payload.channelSid,
       );
-
-      if (target) {
-        Object.assign(target, {
+      if (index >= 0) {
+        stateCopy[index] = {
+          ...stateCopy[index],
           ...action.payload.parameters,
-        });
+        };
       }
-
       return stateCopy;
     },
     removeConversation: (state, action) => {

@@ -305,6 +305,7 @@ const App = () => {
       if (conversation?.sid === sidRef?.current && messageBody) {
         await conversation.advanceLastReadMessageIndex(messageBody.index);
       }
+      let lastMessageTime = messageBody?.lastMessageTime;
       if (!messageBody) {
         const lastMessage = await conversation.getMessages(
           1,
@@ -312,7 +313,9 @@ const App = () => {
         );
         const lastMessageText = lastMessage.items[0]?.body || 'Media message';
         message = lastMessageText;
-
+        lastMessageTime = new Date(
+          lastMessage?.items[0]?.dateCreated,
+        ).getTime();
         const participantData = (await conversation?.getParticipants()) || [];
         const participant =
           participantData.filter(val => val?.state?.identity !== email) || [];
@@ -326,8 +329,15 @@ const App = () => {
       }
 
       await loadUnreadMessagesCount(conversation, message);
+      lastMessageTime &&
+        (await dispatch(
+          updateConversation({
+            channelSid: conversation.sid,
+            parameters: {lastMessageTime},
+          }),
+        ));
     },
-    [loadUnreadMessagesCount, sidRef, email, updateIsOnlineStatus],
+    [loadUnreadMessagesCount, sidRef, email, updateIsOnlineStatus, dispatch],
   );
 
   useEffect(() => {
@@ -361,6 +371,7 @@ const App = () => {
               body: message.body,
               author: message.author,
               index: message.index,
+              lastMessageTime: new Date(message?.dateCreated).getTime(),
             });
           });
 

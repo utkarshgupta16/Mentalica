@@ -19,8 +19,9 @@ const RenderCustomView = ({
   navigation,
   currentMessage,
   selectedMessages,
-  onDownloadAttachments,
-  conversationAttachments,
+  // onDownloadAttachments,
+  // conversationAttachments,
+  channelId,
 }) => {
   const {
     document,
@@ -42,28 +43,17 @@ const RenderCustomView = ({
       <View>
         <Text>{text}</Text>
         <MessageMedia
+          key={_id}
           navigation={navigation}
           extension={extension}
-          key={_id}
-          attachments={
-            conversationAttachments && conversationAttachments?.[_id]
-          }
-          onDownload={async () => await onDownloadAttachments(currentMessage)}
+          channelId={channelId}
+          message={currentMessage}
+          // attachments={
+          //   conversationAttachments && conversationAttachments?.[_id]
+          // }
+          // onDownload={async () => await onDownloadAttachments(currentMessage)}
           files={messageFiles}
           sending={currentMessage?.index === -1}
-          onOpen={(mediaSid, image, file) => {
-            if (conversationAttachments?.[_id][mediaSid]?.includes('twilio')) {
-              if (Platform.OS === 'android') {
-                Linking.openURL(conversationAttachments?.[_id][mediaSid]);
-              } else {
-                navigation.navigate('DocViewer', {
-                  documents: conversationAttachments?.[_id][mediaSid],
-                });
-              }
-            } else {
-              openFile(document);
-            }
-          }}
         />
       </View>
     );

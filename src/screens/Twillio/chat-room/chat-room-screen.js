@@ -25,20 +25,16 @@ import Colors from '../../../customs/Colors';
 import {whatsAppBackgroundURI} from '../../../assets/images';
 import {
   createFormData,
-  getBlobFile,
   initialMediaData,
   removeMessage,
 } from '../../../utils/utils';
 import {colors} from '../colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  getSdkMediaObject,
-  messagesMap,
-} from '../../../redux/coversation-objects';
+import {messagesMap} from '../../../redux/coversation-objects';
 import ScreenLoading from '../../../components/ScreenLoading';
 import {resetCount} from '../../../redux/UnReadMessageCountSlice';
 import {updateCurrentConversation} from '../../../redux/CurrentConvoReducer';
-import {addAttachment, clearAttachments} from '../../../redux/AttachmentSlice';
+import {clearAttachments} from '../../../redux/AttachmentSlice';
 
 const ChatRoomScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
@@ -56,8 +52,6 @@ const ChatRoomScreen = ({route, navigation}) => {
   const chatMessagesPaginator = useRef();
   const [message, showMessage] = useState({message: ''});
   const textInputRef = useRef();
-  const conversationAttachments =
-    useSelector(state => state.attachments[channelId]) || {};
   const [focusIndex, setFocusIndex] = useState(
     messages && messages.length ? messages[messages?.length - 1].index : -1,
   );
@@ -422,10 +416,11 @@ const ChatRoomScreen = ({route, navigation}) => {
   );
   const renderMessageImage = props => (
     <RenderMessageImage
-      conversationAttachments={conversationAttachments}
       props={props}
       selectedMessages={selectedMessages}
-      onDownloadAttachments={onDownloadAttachments}
+      // onDownloadAttachments={onDownloadAttachments}
+      // conversationAttachments={conversationAttachments}
+      channelId={channelId}
     />
   );
   const renderCustomView = ({currentMessage}) => (
@@ -433,8 +428,9 @@ const ChatRoomScreen = ({route, navigation}) => {
       selectedMessages={selectedMessages}
       currentMessage={currentMessage}
       navigation={navigation}
-      onDownloadAttachments={onDownloadAttachments}
-      conversationAttachments={conversationAttachments}
+      channelId={channelId}
+      // onDownloadAttachments={onDownloadAttachments}
+      // conversationAttachments={conversationAttachments}
     />
   );
   const renderFooter = () => (
@@ -537,39 +533,6 @@ const ChatRoomScreen = ({route, navigation}) => {
         }
       }, 500),
     [chatClientChannel],
-  );
-
-  const onDownloadAttachments = useCallback(
-    async message => {
-      const attachedMedia = message?.isLocal
-        ? message.attachedMedia
-        : message.attachedMedia?.map(getSdkMediaObject);
-      if (message.index === -1) {
-        return undefined;
-      }
-      if (!attachedMedia?.length) {
-        return new Error('No media attached ');
-      }
-
-      for (const media of attachedMedia) {
-        let blob = '';
-        if (!media?.isLocal) {
-          blob = await getBlobFile(media);
-        } else {
-          blob = media?.url;
-        }
-        dispatch(
-          addAttachment({
-            channelSid: channelId,
-            messageSid: message._id,
-            mediaSid: media.sid,
-            attachment: blob,
-          }),
-        );
-      }
-      return;
-    },
-    [channelId, dispatch],
   );
 
   return (
