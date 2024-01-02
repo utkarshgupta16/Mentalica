@@ -21,7 +21,14 @@ import {Auth} from 'aws-amplify';
 // import {signUp, confirmSignUp} from '@aws-amplify/auth';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-import {specialities} from '../../utils/default';
+import {
+  DUTY_ITEM,
+  FEEL_ITEMS,
+  GENDER_ITEM,
+  LANGUAGE_LIST,
+  TYPE_OF_ITEMS,
+  specialities,
+} from '../../utils/default';
 import {useDispatch, useSelector} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
@@ -35,6 +42,7 @@ import {
   ADD_SLOTS_SIGNUP_SCREEN,
   PROFILE_TAB_ROUTE,
 } from '../../utils/route.js';
+import {validateEmail} from '../../utils/emailValidation.js';
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
@@ -64,48 +72,14 @@ const MentorSignUp = ({navigation}) => {
     EXPERIENCE_IN_YEARS,
     FEES_FOR_30_MINS,
     STUDENT,
-    HATE,
-    ABANDONED,
     MAlE,
     FEMAlE,
     CIVILIAN,
     SOLDIER,
-    SADNESS,
-    DEPRESSED,
-    ANGER,
-    PAIN,
-    SHOCKED,
-    DANGER,
-    TRAUMA,
-    FEAR,
-    LONELINESS,
-    STUDENT_LIFE,
-    ANXIETY,
-    DISAAPOINTMENT,
     ENGLISH,
     HINDI,
   } = convertLang(t);
-  const typeOfItems = [
-    {
-      label: PATIENT,
-      value: PATIENT,
-    },
-    {
-      label: MENTOR,
-      value: MENTOR,
-    },
-  ];
 
-  const languageList = [
-    {
-      label: ENGLISH,
-      value: ENGLISH,
-    },
-    {
-      label: HINDI,
-      value: HINDI,
-    },
-  ];
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -115,33 +89,12 @@ const MentorSignUp = ({navigation}) => {
   const [typeOpen, setTypeOpen] = useState(false);
   const [typeValue, setTypeValue] = useState(PATIENT);
   const [openGender, setOpenGender] = useState(false);
-  const [genderItems, setGenderItems] = useState([
-    {label: MAlE, value: 'male'},
-    {label: FEMAlE, value: 'female'},
-  ]);
-  const [dutyItems, setDutyItems] = useState([
-    {label: CIVILIAN, value: 'civilian'},
-    {label: SOLDIER, value: 'soldier'},
-    {label: STUDENT, value: 'student'},
-  ]);
-  const [feelItems, setFeelItems] = useState([
-    {label: ANXIETY, value: 'anxiety'},
-    {label: FEAR, value: 'fear'},
-    {label: DANGER, value: 'danger'},
-    {label: DISAAPOINTMENT, value: 'disappointment'},
-    {label: LONELINESS, value: 'loneliness'},
-    {label: HATE, value: 'hate'},
-    {label: ABANDONED, value: 'abandoned'},
-    {label: TRAUMA, value: 'trauma'},
-    {label: SHOCKED, value: 'shocked'},
-    {label: PAIN, value: 'pain'},
-    {label: ANGER, value: 'anger'},
-    {label: DEPRESSED, value: 'depressed'},
-    {label: SADNESS, value: 'sadnesss'},
-  ]);
+  const [genderItems, setGenderItems] = useState(GENDER_ITEM(t));
+  const [dutyItems, setDutyItems] = useState(DUTY_ITEM(t));
+  const [feelItems, setFeelItems] = useState(FEEL_ITEMS(t));
   const [openDuty, setOpenDuty] = useState(false);
   const [feelOpen, setFeelOpen] = useState(false);
-  const [typeItems, setTypeItems] = useState(typeOfItems);
+  const [typeItems, setTypeItems] = useState(TYPE_OF_ITEMS(t));
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
@@ -217,14 +170,6 @@ const MentorSignUp = ({navigation}) => {
         }
       });
     return expertiseUpdated;
-  };
-
-  const validateEmail = email => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      );
   };
 
   const handleSignup = async () => {
@@ -483,7 +428,7 @@ const MentorSignUp = ({navigation}) => {
             value: labels,
           });
         }}
-        items={languageList}
+        items={LANGUAGE_LIST(t)}
         // setItems={setSpecialistItems}
         placeholder={SELECT_LANGUAGE}
         style={styles.dropdown}

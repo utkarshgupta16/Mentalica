@@ -31,6 +31,7 @@ import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import validateEmail from '../utils/emailValidation';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -137,14 +138,6 @@ const LoginScreen = ({navigation}) => {
 
   const handleForgotPassword = async () => {
     navigation.navigate('ForgotPasswordScreen', {email: enteredEmail});
-  };
-
-  const validateEmail = email => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      );
   };
 
   return (
