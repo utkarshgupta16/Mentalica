@@ -44,7 +44,9 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const {jwtToken} = useSelector(state => state.auth);
+  const {
+    userToken: {jwtToken},
+  } = useSelector(state => state.auth);
 
   const {darkMode} = useSelector(state => state.home);
   const isFocus = useIsFocused();

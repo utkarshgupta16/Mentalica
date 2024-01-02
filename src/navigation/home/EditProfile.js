@@ -33,7 +33,7 @@ const EditProfile = ({route, navigation}) => {
 
   const [state, setState] = useState(restData);
   const {t} = useTranslation();
-  const {type, jwtToken} = useSelector(state => state.auth);
+  const {type} = useSelector(state => state.auth);
   const {darkMode} = useSelector(state => state.home);
 
   const {SAVE, FIRST_NAME, LAST_NAME, PHONE_NO} = convertLang(t);

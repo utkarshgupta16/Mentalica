@@ -40,9 +40,10 @@ const ArticlesList = ({handleShadowVisible}) => {
     setRefreshing(false);
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
     return (
       <Pressable
+        key={index}
         onPress={() => {
           setModalVisible(true);
         }}>
@@ -148,10 +149,9 @@ const ArticlesList = ({handleShadowVisible}) => {
           elevation: isShadowVisible ? 2 : 0,
         }}></View> */}
       <FlatList
-        key={new Date()}
         data={articleData}
         renderItem={renderItem}
-        keyExtractor={() => Math.random() * 73}
+        keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
         onScroll={handleOnScroll}
         scrollEventThrottle={16}

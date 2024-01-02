@@ -41,7 +41,7 @@ const initialState = {
   email: '',
   type: '',
   userToken: {},
-  jwtToken: '',
+
 };
 const Authslice = createSlice({
   name: 'auth',
@@ -55,9 +55,7 @@ const Authslice = createSlice({
     getType: (state, action) => {
       state.type = action.payload;
     },
-    getAccessToken: (state, action) => {
-      state.jwtToken = action.payload;
-    },
+
     logout: (state, payload) => initialState,
 
     loginClient: (state, action) => {
@@ -66,6 +64,5 @@ const Authslice = createSlice({
   },
 });
 
-export const {login, logout, loginClient, getType, getAccessToken} =
-  Authslice.actions;
+export const {login, logout, loginClient, getType} = Authslice.actions;
 export default Authslice.reducer;

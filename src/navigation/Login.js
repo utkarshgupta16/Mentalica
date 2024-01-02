@@ -17,7 +17,7 @@ import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, getType, getAccessToken} from '../redux/AuthSlice';
+import {login, getType} from '../redux/AuthSlice';
 import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
@@ -90,8 +90,6 @@ const LoginScreen = ({navigation}) => {
       setLoading(true);
 
       const user = await Auth.signIn(enteredEmail, enteredPassword);
-
-      dispatch(getAccessToken(user?.signInUserSession?.idToken?.jwtToken));
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
       dispatch(setAttributes(attributes));
@@ -105,7 +103,6 @@ const LoginScreen = ({navigation}) => {
         }),
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
-      dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
       setError(err);
