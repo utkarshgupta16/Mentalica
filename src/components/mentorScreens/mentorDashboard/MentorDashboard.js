@@ -39,7 +39,6 @@ const MentorDashboard = ({navigation}) => {
   const {email, type} = useSelector(state => state.auth);
   const {props, setProps} = useContext(AppContext);
   const [selectedDay, setDay] = useState(new Date());
-  // console.log('setprops---------------------', setProps);
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [isLoading, setLoading] = useState(false);
@@ -57,11 +56,6 @@ const MentorDashboard = ({navigation}) => {
     profileData = {},
     scheduledAppointmentsData = [],
   } = useSelector(state => state.home);
-
-  console.log(
-    'scheduledAppointmentsData ========>>>>>',
-    scheduledAppointmentsData,
-  );
 
   const formatSheduleAppointmentData = appointments => {
     const newDate = new Date();
@@ -177,7 +171,6 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const videoCallAction = data => {
-    console.log('Data =========================>>>>>>>>>>>>>>>>>>>>>>>.', data);
     _checkPermissions(async () => {
       try {
         const {payload = {}} = await dispatch(

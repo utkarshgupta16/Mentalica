@@ -261,7 +261,6 @@ const AddSlot = ({
 
   const onConfirm = React.useCallback(
     ({startDate, endDate}) => {
-      // console.log('sart end', moment(startDate).format('x'), moment(endDate).format('x'));
       if (new Date(startDate) > new Date(endDate)) {
         Alert.alert('Invalid Date Range', 'Please enter a valid date range.');
         return;

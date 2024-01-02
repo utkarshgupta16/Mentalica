@@ -178,7 +178,6 @@ const MentorSignUp = ({navigation}) => {
     }
     if (validateInputs()) {
       setCompalsaryField(true);
-      console.log('Please enter');
       return;
     }
 
@@ -238,8 +237,6 @@ const MentorSignUp = ({navigation}) => {
         deviceType: Platform.OS,
         type: typeValue,
       };
-
-      console.log('hello -> data', ddd);
 
       await dispatch(
         singUpSlice({
@@ -305,9 +302,7 @@ const MentorSignUp = ({navigation}) => {
       //   username: state.emailId,
       //   confirmationCode: enteredCode,
       // });
-      // console.log('submitCodeHandler=======:', res);
       const res = await Auth.confirmSignUp(state.emailId, enteredCode);
-      console.log('res:', res);
       navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
@@ -378,7 +373,6 @@ const MentorSignUp = ({navigation}) => {
 
   const resendCode = async () => {
     const response = await Auth.resendSignUp(state.emailId);
-    console.log('response:', response);
   };
 
   const convertFieldStringToCapitalized = str => {

@@ -24,9 +24,8 @@ export function ChatListItem({
   let otherParticipantData = {};
   if (otherParticipantFilter && otherParticipantFilter.length) {
     let {identity} = otherParticipantFilter[0] || {};
-    otherParticipantData = participants[identity] || {}
+    otherParticipantData = participants[identity] || {};
   }
-  console.log('ChatListItem', otherParticipantData);
 
   return (
     <TouchableOpacity

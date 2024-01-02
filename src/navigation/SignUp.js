@@ -227,7 +227,7 @@ const SignUp = ({navigation}) => {
     try {
       const enteredCode = enteredOtp.join('');
       const res = await Auth.confirmSignUp(state.emailId, enteredCode);
-      console.log('res:', res);
+      'res:', res;
       navigation.goBack();
       setShowEnterCodeModal(false);
     } catch (error) {
@@ -298,7 +298,6 @@ const SignUp = ({navigation}) => {
 
   const resendCode = async () => {
     const response = await Auth.resendSignUp(state.emailId);
-    console.log('response:', response);
   };
 
   const mentorExtras = (

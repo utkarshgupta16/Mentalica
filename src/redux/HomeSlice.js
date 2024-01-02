@@ -10,8 +10,6 @@ import {apiMiddleware} from './service';
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
 
-  console.log('JWT token ====================>>>>>>>>>>>>>>>>>>>>>>', jwtToken);
-  // Auth.currentUserCredentials;
   return {
     Authorization: `Bearer ${jwtToken}`,
     'Content-Type': 'application/json',
@@ -228,7 +226,6 @@ export const sendNotificationSlice = createAsyncThunk(
         data,
       },
     };
-    console.log('sendNotificationSlice=========');
     return axios(config)
       .then(async response => {
         const {data, status} = response;

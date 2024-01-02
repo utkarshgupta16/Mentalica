@@ -28,7 +28,6 @@ export function ChatCreateScreen() {
 
   const getTokenNew = async username => {
     let {payload} = await dispatch(getTwilloChatTokenSlice(username));
-    // console.log('getTokenNew', payload);
     return payload?.accessToken;
   };
   const onCreateOrJoin = async () => {
