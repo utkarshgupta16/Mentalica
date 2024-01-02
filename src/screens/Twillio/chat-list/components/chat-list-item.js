@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, {useEffect} from 'react';
 import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import Colors from '../../../../customs/Colors';
 import {getTwilloChatTokenSlice} from '../../../../redux/HomeSlice';
 import {dateFormat} from '../../../../utils/utils';
 import {colors} from '../../colors';
@@ -13,21 +14,21 @@ export function ChatListItem({
   onLongPress,
   onPress,
   otherUser = {},
+  isTyping,
 }) {
   let showDate = dateFormat(channel?.lastMessageTime);
   let otherParticipantFilter =
     (channel.attributes?.participants &&
       channel.attributes?.participants.filter(
-        val => val.identity != username,
+        val => val.identity !== username,
       )) ||
     [];
   let otherParticipantData = {};
   if (otherParticipantFilter && otherParticipantFilter.length) {
     let {identity} = otherParticipantFilter[0] || {};
-    otherParticipantData = participants[identity] || {}
+    otherParticipantData = participants[identity] || {};
   }
-  console.log('ChatListItem', otherParticipantData);
-
+  console.log('TouchableOpacity', channel.isOnline);
   return (
     <TouchableOpacity
       onLongPress={onLongPress}
@@ -52,7 +53,7 @@ export function ChatListItem({
             }}>
             <View
               style={{
-                backgroundColor: 'green',
+                backgroundColor: Colors.emerald,
                 width: 15,
                 height: 15,
                 borderRadius: 10,
@@ -73,6 +74,21 @@ export function ChatListItem({
           <Text style={styles.cardText}>
             {otherUser?.username || channel?.name}
           </Text>
+          {channel.unreadCount ? (
+            <View
+              style={{
+                borderRadius: 15,
+                width: 27,
+                height: 27,
+                backgroundColor: Colors.emerald,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{color: 'white', fontWeight: 'bold'}}>
+                {channel?.unreadCount || 0}
+              </Text>
+            </View>
+          ) : null}
           <Text style={{fontSize: 12, color: 'gray'}}>
             {showDate
               ? showDate
@@ -83,6 +99,7 @@ export function ChatListItem({
           style={{fontSize: 14, marginLeft: 8, paddingTop: 3, color: 'gray'}}>
           {channel?.lastMessageText || ''}
         </Text>
+        {isTyping ? <Text>....Typing</Text> : null}
       </View>
     </TouchableOpacity>
   );

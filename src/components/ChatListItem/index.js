@@ -28,7 +28,7 @@ const ChatListItem = ({chat}) => {
     };
 
     fetchUser();
-  }, [chat]);
+  }, [chat, chatRoom?.users]);
 
   // fetch Chat Room
   // useEffect(() => {
@@ -45,7 +45,6 @@ const ChatListItem = ({chat}) => {
   //   });
   //   return () => subscription.unsubscribe();
   // }, [chat?.id]);
-
 
   return (
     <Pressable

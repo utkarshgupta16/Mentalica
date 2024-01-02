@@ -31,6 +31,8 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
+import {resetConversations} from '../../redux/ConvoSlice';
+import {resetUnreadMessage} from '../../redux/UnReadMessageCountSlice';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
   const {
@@ -119,6 +121,8 @@ const Profile = ({navigation}) => {
         onPress: async () => {
           signOut();
           dispatch(logout());
+          dispatch(resetConversations());
+          dispatch(resetUnreadMessage());
         },
       },
     ]);
@@ -134,7 +138,9 @@ const Profile = ({navigation}) => {
     );
   }
   return (
-    <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.mainContainer}
+      showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
           <View style={styles.imageContainer}>

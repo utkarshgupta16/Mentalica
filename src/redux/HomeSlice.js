@@ -113,7 +113,7 @@ export const deleteConversationSlice = createAsyncThunk(
       method: 'delete',
       url: endPoints.deleteConversation,
       headers: headerApi(getState),
-      data: {conversationId},
+      data: {conversationId: 'CH23f21958836c4c7e8f8b85a8c38bb379'},
     };
     return apiMiddleware(config);
   },
@@ -264,7 +264,47 @@ const HomeSlice = createSlice({
       state.attributes = action.payload;
     },
     updateChannels: (state, action) => {
-      state.channels = action.payload;
+      const {
+        isUpdate = false,
+        isUpdateCount = false,
+        newMessage = {},
+        channels = [],
+      } = action.payload;
+      let newChannels = channels;
+      if (isUpdate) {
+        newChannels = [...state.channels];
+        newChannels =
+          newChannels.map(channel =>
+            channel.id === newMessage?.channelId
+              ? {
+                  ...channel,
+                  lastMessageTime: newMessage?.dateCreated,
+                  lastMessageText: newMessage?.body,
+                  unreadCount:
+                    newMessage.unreadCount || newMessage.unreadCount === 0
+                      ? newMessage.unreadCount
+                      : channel?.unreadCount,
+                }
+              : channel,
+          ) || [];
+      }
+      if (isUpdateCount) {
+        newChannels = [...state.channels];
+        newChannels = newChannels.map(el => {
+          if (el.id === newMessage?.channelId) {
+            return {
+              ...el,
+              isOnline:
+                newMessage?.isOnline === undefined
+                  ? el.isOnline
+                  : newMessage?.isOnline,
+              unreadCount: 0,
+            };
+          }
+          return el;
+        });
+      }
+      state.channels = newChannels;
     },
   },
   extraReducers: builder => {

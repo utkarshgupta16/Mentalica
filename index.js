@@ -1,6 +1,6 @@
 import React, {useEffect, useLayoutEffect} from 'react';
 import {Amplify, Auth, API, graphqlOperation} from 'aws-amplify';
-import {AppRegistry, Platform} from 'react-native';
+import {AppRegistry, Platform, Text} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import messaging from '@react-native-firebase/messaging';
@@ -11,6 +11,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 import awsconfig from './src/aws-exports';
+// import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 // import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
@@ -29,7 +30,7 @@ Platform.OS == 'android' &&
 //   },
 // };
 
-Amplify.configure({...awsconfig,Analytics: { disabled: true } });
+Amplify.configure({...awsconfig, Analytics: {disabled: true}});
 
 let persistor = persistStore(store);
 const AppConfig = () => {
@@ -65,7 +66,7 @@ const AppConfig = () => {
       );
       console.log('newUser@@@@@@@@@@@@@@@@@', newUser);
     };
-    syncUser();
+    // syncUser();
   }, []);
 
   return (

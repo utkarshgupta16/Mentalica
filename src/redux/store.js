@@ -17,6 +17,11 @@ import {configureStore} from '@reduxjs/toolkit';
 import authReducer from './AuthSlice';
 import homeReducer from './HomeSlice';
 import participatReducer from './ParticipatSlice';
+import ConvoSlice from './ConvoSlice';
+import TypingDataSlice from './TypingDataSlice';
+import CurrentConvoReducer from './CurrentConvoReducer';
+import UnReadMessageCountSlice from './UnReadMessageCountSlice';
+import AttachmentSlice from './AttachmentSlice';
 import logger from 'redux-logger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {combineReducers} from 'redux';
@@ -34,7 +39,12 @@ import {
 const reducers = combineReducers({
   auth: authReducer,
   home: homeReducer,
-  participants:participatReducer
+  participants: participatReducer,
+  conversations: ConvoSlice,
+  typingData: TypingDataSlice,
+  unreadMessage: UnReadMessageCountSlice,
+  currentConversation: CurrentConvoReducer,
+  attachments: AttachmentSlice,
 });
 
 const persistConfig = {
@@ -50,9 +60,7 @@ let configureStoreObj = {
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false,
     }).concat(logger),
 };
 

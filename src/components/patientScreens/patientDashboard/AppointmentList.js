@@ -9,7 +9,7 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {styles} from './patientDashboardStyle';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -68,41 +68,44 @@ const AppoinmentsList = ({navigation}) => {
     return now;
   };
 
-  const updateData = async date => {
-    try {
-      let res = await dispatch(
-        getScheduledAppointmentsSlice({
-          date: moment(date).format('YYYY-MM-DD'),
-        }),
-      );
-      const appointments = res.payload;
-      const newDate = new Date(date);
-      const formattedAppointments = {};
-      appointments &&
-        appointments.forEach(appointment => {
-          const date =
-            newDate.getFullYear() +
-            '-' +
-            `${newDate.getMonth() + 1}` +
-            '-' +
-            `${
-              newDate.getDate() < 10
-                ? `0${newDate.getDate()}`
-                : newDate.getDate()
-            }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-          if (!formattedAppointments[date]) {
-            formattedAppointments[date] = [];
-          }
+  const updateData = useCallback(
+    async date => {
+      try {
+        let res = await dispatch(
+          getScheduledAppointmentsSlice({
+            date: moment(date).format('YYYY-MM-DD'),
+          }),
+        );
+        const appointments = res.payload;
+        const newDate = new Date(date);
+        const formattedAppointments = {};
+        appointments &&
+          appointments.forEach(appointment => {
+            const date =
+              newDate.getFullYear() +
+              '-' +
+              `${newDate.getMonth() + 1}` +
+              '-' +
+              `${
+                newDate.getDate() < 10
+                  ? `0${newDate.getDate()}`
+                  : newDate.getDate()
+              }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+            if (!formattedAppointments[date]) {
+              formattedAppointments[date] = [];
+            }
 
-          formattedAppointments[date].push({
-            start: setDateTime(appointment.slots[0].startTime),
-            end: setDateTime(appointment.slots[0].endTime),
-            ...appointment,
+            formattedAppointments[date].push({
+              start: setDateTime(appointment.slots[0].startTime),
+              end: setDateTime(appointment.slots[0].endTime),
+              ...appointment,
+            });
           });
-        });
-      setAppointmentList(formattedAppointments);
-    } catch (err) {}
-  };
+        setAppointmentList(formattedAppointments);
+      } catch (err) {}
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     (async () => {
@@ -114,7 +117,7 @@ const AppoinmentsList = ({navigation}) => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [updateData]);
 
   const videoCallAction = data => {
     _checkPermissions(async () => {
@@ -122,14 +125,14 @@ const AppoinmentsList = ({navigation}) => {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
             roomId: data?.roomId,
-            userName: data?.patient_email_Id,
+            userName: data?.patientEmailId,
           }),
         );
         const token = payload?.accessToken;
         setProps({
           ...props,
           token,
-          userName: data?.patient_email_Id,
+          userName: data?.patientEmailId,
           roomName: data?.roomId,
         });
         navigation.navigate(AV_CHAT_SCREEN);

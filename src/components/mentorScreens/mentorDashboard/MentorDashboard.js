@@ -140,14 +140,14 @@ const MentorDashboard = ({navigation}) => {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
             roomId: data?.roomId,
-            userName: data?.mentor_email_id,
+            userName: data?.mentorEmailId,
           }),
         );
         const token = payload?.accessToken;
         setProps({
           ...props,
           token,
-          userName: data?.mentor_email_id,
+          userName: data?.mentorEmailId,
           roomName: data?.roomId,
         });
         token && navigation.navigate(AV_CHAT_SCREEN);

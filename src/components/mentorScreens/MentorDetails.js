@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
   Pressable,
@@ -7,11 +8,9 @@ import {
   Text,
   FlatList,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import Colors from '../../customs/Colors';
 // import ArrowRight from '../icons/rightArrow.svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import {
@@ -23,9 +22,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {
   bookAppointmentSlice,
-  getBooksSlots,
   getMentorAllSlots,
-  getScheduledAppointmentsSlice,
   sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
@@ -73,7 +70,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       setBookSlots(payload);
       setLoading(false);
     })();
-  }, [dispatch, selectedMentorData?.email_id]);
+  }, [dispatch, selectedMentorData?.email_id, selectedMentorData?.uniqueId]);
 
   return (
     <>
@@ -154,8 +151,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                     disabled={check}
                     style={{paddingTop: 5, opacity: check ? 0.5 : 1}}
                     onPress={() => {
-                      const currentDate = new Date();
-
                       // Extract the time from the "10:30" string
                       //   const startDateTime = setDateTime(item?.startTime);
                       //   const endDateTime = setDateTime(item?.endTime);
@@ -173,7 +168,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         paddingHorizontal: 8,
                         paddingVertical: 3,
                         backgroundColor:
-                          slot == selectedSlot ? 'green' : 'gray',
+                          slot === selectedSlot ? 'green' : 'gray',
                         marginBottom: 10,
                       }}>
                       <Text
@@ -194,7 +189,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text>{`No Slots Available to Book`}</Text>
+              <Text>{'No Slots Available to Book'}</Text>
             </View>
           )}
           {selectedSlot ? (
@@ -215,7 +210,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                           setLoading(true);
                           const {patientEmailId, patientName, ...payload} =
                             state;
-                          const resp = await dispatch(
+                          await dispatch(
                             bookAppointmentSlice({
                               ...payload,
                               mentorEmailId: selectedMentorData.emailId,

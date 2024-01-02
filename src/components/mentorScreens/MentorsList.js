@@ -24,6 +24,7 @@ import ScreenLoading from '../ScreenLoading';
 import {Client, User} from '@twilio/conversations';
 import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
 import {TwilioService} from '../../screens/Twillio/ConversationService';
+import {updateCurrentConversation} from '../../redux/CurrentConvoReducer';
 const green = '#464E2E';
 const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
@@ -53,65 +54,92 @@ const MentorsList = ({navigation}) => {
       }
       // console.log('getAllMentorList', payload.Items);
     })();
-  }, []);
+  }, [dispatch]);
 
   const getTokenNew = async username => {
     let {payload} = await dispatch(getTwilloChatTokenSlice(username));
     return payload?.accessToken;
   };
 
+  const addConversation = (client, mentorData) => {
+    const channelName = `${mentorData?.emailId}-${username}`;
+    client
+      .getUser(mentorData?.emailId)
+      .then(res => {
+        client
+          .createConversation({
+            friendlyName: channelName,
+            uniqueName: channelName,
+            attributes: {
+              participants: [
+                {
+                  identity: username,
+                  username: `${profileData?.firstName} ${profileData?.lastName}`,
+                },
+                {
+                  identity: mentorData?.emailId,
+                  username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                },
+              ],
+            },
+          })
+          .then(async channel => {
+            channel.join().then(async () => {
+              await channel.setAllMessagesUnread();
+              channel.add(mentorData?.emailId).then(() => {
+                setLoading(false);
+                dispatch(updateCurrentConversation(channel?.sid));
+                navigation.navigate(MESSAGES_TAB_ROUTE, {
+                  screen: CHAT_ROOM_SCREEN,
+                  params: {
+                    channelId: channel?.sid,
+                    identity: username,
+                    otherUser: {
+                      username: `${mentorData?.firstName} ${mentorData?.lastName}`,
+                    },
+                  },
+                });
+              });
+            });
+          })
+          .catch(error => {
+            console.log(error);
+            setLoading(false);
+          });
+      })
+      .catch(err => {
+        setLoading(false);
+        console.log('Error=============', err);
+      });
+  };
+
   const createNewConversation = async mentorData => {
     setLoading(true);
     getTokenNew(username)
       .then(token => TwilioService.getInstance().getChatClient(token))
-      .then(() => TwilioService.getInstance().addTokenListener(getTokenNew))
-      .then(client => {
-        client
-          .getUser(mentorData?.emailId)
-          .then(res => {
-            client
-              .createConversation({
-                friendlyName: `${mentorData?.emailId}-${username}`,
-                attributes: {
-                  participants: [
-                    {
-                      identity: username,
-                      username: `${profileData?.firstName} ${profileData?.lastName}`,
-                    },
-                    {
-                      identity: mentorData?.emailId,
-                      username: `${mentorData?.firstName} ${mentorData?.lastName}`,
-                    },
-                  ],
+      .then(async client => {
+        try {
+          const channelResult = await client.getConversationByUniqueName(
+            `${mentorData?.emailId}-${username}`,
+          );
+          if (channelResult?.status === 'joined') {
+            navigation.navigate(MESSAGES_TAB_ROUTE, {
+              screen: CHAT_ROOM_SCREEN,
+              params: {
+                channelId: channelResult.sid,
+                identity: username,
+                otherUser: {
+                  username: `${mentorData?.firstName} ${mentorData?.lastName}`,
                 },
-              })
-              .then(async channel => {
-                channel.join().then(async () => {
-                  await channel.setAllMessagesUnread();
-                  channel.add(mentorData?.emailId).then(() => {
-                    setLoading(false);
-                    navigation.navigate(MESSAGES_TAB_ROUTE, {
-                      screen: CHAT_ROOM_SCREEN,
-                      params: {
-                        channelId: channel?.sid,
-                        identity: username,
-                        otherUser: {
-                          username: `${mentorData?.firstName} ${mentorData?.lastName}`,
-                        },
-                      },
-                    });
-                  });
-                });
-              })
-              .catch(error => {
-                console.log(error);
-                setLoading(false);
-              });
-          })
-          .catch(err => {
-            setLoading(false);
-            console.log('Error=============', err);
-          });
+              },
+            });
+          }
+        } catch (error) {
+          // const error = new Error(err);
+          if (error.message === 'Not Found') {
+            addConversation(client, mentorData);
+          }
+        }
       });
 
     return;
@@ -119,7 +147,7 @@ const MentorsList = ({navigation}) => {
 
   const renderExperties = ({data, label}) => {
     return (
-      <View style={{flexDirection: 'row',flex:1}}>
+      <View style={{flexDirection: 'row', flex: 1}}>
         <Text style={styles.expertiesText}>{`${label} :`}</Text>
         {data && data.length ? (
           <FlatList
@@ -233,7 +261,7 @@ const MentorsList = ({navigation}) => {
       <TouchableOpacity
         onPress={() => {
           setShowAppointmentBtn(true);
-          setModalVisible(true);
+          // setModalVisible(true);
         }}>
         <View
           style={{

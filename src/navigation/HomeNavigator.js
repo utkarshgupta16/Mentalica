@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from './home/Home';
-import Messages from './home/Messages';
-import Profile from './home/Profile';
+// import Home from './home/Home';
+// import Messages from './home/Messages';
+// import Profile from './home/Profile';
 import {useSelector} from 'react-redux';
-import Stats from './home/Stats';
+// import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import UserIcon from '../icons/user.svg';
+// import UserIcon from '../icons/user.svg';
 // import {MaterialIcons} from '@expo/vector-icons';
 import convertLang, {MENTOR} from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
@@ -18,7 +18,12 @@ import PatientDashboard from '../components/patientScreens/patientDashboard/Pati
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
-import {MESSAGES_TAB_ROUTE, PROFILE_TAB_ROUTE,CHATS_SCREENS} from '../utils/route';
+import {
+  MESSAGES_TAB_ROUTE,
+  PROFILE_TAB_ROUTE,
+  CHATS_SCREENS,
+  CHAT_ROOM_SCREEN,
+} from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
@@ -38,7 +43,7 @@ const resetSubmitStackOnTabPress = ({navigation, route}) => ({
 
         if (stackKey && tabName === MESSAGES_TAB_ROUTE) {
           navigation.dispatch({
-            ...StackActions.popToTop(),
+            // ...StackActions.popToTop(),
             target: stackKey,
           });
         }
@@ -112,7 +117,7 @@ const PatientDashboardStack = () => {
 const HomeNavigator = () => {
   const {t} = useTranslation();
 
-  const {HOME, INVOICING,  PROFILE, STATS} = convertLang(t);
+  const {HOME, INVOICING, PROFILE, STATS} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
   return (
@@ -190,28 +195,42 @@ const HomeNavigator = () => {
       )}
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="message" size={25} color={color} />
-          ),
-          tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Messages');
-          },
+        options={({navigation}) => {
+          const {index, routes = []} = navigation.getState();
+          const {
+            state: {
+              index: childIndex = undefined,
+              routes: childRoutes = [],
+            } = {},
+          } = routes[index];
+          let childName = '';
+          if (childIndex) {
+            const {name} = childRoutes[childIndex];
+            childName = name;
+          }
+          return {
+            headerShown: false,
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="message" size={25} color={color} />
+            ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Messages');
+            },
+            tabBarStyle: {
+              display:
+                childName === CHAT_ROOM_SCREEN || childName === 'DocViewer'
+                  ? 'none'
+                  : 'flex',
+            },
+          };
         }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-              e.preventDefault();
-              navigation.navigate(MESSAGES_TAB_ROUTE);
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate(MESSAGES_TAB_ROUTE);
           },
-      })}
+        })}
         component={MessagesStackNavigator}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-              e.preventDefault();
-              navigation.navigate(MESSAGES_TAB_ROUTE);
-          },
-      })}
       />
       <Tab.Screen
         options={{

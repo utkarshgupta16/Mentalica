@@ -14,15 +14,15 @@ export default function HomeStackNavigator() {
         component={PatientDashboard}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="AVChatScreen"
         component={AVChatScreen}
         options={{headerShown: false}}
-      />
+      /> */}
     </Stack.Navigator>
     // </NavigationContainer>
   );
-};
+}
 
 // export default function HomeStackNavigator() {
 //   const {loginFrom} = useSelector(state => state.auth);

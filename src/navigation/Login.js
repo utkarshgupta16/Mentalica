@@ -9,6 +9,7 @@ import {
   Image,
   SafeAreaView,
   I18nManager,
+  Alert,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
@@ -49,9 +50,8 @@ const LoginScreen = ({navigation}) => {
   //pandey.kaushiki@thinksys.com
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
-  const [enteredEmail, setEnteredEmail] = useState(
-    'pandey.kaushiki@thinksys.com',
-  );
+  // bhandari.tribhuwan@thinksys.com
+  const [enteredEmail, setEnteredEmail] = useState('bhandari.tribhuwan@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -233,7 +233,7 @@ const LoginScreen = ({navigation}) => {
           setValue={props => {
             Alert.alert(CHANGE_LANG, RESTART_APP, [
               {
-                text: NO_CANCEL,
+                text: 'Cancel',
                 onPress: () => null,
               },
               {
