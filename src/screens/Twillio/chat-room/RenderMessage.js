@@ -66,7 +66,7 @@ const RenderMessage = ({
         <View
           style={[
             bubbleStyle[position].wrapper,
-            {opacity: isSelected ? 0.5 : 1},
+            // {opacity: isSelected ? 0.5 : 1},
           ]}>
           <Text style={textMessageStyle[position].text}>{text}</Text>
           <View style={[bubbleStyle[position].bottom]}>

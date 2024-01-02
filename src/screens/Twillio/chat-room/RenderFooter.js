@@ -1,5 +1,6 @@
-import React, { memo } from 'react';
+import React, {memo} from 'react';
 import styles from './RenderChatMessageStyle';
+
 import {
   Pressable,
   ScrollView,
@@ -39,8 +40,7 @@ const RenderFooter = ({medias = [], selectedMedia, navigation}) => {
                     name="close"
                     size={16}
                     color={'black'}
-                    // eslint-disable-next-line react-native/no-inline-styles
-                    style={{padding: 4}}
+                    style={styles.closeIcon}
                   />
                 </Pressable>
 

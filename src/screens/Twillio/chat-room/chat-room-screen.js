@@ -23,10 +23,14 @@ import RenderMessageImage from './RenderMessageImage';
 import styles from './RenderChatMessageStyle';
 import Colors from '../../../customs/Colors';
 import {whatsAppBackgroundURI} from '../../../assets/images';
-import {createFormData, getBlobFile, removeMessage} from '../../../utils/utils';
+import {
+  createFormData,
+  getBlobFile,
+  initialMediaData,
+  removeMessage,
+} from '../../../utils/utils';
 import {colors} from '../colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateChannels} from '../../../redux/HomeSlice';
 import {
   getSdkMediaObject,
   messagesMap,
@@ -52,8 +56,6 @@ const ChatRoomScreen = ({route, navigation}) => {
   const chatMessagesPaginator = useRef();
   const [message, showMessage] = useState({message: ''});
   const textInputRef = useRef();
-  const [imagePreview, setImagePreview] = useState(null);
-  const [files, setFiles] = useState([]);
   const conversationAttachments =
     useSelector(state => state.attachments[channelId]) || {};
   const [focusIndex, setFocusIndex] = useState(
@@ -120,7 +122,13 @@ const ChatRoomScreen = ({route, navigation}) => {
           setMessages(prevMessages => {
             if (prevMessages.some(({_id}) => _id === giftedId)) {
               return prevMessages.map(m =>
-                m._id === giftedId ? newMessage1 : m,
+                m._id === giftedId
+                  ? {
+                      ...newMessage1,
+                      attachedMedia: m?.attachedMedia,
+                      isLocal: m?.isLocal,
+                    }
+                  : m,
               );
             }
             return [newMessage1, ...prevMessages];
@@ -203,7 +211,7 @@ const ChatRoomScreen = ({route, navigation}) => {
       .getChatClient()
       .then(async client => {
         let channel = await client?.getConversationBySid(channelId);
-        // client.on('participantUpdated', updateParticipantListner);
+        client.on('participantUpdated', updateParticipantListner);
         if (channel) {
           channel.getMessagesCount().then(result => {
             totalMessageCount.current = result;
@@ -268,21 +276,20 @@ const ChatRoomScreen = ({route, navigation}) => {
         let mediasData = createFormData(image);
         prepareMessageRef?.addMedia(mediasData);
       }
-      // let images =
-      //   initialMediaData({mediasNew, newMessages, lastMessageIndex}) || [];
-      // setMessages(prevMessages => GiftedChat.append(prevMessages, images));
+      let images =
+        initialMediaData({mediasNew, newMessages, lastMessageIndex}) || [];
+      setMessages(prevMessages => GiftedChat.append(prevMessages, images));
     }
-    mediasNew.length && setIsSending(true);
+    // mediasNew.length && setIsSending(true);
     selectedMedia([]);
-
     const messageIndex = await prepareMessageRef.build().send();
-    mediasNew.length && setIsSending(false);
+    // mediasNew.length && setIsSending(false);
     try {
       chatClientChannel?.current?.advanceLastReadMessageIndex(
         messageIndex ?? 0,
       );
     } catch (e) {
-      mediasNew.length && setIsSending(false);
+      // mediasNew.length && setIsSending(false);
       throw e;
     }
     // else if (newMessages && newMessages.length) {
@@ -406,32 +413,30 @@ const ChatRoomScreen = ({route, navigation}) => {
     />
   );
 
-  // const renderMessageVideo = ({currentMessage}) => (
-  //   <RenderMessageVideo
-  //     navigation={navigation}
-  //     currentMessage={currentMessage}
-  //     selectedMessages={selectedMessages}
-  //   />
-  // );
+  const renderMessageVideo = ({currentMessage}) => (
+    <RenderMessageVideo
+      navigation={navigation}
+      currentMessage={currentMessage}
+      selectedMessages={selectedMessages}
+    />
+  );
   const renderMessageImage = props => (
     <RenderMessageImage
       conversationAttachments={conversationAttachments}
       props={props}
       selectedMessages={selectedMessages}
       onDownloadAttachments={onDownloadAttachments}
-      setImagePreview={setImagePreview}
-      onFileOpen={onFileOpen}
     />
   );
-  // const renderCustomView = ({currentMessage}) => (
-  //   <RenderCustomView
-  //     selectedMessages={selectedMessages}
-  //     currentMessage={currentMessage}
-  //     navigation={navigation}
-  //     onDownloadAttachments={onDownloadAttachments}
-  //     conversationAttachments={conversationAttachments}
-  //   />
-  // );
+  const renderCustomView = ({currentMessage}) => (
+    <RenderCustomView
+      selectedMessages={selectedMessages}
+      currentMessage={currentMessage}
+      navigation={navigation}
+      onDownloadAttachments={onDownloadAttachments}
+      conversationAttachments={conversationAttachments}
+    />
+  );
   const renderFooter = () => (
     <RenderFooter
       medias={medias}
@@ -534,13 +539,11 @@ const ChatRoomScreen = ({route, navigation}) => {
     [chatClientChannel],
   );
 
-  const onFileOpen = (file, {filename}) => {
-    // saveAs(file, filename ?? '');
-  };
-
   const onDownloadAttachments = useCallback(
     async message => {
-      const attachedMedia = message.attachedMedia?.map(getSdkMediaObject);
+      const attachedMedia = message?.isLocal
+        ? message.attachedMedia
+        : message.attachedMedia?.map(getSdkMediaObject);
       if (message.index === -1) {
         return undefined;
       }
@@ -549,7 +552,12 @@ const ChatRoomScreen = ({route, navigation}) => {
       }
 
       for (const media of attachedMedia) {
-        const blob = await getBlobFile(media);
+        let blob = '';
+        if (!media?.isLocal) {
+          blob = await getBlobFile(media);
+        } else {
+          blob = media?.url;
+        }
         dispatch(
           addAttachment({
             channelSid: channelId,
@@ -604,8 +612,8 @@ const ChatRoomScreen = ({route, navigation}) => {
             textInputRef={textInputRef}
             messages={messages}
             renderMessageImage={renderMessageImage}
-            // renderMessageVideo={renderMessageVideo}
-            // renderCustomView={renderCustomView}
+            renderMessageVideo={renderMessageVideo}
+            renderCustomView={renderCustomView}
             renderFooter={renderFooter}
             alwaysShowSend={true}
             quickReplyStyle={{borderRadius: 2}}

@@ -3,7 +3,7 @@ import {Send} from 'react-native-gifted-chat';
 import {TouchableOpacity} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from './RenderChatMessageStyle';
-const RenderMessageVideo = ({sendProps, textInputRef, medias, onSend}) => {
+const RenderSend = ({sendProps, textInputRef, medias, onSend}) => {
   const {user = {}, text = ''} = sendProps || {};
   return (
     <Send {...sendProps}>
@@ -30,4 +30,4 @@ const RenderMessageVideo = ({sendProps, textInputRef, medias, onSend}) => {
   );
 };
 
-export default memo(RenderMessageVideo);
+export default memo(RenderSend);

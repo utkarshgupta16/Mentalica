@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, {memo} from 'react';
 import VideoPlayer from '../../../components/VideoPlayer';
 import styles from './RenderChatMessageStyle';
 const RenderMessageVideo = ({navigation, currentMessage}) => {

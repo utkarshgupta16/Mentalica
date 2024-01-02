@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   footerFileText: {paddingVertical: 5, width: 80},
   renderSendImage: {paddingVertical: 7, paddingRight: 12},
   headerChatRoomStyle: {fontSize: 16, fontWeight: '500', color: Colors.black},
+  closeIcon: {padding: 4},
 });
 
 export default styles;

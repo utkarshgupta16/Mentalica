@@ -9,8 +9,15 @@ import {Alert, Platform} from 'react-native';
 import convertLang from './Strings';
 import moment from 'moment';
 import FileViewer from 'react-native-file-viewer';
-import RNFS from 'react-native-fs';
 import {Message} from '@twilio/conversations';
+import {MessageStatus} from './conatant';
+import {
+  getSdkMessageObject,
+  mediaMap,
+  messagesMap,
+} from '../redux/coversation-objects';
+// import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
 let docImage =
@@ -157,64 +164,201 @@ export const initialMediaData = ({
   newMessages,
   lastMessageIndex,
 }) => {
-  let images =
-    mediasNew.map((val, index) => {
+  let mediaType = '';
+  const attachedMedia = mediasNew.map((val, index) => {
+    if (index === 0) {
       let type = val.mime;
-      let mediaType = type && type?.split('/')[0];
-      if (mediaType === 'application') {
-        mediaType = 'document';
+      mediaType = type && type?.split('/')[0];
+    }
+    return {
+      sid: `${index + 1}_attachedMedia`,
+      url: val?.path,
+      isLocal: true,
+      contentType: val.mime,
+    };
+  });
+
+  // let images =
+  //   mediasNew.map((val, index) => {
+  //     let type = val.mime;
+  //     let mediaType = type && type?.split('/')[0];
+  //     if (mediaType === 'application') {
+  //       mediaType = 'document';
+  //     }
+  const newMessage = {
+    _id: newMessages[0]._id,
+    text: newMessages[0]?.text,
+    createdAt: new Date(),
+    user: newMessages[0].user,
+    fileType: mediaType,
+    docImage: mediaType === 'document' ? docImage : '',
+    [mediaType]: mediaType,
+    // sent: true,
+    index: lastMessageIndex + 1,
+    attachedMedia,
+    isLocal: true,
+  };
+  // return newMessage;
+  // }) || [];
+
+  return [newMessage];
+};
+
+// const getSdkMessageObject = message => {
+//   const {index, _id, conversation, links, configuration, services} =
+//     message || {};
+
+//   const messageInstance = new Message(
+//     index,
+//     {sid: _id},
+//     conversation,
+//     links,
+//     configuration,
+//     services,
+//   );
+
+//   return messageInstance;
+// };
+
+export const removeMessage = async ({selectedMessages}) => {
+  for (let message of selectedMessages) {
+    getSdkMessageObject({_id: message?._id})
+      ?.remove()
+      .then(() => {
+        if (messagesMap.has(message?._id)) {
+          messagesMap.delete(message?._id);
+        }
+        if (message?.attachedMedia) {
+          message?.attachedMedia.forEach(media => {
+            if (mediaMap.has(media?._id)) {
+              mediaMap.delete(media?.sid);
+            }
+          });
+        }
+      });
+  }
+};
+
+export const getMessageStatus = async (
+  message,
+  channelParticipants,
+  identity,
+) => {
+  const statuses = {
+    [MessageStatus.Sent]: 0,
+    [MessageStatus.Received]: 0,
+    [MessageStatus.Failed]: 0,
+    [MessageStatus.Pending]: 0,
+  };
+  if (!message || !channelParticipants) {
+    return statuses;
+  }
+
+  if (message.index === -1) {
+    return Promise.resolve({
+      ...statuses,
+      [MessageStatus.Pending]: 1,
+    });
+  }
+
+  channelParticipants.forEach(participant => {
+    if (participant?.identity === identity || participant?.type !== 'chat') {
+      return;
+    }
+
+    if (
+      participant?.lastReadMessageIndex &&
+      participant?.lastReadMessageIndex >= message?.index
+    ) {
+      statuses[MessageStatus.Received] += 1;
+    } else if (participant?.lastReadMessageIndex !== -1) {
+      statuses[MessageStatus.Sent] += 1;
+    }
+  });
+
+  if (message?.aggregatedDeliveryReceipt) {
+    const sdkMessage = getSdkMessageObject({_id: message?._id});
+    const receipts = await sdkMessage?.getDetailedDeliveryReceipts(); // paginated backend query every time
+
+    receipts.forEach(receipt => {
+      if (receipt.status === 'read') {
+        statuses[MessageStatus.Received] += 1;
       }
-      const newMessage = {
-        _id: newMessages[0]._id + index + 1,
-        text: index === 0 ? newMessages[0]?.text : null,
-        createdAt: new Date(),
-        user: newMessages[0].user,
-        fileType: mediaType,
-        docImage: mediaType === 'document' ? docImage : '',
-        [mediaType]: val?.path,
-        received: true,
-        index: lastMessageIndex + index + 1,
-      };
-      return newMessage;
-    }) || [];
 
-  return images;
+      if (receipt.status === 'delivered') {
+        statuses[MessageStatus.Sent] += 1;
+      }
+
+      if (receipt.status === 'failed' || receipt.status === 'undelivered') {
+        statuses[MessageStatus.Failed] += 1;
+      }
+
+      if (receipt.status === 'sent' || receipt.status === 'queued') {
+        statuses[MessageStatus.Pending] += 1;
+      }
+    });
+  }
+
+  return statuses;
 };
 
-export const removeMessage = async ({
-  index,
-  conversation,
-  links,
-  _id,
-  services,
-  configuration,
-  setMessages,
-}) => {
-  Alert.alert('Are you sure want to delete? ', `you are deleting`, [
-    {
-      text: 'Yes',
-      onPress: async () => {
-        const messageInstance = new Message(
-          index,
-          {sid: _id},
-          conversation,
-          links,
-          configuration,
-          services,
-        );
-        try {
-          await messageInstance?.remove();
-          setMessages(previousMessage =>
-            previousMessage.filter(messageItem => {
-              return messageItem?._id !== _id;
-            }),
-          );
-        } catch (err) {}
-      },
-    },
-    {
-      text: 'No',
-      onPress: () => null,
-    },
-  ]);
+export const getMessages = async conversation =>
+  await conversation.getMessages(30);
+
+export const getOtherParticipant = (participants = [], currentParticipant) => {
+  let otherParticipant = {};
+  participants.forEach(participant => {
+    if (participant?.identity !== currentParticipant) {
+      otherParticipant = participant;
+    }
+  });
+  return otherParticipant;
 };
+
+export const getBlobFile = async media => {
+  try {
+    const url = await getFileUrl(media);
+    const response = await fetch(url);
+    // return response && response?.blob();
+    return response.url;
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getFileUrl = async media => {
+  return await media?.getContentTemporaryUrl().then();
+};
+
+// export const imageSaveInCacheIOS = async (images = []) => {
+//   let results = [];
+//   if (images && images.length) {
+//     for (let image of images) {
+//       const path = image?.path;
+//       let fileName = image?.sourceURL
+//         ? image?.filename
+//         : image?.path?.split('/').pop();
+//       let ext = fileName && fileName?.split('.').pop();
+//       try {
+//         await CameraRoll.save(path, {
+//           type: 'photo',
+//           album: 'mentalica',
+//         })
+//           .then(res => {
+//             let data = {
+//               filename: fileName,
+//               uri: res,
+//               mime: `image/${ext}`,
+//             };
+//             results.push(data);
+//           })
+//           .catch(err => {
+//             console.log('err CameraRoll', err);
+//           });
+//       } catch (err) {
+//         console.log('Error in filewrite', err);
+//       }
+//     }
+//   }
+//   return results;
+// };
