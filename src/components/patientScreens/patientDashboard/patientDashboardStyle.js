@@ -5,21 +5,19 @@ import {
 } from '../../../utils/Responsive';
 import Colors from '../../../customs/Colors';
 
-const screenBackgroundColor = Colors.whiteLight;
-
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: wp(2),
-    // backgroundColor: 'white',
-    backgroundColor: Colors.whiteLight,
+    backgroundColor: Colors.white,
     flex: 1,
-    paddingTop: hp(2),
-    position:"relative"
+    position: 'relative',
   },
   helloText: {
+    // fontFamily: 'Fuzzy Bubbles Bold',
+    fontFamily: 'Montserrat',
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: hp(1),
+    marginVertical: hp(1),
     marginLeft: wp(2),
     color: Colors.black,
   },
@@ -37,17 +35,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   belowTabsContainer: {
-    backgroundColor: '#EEEDED',
+    flex: 1,
+    backgroundColor: Colors.white,
+    // backgroundColor: '#EEEDED',
     paddingHorizontal: wp(4),
     borderRadius: 6,
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.6,
-    shadowRadius: 1.65,
-    elevation: 1,
 
     height: hp(73),
   },
@@ -61,49 +53,44 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: 'black',
     shadowOffset: {
-      width: 0,
+      width: 2,
       height: 3,
     },
-    shadowOpacity: 0.27,
+    shadowOpacity: 0.57,
     shadowRadius: 4.65,
     elevation: 3,
+    borderRadius: 10,
   },
   leftCont: {
-    width: wp(30),
+    width: wp(35),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
-    backgroundColor: '#DFDFDE',
-    borderBottomLeftRadius: 5,
+    borderBottomLeftRadius: 8,
+    borderTopLeftRadius: 8,
+    backgroundColor: Colors.darkPaleMintColor,
   },
   rightCont: {
-    width: wp(50),
+    width: wp(52),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
-    backgroundColor: '#EFB7B7',
-    borderBottomLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
+    backgroundColor: '#eab676',
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    borderLeftWidth: 0.3,
+    borderLeftColor: Colors.dustyGray,
   },
   rightContVideoCall: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   headingText: {
-    marginTop: hp(2),
+    marginTop: hp(1),
     fontWeight: 'bold',
     color: Colors.black,
   },
   recommendedArticlesCont: {
     marginTop: hp(1),
-    height: hp(52),
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 3,
+    flex: 1,
   },
   bookedPointmentSlot: {
     paddingHorizontal: wp(6),
@@ -128,8 +115,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderRadius: 8,
+    marginTop: 10,
+    backgroundColor: 'white',
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 3,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    borderColor: '#ffff',
+    borderWidth: 1,
   },
   timeColumn: {
     width: 100, // Adjust the width as needed
@@ -144,6 +144,10 @@ export const styles = StyleSheet.create({
   appointmentDetails: {
     flex: 1,
   },
-  reloadButton: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  reloadText:{color: '#33A3DC', paddingBottom: 10}
+  reloadButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reloadText: {color: Colors.darkPaleMintColor, paddingBottom: 10},
 });

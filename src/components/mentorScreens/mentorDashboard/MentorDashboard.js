@@ -1,32 +1,12 @@
-import {
-  Text,
-  View,
-  FlatList,
-  Pressable,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-  Platform,
-  RefreshControl,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
+import Text from '../../wrapperComponent/TextWrapper.js';
+import View from '../../wrapperComponent/ViewWrapper.js';
 import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from '../../../utils/Responsive';
 import {styles} from './MentorDashboardStyle';
-import axios from 'axios';
 import {AppContext, setProps, props} from '../../../../App';
 import Colors from '../../../customs/Colors';
 import {Agenda} from 'react-native-calendars';
-import Timetable from 'react-native-calendar-timetable';
-// import AppointmentList from './AppointmentList';
-import EventCalendar from 'react-native-events-calendar';
-import AxiosMethods from '../../../redux/axiosService/AxiosMethods';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -63,9 +43,8 @@ const MentorDashboard = ({navigation}) => {
   const [isSelectDate, setIsSelectDate] = useState(null);
   const [selectDate, setSelectDate] = useState('');
   const [isLoading, setLoading] = useState(false);
-  const [mentorName, setMentorName] = useState('');
+  // const [shimmerVisible, setShimmerVisible] = useState(false);
 
-  const [appointmentList, setAppointmentList] = useState({});
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
     const now = new Date();
@@ -73,12 +52,36 @@ const MentorDashboard = ({navigation}) => {
     return now;
   };
 
-  useEffect(() => {
-    (async () => {
-      const res = await dispatch(getProfileSlice({email, type}));
-      setMentorName(res?.payload?.Items[0]?.firstName);
-    })();
-  }, []);
+  const {
+    darkMode,
+    profileData = {},
+    scheduledAppointmentsData = [],
+  } = useSelector(state => state.home);
+
+  const formatSheduleAppointmentData = appointments => {
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments?.forEach(appointment => {
+      const date =
+        newDate?.getFullYear() +
+        '-' +
+        `0${newDate?.getMonth() + 1}` +
+        '-' +
+        `0${
+          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
+        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
+      });
+    });
+    return formattedAppointments;
+  };
 
   const updateData = async date => {
     let res = await dispatch(
@@ -92,11 +95,11 @@ const MentorDashboard = ({navigation}) => {
         const date =
           newDate?.getFullYear() +
           '-' +
-          `${newDate?.getMonth() + 1}` +
+          `0${newDate?.getMonth() + 1}` +
           '-' +
-          `${
+          `0${
             newDate?.getDate() < 10
-              ? `0${newDate?.getDate()}`
+              ? `${newDate?.getDate()}`
               : newDate?.getDate()
           }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
@@ -110,8 +113,37 @@ const MentorDashboard = ({navigation}) => {
           // Other appointment data
         });
       });
+    // });
     setAppointmentList(formattedAppointments);
+    return formattedAppointments;
   };
+
+  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+
+  const [appointmentList, setAppointmentList] = useState(formatedData);
+
+  useEffect(() => {
+    dispatch(getProfileSlice({email, type}));
+  }, [email, type, dispatch]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setShimmerVisible(true);
+  //   }, 5000);
+  // }, []);
+
+  // const updateData = async () => {
+  //   let res = await dispatch(
+  //     getScheduledAppointmentsSlice({
+  //       email,
+  //       fieldName: MENTOR_EMAIL_ID,
+  //     }),
+  //   );
+  //   const appointments = res.payload;
+  //   const formattedAppointments = formatSheduleAppointmentData(appointments);
+  //   setAppointmentList(formattedAppointments);
+  // };
+
   useEffect(() => {
     (async () => {
       updateData(new Date());
@@ -176,7 +208,7 @@ const MentorDashboard = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.helloText}>
-        {HELLO} {mentorName && mentorName}
+        {HELLO}, {profileData?.firstName}
       </Text>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
@@ -190,6 +222,22 @@ const MentorDashboard = ({navigation}) => {
             }}
           />
         }
+        style={{borderRadius: 10}}
+        theme={{
+          calendarBackground: darkMode ? '#000000' : Colors.paleMintColor,
+          dayTextColor: darkMode ? Colors.white : Colors.black,
+          agendaKnobColor: '#283747',
+          agendaDayTextColor: darkMode ? '#fff' : '#000',
+          agendaDayNumColor: '#00adf5',
+          agendaTodayColor: darkMode ? '#fff' : '#000',
+          agendaKnobColor: '#283747',
+          indicatorColor: '#283747',
+          textSectionTitleColor: darkMode ? '#fff' : '#000',
+          dotColor: '#283747',
+          selectedDayBackgroundColor: Colors.darkPaleMintColor,
+          reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
+        }}
+        // key={darkMode}
         onDayPress={async ({dateString}) => {
           setLoading(true);
           await updateData(dateString);
@@ -233,12 +281,32 @@ const MentorDashboard = ({navigation}) => {
                   },
                 ]);
               }}>
-              <View style={styles.itemContainer}>
+              <View
+                style={{
+                  marginBottom: 3,
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  shadowColor: darkMode ? '#fff' : 'gray',
+                  shadowOffset: {
+                    width: 0,
+                    height: 3,
+                  },
+                  shadowOpacity: 0.27,
+                  shadowRadius: 4.65,
+                  elevation: 15,
+                  marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                }}>
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
                   </Text>
-                  <Text style={[styles.timeText]}>-</Text>
+
+                  <Text style={styles.timeText}>-</Text>
                   <Text style={styles.timeText}>
                     {moment(item?.end).format('LT')}
                   </Text>

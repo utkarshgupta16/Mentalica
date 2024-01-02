@@ -7,8 +7,8 @@ import {
   PermissionsAndroid,
   Platform,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
-  Text,
 } from 'react-native';
 import {fcmService} from './src/utils/fcmServices';
 import {localNotificationService} from './src/utils/localPushNotification';
@@ -31,6 +31,7 @@ import {
 import {endTyping, startTyping} from './src/redux/TypingDataSlice';
 import {updateUnreadMessages} from './src/redux/UnReadMessageCountSlice';
 import {updateCurrentConversation} from './src/redux/CurrentConvoReducer';
+import Colors from './src/customs/Colors';
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
@@ -145,6 +146,8 @@ const App = () => {
   sidRef.current = currentConvoSid;
   const dispatch = useDispatch();
 
+  const {darkMode} = useSelector(state => state.home);
+
   useEffect(() => {
     if (androidPlatform) {
       const requestPushNotificationPermission = async () => {
@@ -161,29 +164,29 @@ const App = () => {
               },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              Platform.OS == 'android' && registerNotification();
+              Platform.OS === 'android' && registerNotification();
             } else {
               console.log('please allow notification permission from settings');
             }
           } else {
-            Platform.OS == 'android' && registerNotification();
+            Platform.OS === 'android' && registerNotification();
           }
         } catch (err) {
           console.error('errror --> ', err);
           return false;
         }
       };
-      Platform.OS == 'android' && requestPushNotificationPermission();
+      Platform.OS === 'android' && requestPushNotificationPermission();
     } else {
-      Platform.OS == 'android' && fcmService.registerAppWithFCM();
-      Platform.OS == 'android' &&
+      Platform.OS === 'android' && fcmService.registerAppWithFCM();
+      Platform.OS === 'android' &&
         fcmService.register(onRegister, onNotification, onOpenNotification);
-      Platform.OS == 'android' &&
+      Platform.OS === 'android' &&
         localNotificationService.configure(onOpenNotification);
     }
     return () => {
-      Platform.OS == 'android' && fcmService.unRegister();
-      Platform.OS == 'android' && localNotificationService.unregister();
+      Platform.OS === 'android' && fcmService.unRegister();
+      Platform.OS === 'android' && localNotificationService.unregister();
     };
   }, []);
 
@@ -424,7 +427,13 @@ const App = () => {
   return (
     <AppContext.Provider value={{props, setProps}}>
       <I18nextProvider i18n={i18n}>
-        <SafeAreaView style={styles.safeAreaViewStyle} />
+        <StatusBar
+          backgroundColor={darkMode ? Colors.black : Colors.white} // Set the background color
+          barStyle={darkMode ? 'light-content' : 'dark-content'} // Set the text color (light content for white text)
+        />
+        <SafeAreaView
+          style={[styles.safeAreaViewStyle, darkMode && styles.backgroundBlack]}
+        />
         <MainNavigator style={styles.mainNavigator} />
       </I18nextProvider>
     </AppContext.Provider>
@@ -436,5 +445,9 @@ export default App;
 const styles = StyleSheet.create({
   safeAreaViewStyle: {
     flex: 0,
+    // borderWidth: 1,
+  },
+  backgroundBlack: {
+    backgroundColor: Colors.black,
   },
 });

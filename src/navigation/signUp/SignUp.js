@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Platform,
@@ -6,10 +6,12 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  View,
+  Text,
+  Animated,
 } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
 import CustomHeader from '../../customs/Header';
 import Colors from '../../customs/Colors';
 import Button from '../../components/Button';
@@ -19,28 +21,65 @@ import {Auth} from 'aws-amplify';
 // import {signUp, confirmSignUp} from '@aws-amplify/auth';
 import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import EnterOtpModal from '../../customs/EnterOtpModal';
-import {specialities, languageList} from '../../utils/default';
-import {useDispatch} from 'react-redux';
+import {
+  DUTY_ITEM,
+  FEEL_ITEMS,
+  GENDER_ITEM,
+  LANGUAGE_LIST,
+  TYPE_OF_ITEMS,
+  specialities,
+} from '../../utils/default';
+import {useDispatch, useSelector} from 'react-redux';
 import {singUpSlice} from '../../redux/AuthSlice';
 import AddSlotsComponent from './AddSlots';
 import {useTranslation} from 'react-i18next';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {widthPercentageToDP as wp} from '../../utils/Responsive';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import {
+  ADD_SLOTS_SCREEN,
+  ADD_SLOTS_SIGNUP_SCREEN,
+  PROFILE_TAB_ROUTE,
+} from '../../utils/route.js';
+import {validateEmail} from '../../utils/emailValidation.js';
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
-  const {PASSWORD_NOT_MATCH, ADD_SLOTS, UPDATE_SLOTS} = convertLang(t);
-  const typeOfItems = [
-    {
-      label: 'Patient',
-      value: PATIENT,
-    },
-    {
-      label: 'Mentor',
-      value: MENTOR,
-    },
-  ];
+  const {
+    PASSWORD_NOT_MATCH,
+    ADD_SLOTS,
+    UPDATE_SLOTS,
+    SIGN_UP,
+    FIRST_NAME,
+    LAST_NAME,
+    CITY,
+    TEMP_CITY,
+    PHONE_NO,
+    AGE,
+    EMAIL_ID,
+    CHOOSE_GENDER,
+    CONFIRM_PASSWORD,
+    CHOOSE_PROFESSION,
+    PASSWORD,
+    CHOOSE_HOW_DO_YOU_FEEL,
+    ENTER,
+    CREATE_ACCOUNT,
+    PATIENT,
+    MENTOR,
+    SELECT_SPECIALITY,
+    SELECT_LANGUAGE,
+    EXPERIENCE_IN_YEARS,
+    FEES_FOR_30_MINS,
+    STUDENT,
+    MAlE,
+    FEMAlE,
+    CIVILIAN,
+    SOLDIER,
+    ENGLISH,
+    HINDI,
+  } = convertLang(t);
+
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
@@ -50,47 +89,42 @@ const MentorSignUp = ({navigation}) => {
   const [typeOpen, setTypeOpen] = useState(false);
   const [typeValue, setTypeValue] = useState(PATIENT);
   const [openGender, setOpenGender] = useState(false);
-  const [genderItems, setGenderItems] = useState([
-    {label: 'Male', value: 'male'},
-    {label: 'Female', value: 'female'},
-  ]);
-  const [dutyItems, setDutyItems] = useState([
-    {label: 'Civilian', value: 'civilian'},
-    {label: 'Soldier', value: 'soldier'},
-    {label: 'Student', value: 'student'},
-  ]);
-  const [feelItems, setFeelItems] = useState([
-    {label: 'Anxiety', value: 'anxiety'},
-    {label: 'Fear', value: 'fear'},
-    {label: 'Danger', value: 'danger'},
-    {label: 'Disappointment', value: 'disappointment'},
-    {label: 'Loneliness', value: 'loneliness'},
-    {label: 'Hate', value: 'hate'},
-    {label: 'Abandoned', value: 'abandoned'},
-    {label: 'Trauma', value: 'trauma'},
-    {label: 'Shocked', value: 'shocked'},
-    {label: 'Pain', value: 'pain'},
-    {label: 'Anger', value: 'anger'},
-    {label: 'Depressed', value: 'depressed'},
-    {label: 'Sadness', value: 'sadnesss'},
-  ]);
+  const [genderItems, setGenderItems] = useState(GENDER_ITEM(t));
+  const [dutyItems, setDutyItems] = useState(DUTY_ITEM(t));
+  const [feelItems, setFeelItems] = useState(FEEL_ITEMS(t));
   const [openDuty, setOpenDuty] = useState(false);
   const [feelOpen, setFeelOpen] = useState(false);
-  const [typeItems, setTypeItems] = useState(typeOfItems);
+  const [typeItems, setTypeItems] = useState(TYPE_OF_ITEMS(t));
   const [otpError, setOtpError] = useState('');
   const [showSlots, setShowSlots] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
-  const [slots, addSlots] = useState([]);
+  const [emailWarning, setEmailWarning] = useState(false);
+  const [compalsaryField, setCompalsaryField] = useState(false);
+  // const [slots, addSlots] = useState([]);
+  // let timestamp = Date.now();
+  // const [rangeDate, setRangeDate] = useState({
+  //   startDate: timestamp,
+  //   endDate: timestamp,
+  // });
+  const timestamp = Date.now();
+  const {
+    slots = [],
+    rangeDate = {
+      startDate: timestamp,
+      endDate: timestamp,
+    },
+  } = useSelector(state => state.home);
+
   const [state, setState] = useState({
-    firstName: 'Sonu Patel',
-    lastName: 'Patient',
-    city: 'Varanasi',
-    temporaryCity: 'Varanasi',
-    phoneNumber: '1234567890',
-    emailId: 'patel.sonu@thinksys.com',
+    firstName: '',
+    lastName: '',
+    city: '',
+    temporaryCity: '',
+    phoneNumber: '',
+    emailId: '',
     password: 'Password@123',
     confirmPassword: 'Password@123',
-    age: "29",
+    age: '',
     // MENTOR:
     // type: MENTOR,
     expertise: [],
@@ -100,16 +134,30 @@ const MentorSignUp = ({navigation}) => {
     // PATIENT:
     // type: PATIENT,
 
-    gender: 'male',
-    duty: 'soldier',
-    feel: 'anxiety',
+    gender: '',
+    duty: '',
+    feel: '',
   });
 
   const handleInput = ({field, value}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
 
+  const [isShadowVisible, setIsShadowVisible] = useState(false);
   const [specialistItems, setSpecialistItems] = useState(specialities);
+
+  const handleShadowVisible = isShadowVisible => {
+    setIsShadowVisible(isShadowVisible);
+  };
+
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
 
   const convertString = (arrData = []) => {
     let expertiseUpdated = '';
@@ -125,6 +173,15 @@ const MentorSignUp = ({navigation}) => {
   };
 
   const handleSignup = async () => {
+    if (!validateEmail(state.emailId == '')) {
+      setEmailWarning(true);
+    }
+    if (validateInputs()) {
+      setCompalsaryField(true);
+      console.log('Please enter');
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -154,7 +211,7 @@ const MentorSignUp = ({navigation}) => {
           fees,
           experience,
           language: stringLanguageUpdated,
-          slots,
+          rangeDate: {...rangeDate, slots},
         };
       } else {
         finalSignupData = {
@@ -165,47 +222,26 @@ const MentorSignUp = ({navigation}) => {
         };
       }
 
-      // const {emailId, password} = state;
-      // const attributes = {
-      //   'custom:firstName': state.firstName,
-      //   'custom:lastName': state.lastName,
-      //   'custom:city': state.city,
-      //   'custom:phoneNumber': state.phoneNumber,
-      //   'custom:temporaryCity': state.temporaryCity,
-      //   'custom:expertise': state.expertise,
-      //   'custom:type': MENTOR,
-      //   'custom:fees': state.fees,
-      //   'custom:experience': state.experience,
-      //   'custom:language': state.language,
-      // };
-
-      // const resp = await Auth.signUp({
-      //   emailId,
-      //   password,
-      //   attributes: attributes,
-      // });
       const {password, confirmPassword, ...restData} = finalSignupData;
 
-      // const resp = await signUp({
-      //   username: state.emailId,
-      //   password,
-      //   // attributes: {
-      //   //   'custom:type': typeValue,
-      //   // },
-      //   options: {
-      //     userAttributes: {
-      //       'custom:type': typeValue,
-      //     },
-      //   },
-      // });
-      const resp = await Auth.signUp({
+      await Auth.signUp({
         username: state.emailId,
-        password,
+        password: state.password,
         attributes: {
           'custom:type': typeValue,
         },
       });
-      const attRes = await dispatch(
+
+      const ddd = {
+        ...restData,
+        fcmToken: fcmToken ? fcmToken : '',
+        deviceType: Platform.OS,
+        type: typeValue,
+      };
+
+      console.log('hello -> data', ddd);
+
+      await dispatch(
         singUpSlice({
           ...restData,
           fcmToken: fcmToken ? fcmToken : '',
@@ -221,7 +257,7 @@ const MentorSignUp = ({navigation}) => {
           onPress: () => null,
         },
       ]);
-      console.log('err:', err);
+      console.log('err=====>>>>:', err);
     } finally {
       setIsLoading(false);
     }
@@ -229,14 +265,36 @@ const MentorSignUp = ({navigation}) => {
 
   const renderInput = ({field, placeholder, keyBoardType, ...props}) => {
     return (
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        value={state[field]}
-        keyboardType={keyBoardType || 'default'}
-        {...props}
-        onChangeText={text => handleInput({value: text, field})}
-      />
+      <View style={{marginBottom: 10}}>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.inputLable}>
+            {' '}
+            {/* {field ? t(convertFieldStringToCapitalized(field)) : ''} */}
+            {placeholder}
+          </Text>
+          <Text style={{color: 'red', fontSize: 17}}>
+            {!state[field] && compalsaryField
+              ? ' *'
+              : field == 'emailId' &&
+                compalsaryField &&
+                !validateEmail(state.emailId)
+              ? ' *Invalid email'
+              : null}
+          </Text>
+        </View>
+        <TextInput
+          maxLength={
+            placeholder == 'Phone Number' ? 10 : placeholder == 'Age' ? 3 : null
+          }
+          style={styles.input}
+          placeholder={`${ENTER} ${placeholder}`}
+          placeholderTextColor={Colors.grayishBlue}
+          value={state[field]}
+          keyboardType={keyBoardType || 'default'}
+          {...props}
+          onChangeText={text => handleInput({value: text, field})}
+        />
+      </View>
     );
   };
 
@@ -323,6 +381,13 @@ const MentorSignUp = ({navigation}) => {
     console.log('response:', response);
   };
 
+  const convertFieldStringToCapitalized = str => {
+    let result = str.charAt(0).toUpperCase() + str.slice(1);
+    result = result.replace(/([A-Z])/g, ' $1');
+
+    return result;
+  };
+
   const mentorExtras = (
     <>
       <DropDownPicker
@@ -341,12 +406,12 @@ const MentorSignUp = ({navigation}) => {
             value: labels,
           });
         }}
-        items={specialistItems}
-        setItems={setSpecialistItems}
-        placeholder={'Select Speciality.'}
+        items={feelItems}
+        setItems={setFeelItems}
+        placeholder={SELECT_SPECIALITY}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
         dropDownDirection="TOP"
@@ -363,19 +428,19 @@ const MentorSignUp = ({navigation}) => {
             value: labels,
           });
         }}
-        items={languageList}
+        items={LANGUAGE_LIST(t)}
         // setItems={setSpecialistItems}
-        placeholder={'Select Language.'}
+        placeholder={SELECT_LANGUAGE}
         style={styles.dropdown}
         multiple={true}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       {renderInput({
-        placeholder: 'Fees for 30 Mins',
+        placeholder: FEES_FOR_30_MINS,
         field: 'fees',
       })}
       {renderInput({
-        placeholder: 'Experience in Years',
+        placeholder: EXPERIENCE_IN_YEARS,
         field: 'experience',
       })}
     </>
@@ -396,8 +461,9 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={genderItems}
         setItems={setGenderItems}
-        placeholder={'Choose gender.'}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        placeholder={CHOOSE_GENDER}
+        colo
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
       />
       <DropDownPicker
@@ -413,9 +479,9 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={dutyItems}
         setItems={setDutyItems}
-        placeholder={'Choose Profession.'}
+        placeholder={CHOOSE_PROFESSION}
         style={styles.dropdown}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
 
       <DropDownPicker
@@ -431,27 +497,53 @@ const MentorSignUp = ({navigation}) => {
         }}
         items={feelItems}
         setItems={setFeelItems}
-        placeholder={'Choose How do you feel.'}
+        placeholder={CHOOSE_HOW_DO_YOU_FEEL}
         style={styles.dropdown}
-        containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+        // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
     </>
   );
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
-        title={'Sign Up'}
+        isShadowVisible={isShadowVisible}
+        title={''}
         showBackArrow={true}
         navigation={navigation}
       />
-      {/* <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{flex: 1, flexGrow: 1}}
-        nestedScrollEnabled={true}> */}
+      {!isShadowVisible && (
+        <View
+          style={{
+            borderColor: Colors.white,
+            borderBottomWidth: 0.2,
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%',
+            paddingBottom: 10,
+            shadowColor: 'black',
+            shadowOffset: isShadowVisible && {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: isShadowVisible ? 1 : 0,
+            shadowRadius: isShadowVisible ? 3 : 0,
+            elevation: isShadowVisible ? 4 : 0,
+          }}>
+          <Text style={styles.createAccountTxt}>{CREATE_ACCOUNT}</Text>
+          <MaterialIcons
+            name="person-add"
+            size={30}
+            color={Colors.black}
+            style={styles.icon}
+          />
+        </View>
+      )}
+
       <KeyboardAwareScrollView
+        onScroll={handleOnScroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        style={{flex: 1, backgroundColor: Colors.paleMintColor}}
+        style={{flex: 1, backgroundColor: Colors.white}}
         contentContainerStyle={{flexGrow: 1}}>
         {/* =================================MODAL START================================= */}
         <EnterOtpModal
@@ -465,28 +557,28 @@ const MentorSignUp = ({navigation}) => {
         {/* =================================MODAL END================================= */}
 
         <View style={styles.mainContainer}>
-          {renderInput({placeholder: 'First Name', field: 'firstName'})}
-          {renderInput({placeholder: 'Last Name', field: 'lastName'})}
-          {renderInput({placeholder: 'City', field: 'city'})}
-          {renderInput({placeholder: 'Temporary city', field: 'temporaryCity'})}
+          {renderInput({placeholder: FIRST_NAME, field: 'firstName'})}
+          {renderInput({placeholder: LAST_NAME, field: 'lastName'})}
+          {renderInput({placeholder: CITY, field: 'city'})}
+          {renderInput({placeholder: TEMP_CITY, field: 'temporaryCity'})}
           {renderInput({
-            placeholder: 'Phone Number',
+            placeholder: PHONE_NO,
             field: 'phoneNumber',
             keyBoardType: 'number-pad',
           })}
           {renderInput({
-            placeholder: 'Age',
+            placeholder: AGE,
             field: 'age',
             keyBoardType: 'number-pad',
           })}
-          {renderInput({placeholder: 'Email', field: 'emailId'})}
+          {renderInput({placeholder: EMAIL_ID, field: 'emailId'})}
           {renderInput({
-            placeholder: 'Password',
+            placeholder: PASSWORD,
             field: 'password',
             //   secureTextEntry: true,
           })}
           {renderInput({
-            placeholder: 'Confirm password',
+            placeholder: CONFIRM_PASSWORD,
             field: 'confirmPassword',
             //   secureTextEntry: true,
           })}
@@ -509,7 +601,7 @@ const MentorSignUp = ({navigation}) => {
             setItems={setTypeItems}
             placeholder={'Select Type.'}
             style={styles.dropdown}
-            containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
+            // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
           />
 
           {/* CHECK FOR THE TYPE: */}
@@ -527,7 +619,10 @@ const MentorSignUp = ({navigation}) => {
           {typeValue === MENTOR ? (
             <Pressable
               style={styles.slotContainer}
-              onPress={() => setShowSlots(!showSlots)}>
+              onPress={() => {
+                navigation.navigate(ADD_SLOTS_SIGNUP_SCREEN);
+                // setShowSlots(!showSlots);
+              }}>
               <Text style={styles.slotsText}>
                 {slots.length ? UPDATE_SLOTS : ADD_SLOTS}
               </Text>
@@ -538,22 +633,24 @@ const MentorSignUp = ({navigation}) => {
       </KeyboardAwareScrollView>
       <View style={styles.signUpButtonContainer}>
         <Button
-          disabled={validateInputs()}
-          title="Sign Up"
+          signup
+          title={SIGN_UP}
           onPress={handleSignup}
           secureTextEntry={true}
         />
       </View>
       {isLoading ? <Loader /> : null}
-      {showSlots ? (
+      {/* {showSlots ? (
         <AddSlotsComponent
-          setState={setSlotState}
-          state={slotState}
-          addSlots={addSlots}
-          slots={slots}
+          // setState={setSlotState}
+          // state={slotState}
+          // addSlots={addSlots}
+          // slots={slots}
+          // setRangeDate={setRangeDate}
+          // rangeDate={rangeDate}
           close={() => setShowSlots(false)}
         />
-      ) : null}
+      ) : null} */}
     </SafeAreaView>
   );
 };
@@ -561,8 +658,21 @@ const MentorSignUp = ({navigation}) => {
 export default MentorSignUp;
 
 const styles = StyleSheet.create({
+  headreView: {
+    width: '100%',
+    borderBottomWidth: 0.2,
+    borderColor: Colors.white,
+    paddingBottom: 10,
+  },
+  createAccountTxt: {
+    fontSize: 25,
+    color: Colors.black,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    marginLeft: 15,
+  },
   container: {
-    backgroundColor: Colors.paleMintColor,
+    backgroundColor: Colors.white,
     flex: 1,
   },
   modalContainer: {
@@ -623,23 +733,35 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     // flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: 25,
+    paddingTop: 15,
     justifyContent: 'center',
-    backgroundColor: Colors.paleMintColor,
+    // backgroundColor: Colors.paleMintColor,
     paddingBottom: 10,
+  },
+  icon: {
+    marginHorizontal: 5,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderBottomWidth: 1,
     borderRadius: 8,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    backgroundColor: '#d3d3d3',
+  },
+  inputLable: {
+    color: '#000',
+    fontFamily: 'Montserrat',
     marginBottom: 10,
-    paddingLeft: 10,
+    marginLeft: 5,
+    fontSize: 16,
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
+    marginBottom: 25,
+    borderColor: '#d3d3d3',
+    backgroundColor: '#d3d3d3',
+    color: Colors.white,
   },
   passwordNotMatchText: {
     color: Colors.red,
@@ -647,7 +769,7 @@ const styles = StyleSheet.create({
   slotContainer: {
     paddingVertical: 7,
     borderStyle: 'dashed',
-    borderColor: '#33A3DC',
+    borderColor: '#000',
     borderWidth: 1,
     borderRadius: 4,
     alignItems: 'center',
@@ -656,10 +778,12 @@ const styles = StyleSheet.create({
   },
   slotsText: {
     fontSize: 17,
-    color: '#33A3DC',
+    color: '#000',
     fontWeight: 'bold',
   },
   signUpButtonContainer: {
     paddingBottom: 10,
+    borderTopWidth: 0.2,
+    borderColor: '#000',
   },
 });

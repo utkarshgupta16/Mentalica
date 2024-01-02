@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React, {useEffect, useLayoutEffect} from 'react';
 import {Amplify, Auth, API, graphqlOperation} from 'aws-amplify';
 import {AppRegistry, Platform, Text} from 'react-native';
@@ -15,6 +16,10 @@ import awsconfig from './src/aws-exports';
 // import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
+
+import {enGB, registerTranslation} from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
+
 // Register background handler
 Platform.OS == 'android' &&
   messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -64,7 +69,6 @@ const AppConfig = () => {
       let result = await API.graphql(
         graphqlOperation(createUser, {input: newUser}),
       );
-      console.log('newUser@@@@@@@@@@@@@@@@@', newUser);
     };
     // syncUser();
   }, []);

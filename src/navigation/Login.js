@@ -11,13 +11,14 @@ import {
   I18nManager,
   Alert,
 } from 'react-native';
+
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
 import Button from '../components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
-import {MENTOR_SIGN_UP} from '../utils/route';
+import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
 import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
@@ -26,20 +27,22 @@ import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
 import DropDownPicker from 'react-native-dropdown-picker';
 import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
-import {widthPercentageToDP} from '../utils/Responsive';
+import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
-// import Logo from '../icons/logo-black.svg';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {validateEmail} from '../utils/emailValidation';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {RESTART_APP, CHANGE_LANG} = ConvertLang(t);
-  const {loginFrom} = useSelector(state => state.auth);
-  const [rememberMe, setRememberMe] = useState(false);
+  const {RESTART_APP, CHANGE_LANG, FORGOT_PASSWORD, EMAIL, PASSWORD} =
+    t && ConvertLang(t);
+  // const [rememberMe, setRememberMe] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
+
   const langOptions = LANG_OPTION;
   // guptagaurav9566+1@gmail.com
   // bhandari.tribhuwan@thinksys.com
@@ -51,21 +54,32 @@ const LoginScreen = ({navigation}) => {
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
   // bhandari.tribhuwan@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState('bhandari.tribhuwan@thinksys.com');
+  const [enteredEmail, setEnteredEmail] = useState(
+    'bhandari.tribhuwan@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
+
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'roshanyjambhulkar1204+4@gmail.com',
+  // );
+
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailWarning, setEmailWarning] = useState(false);
+  const [wrongCredentials, setWrongCredentials] = useState(false);
+
   const dispatch = useDispatch();
-
   const resendCode = async () => {
-    // console.log('enteredEmail', enteredEmail);
     const response = await Auth.resendSignUp(enteredEmail);
-    // console.log('response:', response);
   };
-
   const loginHandler = async () => {
+    if (!validateEmail(enteredEmail)) {
+      setEmailWarning(true);
+      return;
+    }
     try {
       // console.log('Auth', await Auth.currentAuthenticatedUser());
       // const user1 = await signIn({
@@ -73,6 +87,7 @@ const LoginScreen = ({navigation}) => {
       //   password: enteredPassword,
       // });
       setLoading(true);
+
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
@@ -87,13 +102,11 @@ const LoginScreen = ({navigation}) => {
         }),
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
-       dispatch(getTwilloChatTokenSlice(enteredEmail));
       setLoading(false);
     } catch (err) {
-      console.log('getCurrentUserInfo Error', err);
-
       setError(err);
       setLoading(false);
+      setWrongCredentials(true);
     }
   };
 
@@ -111,9 +124,7 @@ const LoginScreen = ({navigation}) => {
 
   const submitCodeHandler = async () => {
     try {
-      console.log('res:', res);
-      const res = await confirmSignUp(enteredEmail, enteredCode);
-      console.log('res:', res);
+      await confirmSignUp(enteredEmail, enteredCode);
       setShowEnterCodeModal(false);
       setEnteredEmail('');
       setError('');
@@ -123,18 +134,17 @@ const LoginScreen = ({navigation}) => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    navigation.navigate('ForgotPasswordScreen', {email: enteredEmail});
+  };
+
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: Colors.paleMintColor,
-        justifyContent: 'space-between',
-      }}>
+    <SafeAreaView style={styles.mainContainer}>
       {isLoading ? <Loader /> : null}
-      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <View style={styles.imageContainer}>
         <Image
           source={require('../icons/logo-no-background.png')}
-          style={{width: 200, height: 300}}
+          style={styles.image}
           resizeMode="contain"
         />
       </View>
@@ -176,25 +186,82 @@ const LoginScreen = ({navigation}) => {
         </View>
       </Modal>
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            textAlign={i18n.language === 'he' ? 'right' : 'left'}
-            onChangeText={handleEnteredEmail}
-            style={styles.input}
-            placeholder={t('E-mail')}
-            keyboardType="email-address"
-            value={enteredEmail}
-          />
-          <TextInput
-            textAlign={i18n.language === 'he' ? 'right' : 'left'}
-            onChangeText={handleEnteredPassword}
-            style={styles.input}
-            placeholder={t('Password')}
-            secureTextEntry={true}
-            value={enteredPassword}
-          />
-          <View style={styles.checkBoxSignUpContainer}>
-            <View style={styles.checkboxContainer}>
+        <View>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputHeadingCont}>
+              <Text style={styles.inputsLables}>{EMAIL}</Text>
+              <Text warning style={styles.emailWarningTxt}>
+                {emailWarning
+                  ? '*Invalid email'
+                  : wrongCredentials
+                  ? '*Invalid credentials'
+                  : null}
+              </Text>
+            </View>
+
+            <View style={styles.inputParentCont}>
+              <TextInput
+                textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                onChangeText={handleEnteredEmail}
+                style={{
+                  height: 40,
+                  width: '100%',
+                  fontSize: 16,
+                  color: Colors.black,
+                  paddingHorizontal: 10,
+                }}
+                placeholder={t('E-mail')}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                value={enteredEmail}
+              />
+            </View>
+            <View style={styles.inputHeadingCont}>
+              <Text style={styles.inputsLables}>{PASSWORD}</Text>
+            </View>
+            <View style={styles.inputParentCont}>
+              <TextInput
+                textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                onChangeText={handleEnteredPassword}
+                style={styles.input}
+                placeholder={t('Password')}
+                secureTextEntry={!showPassword}
+                value={enteredPassword}
+              />
+              {showPassword ? (
+                <Pressable onPress={() => setShowPassword(!showPassword)}>
+                  <MaterialIcons
+                    name="visibility"
+                    size={21}
+                    color={Colors.black}
+                    style={{
+                      marginRight: 20,
+                    }}
+                  />
+                </Pressable>
+              ) : (
+                <Pressable onPress={() => setShowPassword(!showPassword)}>
+                  <MaterialIcons
+                    name="visibility-off"
+                    size={21}
+                    color={Colors.black}
+                    style={{
+                      marginRight: 20,
+                    }}
+                  />
+                </Pressable>
+              )}
+            </View>
+
+            <Pressable
+              onPress={handleForgotPassword}
+              style={styles.forgotPassword}>
+              <Text>{FORGOT_PASSWORD}?</Text>
+            </Pressable>
+            <View style={styles.checkBoxSignUpContainer}>
+              {/* <View style={styles.checkboxContainer}>
               <CheckBox
                 disabled={false}
                 value={rememberMe}
@@ -203,24 +270,40 @@ const LoginScreen = ({navigation}) => {
                 boxType="square"
               />
               <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
+            </View> */}
+              <Button title={t('Login')} onPress={loginHandler} />
             </View>
-            <Button
-              disabled={!enteredEmail.trim() || !enteredPassword.trim()}
-              title={t('Login')}
-              onPress={loginHandler}
-            />
           </View>
-        </View>
-        <View style={styles.buttonContainerView}>
-          <Text style={styles.askSignup}>
-            {t("Don't have an account? Wanna")}
-          </Text>
-          <Pressable
-            style={styles.signUpContainer}
-            title={t('Sign Up')}
-            onPress={signUpClickHandler}>
-            <Text style={styles.signUpText}> {t('Sign Up')}</Text>
-          </Pressable>
+
+          <View style={styles.buttonContainerView}>
+            <Text style={styles.askSignup}>
+              {t("Don't have an account? Wanna")}
+            </Text>
+            <Pressable
+              style={styles.signUpContainer}
+              title={t('Sign Up')}
+              onPress={signUpClickHandler}>
+              <Text signUpbutton style={styles.signUpText}>
+                {' '}
+                {t('Sign Up')}
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* {error ? (
+          <View style={styles.buttonContainerView}>
+            <Pressable
+              style={styles.signUpContainer}
+              title={t('Enter Code')}
+              onPress={() => {
+                setShowEnterCodeModal(true);
+              }}>
+              <Text style={styles.signUpText}>
+                {t('Confirm Verification Code')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null} */}
         </View>
         <DropDownPicker
           dropDownDirection="TOP"
@@ -259,38 +342,35 @@ const LoginScreen = ({navigation}) => {
               },
             ]);
           }}
-          dropDownContainerStyle={{
-            backgroundColor: Colors.white,
-            borderWidth: 0,
-            alignSelf: 'center',
-            width: widthPercentageToDP(30),
-          }}
+          dropDownContainerStyle={
+            {
+              // width: '100%',z
+            }
+          }
           items={langOptions}
           placeholder={t('Select Language')}
-          containerStyle={{borderBottomColor: 'gray'}}
+          containerStyle={{width: '100%'}}
           style={styles.dropdown}
         />
-        {error ? (
-          <View style={styles.buttonContainerView}>
-            <Pressable
-              style={styles.signUpContainer}
-              title={t('Enter Code')}
-              onPress={() => {
-                resendCode();
-                setShowEnterCodeModal(true);
-              }}>
-              <Text style={styles.signUpText}>
-                {t('Confirm Verification Code')}
-              </Text>
-            </Pressable>
-          </View>
-        ) : null}
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.white,
+  },
+  image: {
+    width: 250,
+    height: 300,
+  },
   modalContainer: {
     backgroundColor: Colors.white,
     paddingHorizontal: 10,
@@ -301,11 +381,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    borderWidth: 1,
   },
   container: {
     flex: 1,
-    // justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingTop: 32,
   },
   logo: {
     width: 120,
@@ -317,23 +400,45 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  inputHeadingCont: {
+    flexDirection: 'row',
+    marginBottom: 9,
+  },
   inputContainer: {
     // width: '100%',
     marginBottom: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
+  },
+  inputParentCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderColor: Colors.black,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  inputsLables: {
+    fontSize: 16,
+    color: Colors.black,
   },
   input: {
     height: 40,
-    borderColor: Colors.black,
-    borderBottomWidth: 1,
+    width: '90%',
+    fontSize: 16,
+    color: Colors.black,
     borderRadius: 8,
-    marginBottom: 32,
     paddingLeft: 10,
   },
+  forgotPassword: {
+    alignItems: 'flex-end',
+    marginTop: -10,
+  },
   checkBoxSignUpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // width: 500,
+    marginTop: 20,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -355,25 +460,32 @@ const styles = StyleSheet.create({
   },
   askSignup: {
     fontSize: 14,
+    color: Colors.black,
   },
   signUpContainer: {
     // marginTop: 14,
   },
   signUpText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     textDecorationLine: 'none',
-    color: Colors.primaryBlue,
+    color: Colors.darkPaleMintColor,
+    // color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',
     fontSize: 12,
   },
   dropdown: {
-    backgroundColor: Colors.paleMintColor,
-    borderWidth: 0,
-    alignSelf: 'center',
-    width: widthPercentageToDP(30),
+    color: Colors.white,
+    backgroundColor: Colors.white,
+    borderColor: Colors.white,
+    width: widthPercentageToDP(27),
+    alignSelf: 'flex-end',
+  },
+  emailWarningTxt: {
+    fontSize: 12,
+    marginLeft: 5,
   },
 });
 

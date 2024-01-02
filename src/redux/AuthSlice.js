@@ -15,7 +15,7 @@ export const singUpSlice = createAsyncThunk('auth/singUpSlice', async data => {
     method: 'post',
     url: endPoints.signUpUserProfile, // single endpoint used for both mentor and patient
     headers: {
-      // Authorization: `Bearer ${token}`,
+      Authorization: `signup`,
       'Content-Type': 'application/json',
     },
     data: restData,
@@ -41,6 +41,7 @@ const initialState = {
   email: '',
   type: '',
   userToken: {},
+
 };
 const Authslice = createSlice({
   name: 'auth',
@@ -54,9 +55,9 @@ const Authslice = createSlice({
     getType: (state, action) => {
       state.type = action.payload;
     },
-    logout: state => {
-      state.isLoggedIn = false;
-    },
+
+    logout: (state, payload) => initialState,
+
     loginClient: (state, action) => {
       state.loginFrom = action.payload;
     },

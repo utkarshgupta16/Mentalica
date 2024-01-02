@@ -8,9 +8,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    backgroundColor: '#F5F7F8',
     paddingHorizontal: wp(5),
-    // marginTop: hp(3),
   },
   helloText: {
     fontSize: 21,
@@ -23,7 +21,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginHorizontal: 20,
     marginLeft: wp(2),
-    marginBottom: hp(1),
+    marginVertical: hp(1),
   },
   dateText: {
     marginBottom: hp(3),
@@ -39,9 +37,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderRadius: 6,
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
   },
   listContainer: {
+    flex: 1,
+
     marginHorizontal: wp(2),
     marginVertical: 15,
     borderRadius: 6,

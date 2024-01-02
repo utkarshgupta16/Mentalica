@@ -3,8 +3,6 @@ import {
   FlatList,
   Image,
   Pressable,
-  Text,
-  View,
   TouchableOpacity,
   Alert,
   RefreshControl,
@@ -16,16 +14,8 @@ import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
-import axios from 'axios';
 import Colors from '../../../customs/Colors';
-import {
-  checkMultiple,
-  request,
-  requestMultiple,
-  PERMISSIONS,
-  RESULTS,
-} from 'react-native-permissions';
-import convertLang, {MENTOR} from '../../../utils/Strings';
+import convertLang from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
@@ -34,7 +24,10 @@ import {_checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
-const AppoinmentsList = ({navigation}) => {
+import {useIsFocused} from '@react-navigation/native';
+import View from '../../wrapperComponent/ViewWrapper';
+import Text from '../../wrapperComponent/TextWrapper';
+const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {
     ALL,
@@ -50,22 +43,54 @@ const AppoinmentsList = ({navigation}) => {
     YES,
     YOU_JOINED_CALL,
     OKAY,
+    MENTOR,
   } = convertLang(t);
   const {props, setProps} = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
-  const [appointmentList, setAppointmentList] = useState({});
   const [refreshing, onRefresh] = useState(false);
   const [selectedDay, setDay] = useState(new Date());
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const {
+    userToken: {jwtToken},
+  } = useSelector(state => state.auth);
+
+  const {darkMode} = useSelector(state => state.home);
+  const isFocus = useIsFocused();
 
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
     const now = new Date();
     now.setHours(hours, minutes, 0, 0);
     return now;
+  };
+
+  const formatSheduleAppointmentData = appointments => {
+    const newDate = new Date();
+    const formattedAppointments = {};
+    appointments?.forEach(appointment => {
+      const date =
+        newDate?.getFullYear() +
+        '-' +
+        `0${newDate?.getMonth() + 1}` +
+        '-' +
+        `0${
+          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
+        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+      if (!formattedAppointments[date]) {
+        formattedAppointments[date] = [];
+      }
+
+      formattedAppointments[date].push({
+        start: setDateTime(appointment.slots[0].startTime),
+        end: setDateTime(appointment.slots[0].endTime),
+        ...appointment,
+        // Other appointment data
+      });
+    });
+    return formattedAppointments;
   };
 
   const updateData = useCallback(
@@ -84,11 +109,11 @@ const AppoinmentsList = ({navigation}) => {
             const date =
               newDate.getFullYear() +
               '-' +
-              `${newDate.getMonth() + 1}` +
+              `0${newDate.getMonth() + 1}` +
               '-' +
-              `${
+              `0${
                 newDate.getDate() < 10
-                  ? `0${newDate.getDate()}`
+                  ? `${newDate.getDate()}`
                   : newDate.getDate()
               }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
             if (!formattedAppointments[date]) {
@@ -107,23 +132,94 @@ const AppoinmentsList = ({navigation}) => {
     [dispatch],
   );
 
+  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+
+  const [appointmentList, setAppointmentList] = useState(formatedData);
+  const handleOnScroll = event => {
+    handleShadowVisible(true);
+  };
+
+  // const updateData = async () => {
+  //   let res = await dispatch(
+  //     getScheduledAppointmentsSlice({
+  //       email,
+  //       fieldName: PATIENT_EMAIL_ID,
+  //     }),
+  //   );
+  //   const appointments = res.payload;
+  //   const formattedAppointments = formatSheduleAppointmentData(appointments);
+  //   setAppointmentList(formattedAppointments);
+  // };
+
+  // const updateData = async () => {
+  //   try {
+  //     let res = await dispatch(
+  //       getScheduledAppointmentsSlice({
+  //         email,
+  //         fieldName: PATIENT_EMAIL_ID,
+  //         jwtToken,
+  //       }),
+  //     );
+  //     const appointments = res.payload;
+  //     const newDate = new Date();
+  //     const formattedAppointments = {};
+  //     appointments.forEach(appointment => {
+  //       const date =
+  //         newDate.getFullYear() +
+  //         '-' +
+  //         `${newDate.getMonth() + 1}` +
+  //         '-' +
+  //         `${
+  //           newDate.getDate() < 10 ? `0${newDate.getDate()}` : newDate.getDate()
+  //         }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+  //       if (!formattedAppointments[date]) {
+  //         formattedAppointments[date] = [];
+  //       }
+
+  //       formattedAppointments[date].push({
+  //         start: setDateTime(appointment.slots[0].startTime),
+  //         end: setDateTime(appointment.slots[0].endTime),
+  //         ...appointment,
+  //       });
+  //     });
+  //     setAppointmentList(formattedAppointments);
+  //   } catch (err) {}
+  // };
+
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
-        await updateData(new Date());
-        setLoading(false);
+        if (appointmentList.length === 0) {
+          setLoading(true);
+          await updateData(new Date());
+          setLoading(false);
+        }
       } catch (err) {
+        setLoading(false);
+      } finally {
         setLoading(false);
       }
     })();
-  }, [updateData]);
+  }, [dispatch, email, isFocus, updateData, appointmentList]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       setLoading(true);
+  //       await updateData();
+  //       setLoading(false);
+  //     } catch (err) {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
 
   const videoCallAction = data => {
     _checkPermissions(async () => {
       try {
         const {payload = {}} = await dispatch(
           getTwilloTokenSlice({
+            jwtToken,
             roomId: data?.roomId,
             userName: data?.patientEmailId,
           }),
@@ -164,6 +260,19 @@ const AppoinmentsList = ({navigation}) => {
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
+        theme={{
+          calendarBackground: darkMode ? '#000000' : '#ffff',
+          agendaKnobColor: '#283747',
+          agendaDayTextColor: darkMode ? '#fff' : '#000',
+          agendaDayNumColor: '#00adf5',
+          agendaTodayColor: darkMode ? '#fff' : '#000',
+          indicatorColor: '#283747',
+          textSectionTitleColor: darkMode ? '#fff' : '#000',
+          dotColor: '#283747',
+          selectedDayBackgroundColor: Colors.darkPaleMintColor,
+          reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
+        }}
+        // selected="2022-12-01"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -174,14 +283,14 @@ const AppoinmentsList = ({navigation}) => {
             }}
           />
         }
+        // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
-       
         onDayPress={async ({dateString}) => {
           setLoading(true);
           await updateData(dateString);
           setLoading(false);
-          setDay(dateString)
+          setDay(dateString);
         }}
         items={appointmentList}
         renderEmptyData={() => {
@@ -202,7 +311,7 @@ const AppoinmentsList = ({navigation}) => {
           );
         }}
         renderItem={item => {
-          let name = type == MENTOR ? item?.patientName : item?.mentorName;
+          let name = type === 'Mentor' ? item?.patientName : item?.mentorName;
           let {endTime} = (item.slots && item.slots[0]) || {};
           const [hours, minutes] = endTime.split(':');
           const now = new Date();
@@ -233,12 +342,30 @@ const AppoinmentsList = ({navigation}) => {
                   ]);
                 }
               }}>
-              <View style={styles.itemContainer}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  shadowColor: darkMode ? '#fff' : 'gray',
+                  shadowOffset: {
+                    width: 0,
+                    height: 1,
+                  },
+                  shadowOpacity: 0.37,
+                  shadowRadius: 5.65,
+                  elevation: 3,
+                  marginHorizontal: 10,
+                  paddingHorizontal: 10,
+                }}>
                 <View style={styles.timeColumn}>
                   <Text style={styles.timeText}>
                     {moment(item?.start).format('LT')}
                   </Text>
-                  <Text style={[styles.timeText]}>-</Text>
+                  <Text style={styles.timeText}>-</Text>
                   <Text style={styles.timeText}>
                     {moment(item?.end).format('LT')}
                   </Text>
@@ -259,59 +386,6 @@ const AppoinmentsList = ({navigation}) => {
           );
         }}
       />
-      {/* <FlatList
-        data={scheduledAppointmentsData}
-        renderItem={({item, index}) => {
-          return (
-            <View
-              style={{
-                backgroundColor: 'green',
-                borderRadius: 8,
-                padding: 10,
-                flex: 1,
-                marginBottom: 10,
-                position: 'relative',
-              }}>
-              {isLoading ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'absolute',
-                    left: 0,
-                    bottom: 0,
-                    top: 0,
-                    right: 0,
-                  }}>
-                  <ActivityIndicator color={'white'} size="large" />
-                </View>
-              ) : null}
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                Mentor Email : {item?.mentor_email_id}
-              </Text>
-              <Text
-                style={{paddingTop: 10, color: 'white', fontWeight: 'bold'}}>
-                Meeting Time :{' '}
-                {item?.slots[0].startTime + '-' + item?.slots[0].endTime}
-              </Text>
-              <Pressable
-                style={{marginTop: 10}}
-                onPress={async () => {
-                  setLoading(true);
-                  const res = await dispatch(getTwilloTokenSlice(item.roomId));
-                  setLoading(false);
-                  console.log('roomId================', res);
-                }}>
-                <Text
-                  style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
-                  Join
-                </Text>
-              </Pressable>
-            </View>
-          );
-        }}
-      />
-       */}
     </View>
   );
 };

@@ -6,9 +6,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useSelector} from 'react-redux';
 // import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import UserIcon from '../icons/user.svg';
-// import {MaterialIcons} from '@expo/vector-icons';
-import convertLang, {MENTOR} from '../utils/Strings';
+import UserIcon from '../icons/user.svg';
+import convertLang from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
@@ -23,9 +22,11 @@ import {
   PROFILE_TAB_ROUTE,
   CHATS_SCREENS,
   CHAT_ROOM_SCREEN,
+  CHATS_SCREEN,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
@@ -53,7 +54,7 @@ const resetSubmitStackOnTabPress = ({navigation, route}) => ({
 });
 
 const renderTabTitle = (isFocused, tabName) => {
-  const color = isFocused ? Colors.accentColor : Colors.dustyGray;
+  const color = isFocused ? 'teal' : '#89B9AD';
   const title = isFocused ? (
     <Text
       style={{
@@ -116,10 +117,12 @@ const PatientDashboardStack = () => {
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
+  const {MENTOR} = convertLang(t);
 
-  const {HOME, INVOICING, PROFILE, STATS} = convertLang(t);
+  const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -133,7 +136,8 @@ const HomeNavigator = () => {
               }
             : null,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Colors.accentColor,
+        tabBarActiveTintColor: 'teal',
+        tabBarInactiveTintColor: '#89B9AD',
       })}>
       {type === MENTOR ? (
         <Tab.Screen
@@ -145,7 +149,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
@@ -159,7 +163,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="home" size={size} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Home');
+              return renderTabTitle(focused, HOME);
             },
           }}
         />
@@ -174,7 +178,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={26} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Invoice');
+              return renderTabTitle(focused, INVOICE);
             },
           }}
         />
@@ -188,7 +192,7 @@ const HomeNavigator = () => {
               <MaterialIcons name="analytics" size={25} color={color} />
             ),
             tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, 'Stats');
+              return renderTabTitle(focused, STATS);
             },
           }}
         />
@@ -239,7 +243,7 @@ const HomeNavigator = () => {
             <MaterialIcons name={'person'} size={30} color={color} />
           ),
           tabBarLabel: ({focused}) => {
-            return renderTabTitle(focused, 'Profile');
+            return renderTabTitle(focused, PROFILE);
           },
         }}
         name={PROFILE_TAB_ROUTE}
@@ -247,6 +251,14 @@ const HomeNavigator = () => {
       />
     </Tab.Navigator>
   );
+};
+
+const getRouteName = route => {
+  const routeName = getFocusedRouteNameFromRoute(route);
+  if (routeName?.includes(CHATS_SCREEN)) {
+    return 'none';
+  }
+  return 'flex';
 };
 
 export default HomeNavigator;

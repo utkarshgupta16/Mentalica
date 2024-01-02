@@ -54,10 +54,154 @@ export default convertString = convertLang => {
   const PATIENT_EMAIL_ID = 'patientEmailId';
   const MENTOR_EMAIL_ID = 'mentorEmailId';
   const HEBREW = 'Hebrew';
-  const ENGLISH = 'English';
+  // const ENGLISH = 'English';
+  const ENGLISH = convertLang && convertLang('English');
+  const HINDI = convertLang && convertLang('Hindi');
   const SELECT_LANG = convertLang && convertLang('Select Language');
+  const INVOICE = convertLang && convertLang('Invoice');
+  const SUN = convertLang && convertLang('Sun');
+  const DARK_MODE = convertLang && convertLang('Dark Mode');
+  const CHANGE_PASSWORD = convertLang && convertLang('Change Password');
+  const SAVE = convertLang && convertLang('Save');
+  const FIRST_NAME = convertLang && convertLang('First Name');
+  const LAST_NAME = convertLang && convertLang('Last Name');
+  const PHONE_NO = convertLang && convertLang('Phone Number');
+  const OLD_PASSWORD = convertLang && convertLang('Old Password');
+  const NEW_PASSWORD = convertLang && convertLang('New Password');
+  const CONF_NEW_PASSWORD = convertLang && convertLang('Confirm New Password');
+  const TODAY = convertLang && convertLang('Today');
+  const TOMORROW = convertLang && convertLang('Tomorrow');
+  const DAY_AFTER_TOMORROW = convertLang && convertLang('Day after tomorrow');
+  const PLEASE_ENTER_OLD_PASSWORD =
+    convertLang && convertLang('Please Enter Old Password');
+  const PLEASE_ENTER_NEW_PASSWORD =
+    convertLang && convertLang('Please Enter New Password');
+  const PLEASE_Confirm_NEW_PASSWORD =
+    convertLang && convertLang('Please Confirm New Password');
+  const UPDATE = convertLang && convertLang('Update');
+  const CONTACT_DETAILS = convertLang && convertLang('Contact Details');
+  const EMAIL_ADD = convertLang && convertLang('Email Address');
+  const OK = convertLang && convertLang('OK');
+  const CHAT = convertLang && convertLang('Chat');
+  const EXPERTIES = convertLang && convertLang('Experties');
+  const SPEAKS = convertLang && convertLang('Speaks');
+  const YEARS_OF_EXPERIENCE = convertLang && convertLang('Years of experience');
+  const FOR = convertLang && convertLang('for');
+  const MINS_STARTS = convertLang && convertLang('mins starts');
+  const STARTS = convertLang && convertLang('starts');
+  const MINS = convertLang && convertLang('mins');
+  const NEXT_AAPPOINTMENTS = convertLang && convertLang('Next Appointments');
+  const RECOMMENDED_ARTICLES =
+    convertLang && convertLang('Recommended articles');
+  const VIDEO_CALL = convertLang && convertLang('Video Call');
+  const RAQUAL_ALMEIDA = convertLang && convertLang('Raqual Almeida');
+  const SARA_FAWLER = convertLang && convertLang('Sara Fawler');
+  const THE_HEALING_POWER_OF_NATURE =
+    convertLang && convertLang('The healing power of nature');
+  const AVAILABLE_SLOTS = convertLang && convertLang('Available Slots');
+  const NO_SLOTS_AVAILABLE_TO_BOOK =
+    convertLang && convertLang('No slots available to book');
+  const SCHEDULE_APPOINTMENT =
+    convertLang && convertLang('Schedule Appointment');
+  const EMAIL = convertLang && convertLang('Email');
+  const FORGOT_PASSWORD = convertLang && convertLang('Forgot password');
+  const PASSWORD = convertLang && convertLang('Password');
+  const SIGN_UP = convertLang && convertLang('Sign Up');
+  const CITY = convertLang && convertLang('City');
+  const TEMP_CITY = convertLang && convertLang('Temporary City');
+  const AGE = convertLang && convertLang('Age');
+  const EMAIL_ID = convertLang && convertLang('Email Id');
+  const CONFIRM_PASSWORD = convertLang && convertLang('Confirm Password');
+  const CHOOSE_GENDER = convertLang && convertLang('Choose Gender');
+  const CHOOSE_PROFESSION = convertLang && convertLang('Choose Profession');
+  const CHOOSE_HOW_DO_YOU_FEEL =
+    convertLang && convertLang('Choose How do you feel');
+  const ENTER = convertLang && convertLang('Enter');
+  const CREATE_ACCOUNT = convertLang && convertLang('Create Account');
+  const PATIENT = convertLang && convertLang('Patient');
+  const MENTOR = convertLang && convertLang('Mentor');
+  const MAlE = convertLang && convertLang('Male');
+  const FEMAlE = convertLang && convertLang('Female');
+  const CIVILIAN = convertLang && convertLang('Civilian');
+  const SOLDIER = convertLang && convertLang('Soldier');
+  const STUDENT = convertLang && convertLang('Student');
+  const HATE = convertLang && convertLang('Hate');
+  const ABANDONED = convertLang && convertLang('Abandoned');
+  const SELECT_SPECIALITY = convertLang && convertLang('Select Speciality');
+  const SELECT_LANGUAGE = convertLang && convertLang('Select Language');
+  const FEES_FOR_30_MINS = convertLang && convertLang('Fees For 30 Mins');
+  const EXPERIENCE_IN_YEARS = convertLang && convertLang('Experince in Years');
+  const SELECTED_DATE = convertLang && convertLang('Selected date');
+  const DATE_FROM = convertLang && convertLang('Date from');
+  const TO = convertLang && convertLang('to');
+  const SELECT_TIME = convertLang && convertLang('Select Time');
+  const DEPRESSION = convertLang && convertLang('Depression');
+  const DISAAPOINTMENT = convertLang && convertLang('Disappointment');
+  const ANXIETY = convertLang && convertLang('Anxiety');
+  const STUDENT_LIFE = convertLang && convertLang('Student Life');
+  const LONELINESS = convertLang && convertLang('Loneliness');
+  const FEAR = convertLang && convertLang('Fear');
+  const DANGER = convertLang && convertLang('Danger');
+  const TRAUMA = convertLang && convertLang('Trauma');
+  const SHOCKED = convertLang && convertLang('Shocked');
+  const PAIN = convertLang && convertLang('Pain');
+  const ANGER = convertLang && convertLang('Anger');
+  const DEPRESSED = convertLang && convertLang('Depressed');
+  const SADNESS = convertLang && convertLang('Sadness');
 
   return {
+    ENGLISH,
+    HINDI,
+    SADNESS,
+    DEPRESSED,
+    ANGER,
+    PAIN,
+    SHOCKED,
+    DANGER,
+    TRAUMA,
+    FEAR,
+    LONELINESS,
+    STUDENT_LIFE,
+    ANXIETY,
+    DISAAPOINTMENT,
+    DEPRESSED,
+    SELECT_TIME,
+    STUDENT,
+    HATE,
+    ABANDONED,
+    SELECTED_DATE,
+    DATE_FROM,
+    TO,
+    SELECT_SPECIALITY,
+    FEES_FOR_30_MINS,
+    EXPERIENCE_IN_YEARS,
+    SELECT_LANGUAGE,
+    MAlE,
+    FEMAlE,
+    CIVILIAN,
+    SOLDIER,
+    CITY,
+    PATIENT,
+    MENTOR,
+    CREATE_ACCOUNT,
+    ENTER,
+    TEMP_CITY,
+    AGE,
+    EMAIL_ID,
+    CHOOSE_GENDER,
+    CONFIRM_PASSWORD,
+    CHOOSE_PROFESSION,
+    CHOOSE_HOW_DO_YOU_FEEL,
+    FORGOT_PASSWORD,
+    PASSWORD,
+    EMAIL,
+    SCHEDULE_APPOINTMENT,
+    THE_HEALING_POWER_OF_NATURE,
+    SARA_FAWLER,
+    RAQUAL_ALMEIDA,
+    VIDEO_CALL,
+    RECOMMENDED_ARTICLES,
+    NEXT_AAPPOINTMENTS,
     RESTART_APP,
     UPDATE_SLOTS,
     ADD_SLOTS,
@@ -101,8 +245,44 @@ export default convertString = convertLang => {
     ONE_GRANTED,
     PASSWORD_NOT_MATCH,
     CHANGE_LANG,
+    INVOICE,
+    SUN,
+    DARK_MODE,
+    CHANGE_PASSWORD,
+    SAVE,
+    FIRST_NAME,
+    LAST_NAME,
+    PHONE_NO,
+    OLD_PASSWORD,
+    NEW_PASSWORD,
+    CONF_NEW_PASSWORD,
+    TODAY,
+    TOMORROW,
+    DAY_AFTER_TOMORROW,
+    PLEASE_Confirm_NEW_PASSWORD,
+    PLEASE_ENTER_NEW_PASSWORD,
+    PLEASE_ENTER_OLD_PASSWORD,
+    UPDATE,
+    CONTACT_DETAILS,
+    EMAIL_ADD,
+    OK,
+    CHAT,
+    EXPERTIES,
+    SPEAKS,
+    YEARS_OF_EXPERIENCE,
+    FOR,
+    MINS_STARTS,
+    STARTS,
+    MINS,
+    AVAILABLE_SLOTS,
+    NO_SLOTS_AVAILABLE_TO_BOOK,
+    SIGN_UP,
   };
 };
 
-export const PATIENT = 'Patient';
-export const MENTOR = 'Mentor';
+export const FROM = 'From';
+export const TO = 'To';
+export const APPLY = 'Apply';
+export const ADD_SLOTS = 'Add Slots';
+export const HE = 'he';
+export const EN = 'en';

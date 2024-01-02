@@ -36,8 +36,6 @@ const ChatsScreen = ({navigation}) => {
     const response = await API.graphql(
       graphqlOperation(listChatRooms, {id: authUser?.attributes?.sub}),
     );
-console.log("chatRooms",authUser?.attributes?.sub)
-
     
     const sortedRooms =
       response?.data?.getUser?.ChatRooms?.items.sort(

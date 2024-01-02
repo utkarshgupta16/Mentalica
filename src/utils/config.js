@@ -14,14 +14,35 @@ export const endPoints = {
   getTwilloToken: `${API_URL}/getTwilloToken`,
   sendNotification: 'https://fcm.googleapis.com/fcm/send',
   editProfile: `${API_URL}/updateUserProfile`,
-  getMentorAvailableSlots: `${API_URL}/getAvailableSlot`,
+  getMentorAvailableSlots: `${API_URL}/slots?uniqueId=`,
   getArticleList: `${API_URL}/articleList`,
   getTwillioChatAPI: `${API_URL}/chatToken?identity=`,
   deleteConversation: `${API_URL}/deleteConversation`,
   fetchConversation: `${API_URL}/fetchConversation`,
   updateConversation: `${API_URL}/updateConversation`,
+  updateSlots: `${API_URL}/slots`,
+  getSlots: `${API_URL}/slots?date=`,
+  getUrlToUploadImage: `${API_URL}/userpic?type=putImage`,
+  getProfileUrl: `${API_URL}/userpic?type=getImage`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
+
+// export const axiosInstance = axios.create({
+//   baseURL: API_URL,
+//   headers: {
+//     'Content-Type': 'application/json',
+//     // Other common headers can be added here
+//   },
+// });
+
+// // Function to set authorization header
+// export const setAuthToken = token => {
+//   if (token) {
+//     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//   } else {
+//     delete axiosInstance.defaults.headers.common['Authorization'];
+//   }
+// };
 
 // https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId="75thbd"&userName="vhjadvc"

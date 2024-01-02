@@ -1,13 +1,15 @@
 import {
-  Text,
+  // Text,
   Image,
-  View,
+  // View,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
 } from 'react-native';
+import View from '../wrapperComponent/ViewWrapper.js';
+import Text from '../wrapperComponent/TextWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
@@ -20,19 +22,21 @@ import {getAllMentorList, getTwilloChatTokenSlice} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
+import Colors from '../../customs/Colors';
 import ScreenLoading from '../ScreenLoading';
+import RenderHorizontalData from './RenderHorizontalData.js';
 import {Client, User} from '@twilio/conversations';
 import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
 import {TwilioService} from '../../screens/Twillio/ConversationService';
 import {updateCurrentConversation} from '../../redux/CurrentConvoReducer';
+import {useTranslation} from 'react-i18next';
+import convertLang from '../../utils/Strings.js';
 const green = '#464E2E';
-const offWhite = '#F5F7F8';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
-const greenText = '#618264';
 const lightBlack = '#45474B';
 
-const MentorsList = ({navigation}) => {
+const MentorsList = ({navigation, handleShadowVisible}) => {
   const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
   const {email: username} = useSelector(state => state.auth);
   const profileData = useSelector(state => state.home.profileData);
@@ -41,24 +45,49 @@ const MentorsList = ({navigation}) => {
   const [modifiedData, setModifiedData] = useState([]);
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
+  const [isRefreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
+
+  const {t} = useTranslation();
+  const {
+    CHAT,
+    EXPERTIES,
+    SPEAKS,
+    YEARS_OF_EXPERIENCE,
+    FOR,
+    MINS_STARTS,
+    STARTS,
+    MINS,
+  } = t && convertLang(t);
+
+  const {
+    isMentorsDataLoading,
+    mentorsData = {},
+    darkMode,
+  } = useSelector(state => state.home);
+
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const {payload} = await dispatch(getAllMentorList());
-        setAllMentors(payload.Items);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-      // console.log('getAllMentorList', payload.Items);
-    })();
+    dispatch(getAllMentorList());
   }, [dispatch]);
 
   const getTokenNew = async username => {
     let {payload} = await dispatch(getTwilloChatTokenSlice(username));
     return payload?.accessToken;
+  };
+
+  const handleOnScroll = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 0) {
+      handleShadowVisible(true);
+    } else {
+      handleShadowVisible(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(getAllMentorList());
+    setRefreshing(false);
   };
 
   const addConversation = (client, mentorData) => {
@@ -147,27 +176,28 @@ const MentorsList = ({navigation}) => {
 
   const renderExperties = ({data, label}) => {
     return (
-      <View style={{flexDirection: 'row', flex: 1}}>
+      <View isCard style={{flexDirection: 'row', flex: 1}}>
         <Text style={styles.expertiesText}>{`${label} :`}</Text>
         {data && data.length ? (
           <FlatList
             data={data}
             style={{flex: 1}}
-            // horizontal
-            numColumns={3}
-            columnWrapperStyle={{flexWrap: 'wrap'}}
-            scrollEventThrottle={1900}
+            horizontal
+            // numColumns={3}
+            // columnWrapperStyle={{flexWrap: 'wrap'}}
+            // scrollEventThrottle={1900}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => {
               return (
                 <View
+                  slideHorizontal
                   key={index}
                   style={{
                     marginRight: 10,
                     borderRadius: 13,
                     paddingHorizontal: 8,
                     paddingVertical: 3,
-                    backgroundColor: 'gray',
+                    backgroundColor: Colors.saffron,
                     marginBottom: 10,
                   }}>
                   <Text
@@ -193,7 +223,22 @@ const MentorsList = ({navigation}) => {
     const languageArr = item?.language?.split(',') || [];
     return (
       <View key={index} style={styles.flatListContainer}>
-        <View style={styles.cardContainer}>
+        <View
+          isCard
+          style={{
+            marginTop: 2,
+            padding: 10,
+            borderRadius: 8,
+            shadowColor: darkMode ? 'white' : 'gray',
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.87,
+            shadowRadius: 4,
+            elevation: 3,
+            backgroundColor: '#fff',
+          }}>
           <Pressable
             onPress={async () => {
               setMentor(item);
@@ -205,21 +250,22 @@ const MentorsList = ({navigation}) => {
               style={styles.profilePic}
             />
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
-            <View>
+            <View isCard>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
-                {`${item?.firstName} ${item?.lastName}`}
+                {`${t(item?.firstName)} ${t(item?.lastName)}`}
               </Text>
               <Text style={styles.experienceText}>
-                {item?.experience}+ years of experience
+                {item?.experience}+ {YEARS_OF_EXPERIENCE}
               </Text>
-              <View style={{flexDirection: 'row'}}>
-                <Text>starts @</Text>
-                <Text style={styles.feesTxt}>₹{item?.fees} for 50 mins</Text>
+              <View isCard={true} style={{flexDirection: 'row'}}>
+                <Text>
+                  {STARTS} @ ₹{item?.fees} {FOR} 50 {MINS}
+                </Text>
               </View>
             </View>
           </Pressable>
-          {renderExperties({data: expertiseArr, label: 'Experties'})}
-          {renderExperties({data: languageArr, label: 'Speaks'})}
+          {renderExperties({data: expertiseArr, label: EXPERTIES})}
+          {renderExperties({data: languageArr, label: SPEAKS})}
           <Pressable
             style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() => createNewConversation(item)}>
@@ -227,85 +273,24 @@ const MentorsList = ({navigation}) => {
               source={require('../../icons/chat.png')}
               style={{width: 30, height: 30, objectFit: 'contain'}}
             />
-            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>Chat</Text>
+            <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>{CHAT}</Text>
           </Pressable>
         </View>
-        {/* <View style={styles.bookBtnCont}>
-          {showAppointmentBtn ? (
-            <Pressable onPress={() => setShowAppointmentBtn(false)}>
-              <View style={styles.bookBtn}>
-                <Text style={styles.bookBtnText}>Select and book slot</Text>
-              </View>
-            </Pressable>
-          ) : (
-            <View style={styles.slotListCont}>
-              <Text style={{fontSize: 15}}>Available slots: </Text>
-              <View style={styles.slotList}>
-                <FlatList
-                  data={item?.slots}
-                  renderItem={renderSlotsItem}
-                  keyExtractor={key => key}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                />
-              </View>
-            </View>
-          )}
-        </View> */}
       </View>
     );
   };
 
-  const renderSlotsItem = ({item}) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setShowAppointmentBtn(true);
-          // setModalVisible(true);
-        }}>
-        <View
-          style={{
-            marginRight: 10,
-            borderRadius: 13,
-            paddingHorizontal: 8,
-            paddingVertical: 3,
-            backgroundColor: 'gray',
-            marginBottom: 10,
-          }}>
-          <Text
-            style={{
-              color: 'white',
-            }}>
-            {item?.startTime}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         flex: 1,
-  //       }}>
-  //       <Text>
-  //         <ActivityIndicator size={'large'} color="#0000ff" />
-  //       </Text>
-  //     </View>
-  //   );
-  // }
-
   return (
     <View style={styles.container}>
       <FlatList
-        data={allMentors}
+        data={mentorsData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
+        onScroll={handleOnScroll}
+        refreshing={isRefreshing}
+        onRefresh={onRefresh}
       />
       {showDetails ? (
         <MentorDetails
@@ -314,70 +299,68 @@ const MentorsList = ({navigation}) => {
           selectedMentorData={selectedMentorData}
         />
       ) : null}
-      {isLoading ? <ScreenLoading /> : null}
+      {isMentorsDataLoading ? <ScreenLoading /> : null}
     </View>
   );
 };
 
-const renderExpertiesItem = ({item}) => {
-  return (
-    <View
-      style={{
-        marginRight: 10,
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        backgroundColor: '#F0F0F0',
-        marginBottom: 10,
-      }}>
-      <Text
-        style={{
-          color: lightBlack,
-        }}>
-        {item}
-      </Text>
-    </View>
-  );
-};
+// const renderExpertiesItem = ({item}) => {
+//   return (
+//     <View
+//       style={{
+//         marginRight: 10,
+//         borderRadius: 8,
+//         paddingHorizontal: 8,
+//         backgroundColor: '#F0F0F0',
+//         marginBottom: 10,
+//       }}>
+//       <Text
+//         style={{
+//           color: lightBlack,
+//         }}>
+//         {item}
+//       </Text>
+//     </View>
+//   );
+// };
 
-const renderLaunguageItem = ({item}) => {
-  return (
-    <Text style={{marginRight: 10, color: lightBlack, marginBottom: 10}}>
-      {item}
-    </Text>
-  );
-};
+// const renderLaunguageItem = ({item}) => {
+//   return (
+//     <Text style={{marginRight: 10, color: lightBlack, marginBottom: 10}}>
+//       {item}
+//     </Text>
+//   );
+// };
 
-const renderSessionModeItem = ({item}) => {
-  return (
-    <Text style={{marginRight: 10, fontWeight: '600', color: lightBlack}}>
-      {item}
-    </Text>
-  );
-};
+// const renderSessionModeItem = ({item}) => {
+//   return (
+//     <Text style={{marginRight: 10, fontWeight: '600', color: lightBlack}}>
+//       {item}
+//     </Text>
+//   );
+// };
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '82%',
+    flex: 1,
   },
   flatListContainer: {
-    borderWidth: 1,
-    borderColor: '#D8D9DA',
-    borderRadius: 7,
     marginHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: 'white',
-    shadowColor: 'black',
+  },
+  cardContainer: {
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: 'white',
     shadowOffset: {
       width: 0,
       height: 3,
     },
-    shadowOpacity: 0.27,
+    shadowOpacity: 0.57,
     shadowRadius: 4.65,
     elevation: 3,
-  },
-  cardContainer: {
-    padding: 10,
+    backgroundColor: '#fff',
   },
   imageAndNameCont: {
     flexDirection: 'row',
@@ -396,9 +379,9 @@ const styles = StyleSheet.create({
   mentorNameTxt: {
     fontSize: 19,
     fontWeight: '500',
-    color: greenText,
+    color: Colors.darkPaleMintColor,
     marginBottom: 10,
-    width: wp(50),
+    width: wp(58),
   },
   experienceText: {
     fontSize: 14,
@@ -485,65 +468,3 @@ const styles = StyleSheet.create({
 });
 
 export default MentorsList;
-
-const data = [
-  {
-    id: 1,
-    name: 'Trisha Trivedi',
-    experience: 2,
-    fees: 1500,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Marathi'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220523/ourmid/pngtree-female-employee-working-at-the-company-png-image_4719739.png',
-  },
-  {
-    id: 2,
-    name: 'Kaushiki Pandey',
-    experience: 2,
-    fees: 1500,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Gujrati'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
-  },
-  {
-    id: 3,
-    name: 'Roshan Jambhulkar',
-    experience: 2,
-    fees: 1800,
-    experties: [
-      'Depression',
-      'Anxiety',
-      'Relationship',
-      'Stress',
-      'Addiction',
-      'Loss of Motivation',
-      'Genral well-being',
-    ],
-    launguage: ['English', 'Hindi', 'Marathi'],
-    sessionMode: ['Videos', 'Voice', 'Chat'],
-    imageUrl:
-      'https://png.pngtree.com/png-vector/20220901/ourmid/pngtree-company-employee-avatar-icon-wearing-a-suit-png-image_6133899.png',
-  },
-];
-
-const slots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:30 '];

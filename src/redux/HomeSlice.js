@@ -4,10 +4,12 @@ import {endPoints} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
 import {FIREBASE_SERVER_KEY} from '@env';
+import {Auth} from 'aws-amplify';
 import {apiMiddleware} from './service';
 
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
+  // Auth.currentUserCredentials;
   return {
     Authorization: `Bearer ${jwtToken}`,
     'Content-Type': 'application/json',
@@ -26,6 +28,33 @@ export const getAllMentorList = createAsyncThunk(
   },
 );
 
+export const uploadProfilePhoto = createAsyncThunk(
+  'home/uploadProfilePhoto',
+
+  async ({formdata, url}, {getState}) => {
+    if (!url) return;
+    var requestOptions = {
+      method: 'PUT',
+      headers: headerApi(getState),
+      body: formdata,
+    };
+    return fetch(url, requestOptions)
+      .then(response => {
+        if (response.status == 200) {
+          return response.text();
+        }
+        return Promise.reject(response);
+      })
+      .then(result => {
+        let responseResult = result && JSON.parse(result);
+        return Promise.resolve(responseResult);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  },
+);
+
 export const getTwilloChatTokenSlice = createAsyncThunk(
   'home/getTwilloChatTokenSlice',
   async (email, {getState}) => {
@@ -41,12 +70,11 @@ export const getTwilloChatTokenSlice = createAsyncThunk(
 
 export const getMentorAllSlots = createAsyncThunk(
   'home/getMentorAllSlots',
-  async (data, {getState}) => {
+  async ({uniqueId}, {getState}) => {
     var config = {
-      method: 'post',
-      url: endPoints.getMentorAvailableSlots,
+      method: 'get',
+      url: `${endPoints.getMentorAvailableSlots}${uniqueId}`,
       headers: headerApi(getState),
-      data: data,
     };
     try {
       const {data, status} = (await axios(config)) || {};
@@ -72,6 +100,29 @@ export const getAllArticlesList = createAsyncThunk(
     };
     try {
       const {data, status} = (await axios(config)) || {};
+      if (status === 200) {
+        return Promise.resolve(data);
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
+  },
+);
+
+export const getAllArticles = createAsyncThunk(
+  'home/getAllArticles',
+  async (data, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.getArticleList,
+      headers: headerApi(getState),
+    };
+    try {
+      const {data, status} = (await axios(config)) || {};
+      console.log('getArticleList', data);
       if (status === 200) {
         return Promise.resolve(data);
       } else {
@@ -210,6 +261,56 @@ export const getProfileSlice = createAsyncThunk(
   },
 );
 
+export const getSlotsSlice = createAsyncThunk(
+  'home/getSlotsSlice',
+  async (date, {getState}) => {
+    var config = {
+      method: 'get',
+      url: `${endPoints.getSlots}${date}`,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getUrlToUploadImage = createAsyncThunk(
+  'home/getUrlToUploadImage',
+  async (date, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.getUrlToUploadImage,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getUrlOfProfile = createAsyncThunk(
+  'home/getUrlOfProfile',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.getProfileUrl,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const updateSlotsSlice = createAsyncThunk(
+  'home/updateSlotsSlice',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.updateSlots,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
 export const getScheduledAppointmentsSlice = createAsyncThunk(
   'home/getScheduledAppointmentsSlice',
   async (data, {getState}) => {
@@ -243,7 +344,7 @@ export const getBooksSlots = createAsyncThunk(
     return apiMiddleware(config);
   },
 );
-
+let timestamp = Date.now();
 const initialState = {
   attributes: {},
   profileData: {},
@@ -252,9 +353,30 @@ const initialState = {
   isScheduleLoading: false,
   isEditProfileLoading: false,
   type: '',
+  darkMode: false,
+  isArticleDataLoading: false,
+  articleData: [],
+
+  isMentorsDataLoading: false,
+  mentorsData: [],
   channels: [],
   chatToken: '',
   isChatTokenLoading: false,
+  rangeDate: {
+    startDate: timestamp,
+    endDate: timestamp,
+  },
+  slots: [],
+  slotsData: [],
+  isSlotsLoading: false,
+  threeDaysSlots: [],
+  threeDaysSlotLoading: false,
+  currentLanguage: 'en',
+  urlForImageUpload: '',
+  loadingUploadUrl: false,
+  selectedProfileImagePath: '',
+  profileImageUrl: '',
+  loadingProfileImageUrl: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -263,6 +385,14 @@ const HomeSlice = createSlice({
     setAttributes: (state, action) => {
       state.attributes = action.payload;
     },
+    changeTheme: (state, action) => {
+      state.darkMode = action.payload;
+    },
+    languageChange: (state, action) => {
+      state.currentLanguage = action.payload;
+    },
+
+    updateOnLogout: (state, action) => initialState,
     updateChannels: (state, action) => {
       const {
         isUpdate = false,
@@ -306,8 +436,39 @@ const HomeSlice = createSlice({
       }
       state.channels = newChannels;
     },
+    setSelectedProfileImagePath: (state, action) => {
+      state.selectedProfileImagePath = action.payload;
+    },
+    setRangeDate: (state, action) => {
+      state.rangeDate = action.payload;
+    },
+
+    addSlots: (state, action) => {
+      state.slots = action.payload;
+    },
   },
   extraReducers: builder => {
+    builder.addCase(getUrlOfProfile.pending, state => {
+      state.loadingProfileImageUrl = true;
+    });
+    builder.addCase(getUrlOfProfile.fulfilled, (state, action) => {
+      state.loadingProfileImageUrl = false;
+      state.profileImageUrl = action.payload?.url;
+    });
+    builder.addCase(getUrlOfProfile.rejected, (state, action) => {
+      state.loadingProfileImageUrl = false;
+    });
+
+    builder.addCase(getUrlToUploadImage.pending, state => {
+      state.loadingUploadUrl = true;
+    });
+    builder.addCase(getUrlToUploadImage.fulfilled, (state, action) => {
+      state.loadingUploadUrl = false;
+      state.urlForImageUpload = action.payload?.url;
+    });
+    builder.addCase(getUrlToUploadImage.rejected, (state, action) => {
+      state.loadingUploadUrl = false;
+    });
     builder.addCase(getProfileSlice.pending, state => {
       state.isProfileLoading = true;
     });
@@ -319,8 +480,59 @@ const HomeSlice = createSlice({
       state.isProfileLoading = false;
       state.profileData = {};
     });
+
+    builder.addCase(getMentorAllSlots.pending, state => {
+      state.threeDaysSlotLoading = true;
+    });
+    builder.addCase(getMentorAllSlots.fulfilled, (state, action) => {
+      state.threeDaysSlotLoading = false;
+      state.threeDaysSlots = action.payload?.Items;
+    });
+    builder.addCase(getMentorAllSlots.rejected, (state, action) => {
+      state.threeDaysSlotLoading = false;
+      state.threeDaysSlots = [];
+    });
+
+    builder.addCase(getSlotsSlice.pending, state => {
+      state.isSlotsLoading = true;
+    });
+    builder.addCase(getSlotsSlice.fulfilled, (state, action) => {
+      state.isSlotsLoading = false;
+      state.slots = action.payload?.Items[0]?.slots;
+    });
+    builder.addCase(getSlotsSlice.rejected, (state, action) => {
+      state.isSlotsLoading = false;
+      state.slots = [];
+    });
+
+    builder.addCase(getAllArticles.pending, state => {
+      state.isArticleDataLoading = true;
+    });
+
+    builder.addCase(getAllArticles.fulfilled, (state, action) => {
+      state.isArticleDataLoading = false;
+      state.articleData = action.payload;
+    });
+
+    builder.addCase(getAllArticles.rejected, (state, action) => {
+      state.isArticleDataLoading = false;
+      state.articleData = [];
+    });
+
+    builder.addCase(getAllMentorList.pending, (state, action) => {
+      state.isMentorsDataLoading = true;
+    });
+    builder.addCase(getAllMentorList.fulfilled, (state, action) => {
+      state.isMentorsDataLoading = false;
+      state.mentorsData = action.payload.Items;
+    });
+    builder.addCase(getAllMentorList.rejected, (state, action) => {
+      state.isMentorsDataLoading = false;
+    });
+
     builder.addCase(getScheduledAppointmentsSlice.pending, state => {
       state.isScheduleLoading = true;
+      state.scheduledAppointmentsData = state.scheduledAppointmentsData;
     });
     builder.addCase(
       getScheduledAppointmentsSlice.fulfilled,
@@ -361,5 +573,14 @@ const HomeSlice = createSlice({
   },
 });
 
-export const {setAttributes, updateChannels} = HomeSlice.actions;
+export const {
+  setAttributes,
+  updateChannels,
+  changeTheme,
+  updateOnLogout,
+  setRangeDate,
+  addSlots,
+  languageChange,
+  setSelectedProfileImagePath,
+} = HomeSlice.actions;
 export default HomeSlice.reducer;
