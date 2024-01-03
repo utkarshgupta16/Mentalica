@@ -11,7 +11,7 @@ import {
   Switch,
   Platform,
 } from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Colors from '../../customs/Colors';
@@ -23,6 +23,8 @@ import {logout} from '../../redux/AuthSlice';
 import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
 import ScreenLoading from '../../components/ScreenLoading';
+import {connectActionSheet} from '@expo/react-native-action-sheet';
+import ImagePicker from 'react-native-image-crop-picker';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
@@ -34,6 +36,8 @@ import i18n from '../../utils/i18n';
 import RNRestart from 'react-native-restart';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
+import {resetConversations} from '../../redux/ConvoSlice';
+import {resetUnreadMessage} from '../../redux/UnReadMessageCountSlice';
 import {
   changeTheme,
   getUrlToUploadImage,
@@ -47,7 +51,7 @@ import {ADD_SLOTS_PROFILE_SCREEN} from '../../utils/route.js';
 import {changeLanguage} from 'i18next';
 import {PREVIEW_URL} from '@env';
 import axios from 'axios';
-const Profile = ({navigation}) => {
+const Profile = ({navigation, showActionSheetWithOptions}) => {
   const {t} = useTranslation();
   const {
     ACCOUNT_DETAILS,
@@ -87,6 +91,7 @@ const Profile = ({navigation}) => {
     isProfileLoading,
     profileImageUrl,
   } = useSelector(state => state.home);
+  const [imageLoading, setOnLoadingImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
@@ -103,8 +108,8 @@ const Profile = ({navigation}) => {
     firstName = '',
     lastName = '',
     expertise = '',
+    uniqueId,
   } = profileData || {};
-
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
   const isProfile = true;
   const DUMMY_ISSUES =
@@ -169,6 +174,8 @@ const Profile = ({navigation}) => {
         onPress: async () => {
           signOut();
           dispatch(logout());
+          dispatch(resetConversations());
+          dispatch(resetUnreadMessage());
           dispatch(updateOnLogout());
         },
       },
@@ -176,16 +183,56 @@ const Profile = ({navigation}) => {
   };
 
   const handleUploadImage = async () => {
-    launchImageLibrary({
-      mediaType: 'photo',
-      maxWidth: 150,
-      maxHeight: 150,
-      includeBase64: true,
-    }).then(result => {
-      dispatch(getUrlToUploadImage()).then(({payload}) => {
-        uploadImageToServer(result?.assets[0], payload.url);
-      });
-    });
+    // launchImageLibrary({
+    //   mediaType: 'photo',
+    //   maxWidth: 150,
+    //   maxHeight: 150,
+    //   includeBase64: true,
+    // }).then(result => {
+    //   dispatch(getUrlToUploadImage()).then(({payload}) => {
+    //     uploadImageToServer(result?.assets[0], payload.url);
+    //   });
+    // });
+    const options = ['Take Photo', 'Choose From Library', 'Cancel'];
+    const cancelButtonIndex = 2;
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async buttonIndex => {
+        if (buttonIndex === 0) {
+          ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            mediaType: 'photo',
+            cropping: true,
+            compressImageQuality: 0.7,
+          })
+            .then(async image => {
+              dispatch(getUrlToUploadImage()).then(({payload}) => {
+                uploadImageToServer(image, payload.url);
+              });
+            })
+            .catch(err => {});
+        } else if (buttonIndex === 1) {
+          ImagePicker.openPicker({
+            mediaType: 'photo',
+            compressImageQuality: 0.7,
+            showsSelectedCount: true,
+            maxFiles: 1,
+            cropping: true,
+            forceJpg: true,
+          })
+            .then(async image => {
+              dispatch(getUrlToUploadImage()).then(({payload}) => {
+                uploadImageToServer(image, payload.url);
+              });
+            })
+            .catch(error => {});
+        }
+      },
+    );
   };
 
   const decodeBase64 = async data => {
@@ -205,7 +252,8 @@ const Profile = ({navigation}) => {
 
   const uploadImageToServer = async (data, signedUrl) => {
     if (signedUrl) {
-      const fileData = await RNFS.readFile(data?.uri, 'base64');
+      setOnLoadingImage(true);
+      const fileData = await RNFS.readFile(data?.path, 'base64');
       const _data = await decodeBase64(fileData);
 
       try {
@@ -216,7 +264,10 @@ const Profile = ({navigation}) => {
             'Content-Type': 'image/jpeg',
           },
         });
+        setOnLoadingImage(false);
       } catch (e) {
+        setOnLoadingImage(false);
+
         console.log('Error while fetching', e);
       }
     }
@@ -230,18 +281,23 @@ const Profile = ({navigation}) => {
         <View style={styles.profileDetailsContainer}>
           <Pressable onPress={handleUploadImage}>
             <View style={styles.imageContainer}>
-              <Image
-                source={
-                  profileData?.uniqueId
-                    ? {
-                        uri: `${PREVIEW_URL}/${profileData?.uniqueId}/userpic.png`,
-                      }
-                    : loginFrom === PATIENT
-                    ? require('../../icons/patient.jpg')
-                    : require('../../icons/doctor.jpg')
-                }
-                style={styles.image}
-              />
+              {imageLoading ? (
+                <ActivityIndicator size={'small'} color="green" />
+              ) : (
+                <Image
+                  source={
+                    uniqueId
+                      ? {
+                          cache: 'reload',
+                          uri: `${PREVIEW_URL}/${uniqueId}/userpic.png`,
+                        }
+                      : loginFrom === PATIENT
+                      ? require('../../icons/patient.jpg')
+                      : require('../../icons/doctor.jpg')
+                  }
+                  style={styles.image}
+                />
+              )}
             </View>
           </Pressable>
           <View style={styles.details}>
@@ -381,7 +437,7 @@ const Profile = ({navigation}) => {
   );
 };
 
-export default Profile;
+export default connectActionSheet(Profile);
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -395,13 +451,16 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     // borderWidth: 1,
-    borderColor: Colors.grayishBlue,
+    // borderColor: Colors.grayishBlue,
     width: 56,
     height: 56,
     borderRadius: 8,
     marginRight: 16,
     overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
+    borderColor: 'lightgray',
   },
   image: {
     width: 56,

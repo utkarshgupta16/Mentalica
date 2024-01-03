@@ -319,7 +319,6 @@ const LoginScreen = ({navigation}) => {
             Alert.alert(CHANGE_LANG, RESTART_APP, [
               {
                 text: 'Cancel',
-                // text: NO_CANCEL,
                 onPress: () => null,
               },
               {

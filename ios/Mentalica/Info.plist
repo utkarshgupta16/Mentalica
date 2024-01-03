@@ -36,7 +36,9 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Mentalica would like to access the camera.</string>
+	<string>This will allow you to take photos during your walk through and submit them with the report.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This will let you share photos from your library and save photos to your Camera Roll</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>

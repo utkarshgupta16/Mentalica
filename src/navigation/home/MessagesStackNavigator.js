@@ -4,7 +4,9 @@ import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
 import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
 import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
-import {ChatRoomScreen} from '../../screens/Twillio/chat-room/chat-room-screen';
+import ChatRoomScreen from '../../screens/Twillio/chat-room/chat-room-screen';
+import VideoPlayer from '../../components/VideoPlayer';
+import DocViewer from '../../components/DocViewer';
 import Messages from './Messages';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -79,6 +81,22 @@ const MessagesStackNavigator = ({navigation, route}) => {
               </Text>
             </TouchableOpacity>
           ),
+          headerShadowVisible: false,
+        })}
+      />
+      <Stack.Screen
+        name={'VideoPlayer'}
+        component={VideoPlayer}
+        options={({navigation}) => ({
+          title: '',
+          headerShadowVisible: false,
+        })}
+      />
+      <Stack.Screen
+        name={'DocViewer'}
+        component={DocViewer}
+        options={({navigation}) => ({
+          title: '',
           headerShadowVisible: false,
         })}
       />

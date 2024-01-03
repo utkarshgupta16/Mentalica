@@ -1,6 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {styles} from './patientDashboardStyle';
-import {FlatList, Image} from 'react-native';
+import {FlatList, Image, StyleSheet} from 'react-native';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import {articlesData} from '../../../utils/default';
@@ -25,47 +26,13 @@ const AllTabComponent = ({handleShadowVisible}) => {
     return (
       <View
         style={{
-          flexDirection: 'row',
-          flex: 1,
-          marginVertical: 9,
           shadowColor: darkMode ? 'white' : 'gray',
-          shadowOffset: {
-            width: 0,
-            height: 1,
-          },
-          shadowOpacity: 0.87,
-          shadowRadius: 4,
-          elevation: 4,
-          borderTopRightRadius: 10,
-          borderBottomRightRadius: 10,
-          borderTopLeftRadius: 10,
-          borderBottomLeftRadius: 10,
-          // borderWidth: darkMode ? 1 : 0,
-          borderColor: darkMode ? '#fff' : null,
+          borderColor: darkMode ? '#fff' : 'transparent',
+          ...styles.allTabComponentStyle,
         }}>
-        <Image
-          source={{uri: item.image}}
-          style={{
-            width: '25%',
-            height: 100,
-            resizeMode: 'cover',
-            borderTopLeftRadius: 10,
-            borderBottomLeftRadius: 10,
-          }}
-        />
+        <Image source={{uri: item.image}} style={styles.allTabImage} />
 
-        <View
-          isCard={true}
-          style={{
-            width: '75%',
-
-            paddingVertical: 10,
-            paddingHorizontal: 10,
-            justifyContent: 'center',
-            backgroundColor: '#F5F7F8',
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 10,
-          }}>
+        <View isCard={true} style={styles.allSubView}>
           <Text style={{fontSize: 16, fontWeight: '700'}}>
             {t(item?.title)}
           </Text>
@@ -122,5 +89,3 @@ const AllTabComponent = ({handleShadowVisible}) => {
 };
 
 export default React.memo(AllTabComponent);
-
-

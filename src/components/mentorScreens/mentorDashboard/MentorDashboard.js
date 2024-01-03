@@ -64,12 +64,10 @@ const MentorDashboard = ({navigation}) => {
       const date =
         newDate?.getFullYear() +
         '-' +
-        `${newDate?.getMonth() + 1}` +
+        `0${newDate?.getMonth() + 1}` +
         '-' +
-        `${
-          newDate?.getDate() < 10
-            ? `0${newDate?.getDate()}`
-            : newDate?.getDate()
+        `0${
+          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
         }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
       if (!formattedAppointments[date]) {
         formattedAppointments[date] = [];
@@ -96,11 +94,11 @@ const MentorDashboard = ({navigation}) => {
         const date =
           newDate?.getFullYear() +
           '-' +
-          `${newDate?.getMonth() + 1}` +
+          `0${newDate?.getMonth() + 1}` +
           '-' +
-          `${
+          `0${
             newDate?.getDate() < 10
-              ? `0${newDate?.getDate()}`
+              ? `${newDate?.getDate()}`
               : newDate?.getDate()
           }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
@@ -122,11 +120,10 @@ const MentorDashboard = ({navigation}) => {
   const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
 
   const [appointmentList, setAppointmentList] = useState(formatedData);
+
   useEffect(() => {
-    (async () => {
-      await dispatch(getProfileSlice({email, type}));
-    })();
-  }, [dispatch, email, type]);
+    dispatch(getProfileSlice({email, type}));
+  }, [email, type, dispatch]);
 
   // useEffect(() => {
   //   setTimeout(() => {

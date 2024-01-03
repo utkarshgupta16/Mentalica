@@ -9,7 +9,7 @@ import {apiMiddleware} from './service';
 
 const headerApi = getState => {
   const {userToken: {jwtToken} = {}} = getState().auth;
-
+  // Auth.currentUserCredentials;
   return {
     Authorization: `Bearer ${jwtToken}`,
     'Content-Type': 'application/json',
@@ -122,6 +122,7 @@ export const getAllArticles = createAsyncThunk(
     };
     try {
       const {data, status} = (await axios(config)) || {};
+      console.log('getArticleList', data);
       if (status === 200) {
         return Promise.resolve(data);
       } else {
@@ -163,7 +164,7 @@ export const deleteConversationSlice = createAsyncThunk(
       method: 'delete',
       url: endPoints.deleteConversation,
       headers: headerApi(getState),
-      data: {conversationId},
+      data: {conversationId: 'CH23f21958836c4c7e8f8b85a8c38bb379'},
     };
     return apiMiddleware(config);
   },
@@ -392,7 +393,47 @@ const HomeSlice = createSlice({
 
     updateOnLogout: (state, action) => initialState,
     updateChannels: (state, action) => {
-      state.channels = action.payload;
+      const {
+        isUpdate = false,
+        isUpdateCount = false,
+        newMessage = {},
+        channels = [],
+      } = action.payload;
+      let newChannels = channels;
+      if (isUpdate) {
+        newChannels = [...state.channels];
+        newChannels =
+          newChannels.map(channel =>
+            channel.id === newMessage?.channelId
+              ? {
+                  ...channel,
+                  lastMessageTime: newMessage?.dateCreated,
+                  lastMessageText: newMessage?.body,
+                  unreadCount:
+                    newMessage.unreadCount || newMessage.unreadCount === 0
+                      ? newMessage.unreadCount
+                      : channel?.unreadCount,
+                }
+              : channel,
+          ) || [];
+      }
+      if (isUpdateCount) {
+        newChannels = [...state.channels];
+        newChannels = newChannels.map(el => {
+          if (el.id === newMessage?.channelId) {
+            return {
+              ...el,
+              isOnline:
+                newMessage?.isOnline === undefined
+                  ? el.isOnline
+                  : newMessage?.isOnline,
+              unreadCount: 0,
+            };
+          }
+          return el;
+        });
+      }
+      state.channels = newChannels;
     },
     setSelectedProfileImagePath: (state, action) => {
       state.selectedProfileImagePath = action.payload;

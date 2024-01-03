@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from './home/Home';
-import Messages from './home/Messages';
-import Profile from './home/Profile';
+// import Home from './home/Home';
+// import Messages from './home/Messages';
+// import Profile from './home/Profile';
 import {useSelector} from 'react-redux';
-import Stats from './home/Stats';
+// import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
 import convertLang from '../utils/Strings';
@@ -21,6 +21,7 @@ import {
   MESSAGES_TAB_ROUTE,
   PROFILE_TAB_ROUTE,
   CHATS_SCREENS,
+  CHAT_ROOM_SCREEN,
   CHATS_SCREEN,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
@@ -43,7 +44,7 @@ const resetSubmitStackOnTabPress = ({navigation, route}) => ({
 
         if (stackKey && tabName === MESSAGES_TAB_ROUTE) {
           navigation.dispatch({
-            ...StackActions.popToTop(),
+            // ...StackActions.popToTop(),
             target: stackKey,
           });
         }
@@ -198,22 +199,42 @@ const HomeNavigator = () => {
       )}
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
-        options={({route}) => ({
-          tabBarIcon: ({color, size}) => (
-            <MaterialIcons name={'message'} size={26} color={color} />
-          ),
-          tabBarLabel: MESSAGES,
-          tabBarStyle: {
-            display: getRouteName(route) === 'none' ? 'none' : 'flex',
-          },
-        })}
-        component={MessagesStackNavigator}
+        options={({navigation}) => {
+          const {index, routes = []} = navigation.getState();
+          const {
+            state: {
+              index: childIndex = undefined,
+              routes: childRoutes = [],
+            } = {},
+          } = routes[index];
+          let childName = '';
+          if (childIndex) {
+            const {name} = childRoutes[childIndex];
+            childName = name;
+          }
+          return {
+            headerShown: false,
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="message" size={25} color={color} />
+            ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Messages');
+            },
+            tabBarStyle: {
+              display:
+                childName === CHAT_ROOM_SCREEN || childName === 'DocViewer'
+                  ? 'none'
+                  : 'flex',
+            },
+          };
+        }}
         listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();
             navigation.navigate(MESSAGES_TAB_ROUTE);
           },
         })}
+        component={MessagesStackNavigator}
       />
       <Tab.Screen
         options={{

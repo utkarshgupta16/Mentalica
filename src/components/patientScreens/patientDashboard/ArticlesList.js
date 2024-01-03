@@ -18,21 +18,23 @@ const ArticlesList = ({handleShadowVisible}) => {
   const {t} = useTranslation();
 
   const dispatch = useDispatch();
-  const [articlesData, setArticlesData] = useState([]);
+  const [articlesData = [], setArticlesData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
 
-  const {isArticleDataLoading, articleData, darkMode} = useSelector(
-    state => state.home,
-  );
+  const {
+    isArticleDataLoading,
+    articleData = [],
+    darkMode,
+  } = useSelector(state => state.home);
 
   useEffect(() => {
     (async () => {
-      if (Object.keys(articleData).length == 0) {
+      if (articleData.length === 0) {
         await dispatch(getAllArticles());
       }
     })();
-  }, []);
+  }, [articleData, dispatch]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -197,7 +199,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#D8D9DA',
-    borderRadius: 8,
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
@@ -206,7 +207,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 3,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -242,5 +242,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 2, // For Android
+    backgroundColor: 'white',
   },
 });

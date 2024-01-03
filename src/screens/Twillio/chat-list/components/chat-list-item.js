@@ -2,31 +2,24 @@ import moment from 'moment';
 import React, {useEffect} from 'react';
 import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import Colors from '../../../../customs/Colors';
 import {getTwilloChatTokenSlice} from '../../../../redux/HomeSlice';
 import {dateFormat} from '../../../../utils/utils';
 import {colors} from '../../colors';
+import ShowOnlineBatch from './ShowOnlineBatch';
 
 export function ChatListItem({
   channel,
-  participants,
+  participantStatus,
   username,
   onLongPress,
   onPress,
   otherUser = {},
+  typingInfo,
+  unreadCount,
+  lastMessage,
 }) {
   let showDate = dateFormat(channel?.lastMessageTime);
-  let otherParticipantFilter =
-    (channel.attributes?.participants &&
-      channel.attributes?.participants.filter(
-        val => val.identity != username,
-      )) ||
-    [];
-  let otherParticipantData = {};
-  if (otherParticipantFilter && otherParticipantFilter.length) {
-    let {identity} = otherParticipantFilter[0] || {};
-    otherParticipantData = participants[identity] || {};
-  }
-
   return (
     <TouchableOpacity
       onLongPress={onLongPress}
@@ -41,46 +34,43 @@ export function ChatListItem({
             source={require('../../../../icons/patient.jpg')}
           />
         )}
-        {otherParticipantData?.isOnline ? (
-          <View
-            style={{
-              marginLeft: 5,
-              position: 'absolute',
-              right: 0,
-              top: 7,
-            }}>
-            <View
-              style={{
-                backgroundColor: 'green',
-                width: 15,
-                height: 15,
-                borderRadius: 10,
-              }}
-            />
-          </View>
-        ) : null}
+        <ShowOnlineBatch
+          participantStatus={participantStatus}
+          otherUser={otherUser}
+        />
       </View>
-
-      <View style={{flex: 1}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flex: 1,
-          }}>
+      <View style={styles.container}>
+        <View style={styles.subContainerStyle}>
           <Text style={styles.cardText}>
-            {otherUser?.username || channel?.name}
+            {otherUser?.username || channel?.friendlyName}
           </Text>
-          <Text style={{fontSize: 12, color: 'gray'}}>
+          {/* {channel.unreadCount ? (
+            <View style={styles.unreadCountViewStyle}>
+              <Text style={styles.unreadCountTextStyle}>
+                {channel?.unreadCount || 0}
+              </Text>
+            </View>
+          ) : null} */}
+          {unreadCount ? (
+            <View style={styles.unreadCountViewStyle}>
+              <Text style={styles.unreadCountTextStyle}>
+                {unreadCount || 0}
+              </Text>
+            </View>
+          ) : null}
+          <Text style={styles.dateTextStyle}>
             {showDate
               ? showDate
               : moment(channel?.lastMessageTime).format('DD/MM/YY')}
           </Text>
         </View>
+        <Text style={styles.lastMessageTextStyle}>
+          {/* {channel?.lastMessageText || ''} */}
+          {lastMessage}
+        </Text>
         <Text
-          style={{fontSize: 14, marginLeft: 8, paddingTop: 3, color: 'gray'}}>
-          {channel?.lastMessageText || ''}
+          style={{...styles.typingStyle, opacity: typingInfo.length ? 1 : 0}}>
+          ....Typing
         </Text>
       </View>
     </TouchableOpacity>
@@ -97,10 +87,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     // marginTop: 12,
     paddingHorizontal: 6,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
   },
+  container: {flex: 1},
   cardIcon: {
     height: 50,
     width: 50,
@@ -111,5 +102,34 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
     fontWeight: 'bold',
+  },
+  lastMessageTextStyle: {
+    fontSize: 14,
+    marginLeft: 8,
+    paddingTop: 3,
+    color: 'gray',
+  },
+  unreadCountViewStyle: {
+    borderRadius: 15,
+    width: 27,
+    height: 27,
+    backgroundColor: Colors.emerald,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unreadCountTextStyle: {color: 'white', fontWeight: 'bold'},
+  subContainerStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  dateTextStyle: {fontSize: 12, color: 'gray'},
+  typingStyle: {
+    color: Colors.emerald,
+    fontSize: 14,
+    fontWeight: 'bold',
+    paddingTop: 4,
+    paddingLeft: 10,
   },
 });
