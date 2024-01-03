@@ -1,4 +1,4 @@
-import convertLang from '../utils/Strings';
+import convertLang, {MENTOR, PATIENT} from '../utils/Strings';
 
 export const specialities = [
   {label: 'Anxiety', value: 'anxiety'},
@@ -193,14 +193,14 @@ export const FEEL_ITEMS = t => {
 };
 
 export const TYPE_OF_ITEMS = t => {
-  const {PATIENT, MENTOR} = convertLang(t);
+  const {MENTOR_LABEL, PATIENT_LABEL} = t && convertLang(t);
   return [
     {
-      label: PATIENT,
+      label: PATIENT_LABEL,
       value: PATIENT,
     },
     {
-      label: MENTOR,
+      label: MENTOR_LABEL,
       value: MENTOR,
     },
   ];

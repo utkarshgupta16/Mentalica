@@ -8,7 +8,7 @@ import {
   getTwilloTokenSlice,
 } from '../../../redux/HomeSlice';
 import Colors from '../../../customs/Colors';
-import convertLang from '../../../utils/Strings';
+import convertLang, {MENTOR} from '../../../utils/Strings';
 import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
@@ -250,7 +250,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   });
 
   const renderItem = item => {
-    let name = type === 'Mentor' ? item?.patientName : item?.mentorName;
+    let name = type === MENTOR ? item?.patientName : item?.mentorName;
     let {endTime} = (item.slots && item.slots[0]) || {};
     const [hours, minutes] = endTime.split(':');
     const now = new Date();

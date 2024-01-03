@@ -24,26 +24,7 @@ const MessagesStackNavigator = ({navigation, route}) => {
         component={ChatListScreen}
         options={({navigation}) => ({
           title: 'Chat Conversation',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{flexDirection: 'row'}}>
-              {currentLanguage == EN ? (
-                <MaterialIcons
-                  name="arrow-back-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              ) : (
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              )}
-              {/* <Text>Messages</Text> */}
-            </TouchableOpacity>
-          ),
+          headerLeft: null,
           headerShadowVisible: false,
         })}
       />

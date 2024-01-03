@@ -61,6 +61,7 @@ import {
 import {PREVIEW_URL} from '@env';
 import {changeLanguage} from 'i18next';
 import axios from 'axios';
+import {profileURL} from '../../utils/utils.js';
 const Profile = ({navigation, showActionSheetWithOptions}) => {
   const {t} = useTranslation();
   const {
@@ -296,7 +297,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
                     uniqueId
                       ? {
                           cache: 'reload',
-                          uri: `${PREVIEW_URL}/${uniqueId}/userpic.png`,
+                          uri: profileURL(uniqueId),
                         }
                       : loginFrom === PATIENT
                       ? require('../../icons/patient.jpg')

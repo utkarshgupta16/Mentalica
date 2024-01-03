@@ -62,7 +62,7 @@ const ProfileStackNavigator = () => {
         name="changePassword"
         component={ChangePassword}
         options={({navigation}) => ({
-          title: '',
+          title: 'Change Password',
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => navigation.goBack()}

@@ -65,19 +65,13 @@ const MentorSignUp = ({navigation}) => {
     CHOOSE_HOW_DO_YOU_FEEL,
     ENTER,
     CREATE_ACCOUNT,
-    PATIENT,
-    MENTOR,
+    // PATIENT,
+    // MENTOR,
     SELECT_SPECIALITY,
     SELECT_LANGUAGE,
     EXPERIENCE_IN_YEARS,
     FEES_FOR_30_MINS,
-    STUDENT,
-    MAlE,
-    FEMAlE,
-    CIVILIAN,
-    SOLDIER,
-    ENGLISH,
-    HINDI,
+    SELECTED_TYPE,
   } = convertLang(t);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +95,7 @@ const MentorSignUp = ({navigation}) => {
   const [emailWarning, setEmailWarning] = useState(false);
   const [compalsaryField, setCompalsaryField] = useState(false);
   // const [slots, addSlots] = useState([]);
+  console.log('typeItems', typeItems);
   // let timestamp = Date.now();
   // const [rangeDate, setRangeDate] = useState({
   //   startDate: timestamp,
@@ -265,7 +260,7 @@ const MentorSignUp = ({navigation}) => {
 
   const renderInput = ({field, placeholder, keyBoardType, ...props}) => {
     return (
-      <View style={{marginBottom: 10}}>
+      <View key={field} style={{marginBottom: 10}}>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.inputLable}>
             {' '}
@@ -600,7 +595,7 @@ const MentorSignUp = ({navigation}) => {
             // }}
             items={typeItems}
             setItems={setTypeItems}
-            placeholder={'Select Type.'}
+            placeholder={SELECTED_TYPE}
             style={styles.dropdown}
             // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
           />
