@@ -265,7 +265,7 @@ const MentorDashboard = ({navigation}) => {
           );
         }}
         renderItem={item => {
-          let name = type == MENTOR ? item?.patientName : item?.mentorName;
+          let name = type == 'Mentor' ? item?.patientName : item?.mentorName;
           return (
             <TouchableOpacity
               onPress={() => {
