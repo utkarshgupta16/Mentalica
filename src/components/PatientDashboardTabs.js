@@ -21,7 +21,9 @@ export default function PatientDashboardTabs({
           styles.containerStyle,
           {
             backgroundColor:
-              selectedTab.tabStr === tab ? Colors.darkPaleMintColor : null,
+              selectedTab.tabStr === tab
+                ? Colors.darkPaleMintColor
+                : 'transparent',
           },
         ]}>
         <Text customColor={selectedColor} tab style={styles.tabText}>

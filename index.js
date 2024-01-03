@@ -12,7 +12,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 import awsconfig from './src/aws-exports';
-// import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 // import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
@@ -76,9 +76,11 @@ const AppConfig = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
-          <App />
-        </SafeAreaProvider>
+        <ActionSheetProvider>
+          <SafeAreaProvider>
+            <App />
+          </SafeAreaProvider>
+        </ActionSheetProvider>
       </PersistGate>
     </Provider>
   );

@@ -43,10 +43,6 @@ export const styles = StyleSheet.create({
 
     height: hp(73),
   },
-  headingText: {
-    fontWeight: 'bold',
-    color: Colors.black,
-  },
   nextAppointmentCont: {
     marginTop: hp(2),
     flexDirection: 'row',
@@ -60,6 +56,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 3,
     borderRadius: 10,
+    backgroundColor: 'white',
   },
   leftCont: {
     width: wp(35),
@@ -150,4 +147,76 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reloadText: {color: Colors.darkPaleMintColor, paddingBottom: 10},
+  allTabComponentStyle: {
+    flexDirection: 'row',
+    flex: 1,
+    marginVertical: 9,
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.87,
+    shadowRadius: 4,
+    elevation: 4,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  allTabImage: {
+    width: '25%',
+    height: 100,
+    resizeMode: 'cover',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  allSubView: {
+    width: '75%',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    backgroundColor: '#F5F7F8',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  appointmentAgenda: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 5.65,
+    elevation: 3,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+  },
+  agendaText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#33A3DC',
+  },
 });
+
+export const agendaTheme = darkMode => {
+  return StyleSheet.create({
+    theme: {
+      calendarBackground: darkMode ? Colors.black : Colors.white,
+      agendaKnobColor: Colors.primaryBlue1,
+      agendaDayTextColor: darkMode ? Colors.white : Colors.black,
+      agendaDayNumColor: Colors.blueDarkColor,
+      agendaTodayColor: darkMode ? Colors.white : Colors.black,
+      indicatorColor: Colors.primaryBlue1,
+      textSectionTitleColor: darkMode ? Colors.white : Colors.black,
+      dotColor: Colors.primaryBlue1,
+      selectedDayBackgroundColor: Colors.darkPaleMintColor,
+      reservationsBackgroundColor: darkMode ? Colors.black : Colors.white,
+    },
+  });
+};

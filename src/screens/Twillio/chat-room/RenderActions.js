@@ -38,15 +38,15 @@ const RenderActions = ({actionsProps, selectedMedia}) => {
             })
             .catch(error => {});
         },
-        ['Choose Video']: () => {
-          ImagePicker.openPicker({
-            mediaType: 'video',
-          })
-            .then(video => {
-              selectedMedia([video]);
-            })
-            .catch(error => {});
-        },
+        // ['Choose Video']: () => {
+        //   ImagePicker.openPicker({
+        //     mediaType: 'video',
+        //   })
+        //     .then(video => {
+        //       selectedMedia([video]);
+        //     })
+        //     .catch(error => {});
+        // },
         ['Choose Documents']: async () => {
           const res = await DocumentPicker.pick({
             type: [DocumentPicker.types.allFiles],

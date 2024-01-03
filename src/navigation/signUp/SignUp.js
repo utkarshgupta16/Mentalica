@@ -528,6 +528,7 @@ const MentorSignUp = ({navigation}) => {
             shadowOpacity: isShadowVisible ? 1 : 0,
             shadowRadius: isShadowVisible ? 3 : 0,
             elevation: isShadowVisible ? 4 : 0,
+            backgroundColor: 'white',
           }}>
           <Text style={styles.createAccountTxt}>{CREATE_ACCOUNT}</Text>
           <MaterialIcons

@@ -66,7 +66,7 @@ const PatientDashboard = ({navigation}) => {
   };
   const {email, type} = useSelector(state => state.auth);
   const {darkMode, profileData = {}} = useSelector(state => state.home);
-  const [selectedTab, setSelectedTab] = useState({tabStr: ALL});
+  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
 
   const dispatch = useDispatch();
 

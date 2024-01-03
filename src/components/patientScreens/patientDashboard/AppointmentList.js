@@ -1,14 +1,7 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Pressable,
-  TouchableOpacity,
-  Alert,
-  RefreshControl,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {styles} from './patientDashboardStyle';
+import {agendaTheme, styles} from './patientDashboardStyle';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getScheduledAppointmentsSlice,
@@ -30,20 +23,14 @@ import Text from '../../wrapperComponent/TextWrapper';
 const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {
-    ALL,
     APPOINTMENTS,
     ARE_YOU_JOIN,
-    ARTICLES,
     LINK_EXPIRED,
-    MENTORS_LIST,
     NO,
-    PATIENT_EMAIL_ID,
     RELOAD,
-    SAVED,
     YES,
     YOU_JOINED_CALL,
     OKAY,
-    MENTOR,
   } = convertLang(t);
   const {props, setProps} = useContext(AppContext);
   const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
@@ -256,22 +243,102 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     }, t);
   };
 
+  const getItemLayout = (data, index) => ({
+    length: 80,
+    offset: 80 * index,
+    index,
+  });
+
+  const renderItem = item => {
+    let name = type === 'Mentor' ? item?.patientName : item?.mentorName;
+    let {endTime} = (item.slots && item.slots[0]) || {};
+    const [hours, minutes] = endTime.split(':');
+    const now = new Date();
+    now.setHours(hours, minutes, 0, 0);
+    let endDateTime = now.getTime();
+    let checkExpired = true;
+    if (isLoading) {
+      return null;
+    }
+    return (
+      <TouchableOpacity
+        style={{opacity: checkExpired ? 1 : 0.5}}
+        onPress={() => {
+          if (checkExpired) {
+            Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+              {
+                onPress: () => videoCallAction(item),
+                text: YES,
+              },
+              {
+                onPress: () => null,
+                text: NO,
+              },
+            ]);
+          } else {
+            Alert.alert(LINK_EXPIRED, ``, [
+              {
+                onPress: () => null,
+                text: OKAY,
+              },
+            ]);
+          }
+        }}>
+        <View
+          style={{
+            shadowColor: darkMode ? '#fff' : 'gray',
+            ...styles.appointmentAgenda,
+          }}>
+          <View style={styles.timeColumn}>
+            <Text style={styles.timeText}>
+              {moment(item?.start).format('LT')}
+            </Text>
+            <Text style={styles.timeText}>-</Text>
+            <Text style={styles.timeText}>
+              {moment(item?.end).format('LT')}
+            </Text>
+          </View>
+
+          <View style={styles.appointmentDetails}>
+            <Text style={styles.agendaText}>{name}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const onDayPress = async ({dateString}) => {
+    setLoading(true);
+    await updateData(dateString);
+    setLoading(false);
+    setDay(dateString);
+  };
+
+  const renderEmptyData = () => {
+    if (isLoading) {
+      return null;
+    }
+    return (
+      <Pressable
+        onPress={async () => {
+          setLoading(true);
+          await updateData(selectedDay);
+          setLoading(false);
+        }}
+        style={styles.reloadButton}>
+        <Text style={styles.reloadText}>{RELOAD}</Text>
+        <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
+      </Pressable>
+    );
+  };
+
+  const keyExtractor = (item, index) => index;
+
   return (
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
-        theme={{
-          calendarBackground: darkMode ? '#000000' : '#ffff',
-          agendaKnobColor: '#283747',
-          agendaDayTextColor: darkMode ? '#fff' : '#000',
-          agendaDayNumColor: '#00adf5',
-          agendaTodayColor: darkMode ? '#fff' : '#000',
-          indicatorColor: '#283747',
-          textSectionTitleColor: darkMode ? '#fff' : '#000',
-          dotColor: '#283747',
-          selectedDayBackgroundColor: Colors.darkPaleMintColor,
-          reservationsBackgroundColor: darkMode ? '#000' : '#ffff',
-        }}
+        theme={agendaTheme(darkMode).theme}
         // selected="2022-12-01"
         refreshControl={
           <RefreshControl
@@ -286,105 +353,13 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
-        onDayPress={async ({dateString}) => {
-          setLoading(true);
-          await updateData(dateString);
-          setLoading(false);
-          setDay(dateString);
-        }}
+        getItemLayout={getItemLayout}
+        onDayPress={onDayPress}
         items={appointmentList}
-        renderEmptyData={() => {
-          if (isLoading) {
-            return null;
-          }
-          return (
-            <Pressable
-              onPress={async () => {
-                setLoading(true);
-                await updateData(selectedDay);
-                setLoading(false);
-              }}
-              style={styles.reloadButton}>
-              <Text style={styles.reloadText}>{RELOAD}</Text>
-              <AIcon name="refresh" size={35} color={Colors.blueDarkColor} />
-            </Pressable>
-          );
-        }}
-        renderItem={item => {
-          let name = type === 'Mentor' ? item?.patientName : item?.mentorName;
-          let {endTime} = (item.slots && item.slots[0]) || {};
-          const [hours, minutes] = endTime.split(':');
-          const now = new Date();
-          now.setHours(hours, minutes, 0, 0);
-          let endDateTime = now.getTime();
-          let checkExpired = true;
-          return (
-            <TouchableOpacity
-              style={{opacity: checkExpired ? 1 : 0.5}}
-              onPress={() => {
-                if (checkExpired) {
-                  Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
-                    {
-                      onPress: () => videoCallAction(item),
-                      text: YES,
-                    },
-                    {
-                      onPress: () => null,
-                      text: NO,
-                    },
-                  ]);
-                } else {
-                  Alert.alert(LINK_EXPIRED, ``, [
-                    {
-                      onPress: () => null,
-                      text: OKAY,
-                    },
-                  ]);
-                }
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  padding: 10,
-                  borderRadius: 8,
-                  marginTop: 10,
-                  backgroundColor: 'white',
-                  shadowColor: darkMode ? '#fff' : 'gray',
-                  shadowOffset: {
-                    width: 0,
-                    height: 1,
-                  },
-                  shadowOpacity: 0.37,
-                  shadowRadius: 5.65,
-                  elevation: 3,
-                  marginHorizontal: 10,
-                  paddingHorizontal: 10,
-                }}>
-                <View style={styles.timeColumn}>
-                  <Text style={styles.timeText}>
-                    {moment(item?.start).format('LT')}
-                  </Text>
-                  <Text style={styles.timeText}>-</Text>
-                  <Text style={styles.timeText}>
-                    {moment(item?.end).format('LT')}
-                  </Text>
-                </View>
-
-                <View style={styles.appointmentDetails}>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: 'bold',
-                      color: '#33A3DC',
-                    }}>
-                    {name}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
+        initialNumToRender={5}
+        keyExtractor={keyExtractor}
+        renderEmptyData={renderEmptyData}
+        renderItem={renderItem}
       />
     </View>
   );

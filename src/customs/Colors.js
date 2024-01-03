@@ -29,6 +29,7 @@ const Colors = {
   purple: '#753BBD',
   emerald: '#09bd55',
   whatsappColor: '#dcf8c6',
+  primaryBlue1: '#283747',
 };
 
 export default Colors;

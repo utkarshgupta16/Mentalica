@@ -199,7 +199,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#D8D9DA',
-    borderRadius: 8,
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
@@ -208,7 +207,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 3,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -244,5 +242,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 2, // For Android
+    backgroundColor: 'white',
   },
 });
