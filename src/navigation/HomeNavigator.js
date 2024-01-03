@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux';
 // import Stats from './home/Stats';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import UserIcon from '../icons/user.svg';
-import convertLang from '../utils/Strings';
+import convertLang, {MENTOR} from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
@@ -117,8 +117,6 @@ const PatientDashboardStack = () => {
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
-  const {MENTOR} = convertLang(t);
-
   const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);

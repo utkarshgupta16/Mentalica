@@ -39,18 +39,6 @@ const ChatListScreens = ({navigation, route}) => {
   const unreadMessage = useSelector(state => state?.unreadMessage) ?? {};
   const participantObj = useSelector(state => state?.participants);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('')}>
-          <Text style={styles.addButtonText}>+</Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
-
   // const getSubscribedChannels = useCallback(
   //   client => {
   //     setLoading(true);

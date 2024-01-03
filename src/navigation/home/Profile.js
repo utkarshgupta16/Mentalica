@@ -51,6 +51,7 @@ import {ADD_SLOTS_PROFILE_SCREEN} from '../../utils/route.js';
 import {changeLanguage} from 'i18next';
 import {PREVIEW_URL} from '@env';
 import axios from 'axios';
+import {profileURL} from '../../utils/utils.js';
 const Profile = ({navigation, showActionSheetWithOptions}) => {
   const {t} = useTranslation();
   const {
@@ -289,7 +290,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
                     uniqueId
                       ? {
                           cache: 'reload',
-                          uri: `${PREVIEW_URL}/${uniqueId}/userpic.png`,
+                          uri: profileURL(uniqueId),
                         }
                       : loginFrom === PATIENT
                       ? require('../../icons/patient.jpg')

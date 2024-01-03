@@ -16,6 +16,7 @@ import {
   mediaMap,
   messagesMap,
 } from '../redux/coversation-objects';
+import {PREVIEW_URL} from '@env';
 // import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 
 export const iosPlatform = Platform.OS === 'ios';
@@ -377,3 +378,5 @@ export const monthsShorts = [
   'Nov',
   'Dec',
 ];
+
+export const profileURL = profileId => `${PREVIEW_URL}/${profileId}/userpic`;

@@ -1,4 +1,4 @@
-export default convertString = convertLang => {
+const convertString = convertLang => {
   const CHANGE_LANG =
     convertLang && convertLang('Are you sure want to change language');
   const RESTART_APP =
@@ -118,8 +118,8 @@ export default convertString = convertLang => {
     convertLang && convertLang('Choose How do you feel');
   const ENTER = convertLang && convertLang('Enter');
   const CREATE_ACCOUNT = convertLang && convertLang('Create Account');
-  const PATIENT = convertLang && convertLang('Patient');
-  const MENTOR = convertLang && convertLang('Mentor');
+  const PATIENT_LABEL = convertLang && convertLang('Patient');
+  const MENTOR_LABEL = convertLang && convertLang('Mentor');
   const MAlE = convertLang && convertLang('Male');
   const FEMAlE = convertLang && convertLang('Female');
   const CIVILIAN = convertLang && convertLang('Civilian');
@@ -148,8 +148,10 @@ export default convertString = convertLang => {
   const ANGER = convertLang && convertLang('Anger');
   const DEPRESSED = convertLang && convertLang('Depressed');
   const SADNESS = convertLang && convertLang('Sadness');
+  const SELECTED_TYPE = convertLang && convertLang('Select Type.');
 
   return {
+    SELECTED_TYPE,
     ENGLISH,
     HINDI,
     SADNESS,
@@ -164,7 +166,6 @@ export default convertString = convertLang => {
     STUDENT_LIFE,
     ANXIETY,
     DISAAPOINTMENT,
-    DEPRESSED,
     SELECT_TIME,
     STUDENT,
     HATE,
@@ -181,8 +182,8 @@ export default convertString = convertLang => {
     CIVILIAN,
     SOLDIER,
     CITY,
-    PATIENT,
-    MENTOR,
+    PATIENT_LABEL,
+    MENTOR_LABEL,
     CREATE_ACCOUNT,
     ENTER,
     TEMP_CITY,
@@ -207,7 +208,6 @@ export default convertString = convertLang => {
     ADD_SLOTS,
     OKAY,
     SELECT_LANG,
-    ENGLISH,
     HEBREW,
     MENTOR_EMAIL_ID,
     RELOAD,
@@ -237,7 +237,6 @@ export default convertString = convertLang => {
     APPOINTMENTS,
     ARTICLES,
     SAVED,
-    MENTORS_LIST,
     HELLO,
     HARDWARE_SUPPORT,
     ERROR,
@@ -279,10 +278,12 @@ export default convertString = convertLang => {
     SIGN_UP,
   };
 };
-
+export default convertString;
 export const FROM = 'From';
 export const TO = 'To';
 export const APPLY = 'Apply';
 export const ADD_SLOTS = 'Add Slots';
 export const HE = 'he';
 export const EN = 'en';
+export const PATIENT = 'Patient';
+export const MENTOR = 'Mentor';
