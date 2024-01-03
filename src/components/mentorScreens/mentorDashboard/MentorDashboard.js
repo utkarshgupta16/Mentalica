@@ -124,11 +124,9 @@ const MentorDashboard = ({navigation}) => {
   const [appointmentList, setAppointmentList] = useState(formatedData);
   useEffect(() => {
     (async () => {
-      if (Object.keys(profileData).length == 0) {
-        await dispatch(getProfileSlice({email, type}));
-      }
+      await dispatch(getProfileSlice({email, type}));
     })();
-  }, [profileData]);
+  }, [dispatch, email, type]);
 
   // useEffect(() => {
   //   setTimeout(() => {

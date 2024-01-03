@@ -23,7 +23,7 @@ export const endPoints = {
   updateSlots: `${API_URL}/slots`,
   getSlots: `${API_URL}/slots?date=`,
   getUrlToUploadImage: `${API_URL}/userpic?type=putImage`,
-  getProfileUrl: `${API_URL}/userpic?type=getImage`,
+  getProfileUrl: `${API_URL}/images/`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

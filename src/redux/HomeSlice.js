@@ -285,10 +285,10 @@ export const getUrlToUploadImage = createAsyncThunk(
 
 export const getUrlOfProfile = createAsyncThunk(
   'home/getUrlOfProfile',
-  async (data, {getState}) => {
+  async (id, {getState}) => {
     var config = {
       method: 'post',
-      url: endPoints.getProfileUrl,
+      url: `${endPoints.getProfileUrl}${id}/userpic.png`,
       headers: headerApi(getState),
       data: data,
     };

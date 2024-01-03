@@ -55,12 +55,17 @@ const AddSlotsMentor = ({navigation, route}) => {
     },
   } = useSelector(state => state.home);
 
-  const getSlots = async () => {
+  const getSlots = async dateObj => {
+    const date = dateObj
+      ? dateObj?.from
+      : Platform.OS == 'ios'
+      ? new Date(rangeDate.startDate)
+      : new Date(dateObj?.from);
     try {
-      const date =
-        Platform.OS == 'ios'
-          ? new Date(rangeDate.startDate)
-          : new Date(dateObj?.from);
+      // const date =
+      //   Platform.OS == 'ios'
+      //     ? new Date(rangeDate.startDate)
+      //     : new Date(dateObj?.from);
       const zDate = String(date.toString());
       const responce = await dispatch(getSlotsSlice(zDate));
     } catch (err) {
@@ -69,10 +74,8 @@ const AddSlotsMentor = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    {
-      isProfile && getSlots();
-    }
-  }, [dateObj]);
+    isProfile && getSlots();
+  }, [isProfile]);
 
   let slots1 = [];
   if (!isProfile) {
@@ -306,15 +309,16 @@ const AddSlotsMentor = ({navigation, route}) => {
 
   const onConfirm = React.useCallback(
     ({startDate, endDate}) => {
-      getSlots();
+      const objdate = {
+        from: Number(moment(startDate).format('x')),
+        to: Number(moment(endDate).format('x')),
+      };
+      getSlots(objdate);
       if (new Date(startDate) > new Date(endDate)) {
         Alert.alert('Invalid Date Range', 'Please enter a valid date range.');
         return;
       }
-      setDateObj({
-        from: Number(moment(startDate).format('x')),
-        to: Number(moment(endDate).format('x')),
-      });
+      setDateObj(objdate);
       setCalendarModalAndroid(false);
     },
     [showCalendarModalAndroid],

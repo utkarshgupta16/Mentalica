@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 import {
-  // Text,
-  // View,
   StyleSheet,
   ScrollView,
   Pressable,
@@ -20,7 +18,7 @@ import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import convertLang, {PATIENT, MENTOR} from '../../utils/Strings';
+import convertLang from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
@@ -38,23 +36,16 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AddSlotsComponent from '../signUp/AddSlots';
 import {
   changeTheme,
-  getUrlOfPrifile,
-  getUrlOfProfile,
   getUrlToUploadImage,
   languageChange,
-  setSelectedProfileImagePath,
   updateOnLogout,
-  uploadProfilePhoto,
 } from '../../redux/HomeSlice';
 import {Auth} from 'aws-amplify';
 import {decode} from 'base-64';
 import RNFS from 'react-native-fs';
-import {
-  ADD_SLOTS_PROFILE_SCREEN,
-  ADD_SLOTS_SCREEN,
-  PROFILE_TAB_ROUTE,
-} from '../../utils/route.js';
+import {ADD_SLOTS_PROFILE_SCREEN} from '../../utils/route.js';
 import {changeLanguage} from 'i18next';
+import {PREVIEW_URL} from '@env';
 import axios from 'axios';
 const Profile = ({navigation}) => {
   const {t} = useTranslation();
@@ -79,6 +70,9 @@ const Profile = ({navigation}) => {
     EMAIL_ADD,
     PHONE_NO,
     OK,
+    PATIENT,
+    MENTOR,
+    TODAYS_SLOTS,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
@@ -140,7 +134,7 @@ const Profile = ({navigation}) => {
       },
     },
     {
-      label: CHANGE_PASSWORD,
+      label: 'Change Password',
       screen: '',
       props: profileData || {},
       onPress: () => {
@@ -148,7 +142,7 @@ const Profile = ({navigation}) => {
       },
     },
   ];
-  if (type === MENTOR) {
+  if (type === 'Mentor') {
     profileDetailsItems.push({
       label: "Today's Slots",
       screen: '',
@@ -158,7 +152,7 @@ const Profile = ({navigation}) => {
   }
   const paymentDetailsItemsPatient = PAYMENT_DETAIL_ITEM_PATIENT;
   const paymentDetailsItemsMentor = PAYMENT_DETAIL_ITEM_MENTOR;
-
+  console.log('profileDetailsItems', profileDetailsItems, type);
   const toggleSwitch = () => {
     // setIsSwitchEnabled(previousState => !previousState);
     dispatch(changeTheme(!darkMode));
@@ -222,8 +216,6 @@ const Profile = ({navigation}) => {
             'Content-Type': 'image/jpeg',
           },
         });
-
-        await dispatch(getUrlOfProfile());
       } catch (e) {
         console.log('Error while fetching', e);
       }
@@ -240,8 +232,10 @@ const Profile = ({navigation}) => {
             <View style={styles.imageContainer}>
               <Image
                 source={
-                  profileImageUrl
-                    ? {uri: profileImageUrl}
+                  profileData?.uniqueId
+                    ? {
+                        uri: `${PREVIEW_URL}/${profileData?.uniqueId}/userpic.png`,
+                      }
                     : loginFrom === PATIENT
                     ? require('../../icons/patient.jpg')
                     : require('../../icons/doctor.jpg')
@@ -257,9 +251,7 @@ const Profile = ({navigation}) => {
               style={{
                 ...styles.nameText,
                 width: screenWidth - 100,
-                // borderWidth: 1,
               }}>
-              {/* {firstName + ' ' + lastName} */}
               {(firstName + ' ' + lastName).length > 10
                 ? (firstName + ' ' + lastName).substring(0, 21 - 3) + '...'
                 : firstName + ' ' + lastName}
@@ -272,14 +264,11 @@ const Profile = ({navigation}) => {
             {loginFrom === MENTOR ? I_AM_SPECIALIST : I_WANT}
           </Text>
           <View style={styles.allIssues}>
-            {/* {DUMMY_ISSUES.map(issue => (
-              <Issue key={issue} title={issue} />
-            ))} */}
             <FlatList
               data={DUMMY_ISSUES}
               renderItem={({item}) => <Issue key={item} title={item} />}
               keyExtractor={item => item}
-              horizontal={true} // Set to true for horizontal rendering
+              horizontal={true}
               showsHorizontalScrollIndicator={false}
             />
           </View>
@@ -412,6 +401,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 16,
     overflow: 'hidden',
+    borderWidth: 1,
   },
   image: {
     width: 56,
