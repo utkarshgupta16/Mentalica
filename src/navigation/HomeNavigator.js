@@ -117,6 +117,7 @@ const PatientDashboardStack = () => {
 
 const HomeNavigator = () => {
   const {t} = useTranslation();
+
   const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
   const {loginFrom} = useSelector(state => state.auth);
   const {type} = useSelector(state => state.auth);

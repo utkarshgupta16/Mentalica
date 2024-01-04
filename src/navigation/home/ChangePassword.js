@@ -106,10 +106,11 @@ const ChangePassword = ({navigation}) => {
             style={{
               padding: 8,
               borderRadius: 4,
-              color: darkMode ? 'gray' : '#000',
+              color: darkMode ? '#fff' : '#000',
               width: '80%',
             }}
             placeholder={PLEASE_ENTER_OLD_PASSWORD}
+            placeholderTextColor={'gray'}
             value={oldPassword}
             onChangeText={text => {
               setOldPassword(text);
@@ -163,10 +164,11 @@ const ChangePassword = ({navigation}) => {
             style={{
               padding: 8,
               borderRadius: 4,
-              color: darkMode ? 'gray' : '#000',
+              color: Colors.white,
               width: '80%',
             }}
             placeholder={PLEASE_ENTER_NEW_PASSWORD}
+            placeholderTextColor={'gray'}
             value={newPassword}
             onChangeText={text => {
               setNewPassowrd(text);
@@ -229,6 +231,7 @@ const ChangePassword = ({navigation}) => {
               color: darkMode ? 'white' : '#000',
               width: '80%',
             }}
+            placeholderTextColor={'gray'}
             placeholder={PLEASE_Confirm_NEW_PASSWORD}
             value={confirmPassword}
             onChangeText={text => {

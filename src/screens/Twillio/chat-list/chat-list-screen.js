@@ -7,13 +7,15 @@ import React, {
   useMemo,
 } from 'react';
 import {
-  View,
-  Text,
+  // View,
+  // Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import {TextWrapper as Text} from '../../../components/wrapperComponent/TextWrapper';
+import {ViewWrapper as View} from '../../../components/wrapperComponent/ViewWrapper';
 import {colors} from '../colors';
 import {TwilioService} from '../ConversationService';
 import {ChatListLoader} from './components/chat-list-loader';

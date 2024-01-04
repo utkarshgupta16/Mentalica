@@ -3,13 +3,15 @@
 import React, {useState, useCallback, useEffect, useRef, useMemo} from 'react';
 import {
   ActivityIndicator,
-  Text,
-  View,
+  // Text,
+  // View,
   ImageBackground,
   TouchableOpacity,
   SafeAreaView,
   Alert,
 } from 'react-native';
+import {TextWrapper as Text} from '../../../components/wrapperComponent/TextWrapper';
+import {ViewWrapper as View} from '../../../components/wrapperComponent/ViewWrapper';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {TwilioService} from '../ConversationService';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -22,7 +24,10 @@ import RenderActions from './RenderActions';
 import RenderMessageImage from './RenderMessageImage';
 import styles from './RenderChatMessageStyle';
 import Colors from '../../../customs/Colors';
-import {whatsAppBackgroundURI} from '../../../assets/images';
+import {
+  whatsAppBackgroundURI,
+  whatsAppBackgroundDarkURI,
+} from '../../../assets/images';
 import {
   createFormData,
   initialMediaData,
@@ -40,6 +45,7 @@ const ChatRoomScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
   const {channelId, identity, otherUser = {}} = route.params;
   const typingData = useSelector(state => state?.typingData);
+  const {darkMode} = useSelector(state => state.home);
   let [messages, setMessages] = useState([]);
   let [medias, selectedMedia] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -538,7 +544,7 @@ const ChatRoomScreen = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.screen}>
       <ImageBackground
-        source={whatsAppBackgroundURI}
+        source={darkMode ? whatsAppBackgroundDarkURI : whatsAppBackgroundURI}
         style={{flex: 1, justifyContent: 'center'}}>
         {message ? <Text>{message?.message}</Text> : null}
         {isSending ? <ScreenLoading /> : null}

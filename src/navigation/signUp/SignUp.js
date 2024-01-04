@@ -95,7 +95,7 @@ const MentorSignUp = ({navigation}) => {
   const [emailWarning, setEmailWarning] = useState(false);
   const [compalsaryField, setCompalsaryField] = useState(false);
   // const [slots, addSlots] = useState([]);
-  console.log('typeItems', typeItems);
+
   // let timestamp = Date.now();
   // const [rangeDate, setRangeDate] = useState({
   //   startDate: timestamp,

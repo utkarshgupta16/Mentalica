@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {useState} from 'react';
 import {
-  View,
-  Text,
+  // View,
+  // Text,
   FlatList,
   SafeAreaView,
   StyleSheet,
@@ -12,6 +12,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import {ViewWrapper as View} from '../../components/wrapperComponent/ViewWrapper';
+import {TextWrapper as Text} from '../../components/wrapperComponent/TextWrapper';
 import Modal from 'react-native-modal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -606,6 +608,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFFCC',
     borderRadius: 10,
     backgroundColor: 'white',
+    marginTop: 10,
   },
   todaySlotsText: {
     color: Colors.black,

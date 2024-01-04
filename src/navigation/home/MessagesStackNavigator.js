@@ -32,7 +32,32 @@ const MessagesStackNavigator = ({navigation, route}) => {
       <Stack.Screen
         name={CHAT_ROOM_SCREEN}
         component={ChatRoomScreen}
-        options={{title: ''}}
+        options={({navigation}) => ({
+          title: '',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{flexDirection: 'row'}}>
+              {currentLanguage == EN ? (
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              ) : (
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={16}
+                  color={darkMode ? Colors.white : Colors.grey}
+                />
+              )}
+              <Text style={{color: darkMode ? Colors.white : Colors.grey}}>
+                {''}
+              </Text>
+            </TouchableOpacity>
+          ),
+          headerShadowVisible: false,
+        })}
       />
 
       <Stack.Screen

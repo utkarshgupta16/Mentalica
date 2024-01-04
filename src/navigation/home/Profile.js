@@ -11,14 +11,13 @@ import {
   Switch,
   Platform,
 } from 'react-native';
-// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Colors from '../../customs/Colors';
 import Issue from '../../components/Issue';
 import ProfileDetailsItem from '../../components/ProfileDetailsItem';
 import {useDispatch, useSelector} from 'react-redux';
-import convertLang from '../../utils/Strings';
+import convertLang, {MENTOR, PATIENT} from '../../utils/Strings';
 import {logout} from '../../redux/AuthSlice';
 import {screenWidth, widthPercentageToDP} from '../../utils/Responsive';
 import {signOut} from '../../AWS/AWSConfiguration';
@@ -28,7 +27,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {
   PAYMENT_DETAIL_ITEM_MENTOR,
   PAYMENT_DETAIL_ITEM_PATIENT,
-  // PROFILE_DETAILS,
   LANG_OPTION,
 } from '../../utils/default';
 import {useTranslation} from 'react-i18next';
@@ -70,28 +68,15 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
     CHANGE_LANG,
     OKAY,
     DARK_MODE,
-    CHANGE_PASSWORD,
     CONTACT_DETAILS,
     EMAIL_ADD,
     PHONE_NO,
     OK,
-    PATIENT,
-    MENTOR,
-    TODAYS_SLOTS,
   } = convertLang(t);
   const dispatch = useDispatch();
   const {loginFrom, email, type} = useSelector(state => state.auth);
-  const {
-    darkMode,
-    currentLanguage,
-    urlForImageUpload,
-    selectedProfileImagePath,
-  } = useSelector(state => state.home);
-  const {
-    profileData = {},
-    isProfileLoading,
-    profileImageUrl,
-  } = useSelector(state => state.home);
+  const {darkMode} = useSelector(state => state.home);
+  const {profileData = {}, isProfileLoading} = useSelector(state => state.home);
   const [imageLoading, setOnLoadingImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
@@ -148,7 +133,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
       },
     },
   ];
-  if (type === 'Mentor') {
+  if (type === MENTOR) {
     profileDetailsItems.push({
       label: "Today's Slots",
       screen: '',
@@ -184,16 +169,6 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
   };
 
   const handleUploadImage = async () => {
-    // launchImageLibrary({
-    //   mediaType: 'photo',
-    //   maxWidth: 150,
-    //   maxHeight: 150,
-    //   includeBase64: true,
-    // }).then(result => {
-    //   dispatch(getUrlToUploadImage()).then(({payload}) => {
-    //     uploadImageToServer(result?.assets[0], payload.url);
-    //   });
-    // });
     const options = ['Take Photo', 'Choose From Library', 'Cancel'];
     const cancelButtonIndex = 2;
     showActionSheetWithOptions(
@@ -418,7 +393,13 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
           items={langOptions}
           placeholder={SELECT_LANG}
           containerStyle={{borderBottomColor: 'gray'}}
-          style={styles.dropdown}
+          style={[
+            styles.dropdown,
+            {
+              backgroundColor: darkMode ? Colors.dune : '#fff',
+              borderColor: darkMode ? Colors.dune : '#fff',
+            },
+          ]}
         />
 
         <Pressable onPress={logoutPressHandler} style={styles.logoutContainer}>
@@ -443,7 +424,6 @@ export default connectActionSheet(Profile);
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: Colors.white,
   },
   topPartContainer: {
     backgroundColor: Colors.white,
@@ -451,8 +431,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
   },
   imageContainer: {
-    // borderWidth: 1,
-    // borderColor: Colors.grayishBlue,
     width: 56,
     height: 56,
     borderRadius: 8,
@@ -467,9 +445,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
   },
-  details: {
-    // justifyContent: 'space-between',
-  },
+
   nameText: {
     fontSize: 22,
     fontWeight: '700',
@@ -498,7 +474,6 @@ const styles = StyleSheet.create({
   },
   allIssues: {
     flexDirection: 'row',
-    // flexWrap: 'wrap',
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -515,7 +490,7 @@ const styles = StyleSheet.create({
   accDetailsTitle: {
     fontSize: 18,
     color: Colors.dune,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 14,
   },
   logoutContainer: {
@@ -526,11 +501,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    // textDecorationLine: 'underline',
   },
   dropdown: {
-    // backgroundColor: Colors.paleMintColor,
-    // borderWidth: 1,
     alignSelf: 'center',
     borderColor: Colors.white,
     width: widthPercentageToDP(27),

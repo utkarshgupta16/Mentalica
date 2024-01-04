@@ -1,6 +1,8 @@
 import moment from 'moment';
 import React, {useEffect} from 'react';
-import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {TextWrapper as Text} from '../../../../components/wrapperComponent/TextWrapper';
+import {ViewWrapper as View} from '../../../../components/wrapperComponent/ViewWrapper';
 import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../../../../customs/Colors';
 import {getTwilloChatTokenSlice} from '../../../../redux/HomeSlice';

@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: Colors.darkPaleMintColor,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: Colors.white,
+
     borderRadius: 50,
   },
   lessOpacity: {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
+  // View,
+  // Text,
   TextInput,
   StyleSheet,
   Pressable,
@@ -10,8 +10,10 @@ import {
   SafeAreaView,
   I18nManager,
   Alert,
+  Switch,
 } from 'react-native';
-
+import {ViewWrapper as View} from '../components/wrapperComponent/ViewWrapper';
+import {TextWrapper as Text} from '../components/wrapperComponent/TextWrapper';
 import Modal from 'react-native-modal';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../customs/Colors';
@@ -20,7 +22,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
-import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
+import {
+  changeTheme,
+  getTwilloChatTokenSlice,
+  setAttributes,
+} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
@@ -29,19 +35,31 @@ import i18n from '../utils/i18n';
 import RNRestart from 'react-native-restart';
 import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
-import ConvertLang from '../utils/Strings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {validateEmail} from '../utils/emailValidation';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import convertLang, {MENTOR} from '../utils/Strings';
+import {colors} from '../screens/Twillio/colors';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {RESTART_APP, CHANGE_LANG, FORGOT_PASSWORD, EMAIL, PASSWORD} =
-    t && ConvertLang(t);
-  // const [rememberMe, setRememberMe] = useState(false);
+  const {
+    RESTART_APP,
+    CHANGE_LANG,
+    FORGOT_PASSWORD,
+    EMAIL,
+    PASSWORD,
+    DARK_MODE,
+  } = t && convertLang(t);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setLanguage] = useState(
     i18n.language === 'he' ? 'Hebrew' : 'English',
   );
+  const {darkMode} = useSelector(state => state.home);
+
+  const toggleSwitch = () => {
+    dispatch(changeTheme(!darkMode));
+  };
 
   const langOptions = LANG_OPTION;
   // guptagaurav9566+1@gmail.com
@@ -57,13 +75,13 @@ const LoginScreen = ({navigation}) => {
   //   'pandey.kaushiki@thinksys.com',
   // );
 
-  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
+  // const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
 
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'roshanyjambhulkar1204+4@gmail.com',
-  // );
+  const [enteredEmail, setEnteredEmail] = useState(
+    'roshanyjambhulkar1204+4@gmail.com',
+  );
 
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -83,13 +101,7 @@ const LoginScreen = ({navigation}) => {
       return;
     }
     try {
-      // console.log('Auth', await Auth.currentAuthenticatedUser());
-      // const user1 = await signIn({
-      //   username: enteredEmail,
-      //   password: enteredPassword,
-      // });
       setLoading(true);
-
       const user = await Auth.signIn(enteredEmail, enteredPassword);
       const currentUserInfo = await getCurrentUserInfo();
       const {attributes} = user;
@@ -141,129 +153,155 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      {isLoading ? <Loader /> : null}
-      <View style={styles.imageContainer}>
-        <Image
-          source={require('../icons/logo-no-background.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
-      <Modal
-        avoidKeyboard={false}
-        onRequestClose={() => {
-          setShowEnterCodeModal(false);
-        }}
-        keyboardAvoidingBehavior={
-          Platform.OS === 'android' ? 'height' : 'padding'
-        }
-        animationType="slide"
-        transparent={true}
-        closeOnClick={true}
-        isVisible={showEnterCodeModal}
-        onBackdropPress={() => {
-          setShowEnterCodeModal(false);
-        }}
-        onBackButtonPress={() => {
-          setShowEnterCodeModal(false);
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.codeContainer}>
-            <Text>{`${t('Enter Email')}:`}</Text>
-            <TextInput
-              value={enteredEmail}
-              onChangeText={text => setEnteredEmail(text)}
-              style={styles.modalTextInput}
-            />
-          </View>
-          <View style={styles.codeContainer}>
-            <Text>{`${t('Enter Code')}:`}</Text>
-            <TextInput
-              onChangeText={text => setEnteredCode(text)}
-              style={styles.modalTextInput}
-            />
-          </View>
-          <Button title={t('Submit')} onPress={submitCodeHandler} />
+    <SafeAreaView
+      style={[
+        styles.mainContainer,
+        {backgroundColor: darkMode ? Colors.black : Colors.white},
+      ]}>
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
+        style={{flex: 1, backgroundColor: Colors.white}}
+        contentContainerStyle={{flexGrow: 1}}>
+        {isLoading ? <Loader /> : null}
+        <View style={styles.imageContainer}>
+          <Image
+            source={
+              darkMode
+                ? require('../assets/images/2.png')
+                : require('../assets/images/1.png')
+            }
+            style={styles.image}
+            resizeMode="contain"
+          />
         </View>
-      </Modal>
-      <View style={styles.container}>
-        <View>
-          <View style={styles.inputContainer}>
-            <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>{EMAIL}</Text>
-              <Text warning style={styles.emailWarningTxt}>
-                {emailWarning
-                  ? '*Invalid email'
-                  : wrongCredentials
-                  ? '*Invalid credentials'
-                  : null}
-              </Text>
-            </View>
-
-            <View style={styles.inputParentCont}>
+        <Modal
+          avoidKeyboard={false}
+          onRequestClose={() => {
+            setShowEnterCodeModal(false);
+          }}
+          keyboardAvoidingBehavior={
+            Platform.OS === 'android' ? 'height' : 'padding'
+          }
+          animationType="slide"
+          transparent={true}
+          closeOnClick={true}
+          isVisible={showEnterCodeModal}
+          onBackdropPress={() => {
+            setShowEnterCodeModal(false);
+          }}
+          onBackButtonPress={() => {
+            setShowEnterCodeModal(false);
+          }}>
+          <View style={styles.modalContainer}>
+            <View style={styles.codeContainer}>
+              <Text>{`${t('Enter Email')}:`}</Text>
               <TextInput
-                textAlign={i18n.language === 'he' ? 'right' : 'left'}
-                onChangeText={handleEnteredEmail}
-                style={{
-                  height: 40,
-                  width: '100%',
-                  fontSize: 16,
-                  color: Colors.black,
-                  paddingHorizontal: 10,
-                }}
-                placeholder={t('E-mail')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
                 value={enteredEmail}
+                onChangeText={text => setEnteredEmail(text)}
+                style={styles.modalTextInput}
               />
             </View>
-            <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>{PASSWORD}</Text>
-            </View>
-            <View style={styles.inputParentCont}>
+            <View style={styles.codeContainer}>
+              <Text>{`${t('Enter Code')}:`}</Text>
               <TextInput
-                textAlign={i18n.language === 'he' ? 'right' : 'left'}
-                onChangeText={handleEnteredPassword}
-                style={styles.input}
-                placeholder={t('Password')}
-                secureTextEntry={!showPassword}
-                value={enteredPassword}
+                onChangeText={text => setEnteredCode(text)}
+                style={styles.modalTextInput}
               />
-              {showPassword ? (
-                <Pressable onPress={() => setShowPassword(!showPassword)}>
-                  <MaterialIcons
-                    name="visibility"
-                    size={21}
-                    color={Colors.black}
-                    style={{
-                      marginRight: 20,
-                    }}
-                  />
-                </Pressable>
-              ) : (
-                <Pressable onPress={() => setShowPassword(!showPassword)}>
-                  <MaterialIcons
-                    name="visibility-off"
-                    size={21}
-                    color={Colors.black}
-                    style={{
-                      marginRight: 20,
-                    }}
-                  />
-                </Pressable>
-              )}
             </View>
+            <Button title={t('Submit')} onPress={submitCodeHandler} />
+          </View>
+        </Modal>
+        <View style={styles.container}>
+          <View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeadingCont}>
+                <Text style={styles.inputsLables}>{EMAIL}</Text>
+                <Text warning style={styles.emailWarningTxt}>
+                  {emailWarning
+                    ? '*Invalid email'
+                    : wrongCredentials
+                    ? '*Invalid credentials'
+                    : null}
+                </Text>
+              </View>
 
-            <Pressable
-              onPress={handleForgotPassword}
-              style={styles.forgotPassword}>
-              <Text>{FORGOT_PASSWORD}?</Text>
-            </Pressable>
-            <View style={styles.checkBoxSignUpContainer}>
-              {/* <View style={styles.checkboxContainer}>
+              <View
+                style={{
+                  ...styles.inputParentCont,
+                  borderColor: darkMode ? Colors.white : Colors.black,
+                }}>
+                <TextInput
+                  textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                  onChangeText={handleEnteredEmail}
+                  style={{
+                    height: 40,
+                    width: '100%',
+                    fontSize: 16,
+                    color: darkMode ? Colors.white : Colors.black,
+                    paddingHorizontal: 10,
+                  }}
+                  placeholderTextColor={'gray'}
+                  placeholder={t('E-mail')}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="email"
+                  value={enteredEmail}
+                />
+              </View>
+              <View style={styles.inputHeadingCont}>
+                <Text style={styles.inputsLables}>{PASSWORD}</Text>
+              </View>
+              <View
+                style={{
+                  ...styles.inputParentCont,
+                  borderColor: darkMode ? Colors.white : Colors.black,
+                }}>
+                <TextInput
+                  textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                  onChangeText={handleEnteredPassword}
+                  style={[
+                    styles.input,
+                    {color: darkMode ? Colors.white : Colors.black},
+                  ]}
+                  placeholder={t('Password')}
+                  placeholderTextColor={'gray'}
+                  secureTextEntry={!showPassword}
+                  value={enteredPassword}
+                />
+                {showPassword ? (
+                  <Pressable onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialIcons
+                      name="visibility"
+                      size={21}
+                      color={Colors.black}
+                      style={{
+                        marginRight: 20,
+                      }}
+                    />
+                  </Pressable>
+                ) : (
+                  <Pressable onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialIcons
+                      name="visibility-off"
+                      size={21}
+                      color={Colors.black}
+                      style={{
+                        marginRight: 20,
+                      }}
+                    />
+                  </Pressable>
+                )}
+              </View>
+
+              <Pressable
+                onPress={handleForgotPassword}
+                style={styles.forgotPassword}>
+                <Text>{FORGOT_PASSWORD}?</Text>
+              </Pressable>
+              <View style={styles.checkBoxSignUpContainer}>
+                {/* <View style={styles.checkboxContainer}>
               <CheckBox
                 disabled={false}
                 value={rememberMe}
@@ -273,88 +311,83 @@ const LoginScreen = ({navigation}) => {
               />
               <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
             </View> */}
-              <Button title={t('Login')} onPress={loginHandler} />
+                <Button title={t('Login')} onPress={loginHandler} />
+              </View>
+            </View>
+
+            <View style={styles.buttonContainerView}>
+              <Text style={styles.askSignup}>
+                {t("Don't have an account? Wanna")}
+              </Text>
+              <Pressable
+                style={styles.signUpContainer}
+                title={t('Sign Up')}
+                onPress={signUpClickHandler}>
+                <Text signUpbutton style={styles.signUpText}>
+                  {' '}
+                  {t('Sign Up')}
+                </Text>
+              </Pressable>
             </View>
           </View>
-
-          <View style={styles.buttonContainerView}>
-            <Text style={styles.askSignup}>
-              {t("Don't have an account? Wanna")}
-            </Text>
-            <Pressable
-              style={styles.signUpContainer}
-              title={t('Sign Up')}
-              onPress={signUpClickHandler}>
-              <Text signUpbutton style={styles.signUpText}>
-                {' '}
-                {t('Sign Up')}
-              </Text>
-            </Pressable>
+          <View style={styles.darkModeParentCont}>
+            <View style={styles.switchContaimer}>
+              <Text style={styles.accDetailsTitle}>{DARK_MODE}</Text>
+              <Switch onValueChange={toggleSwitch} value={darkMode} />
+            </View>
+            <View>
+              <DropDownPicker
+                dropDownDirection="TOP"
+                listMode="SCROLLVIEW"
+                autoScroll={true}
+                zIndex={3000}
+                open={isOpen}
+                setOpen={setIsOpen}
+                value={t(selectedLanguage)}
+                setValue={props => {
+                  Alert.alert(CHANGE_LANG, RESTART_APP, [
+                    {
+                      text: 'Cancel',
+                      onPress: () => null,
+                    },
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        i18n
+                          .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                          .then(() => {
+                            I18nManager.allowRTL(i18n.language === 'he');
+                            I18nManager.forceRTL(i18n.language === 'he');
+                            setLanguage(props());
+                            setTimeout(() => {
+                              RNRestart.Restart();
+                            }, 5);
+                          })
+                          .catch(err => {
+                            console.log(
+                              'something went wrong while applying RTL',
+                              err,
+                            );
+                          });
+                      },
+                    },
+                  ]);
+                }}
+                items={langOptions}
+                placeholder={t('Select Language')}
+                containerStyle={{width: '100%'}}
+                style={[
+                  styles.dropdown,
+                  {
+                    backgroundColor: darkMode ? Colors.dune : '#fff',
+                    borderColor: darkMode ? Colors.dune : '#fff',
+                  },
+                ]}
+              />
+            </View>
           </View>
-
-          {/* {error ? (
-          <View style={styles.buttonContainerView}>
-            <Pressable
-              style={styles.signUpContainer}
-              title={t('Enter Code')}
-              onPress={() => {
-                setShowEnterCodeModal(true);
-              }}>
-              <Text style={styles.signUpText}>
-                {t('Confirm Verification Code')}
-              </Text>
-            </Pressable>
-          </View>
-        ) : null} */}
         </View>
-        <DropDownPicker
-          dropDownDirection="TOP"
-          listMode="SCROLLVIEW"
-          autoScroll={true}
-          zIndex={3000}
-          open={isOpen}
-          setOpen={setIsOpen}
-          value={t(selectedLanguage)}
-          setValue={props => {
-            Alert.alert(CHANGE_LANG, RESTART_APP, [
-              {
-                text: 'Cancel',
-                onPress: () => null,
-              },
-              {
-                text: 'OK',
-                onPress: () => {
-                  i18n
-                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
-                    .then(() => {
-                      I18nManager.allowRTL(i18n.language === 'he');
-                      I18nManager.forceRTL(i18n.language === 'he');
-                      setLanguage(props());
-                      setTimeout(() => {
-                        RNRestart.Restart();
-                      }, 5);
-                    })
-                    .catch(err => {
-                      console.log(
-                        'something went wrong while applying RTL',
-                        err,
-                      );
-                    });
-                },
-              },
-            ]);
-          }}
-          dropDownContainerStyle={
-            {
-              // width: '100%',z
-            }
-          }
-          items={langOptions}
-          placeholder={t('Select Language')}
-          containerStyle={{width: '100%'}}
-          style={styles.dropdown}
-        />
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
@@ -362,7 +395,7 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
   imageContainer: {
     alignItems: 'center',
@@ -415,7 +448,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderColor: Colors.black,
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -436,10 +468,6 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   checkBoxSignUpContainer: {
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // width: 500,
     marginTop: 20,
   },
   checkboxContainer: {
@@ -454,7 +482,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainerView: {
-    // justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
@@ -464,15 +491,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.black,
   },
-  signUpContainer: {
-    // marginTop: 14,
-  },
+  signUpContainer: {},
   signUpText: {
     fontSize: 16,
     fontWeight: '600',
     textDecorationLine: 'none',
     color: Colors.darkPaleMintColor,
-    // color: Colors.primaryBlue,
   },
   warningMessage: {
     color: 'tomato',
@@ -480,14 +504,22 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     color: Colors.white,
-    backgroundColor: Colors.white,
-    borderColor: Colors.white,
     width: widthPercentageToDP(27),
-    alignSelf: 'flex-end',
+    alignSelf: 'auto',
   },
   emailWarningTxt: {
     fontSize: 12,
     marginLeft: 5,
+  },
+  switchContaimer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  accDetailsTitle: {marginRight: 10},
+  darkModeParentCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

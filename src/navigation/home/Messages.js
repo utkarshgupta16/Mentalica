@@ -2,9 +2,12 @@ import React, {useState, useCallback, useEffect} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useTranslation} from 'react-i18next';
 import {View, Text, ImageBackground} from 'react-native';
+import {useSelector} from 'react-redux';
 
 const Messages = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
+
+  const {darkMode} = useSelector(state => state.home);
 
   useEffect(() => {
     setMessages([
@@ -38,11 +41,15 @@ const Messages = ({navigation, route}) => {
       GiftedChat.append(previousMessages, messages),
     );
   }, []);
-
+  return null;
   return (
     <View style={{flex: 1, backgroundColor: 'teal', marginBottom: 5}}>
       <ImageBackground
-        source={require('../../assets/images/watsapp-background.png')}
+        source={
+          darkMode
+            ? require('../../assets/images/watsapp-background-dark.jpeg')
+            : require('../../assets/images/watsapp-background.png')
+        }
         style={{flex: 1, justifyContent: 'center'}}>
         <GiftedChat
           messages={messages}
