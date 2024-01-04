@@ -1,18 +1,19 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import {Text, StyleSheet, View, Dimensions} from 'react-native';
 
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 
 export const ChatListEmpty = () => {
-  return <Text style={styles.titleText}>No Chats Created</Text>;
+  return <Text style={styles.titleText}>No Conversation List Found</Text>;
 };
 
 const styles = StyleSheet.create({
   titleText: {
-    marginTop: '50%',
+    marginTop: '80%',
     textAlign: 'center',
+
     fontSize: 20,
     fontWeight: '700',
-    color: colors.amaranth,
+    color: 'grey',
   },
 });

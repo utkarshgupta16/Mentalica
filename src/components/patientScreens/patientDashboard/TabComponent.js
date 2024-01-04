@@ -52,6 +52,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         onPress={() => {
           setSelectedTab({tabStr: ALL});
         }}
+        darkMode={darkMode}
       />
       <PatientDashboardTabs
         selectedTab={selectedTab}
@@ -60,6 +61,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         onPress={() => {
           setSelectedTab({tabStr: APPOINTMENTS});
         }}
+        darkMode={darkMode}
       />
       <PatientDashboardTabs
         selectedTab={selectedTab}
@@ -68,6 +70,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         onPress={() => {
           setSelectedTab({tabStr: ARTICLES});
         }}
+        darkMode={darkMode}
       />
       <PatientDashboardTabs
         selectedTab={selectedTab}
@@ -76,6 +79,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         onPress={() => {
           setSelectedTab({tabStr: SAVED});
         }}
+        darkMode={darkMode}
       />
       <PatientDashboardTabs
         selectedTab={selectedTab}
@@ -84,6 +88,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         onPress={() => {
           setSelectedTab({tabStr: MENTORS_LIST});
         }}
+        darkMode={darkMode}
       />
     </View>
   );

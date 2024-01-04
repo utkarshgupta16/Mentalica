@@ -1,8 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import Colors from '../customs/Colors';
 import {useSelector} from 'react-redux';
-// import View from '../components/wrapperComponent/ViewWrapper.js';
 import Text from '../components/wrapperComponent/TextWrapper.js';
 
 export default function PatientDashboardTabs({
@@ -10,21 +10,23 @@ export default function PatientDashboardTabs({
   title,
   selectedTab,
   tab,
+  darkMode,
 }) {
-  const {darkMode} = useSelector(state => state.home);
-
+  const selectedColor =
+    selectedTab.tabStr === tab ? 'white' : darkMode ? 'white' : 'black';
   return (
     <Pressable onPress={onPress}>
       <View
-        style={{
-          backgroundColor:
-            selectedTab.tabStr == tab ? Colors.darkPaleMintColor : null,
-          paddingHorizontal: 6,
-          paddingVertical: 6,
-          borderRadius: 50,
-          // flex: 1
-        }}>
-        <Text tab style={styles.tabText}>
+        style={[
+          styles.containerStyle,
+          {
+            backgroundColor:
+              selectedTab.tabStr === tab
+                ? Colors.darkPaleMintColor
+                : 'transparent',
+          },
+        ]}>
+        <Text customColor={selectedColor} tab style={styles.tabText}>
           {title}
         </Text>
       </View>
@@ -37,5 +39,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     fontFamily: 'Roboto Black',
+  },
+  containerStyle: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    borderRadius: 50,
+    // flex: 1
   },
 });

@@ -31,7 +31,7 @@ import {heightPercentageToDP, widthPercentageToDP} from '../utils/Responsive';
 import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import validateEmail from '../utils/emailValidation';
+import {validateEmail} from '../utils/emailValidation';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -53,12 +53,10 @@ const LoginScreen = ({navigation}) => {
   //pandey.kaushiki@thinksys.com
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
-  // const [enteredEmail, setEnteredEmail] = useState(
-  //   'pandey.kaushiki@thinksys.com',
-  // );
-
-  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
-
+  // bhandari.tribhuwan@thinksys.com
+  const [enteredEmail, setEnteredEmail] = useState(
+    'bhandari.tribhuwan@thinksys.com',
+  );
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
   // const [enteredEmail, setEnteredEmail] = useState(
@@ -319,7 +317,6 @@ const LoginScreen = ({navigation}) => {
             Alert.alert(CHANGE_LANG, RESTART_APP, [
               {
                 text: 'Cancel',
-                // text: NO_CANCEL,
                 onPress: () => null,
               },
               {

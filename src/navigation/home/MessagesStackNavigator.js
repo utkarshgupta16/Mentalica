@@ -4,7 +4,9 @@ import Colors from '../../customs/Colors';
 import {TouchableOpacity, Text, Platform} from 'react-native';
 import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
 import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
-import {ChatRoomScreen} from '../../screens/Twillio/chat-room/chat-room-screen';
+import ChatRoomScreen from '../../screens/Twillio/chat-room/chat-room-screen';
+import VideoPlayer from '../../components/VideoPlayer';
+import DocViewer from '../../components/DocViewer';
 import Messages from './Messages';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -22,26 +24,7 @@ const MessagesStackNavigator = ({navigation, route}) => {
         component={ChatListScreen}
         options={({navigation}) => ({
           title: 'Chat Conversation',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{flexDirection: 'row'}}>
-              {currentLanguage == EN ? (
-                <MaterialIcons
-                  name="arrow-back-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              ) : (
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              )}
-              {/* <Text>Messages</Text> */}
-            </TouchableOpacity>
-          ),
+          headerLeft: null,
           headerShadowVisible: false,
         })}
       />
@@ -79,6 +62,22 @@ const MessagesStackNavigator = ({navigation, route}) => {
               </Text>
             </TouchableOpacity>
           ),
+          headerShadowVisible: false,
+        })}
+      />
+      <Stack.Screen
+        name={'VideoPlayer'}
+        component={VideoPlayer}
+        options={({navigation}) => ({
+          title: '',
+          headerShadowVisible: false,
+        })}
+      />
+      <Stack.Screen
+        name={'DocViewer'}
+        component={DocViewer}
+        options={({navigation}) => ({
+          title: '',
           headerShadowVisible: false,
         })}
       />

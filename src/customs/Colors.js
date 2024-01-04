@@ -17,6 +17,19 @@ const Colors = {
   lightDark: '#DDE6ED',
   whiteLight: '#F5F7F8',
   dustyGray: '#999999',
+  lavender: '#ececee',
+  eclipse: '#3e3e3e',
+  cinder: '#242729',
+  malibu: '#55acee',
+  whisper: '#eeeeee',
+  amaranth: '#E0434C',
+  windsor: '#402583',
+  ghost: '#bbbdc5',
+  snow: '#FBFBFB',
+  purple: '#753BBD',
+  emerald: '#09bd55',
+  whatsappColor: '#dcf8c6',
+  primaryBlue1: '#283747',
 };
 
 export default Colors;

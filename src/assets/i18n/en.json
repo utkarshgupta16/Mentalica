@@ -133,7 +133,6 @@
     "Choose Gender": "Choose gender",
     "Choose Profession": "Choose Profession",
     "Choose How do you feel": "Choose How do you feel",
-
     "Enter": "Enter",
     "Male": "Male",
     "Female": "Female",
@@ -147,9 +146,7 @@
     "Selected date": "Selected date",
     "Date from": "Date from",
     "to": "to",
-    "Select Time": "Select Time"
+    "Select Time": "Select Time",
+    "Select Type.": "Select Type."
   }
 }
-
-
-

@@ -22,7 +22,7 @@ export const endPoints = {
   updateConversation: `${API_URL}/updateConversation`,
   updateSlots: `${API_URL}/slots`,
   getSlots: `${API_URL}/slots?date=`,
-  getUrlToUploadImage: `${API_URL}/userpic?type=putImage`,
+  getUrlToUploadImage: `${API_URL}/userpic`,
   getProfileUrl: `${API_URL}/userpic?type=getImage`,
 };
 export const iosPlatform = Platform.OS === 'ios';

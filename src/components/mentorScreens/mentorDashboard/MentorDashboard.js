@@ -58,11 +58,6 @@ const MentorDashboard = ({navigation}) => {
     scheduledAppointmentsData = [],
   } = useSelector(state => state.home);
 
-  console.log(
-    'scheduledAppointmentsData ========>>>>>',
-    scheduledAppointmentsData,
-  );
-
   const formatSheduleAppointmentData = appointments => {
     const newDate = new Date();
     const formattedAppointments = {};
@@ -70,12 +65,10 @@ const MentorDashboard = ({navigation}) => {
       const date =
         newDate?.getFullYear() +
         '-' +
-        `${newDate?.getMonth() + 1}` +
+        `0${newDate?.getMonth() + 1}` +
         '-' +
-        `${
-          newDate?.getDate() < 10
-            ? `0${newDate?.getDate()}`
-            : newDate?.getDate()
+        `0${
+          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
         }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
       if (!formattedAppointments[date]) {
         formattedAppointments[date] = [];
@@ -102,11 +95,11 @@ const MentorDashboard = ({navigation}) => {
         const date =
           newDate?.getFullYear() +
           '-' +
-          `${newDate?.getMonth() + 1}` +
+          `0${newDate?.getMonth() + 1}` +
           '-' +
-          `${
+          `0${
             newDate?.getDate() < 10
-              ? `0${newDate?.getDate()}`
+              ? `${newDate?.getDate()}`
               : newDate?.getDate()
           }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
         if (!formattedAppointments[date]) {
@@ -128,13 +121,10 @@ const MentorDashboard = ({navigation}) => {
   const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
 
   const [appointmentList, setAppointmentList] = useState(formatedData);
+
   useEffect(() => {
-    (async () => {
-      if (Object.keys(profileData).length == 0) {
-        await dispatch(getProfileSlice({email, type}));
-      }
-    })();
-  }, [profileData]);
+    dispatch(getProfileSlice({email, type}));
+  }, [email, type, dispatch]);
 
   // useEffect(() => {
   //   setTimeout(() => {
@@ -177,7 +167,6 @@ const MentorDashboard = ({navigation}) => {
   };
 
   const videoCallAction = data => {
-    console.log('Data =========================>>>>>>>>>>>>>>>>>>>>>>>.', data);
     _checkPermissions(async () => {
       try {
         const {payload = {}} = await dispatch(

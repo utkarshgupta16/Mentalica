@@ -71,12 +71,8 @@ const PatientDashboard = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      if (Object.keys(profileData).length == 0) {
-        await dispatch(getProfileSlice({email, type: type}));
-      }
-    })();
-  }, [profileData]);
+    dispatch(getProfileSlice({email, type: type}));
+  }, [email, type, dispatch]);
 
   return (
     <View style={styles.container}>

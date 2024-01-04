@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, {useEffect, useLayoutEffect} from 'react';
 import {Amplify, Auth, API, graphqlOperation} from 'aws-amplify';
-import {AppRegistry, Platform} from 'react-native';
+import {AppRegistry, Platform, Text} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import messaging from '@react-native-firebase/messaging';
@@ -12,6 +12,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
 import SplashScreen from 'react-native-splash-screen';
 import awsconfig from './src/aws-exports';
+import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 // import amplifyconfiguration from './src/amplifyconfiguration.json';
 import {createUser} from './src/graphql/mutations';
 import {getUser} from './src/graphql/queries';
@@ -75,9 +76,11 @@ const AppConfig = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
-          <App />
-        </SafeAreaProvider>
+        <ActionSheetProvider>
+          <SafeAreaProvider>
+            <App />
+          </SafeAreaProvider>
+        </ActionSheetProvider>
       </PersistGate>
     </Provider>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
   Pressable,
@@ -7,9 +8,9 @@ import {
   Text,
   FlatList,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import Colors from '../../customs/Colors';
+// import ArrowRight from '../icons/rightArrow.svg';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import convertLang, {PATIENT, MENTOR} from '../../utils/Strings';
@@ -23,9 +24,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {
   bookAppointmentSlice,
-  getBooksSlots,
   getMentorAllSlots,
-  getScheduledAppointmentsSlice,
   sendNotificationSlice,
 } from '../../redux/HomeSlice';
 import ScreenLoading from '../ScreenLoading';
@@ -198,8 +197,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                     disabled={check}
                     style={{paddingTop: 5, opacity: check ? 0.5 : 1}}
                     onPress={() => {
-                      const currentDate = new Date();
-
                       // Extract the time from the "10:30" string
                       //   const startDateTime = setDateTime(item?.startTime);
                       //   const endDateTime = setDateTime(item?.endTime);
@@ -261,7 +258,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                           setLoading(true);
                           const {patientEmailId, patientName, ...payload} =
                             state;
-                          const resp = await dispatch(
+                          await dispatch(
                             bookAppointmentSlice({
                               ...payload,
                               mentorEmailId: selectedMentorData.emailId,

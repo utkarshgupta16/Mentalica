@@ -13,7 +13,6 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  Pressable,
 } from 'react-native';
 import {colors} from '../colors';
 import {TwilioService} from '../ConversationService';
@@ -25,226 +24,64 @@ import {
   deleteConversationSlice,
   getTwilloChatTokenSlice,
   updateChannels,
-  updateConversationSlice,
 } from '../../../redux/HomeSlice';
-import {ChatCreateScreen} from '../CreateChannel';
 import {CHAT_ROOM_SCREEN} from '../../../utils/route';
-import {Client, Conversation} from '@twilio/conversations';
-import {
-  updateAfterRemoveParticipant,
-  updateParticipant,
-  setParticipant,
-} from '../../../redux/ParticipatSlice';
-import {twilioStatus} from '../../../utils/utils';
-
+import {setAllParticipant} from '../../../redux/ParticipatSlice';
+import {getOtherParticipant} from '../../../utils/utils';
+import {updateCurrentConversation} from '../../../redux/CurrentConvoReducer';
 const ChatListScreens = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [checkConnection, setState] = useState('');
-  let {channels = []} = useSelector(state => state.home);
-  const token = useSelector(state => state.home.chatToken);
+  const [loading, setLoading] = useState(false);
+  let {chatToken} = useSelector(state => state.home);
   const {email: username} = useSelector(state => state.auth);
-  const {participants: participantObj} = useSelector(
-    state => state?.participants,
-  );
-  const channelPaginator = useRef();
-  const [message, showMessage] = useState({message: ''});
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('')}>
-          <Text style={styles.addButtonText}>+</Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  const typingData = useSelector(state => state?.typingData);
+  const channels = useSelector(state => state?.conversations) ?? [];
+  const unreadMessage = useSelector(state => state?.unreadMessage) ?? {};
+  const participantObj = useSelector(state => state?.participants);
 
-  const setChannelEvents = useCallback(client => {
-    client.on('messageAdded', message => {
-      let selectedChannel =
-        channels.filter(
-          channel => channel?.id === message?.conversation?.sid,
-        ) || [];
-      let newChannels = [...channels];
-      newChannels =
-        newChannels.map(channel =>
-          channel.id === message?.conversation?.sid
-            ? {
-                ...channel,
-                lastMessageTime: new Date(message?.dateCreated).getTime(),
-                lastMessageText: message?.body,
-              }
-            : channel,
-        ) || [];
+  // const getSubscribedChannels = useCallback(
+  //   client => {
+  //     setLoading(true);
+  //     return client.getSubscribedConversations().then(async convs => {
+  //       let chats = [...convs.items];
+  //       let newChannels = [];
+  //       for await (let channel of chats) {
+  //         const lastMessage = await channel.getMessages(
+  //           1,
+  //           channel.lastMessage?.index || 0,
+  //         );
+  //         const unreadCount = await channel.getUnreadMessagesCount();
+  //         const lastMessageText = lastMessage.items[0]?.body || 'Media message';
+  //         let obj = TwilioService.getInstance().parseChannel(channel);
+  //         newChannels.push({...obj, unreadCount, lastMessageText});
+  //       }
+  //       dispatch(updateChannels({channels: newChannels, isUpdate: false}));
+  //     });
+  //   },
+  //   [dispatch],
+  // );
 
-      dispatch(updateChannels(newChannels));
-      if (message?.author == username && selectedChannel.length) {
-        message?.conversation?.updateAttributes({
-          lastMessageText: message?.body,
-          participants: selectedChannel[0]?.attributes?.participants || [],
-        });
+  const getTokenNew = useCallback(
+    async userName => {
+      try {
+        let {payload} = await dispatch(getTwilloChatTokenSlice(userName));
+        return payload?.accessToken;
+      } catch (err) {
+        console.log('Error%%%%%%%%%%%% New ', err);
       }
-    });
-    return client;
-  }, []);
-
-  const updateUserOnlineOffline = client => {
-    client.on('updated', function ({user}) {
-      const {notifiable, identity, isOnline} = user || {};
-      // {user}
-      // notifiable
-      // entityName
-      // identity
-      // online
-      // let newChannels = channels.map(val => {
-      //   if (val.id == channel.sid) {
-      //     return {
-      //       ...val,
-      //       isOnline: user.isOnline,
-      //     };
-      //   }
-      //   return val;
-      // });
-      dispatch(
-        setParticipant({
-          notifiable,
-          identity,
-          isOnline,
-        }),
-      );
-    });
-  };
-
-  const updateConversationData = conversations => {
-    new Promise.all(
-      conversations.map(channel => {
-        return channel?.getParticipants().then(participants => {
-          let participantObj = null;
-          participants.forEach(participant => {
-            if (username != participant?.state?.identity) {
-              participantObj = participant.getUser().then(result => {
-                updateUserOnlineOffline(result, channel);
-                return {
-                  sid: channel?.sid,
-                  friendlyName: channel?.friendlyName,
-                  attributes: channel?.attributes,
-                  dateCreated: channel?.dateCreated,
-                  dateUpdated: channel?.dateUpdated,
-                  isOnline: result?.isOnline,
-                };
-              });
-            }
-          });
-          return participantObj;
-        });
-      }),
-    ).then(response => {
-      new Promise.all(response).then(results => {
-        const newChannels = TwilioService.getInstance().parseChannels(results);
-        dispatch(updateChannels(newChannels));
-        setLoading(false);
-      });
-    });
-  };
-
-  const getSubscribedChannels = useCallback(client => {
-    setLoading(true);
-    return client?.getSubscribedConversations().then(paginator => {
-      channelPaginator.current = paginator;
-      // updateConversationData(channelPaginator.current.items);
-      const newChannels = TwilioService.getInstance().parseChannels(
-        channelPaginator.current.items,
-      );
-      dispatch(updateChannels(newChannels));
-    });
-  }, []);
-
-  const getTokenNew = async username => {
-    try {
-      let {payload} = await dispatch(getTwilloChatTokenSlice(username));
-      return payload?.accessToken;
-    } catch (err) {
-      console.log('Error%%%%%%%%%%%% New ', err);
-    }
-  };
-
-  const reduxifyParticipant = participant => {
-    return {
-      sid: participant?.sid,
-      attributes: participant?.attributes,
-      identity: participant?.identity,
-      type: participant?.type,
-      lastReadMessageIndex: participant?.lastReadMessageIndex,
-    };
-  };
-
-  const updateParticipants = async conversation => {
-    const result = await conversation?.getParticipants();
-    let participants = (result && result.map(reduxifyParticipant)) || [];
-    dispatch(updateParticipant({participants, sid: conversation.sid}));
-  };
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
-    // const client = TwilioService.chatClient;
-    // console.log('About to expire', client);
-    // if (client && Object.keys(client).length) {
-    getTokenNew(username)
-      .then(token => token && TwilioService.getInstance().getChatClient(token))
-      .then(client => {
-        client.on('conversationJoined', conversation => {
-          conversation?.getParticipants().then(participants => {
-            participants.forEach(participant => {
-              if (username != participant?.state?.identity) {
-                participant.getUser().then(result => {
-                  updateUserOnlineOffline(result);
-                });
-              }
-            });
-          });
-        });
-      });
-
-    // client.on('tokenAboutToExpire', () => {
-    //   console.log('About to expire');
-    //   getTokenNew().then(TwilioService.chatClient.updateToken);
-    // });
-    // client.on('tokenExpired', () => {
-    //   console.log('tokenExpired');
-    //   client.removeAllListeners();
-    //   getTokenNew().then(TwilioService.chatClient.updateToken);
-    // });
-    // client.on('connectionStateChanged', state =>
-    //   setState(twilioStatus[state]),
-    // );
-    // const user = client.user;
-    // user.on('updated', function (event) {
-    //   console.warn('typingEnded############ new');
-    // });
-    // client.on('conversationLeft', conversation => {
-    // conversation.on('typingEnded', async participant => {
-    //   console.warn('typingEnded############ new');
-    // });
-    // });
-    // }
-
-    // return () => {
-    //   client && Object.keys(client).length && client?.removeAllListeners();
-    // };
-  }, []);
-
-  useEffect(() => {
-    getTokenNew(username)
-      .then(token => token && TwilioService.getInstance().getChatClient(token))
-      .then(() => TwilioService.getInstance()?.addTokenListener(getTokenNew))
-
-      .then(setChannelEvents)
-      .then(getSubscribedChannels)
-      .catch(err => showMessage({message: err.message, type: 'danger'}))
+    TwilioService.getInstance()
+      .getChatClient()
+      // .then(() => TwilioService.getInstance()?.addTokenListener(getTokenNew))
+      // .then(setChannelEvents)
+      // .then(getSubscribedChannels)
+      .catch(err => {})
       .finally(() => setLoading(false));
-    return () => TwilioService?.getInstance()?.clientShutdown();
-  }, [username, setChannelEvents, getSubscribedChannels]);
+  }, [chatToken, getTokenNew]);
 
   // let sortedChannels = useMemo(() => {
   //   let channelsNew = [...channels];
@@ -254,7 +91,6 @@ const ChatListScreens = ({navigation, route}) => {
   //   );
   //   return channelsNew;
   // }, [channels]);
-
 
   return (
     <View style={styles.screen}>
@@ -266,23 +102,19 @@ const ChatListScreens = ({navigation, route}) => {
           username={username}
           keyExtractor={(item, index) => index}
           renderItem={({item}) => {
-            let participants = item?.attributes?.participants || [];
-            let otherUser =
-              (participants.length &&
-                participants.filter(val => {
-                  if (val?.identity != username) {
-                    return true;
-                  }
-                  return false;
-                })) ||
-              [];
-            otherUser = (otherUser && otherUser.length && otherUser[0]) || {};
+            let otherUser = getOtherParticipant(
+              item?.attributes?.participants,
+              username,
+            );
             return (
               <ChatListItem
                 channel={item}
-                participants={participantObj}
+                typingInfo={typingData[item.sid] || []}
+                participantStatus={participantObj}
                 otherUser={otherUser}
                 username={username}
+                unreadCount={unreadMessage[item.sid]?.unreadCount || 0}
+                lastMessage={unreadMessage[item.sid]?.lastMessage || ''}
                 onLongPress={() => {
                   Alert.alert(
                     'Delete conversation!',
@@ -294,34 +126,35 @@ const ChatListScreens = ({navigation, route}) => {
                         onPress: async () => {
                           setLoading(true);
                           let {meta: {arg: sid} = {}} = await dispatch(
-                            deleteConversationSlice(item?.id),
+                            deleteConversationSlice(item?.sid),
                           );
                           // let participantsObjNew = {...participantsObj};
                           // delete participantsObjNew[sid];
                           // dispatch(
                           //   updateAfterRemoveParticipant(participantsObjNew),
                           // );
-                          let newChannels =
-                            channels.filter(channel => {
-                              if (channel?.id === sid) {
-                                return false;
-                              }
-                              return true;
-                            }) || [];
-                          dispatch(updateChannels(newChannels));
+                          // let newChannels =
+                          //   channels.filter(channel => {
+                          //     if (channel?.id === sid) {
+                          //       return false;
+                          //     }
+                          //     return true;
+                          //   }) || [];
+                          // dispatch(updateChannels(newChannels));
                           setLoading(false);
                         },
                       },
                     ],
                   );
                 }}
-                onPress={() =>
+                onPress={() => {
                   navigation.navigate(CHAT_ROOM_SCREEN, {
-                    channelId: item?.id,
+                    channelId: item?.sid,
                     identity: username,
                     otherUser,
-                  })
-                }
+                  });
+                  dispatch(updateCurrentConversation(item?.sid));
+                }}
               />
             );
           }}
