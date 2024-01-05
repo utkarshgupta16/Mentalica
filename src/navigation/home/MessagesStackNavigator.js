@@ -23,9 +23,9 @@ const MessagesStackNavigator = ({navigation, route}) => {
         name={MESSAGES}
         component={ChatListScreen}
         options={({navigation}) => ({
-          title: 'Chat Conversation',
+          title: 'Conversation List',
           headerLeft: null,
-          headerShadowVisible: false,
+          headerShadowVisible: true,
         })}
       />
 

@@ -6,7 +6,7 @@ const ShowOnlineBatch = ({otherUser, participantStatus}) => {
   const {identity} = otherUser || {};
   return (
     <>
-      {true ? (
+      {participantStatus[identity]?.isOnline ? (
         <View style={styles.containerStyle}>
           <View style={styles.batchStyle} />
         </View>
