@@ -20,7 +20,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React, {useRef, useContext, useEffect, useState} from 'react';
 import {AppContext} from '../../../App';
 import Colors from '../../customs/Colors';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 // const { TwilioVideo } = require('react-native-twilio-video-webrtc');
 
 const initialState = {

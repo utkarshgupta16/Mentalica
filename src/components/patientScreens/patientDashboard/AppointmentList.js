@@ -1,6 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {agendaTheme, styles} from './patientDashboardStyle';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -13,13 +20,56 @@ import {AppContext} from '../../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
-import {_checkPermissions} from '../../../utils/utils';
+import {dateFormatYY_MM_DD, _checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
 import {useIsFocused} from '@react-navigation/native';
 import View from '../../wrapperComponent/ViewWrapper';
 import Text from '../../wrapperComponent/TextWrapper';
+
+const RenderAgenda = ({
+  darkMode,
+  onRefresh,
+  updateData,
+  refreshing,
+  selectedDay,
+  onDayPress,
+  appointmentList,
+  renderEmptyData,
+  keyExtractor,
+  renderItem,
+}) => {
+  return (
+    <Agenda
+      // hideExtraDays={true}
+      // hideKnob={true}
+      theme={agendaTheme(darkMode).theme}
+      // selected="2024-01-04"
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            updateData(selectedDay, true);
+          }}
+        />
+      }
+      // key={darkMode}
+      scrollEnabled
+      // showOnlySelectedDayItems
+      // getItemLayout={getItemLayout}
+      onDayPress={onDayPress}
+      items={appointmentList}
+      initialNumToRender={5}
+      keyExtractor={keyExtractor}
+      renderEmptyData={renderEmptyData}
+      renderItem={renderItem}
+    />
+  );
+};
+
+const RenderAgendaMemo = memo(RenderAgenda);
+
 const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {
@@ -39,6 +89,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {email, type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState(false);
+  const agendaLoad = useRef(true);
   const dispatch = useDispatch();
   const {
     userToken: {jwtToken},
@@ -54,72 +105,80 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     return now;
   };
 
-  const formatSheduleAppointmentData = appointments => {
-    const newDate = new Date();
-    const formattedAppointments = {};
-    appointments?.forEach(appointment => {
-      const date =
-        newDate?.getFullYear() +
-        '-' +
-        `0${newDate?.getMonth() + 1}` +
-        '-' +
-        `0${
-          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
-        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-      if (!formattedAppointments[date]) {
-        formattedAppointments[date] = [];
-      }
-
-      formattedAppointments[date].push({
-        start: setDateTime(appointment.slots[0].startTime),
-        end: setDateTime(appointment.slots[0].endTime),
-        ...appointment,
-        // Other appointment data
-      });
-    });
-    return formattedAppointments;
-  };
-
-  const updateData = useCallback(
-    async date => {
-      try {
-        let res = await dispatch(
-          getScheduledAppointmentsSlice({
-            date: moment(date).format('YYYY-MM-DD'),
-          }),
-        );
-        const appointments = res.payload;
-        const newDate = new Date(date);
-        const formattedAppointments = {};
+  const formatDataCalender = useCallback(
+    ({appointments = [], formattedAppointments, newDate}) => {
+      if (appointments.length) {
         appointments &&
           appointments.forEach(appointment => {
-            const date =
-              newDate.getFullYear() +
-              '-' +
-              `0${newDate.getMonth() + 1}` +
-              '-' +
-              `0${
-                newDate.getDate() < 10
-                  ? `${newDate.getDate()}`
-                  : newDate.getDate()
-              }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
+            const date = dateFormatYY_MM_DD(newDate); //appointment.startTime.split('T')[0]; // Extract date from startTime
             if (!formattedAppointments[date]) {
               formattedAppointments[date] = [];
             }
-
             formattedAppointments[date].push({
               start: setDateTime(appointment.slots[0].startTime),
               end: setDateTime(appointment.slots[0].endTime),
               ...appointment,
+              // Other appointment data
             });
           });
-        setAppointmentList(formattedAppointments);
-      } catch (err) {}
+      }
+      return formattedAppointments;
+    },
+    [],
+  );
+
+  const formatSheduleAppointmentData = (appointments, selectedDay) => {
+    const newDate = new Date(selectedDay);
+    const formattedAppointments = {};
+    return formatDataCalender({
+      appointments,
+      formattedAppointments,
+      newDate,
+    });
+  };
+
+  const updateData = useCallback(
+    async (date, isRefresh) => {
+      try {
+        if (isRefresh) {
+          onRefresh(true);
+        } else {
+          setLoading(true);
+        }
+        await dispatch(
+          getScheduledAppointmentsSlice({
+            date: moment(date).format('YYYY-MM-DD'),
+          }),
+        );
+        // const appointments = res.payload;
+        // const newDate = new Date(date);
+        // let formattedAppointments = {};
+        // formattedAppointments = formatDataCalender({
+        //   appointments,
+        //   formattedAppointments,
+        //   newDate,
+        // });
+        if (isRefresh) {
+          onRefresh(false);
+        } else {
+          setLoading(false);
+        }
+        // setAppointmentList(formattedAppointments);
+      } catch (err) {
+        if (isRefresh) {
+          onRefresh(false);
+        } else {
+          setLoading(false);
+        }
+      }
     },
     [dispatch],
   );
 
-  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+  const formatedData = formatSheduleAppointmentData(
+    scheduledAppointmentsData,
+    selectedDay,
+  );
 
   const [appointmentList, setAppointmentList] = useState(formatedData);
   const handleOnScroll = event => {
@@ -173,21 +232,17 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   //   } catch (err) {}
   // };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        if (appointmentList.length === 0) {
-          setLoading(true);
-          await updateData(new Date());
-          setLoading(false);
-        }
-      } catch (err) {
-        setLoading(false);
-      } finally {
-        setLoading(false);
+  const updateDataMount = useCallback(async () => {
+    try {
+      if (scheduledAppointmentsData.length === 0) {
+        await updateData(new Date());
       }
-    })();
-  }, [dispatch, email, isFocus, updateData, appointmentList]);
+    } catch (err) {}
+  }, [updateData]);
+
+  useEffect(() => {
+    updateDataMount();
+  }, [updateDataMount]);
 
   // useEffect(() => {
   //   (async () => {
@@ -307,11 +362,9 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     );
   };
 
-  const onDayPress = async ({dateString}) => {
-    setLoading(true);
-    await updateData(dateString);
-    setLoading(false);
+  const onDayPress = ({dateString}) => {
     setDay(dateString);
+    updateData(dateString);
   };
 
   const renderEmptyData = () => {
@@ -320,10 +373,8 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     }
     return (
       <Pressable
-        onPress={async () => {
-          setLoading(true);
-          await updateData(selectedDay);
-          setLoading(false);
+        onPress={() => {
+          updateData(selectedDay);
         }}
         style={styles.reloadButton}>
         <Text style={styles.reloadText}>{RELOAD}</Text>
@@ -337,9 +388,21 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   return (
     <View style={styles.container}>
       {isLoading ? <ScreenLoading /> : null}
-      <Agenda
+      <RenderAgendaMemo
+        darkMode={darkMode}
+        onRefresh={onRefresh}
+        updateData={updateData}
+        refreshing={refreshing}
+        selectedDay={selectedDay}
+        onDayPress={onDayPress}
+        appointmentList={formatedData}
+        renderEmptyData={renderEmptyData}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
+      {/* <Agenda
         theme={agendaTheme(darkMode).theme}
-        // selected="2022-12-01"
+        // selected="2024-01-04"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -360,7 +423,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         keyExtractor={keyExtractor}
         renderEmptyData={renderEmptyData}
         renderItem={renderItem}
-      />
+      /> */}
     </View>
   );
 };

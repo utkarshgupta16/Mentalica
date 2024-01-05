@@ -41,7 +41,6 @@ const RenderCustomView = ({
     });
     return (
       <View>
-        <Text>{text}</Text>
         <MessageMedia
           key={_id}
           navigation={navigation}

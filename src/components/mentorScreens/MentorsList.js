@@ -71,7 +71,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   }, [dispatch]);
 
   const getTokenNew = async username => {
-    let {payload} = await dispatch(getTwilloChatTokenSlice(username));
+    let {payload} = await dispatch(getTwilloChatTokenSlice({email: username}));
     return payload?.accessToken;
   };
 
@@ -102,10 +102,12 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
             attributes: {
               participants: [
                 {
+                  profileId: profileData?.uniqueId,
                   identity: username,
                   username: `${profileData?.firstName} ${profileData?.lastName}`,
                 },
                 {
+                  profileId: mentorData?.uniqueId,
                   identity: mentorData?.emailId,
                   username: `${mentorData?.firstName} ${mentorData?.lastName}`,
                 },

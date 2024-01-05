@@ -17,6 +17,7 @@ import {
   messagesMap,
 } from '../redux/coversation-objects';
 import {PREVIEW_URL} from '@env';
+import Colors from '../customs/Colors';
 // import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 
 export const iosPlatform = Platform.OS === 'ios';
@@ -380,3 +381,21 @@ export const monthsShorts = [
 ];
 
 export const profileURL = profileId => `${PREVIEW_URL}/${profileId}/userpic`;
+
+export const darkModeColor = isDarkMode => {
+  if (isDarkMode) {
+    return Colors.white;
+  }
+  return Colors.black;
+};
+
+export const dateFormatYY_MM_DD = date => {
+  const newDate = date || new Date();
+  return (
+    newDate.getFullYear() +
+    '-' +
+    `0${newDate.getMonth() + 1}` +
+    '-' +
+    `0${newDate.getDate() < 10 ? `${newDate.getDate()}` : newDate.getDate()}`
+  );
+};

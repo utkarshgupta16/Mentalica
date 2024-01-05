@@ -2,7 +2,7 @@ import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import Text from '../../wrapperComponent/TextWrapper.js';
 import View from '../../wrapperComponent/ViewWrapper.js';
 import moment from 'moment';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {styles} from './MentorDashboardStyle';
 import {AppContext, setProps, props} from '../../../../App';
 import Colors from '../../../customs/Colors';
@@ -16,7 +16,7 @@ import {
 } from '../../../redux/HomeSlice';
 import convertLang, {MENTOR} from '../../../utils/Strings';
 import {useIsFocused} from '@react-navigation/native';
-import {_checkPermissions} from '../../../utils/utils';
+import {dateFormatYY_MM_DD, _checkPermissions} from '../../../utils/utils';
 import ScreenLoading from '../../ScreenLoading';
 import {useTranslation} from 'react-i18next';
 import {AV_CHAT_SCREEN} from '../../../utils/route';
@@ -58,67 +58,81 @@ const MentorDashboard = ({navigation}) => {
     scheduledAppointmentsData = [],
   } = useSelector(state => state.home);
 
-  const formatSheduleAppointmentData = appointments => {
-    const newDate = new Date();
-    const formattedAppointments = {};
-    appointments?.forEach(appointment => {
-      const date =
-        newDate?.getFullYear() +
-        '-' +
-        `0${newDate?.getMonth() + 1}` +
-        '-' +
-        `0${
-          newDate?.getDate() < 10 ? `${newDate?.getDate()}` : newDate?.getDate()
-        }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-      if (!formattedAppointments[date]) {
-        formattedAppointments[date] = [];
+  const formatDataCalender = useCallback(
+    ({appointments = [], formattedAppointments, newDate}) => {
+      if (appointments.length) {
+        appointments &&
+          appointments.forEach(appointment => {
+            const date = dateFormatYY_MM_DD(newDate); //appointment.startTime.split('T')[0]; // Extract date from startTime
+            if (!formattedAppointments[date]) {
+              formattedAppointments[date] = [];
+            }
+            formattedAppointments[date].push({
+              start: setDateTime(appointment.slots[0].startTime),
+              end: setDateTime(appointment.slots[0].endTime),
+              ...appointment,
+              // Other appointment data
+            });
+          });
       }
-      formattedAppointments[date].push({
-        start: setDateTime(appointment.slots[0].startTime),
-        end: setDateTime(appointment.slots[0].endTime),
-        ...appointment,
-        // Other appointment data
-      });
-    });
-    return formattedAppointments;
-  };
+      return formattedAppointments;
+    },
+    [],
+  );
 
-  const updateData = async date => {
-    let res = await dispatch(
-      getScheduledAppointmentsSlice({date: moment(date).format('YYYY-MM-DD')}),
-    );
-    const appointments = res.payload;
-    const newDate = new Date(date);
+  const formatSheduleAppointmentData = (appointments, selectedDay) => {
+    const newDate = new Date(selectedDay);
     const formattedAppointments = {};
-    appointments &&
-      appointments.forEach(appointment => {
-        const date =
-          newDate?.getFullYear() +
-          '-' +
-          `0${newDate?.getMonth() + 1}` +
-          '-' +
-          `0${
-            newDate?.getDate() < 10
-              ? `${newDate?.getDate()}`
-              : newDate?.getDate()
-          }`; //appointment.startTime.split('T')[0]; // Extract date from startTime
-        if (!formattedAppointments[date]) {
-          formattedAppointments[date] = [];
-        }
-
-        formattedAppointments[date].push({
-          start: setDateTime(appointment.slots[0].startTime),
-          end: setDateTime(appointment.slots[0].endTime),
-          ...appointment,
-          // Other appointment data
-        });
-      });
-    // });
-    setAppointmentList(formattedAppointments);
-    return formattedAppointments;
+    return formatDataCalender({
+      appointments,
+      formattedAppointments,
+      newDate,
+    });
   };
 
-  const formatedData = formatSheduleAppointmentData(scheduledAppointmentsData);
+  const updateData = useCallback(
+    async (date, isRefresh) => {
+      try {
+        if (isRefresh) {
+          onRefresh(true);
+        } else {
+          setLoading(true);
+        }
+        let res = await dispatch(
+          getScheduledAppointmentsSlice({
+            date: moment(date).format('YYYY-MM-DD'),
+          }),
+        );
+        const appointments = res.payload;
+        const newDate = new Date(date);
+        let formattedAppointments = {};
+        formattedAppointments = formatDataCalender({
+          appointments,
+          formattedAppointments,
+          newDate,
+        });
+        // setAppointmentList(formattedAppointments);
+        if (isRefresh) {
+          onRefresh(false);
+        } else {
+          setLoading(false);
+        }
+        return formattedAppointments;
+      } catch (err) {
+        if (isRefresh) {
+          onRefresh(false);
+        } else {
+          setLoading(false);
+        }
+      }
+    },
+    [dispatch, formatDataCalender],
+  );
+
+  const formatedData = formatSheduleAppointmentData(
+    scheduledAppointmentsData,
+    selectedDay,
+  );
 
   const [appointmentList, setAppointmentList] = useState(formatedData);
 
@@ -144,11 +158,17 @@ const MentorDashboard = ({navigation}) => {
   //   setAppointmentList(formattedAppointments);
   // };
 
+  const updateDataMount = useCallback(() => {
+    try {
+      if (scheduledAppointmentsData.length === 0) {
+        updateData(new Date());
+      }
+    } catch (err) {}
+  }, [updateData]);
+
   useEffect(() => {
-    (async () => {
-      updateData(new Date());
-    })();
-  }, [dispatch, email, isFocus]);
+    updateDataMount();
+  }, [updateDataMount]);
 
   const generateWeekData = () => {
     const weekData = [];
@@ -215,10 +235,8 @@ const MentorDashboard = ({navigation}) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={async () => {
-              onRefresh(true);
-              await updateData(selectedDay);
-              onRefresh(false);
+            onRefresh={() => {
+              updateData(selectedDay, true);
             }}
           />
         }
@@ -230,7 +248,6 @@ const MentorDashboard = ({navigation}) => {
           agendaDayTextColor: darkMode ? '#fff' : '#000',
           agendaDayNumColor: '#00adf5',
           agendaTodayColor: darkMode ? '#fff' : '#000',
-          agendaKnobColor: '#283747',
           indicatorColor: '#283747',
           textSectionTitleColor: darkMode ? '#fff' : '#000',
           dotColor: '#283747',
@@ -239,10 +256,8 @@ const MentorDashboard = ({navigation}) => {
         }}
         // key={darkMode}
         onDayPress={async ({dateString}) => {
-          setLoading(true);
-          await updateData(dateString);
-          setLoading(false);
           setDay(dateString);
+          updateData(dateString);
         }}
         scrollEnabled
         showOnlySelectedDayItems
@@ -254,10 +269,8 @@ const MentorDashboard = ({navigation}) => {
           }
           return (
             <Pressable
-              onPress={async () => {
-                setLoading(true);
-                await updateData(selectedDay);
-                setLoading(false);
+              onPress={() => {
+                updateData(selectedDay);
               }}
               style={styles.reloadButton}>
               <Text style={styles.reloadText}>{RELOAD}</Text>

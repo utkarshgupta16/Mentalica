@@ -10,6 +10,7 @@ import {
 } from '../../utils/route';
 import Profile from './Profile';
 import EditProfile from './EditProfile';
+import PreviewImage from '../../components/PreviewImage';
 import {useSelector} from 'react-redux';
 import ChangePassword from './ChangePassword';
 import AddSlotsMentor from '../signUp/AddSlotsMentor';
@@ -32,29 +33,37 @@ const ProfileStackNavigator = () => {
         component={EditProfile}
         options={({navigation}) => ({
           title: '',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{flexDirection: 'row'}}>
-              {currentLanguage == EN ? (
-                <MaterialIcons
-                  name="arrow-back-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              ) : (
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={16}
-                  color={darkMode ? Colors.white : Colors.grey}
-                />
-              )}
-              {/* <Text style={{color: darkMode ? '#fff' : '#000'}}>
-                Edit Profile
-              </Text> */}
-            </TouchableOpacity>
-          ),
-          headerShadowVisible: false,
+          headerShown: false,
+          // headerLeft: () => (
+          //   <TouchableOpacity
+          //     onPress={() => navigation.goBack()}
+          //     style={{flexDirection: 'row'}}>
+          //     {currentLanguage == EN ? (
+          //       <MaterialIcons
+          //         name="arrow-back-ios"
+          //         size={16}
+          //         color={darkMode ? Colors.white : Colors.grey}
+          //       />
+          //     ) : (
+          //       <MaterialIcons
+          //         name="arrow-forward-ios"
+          //         size={16}
+          //         color={darkMode ? Colors.white : Colors.grey}
+          //       />
+          //     )}
+          //     {/* <Text style={{color: darkMode ? '#fff' : '#000'}}>
+          //       Edit Profile
+          //     </Text> */}
+          //   </TouchableOpacity>
+          // ),
+          // headerShadowVisible: false,
+        })}
+      />
+      <Stack.Screen
+        name="PreviewImage"
+        component={PreviewImage}
+        options={({navigation}) => ({
+          title: '',
         })}
       />
 

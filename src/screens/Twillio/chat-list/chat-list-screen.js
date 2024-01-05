@@ -7,13 +7,13 @@ import React, {
   useMemo,
 } from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import View from '../../../components/wrapperComponent/ViewWrapper';
 import {colors} from '../colors';
 import {TwilioService} from '../ConversationService';
 import {ChatListLoader} from './components/chat-list-loader';
@@ -22,7 +22,6 @@ import {ChatListItem} from './components/chat-list-item';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   deleteConversationSlice,
-  getTwilloChatTokenSlice,
   updateChannels,
 } from '../../../redux/HomeSlice';
 import {CHAT_ROOM_SCREEN} from '../../../utils/route';
@@ -61,17 +60,17 @@ const ChatListScreens = ({navigation, route}) => {
   //   [dispatch],
   // );
 
-  const getTokenNew = useCallback(
-    async userName => {
-      try {
-        let {payload} = await dispatch(getTwilloChatTokenSlice(userName));
-        return payload?.accessToken;
-      } catch (err) {
-        console.log('Error%%%%%%%%%%%% New ', err);
-      }
-    },
-    [dispatch],
-  );
+  // const getTokenNew = useCallback(
+  //   async userName => {
+  //     try {
+  //       let {payload} = await dispatch(getTwilloChatTokenSlice(userName));
+  //       return payload?.accessToken;
+  //     } catch (err) {
+  //       console.log('Error%%%%%%%%%%%% New ', err);
+  //     }
+  //   },
+  //   [dispatch],
+  // );
 
   useEffect(() => {
     TwilioService.getInstance()
@@ -81,7 +80,7 @@ const ChatListScreens = ({navigation, route}) => {
       // .then(getSubscribedChannels)
       .catch(err => {})
       .finally(() => setLoading(false));
-  }, [chatToken, getTokenNew]);
+  }, [chatToken]);
 
   // let sortedChannels = useMemo(() => {
   //   let channelsNew = [...channels];

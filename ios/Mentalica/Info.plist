@@ -37,15 +37,20 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This will allow you to take photos during your walk through and submit them with the report.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This will let you share photos from your library and save photos to your Camera Roll</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Mentalica would like to access the microphone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This will let you share photos from your library and save photos to your Camera Roll</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Black.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome.ttf</string>
 		<string>FuzzyBubbles-Bold.ttf</string>
 		<string>FuzzyBubbles-Regular.ttf</string>
 		<string>MaterialIcons.ttf</string>

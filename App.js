@@ -32,6 +32,11 @@ import {endTyping, startTyping} from './src/redux/TypingDataSlice';
 import {updateUnreadMessages} from './src/redux/UnReadMessageCountSlice';
 import {updateCurrentConversation} from './src/redux/CurrentConvoReducer';
 import Colors from './src/customs/Colors';
+import {Auth} from 'aws-amplify';
+import {updateToken} from './src/redux/AuthSlice';
+import jwtDecode from 'jwt-decode';
+import BackgroundTimer from 'react-native-background-timer';
+
 export const AppContext = React.createContext(initialState);
 
 const LOCAL_NOTIFICATION_CHANNEL_ID = 'high_priority_alerts';
@@ -139,7 +144,7 @@ const registerNotification = () => {
 
 const App = () => {
   const [props, setProps] = useState(initialState);
-  const {email, isLoggedIn} = useSelector(state => state.auth);
+  const {email, isLoggedIn, userToken} = useSelector(state => state.auth);
   const currentConvoSid = useSelector(state => state.currentConversation);
   const mainClient = useRef();
   const sidRef = useRef('');
@@ -191,11 +196,11 @@ const App = () => {
   }, []);
 
   const getTokenNew = useCallback(
-    async userName => {
+    async (userName, token) => {
       if ((userName || email) && isLoggedIn) {
         try {
           let {payload} = await dispatch(
-            getTwilloChatTokenSlice(userName || email),
+            getTwilloChatTokenSlice({email: userName || email, token}),
           );
           return payload?.accessToken;
         } catch (err) {
@@ -279,11 +284,6 @@ const App = () => {
     [dispatch],
   );
 
-  const updateConversationData = conversation => {
-    let obj = TwilioService.getInstance().parseChannel(conversation);
-    // dispatch(updateConversation({parameters:{},channelSid:}));
-  };
-
   const loadUnreadMessagesCount = useCallback(
     async (convo, lastMessage) => {
       let unreadCount = 0;
@@ -346,10 +346,11 @@ const App = () => {
   useEffect(() => {
     if (isLoggedIn) {
       getTokenNew(email)
-        ?.then(chatToken =>
-          TwilioService.getInstance().getChatClient(chatToken),
+        ?.then(
+          chatToken =>
+            chatToken && TwilioService.getInstance().getChatClient(chatToken),
         )
-        .then(() => TwilioService.getInstance()?.addTokenListener(getTokenNew))
+        // .then(() => TwilioService.getInstance()?.addTokenListener(updateTokenM))
         ?.then(client => {
           mainClient.current = client;
 
@@ -410,6 +411,91 @@ const App = () => {
     upsertConversationData,
     conversationJoinedM,
   ]);
+
+  const updateTokenBackground = useCallback(() => {
+    BackgroundTimer.runBackgroundTimer(async () => {
+      try {
+        const cognitoUser = await Auth.currentAuthenticatedUser();
+        const currentSession = await Auth.currentSession();
+        cognitoUser.refreshSession(
+          currentSession?.refreshToken,
+          (error, session) => {
+            const {idToken, refreshToken} = session;
+
+            dispatch(
+              updateToken({
+                userToken: {
+                  jwtToken: idToken?.jwtToken,
+                  refreshToken: refreshToken?.token,
+                },
+              }),
+            );
+
+            getTokenNew(email, idToken?.jwtToken)?.then(
+              token =>
+                token && TwilioService.getInstance().getChatClient(token),
+            );
+            // do whatever you want to do now :)
+          },
+        );
+      } catch (e) {
+        console.log('Unable to refresh Token', e);
+      }
+      //code that will be called every 23 58 min
+    }, 1000 * 3600 * 23 + 1000 * 60 * 58);
+  }, [dispatch, email, getTokenNew]);
+
+  const isTokenExpired = useCallback(token => {
+    if (!token) {
+      return true;
+    }
+    const currentTime = Math.floor(Date.now() / 1000);
+    const decodedToken = jwtDecode(token);
+
+    if (decodedToken.exp) {
+      return decodedToken.exp < currentTime;
+    } else {
+      return true;
+    }
+  }, []);
+
+  const updateTokenM = useCallback(async () => {
+    if (!isTokenExpired(userToken?.jwtToken)) {
+      getTokenNew(email)?.then(
+        chatToken =>
+          chatToken && TwilioService.getInstance().getChatClient(chatToken),
+      );
+      return;
+    }
+    const cognitoUser = await Auth.currentAuthenticatedUser();
+    const currentSession = await Auth.currentSession();
+    cognitoUser.refreshSession(
+      currentSession?.refreshToken,
+      (error, session) => {
+        const {idToken, refreshToken, accessToken} = session;
+        dispatch(
+          updateToken({
+            userToken: {
+              jwtToken: idToken?.jwtToken,
+              refreshToken: refreshToken?.token,
+            },
+          }),
+        );
+        getTokenNew(email, idToken?.jwtToken)?.then(
+          chatToken =>
+            chatToken && TwilioService.getInstance().getChatClient(chatToken),
+        );
+        // do whatever you want to do now :)
+      },
+    );
+  }, [dispatch, isTokenExpired, getTokenNew, email, userToken]);
+
+  useEffect(() => {
+    updateTokenBackground();
+    return () => {
+      BackgroundTimer.stopBackgroundTimer();
+    };
+  }, [updateTokenBackground]);
 
   if (__DEV__) {
     const yeOldeConsoleLog = console.log;

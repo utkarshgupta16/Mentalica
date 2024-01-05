@@ -7,11 +7,11 @@ import {FIREBASE_SERVER_KEY} from '@env';
 import {Auth} from 'aws-amplify';
 import {apiMiddleware} from './service';
 
-const headerApi = getState => {
+const headerApi = (getState, token) => {
   const {userToken: {jwtToken} = {}} = getState().auth;
   // Auth.currentUserCredentials;
   return {
-    Authorization: `Bearer ${jwtToken}`,
+    Authorization: `Bearer ${token || jwtToken}`,
     'Content-Type': 'application/json',
   };
 };
@@ -57,14 +57,38 @@ export const uploadProfilePhoto = createAsyncThunk(
 
 export const getTwilloChatTokenSlice = createAsyncThunk(
   'home/getTwilloChatTokenSlice',
-  async (email, {getState}) => {
+  async ({email, token}, {getState}) => {
     const {email: username} = getState().auth;
     var config = {
       method: 'get',
       url: `${endPoints.getTwillioChatAPI}${email || username}`,
-      headers: headerApi(getState),
+      headers: headerApi(getState, token),
     };
     return apiMiddleware(config);
+  },
+);
+
+export const uploadImageToServerSlice = createAsyncThunk(
+  'home/uploadImageToServerSlice',
+  async ({signedUrl, data}) => {
+    try {
+      const {status} = await fetch(signedUrl, {
+        method: 'PUT',
+        body: data,
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      });
+
+      if (status === 200) {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
   },
 );
 
@@ -377,6 +401,7 @@ const initialState = {
   selectedProfileImagePath: '',
   profileImageUrl: '',
   loadingProfileImageUrl: false,
+  isImageLoading: false,
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -569,6 +594,16 @@ const HomeSlice = createSlice({
     builder.addCase(getTwilloChatTokenSlice.rejected, (state, action) => {
       state.isChatTokenLoading = false;
       state.chatToken = '';
+    });
+
+    builder.addCase(uploadImageToServerSlice.pending, state => {
+      state.isImageLoading = true;
+    });
+    builder.addCase(uploadImageToServerSlice.fulfilled, (state, action) => {
+      state.isImageLoading = false;
+    });
+    builder.addCase(uploadImageToServerSlice.rejected, (state, action) => {
+      state.isImageLoading = false;
     });
   },
 });
