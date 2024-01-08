@@ -189,17 +189,17 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     })();
   }, [dispatch, email, isFocus, updateData, appointmentList]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       setLoading(true);
-  //       await updateData();
-  //       setLoading(false);
-  //     } catch (err) {
-  //       setLoading(false);
-  //     }
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        await updateData();
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const videoCallAction = data => {
     _checkPermissions(async () => {
@@ -222,24 +222,6 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
       } catch (err) {
         console.log('err----------------------', err);
       }
-      // axios
-      //   .get(
-      //     `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.patient_email_Id}`,
-      //   )
-      //   .then(response => {
-      //     const token = response.data.token ?? response.data;
-      //     setProps({
-      //       ...props,
-      //       token,
-      //       userName: data?.patient_email_Id,
-      //       roomName: data?.roomId,
-      //     });
-
-      //     navigation.navigate('AVChatScreen');
-      //   })
-      //   .catch(err => {
-      //     console.log('err----------------------', err);
-      //   });
     }, t);
   };
 
@@ -339,7 +321,6 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
       {isLoading ? <ScreenLoading /> : null}
       <Agenda
         theme={agendaTheme(darkMode).theme}
-        // selected="2022-12-01"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -350,7 +331,6 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
             }}
           />
         }
-        // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         getItemLayout={getItemLayout}

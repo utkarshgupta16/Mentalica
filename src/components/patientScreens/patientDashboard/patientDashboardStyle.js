@@ -185,7 +185,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     borderRadius: 8,
-    marginTop: 10,
+    marginVertical: 10,
     backgroundColor: 'white',
     shadowOffset: {
       width: 0,
@@ -193,7 +193,7 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.37,
     shadowRadius: 5.65,
-    elevation: 3,
+    elevation: 5,
     marginHorizontal: 10,
     paddingHorizontal: 10,
   },

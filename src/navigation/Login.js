@@ -43,6 +43,7 @@ import {colors} from '../screens/Twillio/colors';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
+
   const {
     RESTART_APP,
     CHANGE_LANG,
@@ -75,13 +76,13 @@ const LoginScreen = ({navigation}) => {
   //   'pandey.kaushiki@thinksys.com',
   // );
 
-  // const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
+  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
 
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
-  const [enteredEmail, setEnteredEmail] = useState(
-    'roshanyjambhulkar1204+4@gmail.com',
-  );
+  // const [enteredEmail, setEnteredEmail] = useState(
+  //   'roshanyjambhulkar1204+4@gmail.com',
+  // );
 
   const [showEnterCodeModal, setShowEnterCodeModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -337,6 +338,7 @@ const LoginScreen = ({navigation}) => {
             </View>
             <View>
               <DropDownPicker
+                theme={darkMode ? 'DARK' : 'LIGHT'}
                 dropDownDirection="TOP"
                 listMode="SCROLLVIEW"
                 autoScroll={true}
@@ -344,6 +346,7 @@ const LoginScreen = ({navigation}) => {
                 open={isOpen}
                 setOpen={setIsOpen}
                 value={t(selectedLanguage)}
+                searchPlaceholderTextColor={darkMode ? 'white' : 'black'}
                 setValue={props => {
                   Alert.alert(CHANGE_LANG, RESTART_APP, [
                     {
@@ -379,7 +382,7 @@ const LoginScreen = ({navigation}) => {
                 style={[
                   styles.dropdown,
                   {
-                    backgroundColor: darkMode ? Colors.dune : '#fff',
+                    // backgroundColor: darkMode ? Colors.dune : '#fff',
                     borderColor: darkMode ? Colors.dune : '#fff',
                   },
                 ]}
@@ -520,6 +523,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 10,
   },
 });
 

@@ -31,6 +31,7 @@ import {TwilioService} from '../../screens/Twillio/ConversationService';
 import {updateCurrentConversation} from '../../redux/CurrentConvoReducer';
 import {useTranslation} from 'react-i18next';
 import convertLang from '../../utils/Strings.js';
+import {profileURL} from '../../utils/utils.js';
 const green = '#464E2E';
 const lightGray = '#F1EFEF';
 const lightRed = '#E76161';
@@ -245,11 +246,30 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
               setShowDetails(!showDetails);
             }}
             style={styles.imageAndNameCont}>
-            <Image
+            {/* <Image
               source={require('../../icons/doctor.jpg')}
               style={styles.profilePic}
-            />
-            {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
+            /> */}
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: '#ffff',
+                width: 100,
+                marginRight: 10,
+                borderRadius: 5,
+              }}>
+              <Image
+                source={
+                  item?.uniqueId
+                    ? {
+                        cache: 'reload',
+                        uri: profileURL(item?.uniqueId),
+                      }
+                    : require('../../icons/doctor.jpg')
+                }
+                style={styles.profilePic}
+              />
+            </View>
             <View isCard>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
                 {`${t(item?.firstName)} ${t(item?.lastName)}`}
@@ -368,10 +388,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profilePic: {
-    width: 100,
+    width: '100%',
     height: 130,
-    borderWidth: 1,
-    borderColor: '#D8D9DA',
     borderRadius: 5,
     marginRight: 10,
     resizeMode: 'cover',

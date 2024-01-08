@@ -348,6 +348,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
         <DropDownPicker
           dropDownDirection="TOP"
           listMode="SCROLLVIEW"
+          theme={darkMode ? 'DARK' : 'LIGHT'}
           autoScroll={true}
           zIndex={3000}
           open={isOpen}
