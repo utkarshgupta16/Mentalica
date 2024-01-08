@@ -489,10 +489,9 @@ PODS:
   - React-jsinspector (0.72.6)
   - React-logger (0.72.6):
     - glog
-  - react-native-get-random-values (1.10.0):
+  - react-native-document-picker (9.1.0):
     - React-Core
-  - react-native-image-picker (7.1.0):
-    - RCT-Folly (= 2021.07.22.00)
+  - react-native-get-random-values (1.10.0):
     - React-Core
   - react-native-netinfo (9.5.0):
     - React-Core
@@ -505,6 +504,11 @@ PODS:
   - react-native-twilio-video-webrtc (3.2.0):
     - React
     - TwilioVideo (~> 4.6)
+  - react-native-video (5.2.1):
+    - React-Core
+    - react-native-video/Video (= 5.2.1)
+  - react-native-video/Video (5.2.1):
+    - React-Core
   - react-native-webview (11.26.1):
     - React-Core
   - React-NativeModulesApple (0.72.6):
@@ -636,11 +640,22 @@ PODS:
     - FirebaseCoreExtension (= 10.7.0)
     - React-Core
     - RNFBApp
+  - RNFileViewer (2.1.5):
+    - React-Core
   - RNFS (2.20.0):
     - React-Core
   - RNGestureHandler (2.14.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - RNImageCropPicker (0.37.3):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.37.3)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.37.3):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNPermissions (3.10.1):
     - React-Core
   - RNScreens (3.29.0):
@@ -651,6 +666,7 @@ PODS:
   - RNVectorIcons (9.2.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - TOCropViewController (2.6.1)
   - TwilioVideo (4.6.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -706,13 +722,14 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
-  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-twilio-video-webrtc (from `../node_modules/react-native-twilio-video-webrtc`)
+  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -738,8 +755,10 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - RNFileViewer (from `../node_modules/react-native-file-viewer`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -774,6 +793,7 @@ SPEC REPOS:
     - OpenSSL-Universal
     - PromisesObjC
     - SocketRocket
+    - TOCropViewController
     - TwilioVideo
     - YogaKit
 
@@ -821,10 +841,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
-  react-native-image-picker:
-    :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-restart:
@@ -835,6 +855,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-splash-screen"
   react-native-twilio-video-webrtc:
     :path: "../node_modules/react-native-twilio-video-webrtc"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -885,10 +907,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
+  RNFileViewer:
+    :path: "../node_modules/react-native-file-viewer"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -947,13 +973,14 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3bf18ff7cb03cd8dfdce08fbbc0d15058c1d71ae
   React-jsinspector: 194e32c6aab382d88713ad3dd0025c5f5c4ee072
   React-logger: cebf22b6cf43434e471dc561e5911b40ac01d289
+  react-native-document-picker: b4f4a23b73f864ce17965b284c0757648993805b
   react-native-get-random-values: 384787fd76976f5aec9465aff6fa9e9129af1e74
-  react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-twilio-video-webrtc: 55b6948742aac81f62ca692c97d055aa0206648f
+  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webview: 9f111dfbcfc826084d6c507f569e5e03342ee1c1
   React-NativeModulesApple: 02e35e9a51e10c6422f04f5e4076a7c02243fff2
   React-perflogger: e3596db7e753f51766bceadc061936ef1472edc3
@@ -979,13 +1006,16 @@ SPEC CHECKSUMS:
   RNDateTimePicker: fc2e4f2795877d45e84d85659bebe627eba5c931
   RNFBApp: 0d8bf86673bbad0524d1ceac3944d71ccf48a0e4
   RNFBMessaging: 4b8cb1215465bacca36d0fcfc2f51e7e2aa1bc91
+  RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
+  RNImageCropPicker: 44e2807bc410741f35d4c45b6586aedfe3da39d2
   RNPermissions: 561ea280861e63040eb5e6ee3d9ba969766008d8
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   TwilioVideo: 4afaac028c5886f2f3b313a9fcc146a6b7ca34e2
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
