@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import VideoPlayer from '../../../components/VideoPlayer';
+// import VideoPlayer from '../../../components/VideoPlayer';
 import {openFile} from '../../../utils/utils';
 let docImage =
   'https://png.pngtree.com/png-clipart/20220612/original/pngtree-pdf-file-icon-png-png-image_7965915.png';
@@ -44,40 +44,43 @@ const RenderFooter = ({medias = [], selectedMedia, navigation}) => {
                   />
                 </Pressable>
 
-                {mediaType === 'video' ? (
-                  <>
-                    <VideoPlayer
-                      navigation={navigation}
-                      video={item.path}
-                      style={styles.footerVideo}
-                      showPreview={true}
-                    />
-                  </>
-                ) : mediaType === 'image' ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      openFile(item.path);
-                    }}>
-                    <Image
-                      source={{uri: item?.path}}
-                      style={styles.footerImage}
-                    />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.footerFilePress}
-                    onPress={() => {
-                      openFile(item.path);
-                    }}>
-                    <Image
-                      source={{uri: docImage}}
-                      style={styles.footerFileImage}
-                    />
-                    <Text style={styles.footerFileText} numberOfLines={2}>
-                      {item?.filename}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                {
+                  // mediaType === 'video' ? (
+                  //   <>
+                  //     <VideoPlayer
+                  //       navigation={navigation}
+                  //       video={item.path}
+                  //       style={styles.footerVideo}
+                  //       showPreview={true}
+                  //     />
+                  //   </>
+                  // ) :
+                  mediaType === 'image' ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        openFile(item.path);
+                      }}>
+                      <Image
+                        source={{uri: item?.path}}
+                        style={styles.footerImage}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.footerFilePress}
+                      onPress={() => {
+                        openFile(item.path);
+                      }}>
+                      <Image
+                        source={{uri: docImage}}
+                        style={styles.footerFileImage}
+                      />
+                      <Text style={styles.footerFileText} numberOfLines={2}>
+                        {item?.filename}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                }
               </View>
             );
           })}

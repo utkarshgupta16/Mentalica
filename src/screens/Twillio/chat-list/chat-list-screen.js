@@ -28,9 +28,10 @@ import {CHAT_ROOM_SCREEN} from '../../../utils/route';
 import {setAllParticipant} from '../../../redux/ParticipatSlice';
 import {getOtherParticipant} from '../../../utils/utils';
 import {updateCurrentConversation} from '../../../redux/CurrentConvoReducer';
+import {SkeletonContentLoaderIterate} from '../../../components/SkeletonContentLoading';
 const ChatListScreens = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   let {chatToken} = useSelector(state => state.home);
   const {email: username} = useSelector(state => state.auth);
   const typingData = useSelector(state => state?.typingData);
@@ -72,15 +73,23 @@ const ChatListScreens = ({navigation, route}) => {
   //   [dispatch],
   // );
 
+  // useEffect(() => {
+  //   TwilioService.getInstance()
+  //     .getChatClient()
+  //     // .then(() => TwilioService.getInstance()?.addTokenListener(getTokenNew))
+  //     // .then(setChannelEvents)
+  //     // .then(getSubscribedChannels)
+  //     .catch(err => {})
+  //     .finally(() => setLoading(false));
+  // }, [chatToken]);
+
   useEffect(() => {
-    TwilioService.getInstance()
-      .getChatClient()
-      // .then(() => TwilioService.getInstance()?.addTokenListener(getTokenNew))
-      // .then(setChannelEvents)
-      // .then(getSubscribedChannels)
-      .catch(err => {})
-      .finally(() => setLoading(false));
-  }, [chatToken]);
+    if (channels.length !== 0) {
+      setLoading(false);
+    } else {
+      setTimeout(() => setLoading(false), 7000);
+    }
+  }, []);
 
   // let sortedChannels = useMemo(() => {
   //   let channelsNew = [...channels];
@@ -93,8 +102,8 @@ const ChatListScreens = ({navigation, route}) => {
 
   return (
     <View style={styles.screen}>
-      {loading ? (
-        <ChatListLoader />
+      {channels.length === 0 && loading ? (
+        <SkeletonContentLoaderIterate length={10} />
       ) : (
         <FlatList
           data={channels}

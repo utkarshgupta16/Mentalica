@@ -146,7 +146,7 @@ const ChatRoomScreen = ({route, navigation}) => {
   const setChannelEvents = useCallback(
     channel => {
       chatClientChannel.current = channel;
-      // chatClientChannel.current.on('messageAdded', messageListener);
+      chatClientChannel.current.on('messageAdded', messageListener);
       return chatClientChannel.current;
     },
     [messageListener],
@@ -209,7 +209,7 @@ const ChatRoomScreen = ({route, navigation}) => {
       .getChatClient()
       .then(async client => {
         let channel = await client?.getConversationBySid(channelId);
-        // client.on('participantUpdated', updateParticipantListner);
+        client.on('participantUpdated', updateParticipantListner);
         if (channel) {
           channel.getMessagesCount().then(result => {
             totalMessageCount.current = result;

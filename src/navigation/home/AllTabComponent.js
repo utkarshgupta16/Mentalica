@@ -1,14 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {styles} from './patientDashboardStyle';
+import {styles} from './homeDashboardStyle';
 import {FlatList, Image, StyleSheet} from 'react-native';
-import View from '../../wrapperComponent/ViewWrapper.js';
-import Text from '../../wrapperComponent/TextWrapper.js';
-import {articlesData} from '../../../utils/default';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import {articlesData} from '../../utils/default';
 import {useSelector} from 'react-redux';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useTranslation} from 'react-i18next';
-import convertLang from '../../../utils/Strings';
+import convertLang from '../../utils/Strings';
+import Colors from '../../customs/Colors';
 
 const AllTabComponent = ({handleShadowVisible}) => {
   const {t} = useTranslation();
@@ -26,17 +26,19 @@ const AllTabComponent = ({handleShadowVisible}) => {
     return (
       <View
         style={{
-          shadowColor: darkMode ? 'white' : 'gray',
-          borderColor: darkMode ? '#fff' : 'transparent',
+          shadowColor: darkMode ? Colors.white : 'gray',
+          borderColor: darkMode ? Colors.white : Colors.transparent,
           ...styles.allTabComponentStyle,
         }}>
         <Image source={{uri: item.image}} style={styles.allTabImage} />
 
         <View isCard={true} style={styles.allSubView}>
-          <Text style={{fontSize: 16, fontWeight: '700'}}>
+          <Text style={{fontSize: 16, fontWeight: '700', color: Colors.dune}}>
             {t(item?.title)}
           </Text>
-          <Text style={{marginTop: 10}}>{t(item?.author)}</Text>
+          <Text style={{marginTop: 10, color: Colors.dune}}>
+            {t(item?.author)}
+          </Text>
         </View>
       </View>
     );

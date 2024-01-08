@@ -30,6 +30,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {decode} from 'base-64';
 import RNFS from 'react-native-fs';
 import Header from '../../components/Header';
+import {doctorURI, patientURI} from '../../icons';
 
 const EditProfile = ({route, navigation, showActionSheetWithOptions}) => {
   const dispatch = useDispatch();
@@ -261,8 +262,8 @@ const EditProfile = ({route, navigation, showActionSheetWithOptions}) => {
                         uri: profileURL(uniqueId) + '?time=' + new Date(),
                       }
                     : loginFrom === PATIENT
-                    ? require('../../icons/patient.jpg')
-                    : require('../../icons/doctor.jpg')
+                    ? patientURI
+                    : doctorURI
                 }
                 style={styles.image}
               />

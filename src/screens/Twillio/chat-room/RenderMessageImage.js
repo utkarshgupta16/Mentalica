@@ -36,15 +36,15 @@ const RenderMessageImage = ({
       />
     </View>
   );
-  return (
-    <MessageImage
-      {...restProps}
-      lightboxProps={{
-        ...lightboxProps,
-        style: {opacity: isSelected ? 0.6 : 1},
-      }}
-    />
-  );
+  // return (
+  //   <MessageImage
+  //     {...restProps}
+  //     lightboxProps={{
+  //       ...lightboxProps,
+  //       style: {opacity: isSelected ? 0.6 : 1},
+  //     }}
+  //   />
+  // );
 };
 
 export default memo(RenderMessageImage);

@@ -4,17 +4,13 @@ import {
   // View,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
   Pressable,
-  ActivityIndicator,
 } from 'react-native';
 import View from '../wrapperComponent/ViewWrapper.js';
 import Text from '../wrapperComponent/TextWrapper.js';
 import React, {useEffect, useState} from 'react';
 import {
   heightPercentageToDP as hp,
-  screenHeight,
-  screenWidth,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
 import {useDispatch, useSelector} from 'react-redux';
@@ -23,51 +19,46 @@ import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
 import Colors from '../../customs/Colors';
-import ScreenLoading from '../ScreenLoading';
-import RenderHorizontalData from './RenderHorizontalData.js';
-import {Client, User} from '@twilio/conversations';
 import {CHAT_ROOM_SCREEN, MESSAGES_TAB_ROUTE} from '../../utils/route';
 import {TwilioService} from '../../screens/Twillio/ConversationService';
 import {updateCurrentConversation} from '../../redux/CurrentConvoReducer';
 import {useTranslation} from 'react-i18next';
 import convertLang from '../../utils/Strings.js';
-const green = '#464E2E';
-const lightGray = '#F1EFEF';
-const lightRed = '#E76161';
-const lightBlack = '#45474B';
-
+import {FacebookContentLoading} from '../SkeletonContentLoading';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {darkModeColor, profileURL} from '../../utils/utils.js';
+import {doctorURI} from '../../icons/index.js';
 const MentorsList = ({navigation, handleShadowVisible}) => {
-  const [showAppointmentBtn, setShowAppointmentBtn] = useState(true);
   const {email: username} = useSelector(state => state.auth);
   const profileData = useSelector(state => state.home.profileData);
-  const [isLoading, setLoading] = useState(true);
-  const [allMentors, setAllMentors] = useState([]);
-  const [modifiedData, setModifiedData] = useState([]);
+  const [isMentorsDataLoading, setLoading] = useState(false);
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
   const {t} = useTranslation();
-  const {
-    CHAT,
-    EXPERTIES,
-    SPEAKS,
-    YEARS_OF_EXPERIENCE,
-    FOR,
-    MINS_STARTS,
-    STARTS,
-    MINS,
-  } = t && convertLang(t);
+  const {CHAT, EXPERTIES, SPEAKS, YEARS_OF_EXPERIENCE, FOR, STARTS, MINS} =
+    t && convertLang(t);
 
   const {
-    isMentorsDataLoading,
-    mentorsData = {},
+    // isMentorsDataLoading,
+    mentorsData = [],
     darkMode,
   } = useSelector(state => state.home);
 
   useEffect(() => {
-    dispatch(getAllMentorList());
+    (async () => {
+      if (mentorsData.length === 0) {
+        try {
+          setLoading(true);
+          await dispatch(getAllMentorList());
+          setLoading(false);
+        } catch (err) {
+          setLoading(false);
+        }
+      }
+    })();
   }, [dispatch]);
 
   const getTokenNew = async username => {
@@ -223,24 +214,11 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const renderItem = ({item, index}) => {
     const expertiseArr = item?.expertise?.split(',') || [];
     const languageArr = item?.language?.split(',') || [];
+    const shadowColor = darkModeColor(darkMode);
+    const uniqueId = item?.uniqueId;
     return (
       <View key={index} style={styles.flatListContainer}>
-        <View
-          isCard
-          style={{
-            marginTop: 2,
-            padding: 10,
-            borderRadius: 8,
-            shadowColor: darkMode ? 'white' : 'gray',
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowOpacity: 0.87,
-            shadowRadius: 4,
-            elevation: 3,
-            backgroundColor: '#fff',
-          }}>
+        <View isCard style={[styles.flatListContainerSub, {shadowColor}]}>
           <Pressable
             onPress={async () => {
               setMentor(item);
@@ -248,7 +226,14 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
             }}
             style={styles.imageAndNameCont}>
             <Image
-              source={require('../../icons/doctor.jpg')}
+              source={
+                uniqueId
+                  ? {
+                      cache: 'reload',
+                      uri: profileURL(uniqueId) + '?time=' + new Date(),
+                    }
+                  : doctorURI
+              }
               style={styles.profilePic}
             />
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
@@ -271,10 +256,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
           <Pressable
             style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() => createNewConversation(item)}>
-            <Image
-              source={require('../../icons/chat.png')}
-              style={{width: 30, height: 30, objectFit: 'contain'}}
-            />
+            <MaterialIcons name="chat" size={22} />
             <Text style={{paddingLeft: 10, fontWeight: 'bold'}}>{CHAT}</Text>
           </Pressable>
         </View>
@@ -284,6 +266,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
 
   return (
     <View style={styles.container}>
+      {isMentorsDataLoading ? <FacebookContentLoading length={5} /> : null}
       <FlatList
         data={mentorsData}
         renderItem={renderItem}
@@ -301,46 +284,9 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
           selectedMentorData={selectedMentorData}
         />
       ) : null}
-      {isMentorsDataLoading ? <ScreenLoading /> : null}
     </View>
   );
 };
-
-// const renderExpertiesItem = ({item}) => {
-//   return (
-//     <View
-//       style={{
-//         marginRight: 10,
-//         borderRadius: 8,
-//         paddingHorizontal: 8,
-//         backgroundColor: '#F0F0F0',
-//         marginBottom: 10,
-//       }}>
-//       <Text
-//         style={{
-//           color: lightBlack,
-//         }}>
-//         {item}
-//       </Text>
-//     </View>
-//   );
-// };
-
-// const renderLaunguageItem = ({item}) => {
-//   return (
-//     <Text style={{marginRight: 10, color: lightBlack, marginBottom: 10}}>
-//       {item}
-//     </Text>
-//   );
-// };
-
-// const renderSessionModeItem = ({item}) => {
-//   return (
-//     <Text style={{marginRight: 10, fontWeight: '600', color: lightBlack}}>
-//       {item}
-//     </Text>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -350,6 +296,20 @@ const styles = StyleSheet.create({
   flatListContainer: {
     marginHorizontal: 10,
     marginBottom: 15,
+  },
+  flatListContainerSub: {
+    marginTop: 2,
+    padding: 10,
+    borderRadius: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.87,
+    shadowRadius: 4,
+    elevation: 3,
+    backgroundColor: Colors.white,
   },
   cardContainer: {
     padding: 10,
@@ -362,7 +322,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.57,
     shadowRadius: 4.65,
     elevation: 3,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
   },
   imageAndNameCont: {
     flexDirection: 'row',
@@ -387,7 +347,7 @@ const styles = StyleSheet.create({
   },
   experienceText: {
     fontSize: 14,
-    color: lightBlack,
+    color: Colors.lightBlack,
   },
   feesTxt: {
     color: 'black',
@@ -426,36 +386,9 @@ const styles = StyleSheet.create({
   sessionText: {
     marginRight: 10,
   },
-  bookBtnCont: {
-    padding: 10,
-    paddingVertical: 20,
-    backgroundColor: lightGray,
-    alignItems: 'center',
-  },
-  bookBtn: {
-    height: 40,
-    width: wp(50),
-    paddingHorizontal: 17,
-    paddingVertical: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 50,
-    backgroundColor: green,
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 3,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
-  },
   bookBtnText: {
     color: 'white',
     fontWeight: '700',
-  },
-  bookongTimeText: {
-    color: lightRed,
   },
   slotListCont: {
     flexDirection: 'row',

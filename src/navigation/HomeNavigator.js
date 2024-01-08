@@ -12,8 +12,8 @@ import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
 import {useTranslation} from 'react-i18next';
-import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
-import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
+// import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
+// import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
 import {Text, Platform, Pressable} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
@@ -23,10 +23,12 @@ import {
   CHATS_SCREENS,
   CHAT_ROOM_SCREEN,
   CHATS_SCREEN,
+  HOME as HOME_ROUTE,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import HomeDashboard from './home/HomeDashboard';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
@@ -96,28 +98,43 @@ const videoCallAV = navigation => {
   );
 };
 
-const MentorDashboardStack = ({navigation}) => {
-  return (
-    // <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen
-        name="MentorDashboard"
-        component={MentorDashboard}
-        options={{headerShown: false}}
-      />
-      {videoCallAV(navigation)}
-    </Stack.Navigator>
-    // </NavigationContainer>
-  );
-};
+// const MentorDashboardStack = ({navigation}) => {
+//   return (
+//     // <NavigationContainer>
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="MentorDashboard"
+//         component={MentorDashboard}
+//         options={{headerShown: false}}
+//       />
+//       {videoCallAV(navigation)}
+//     </Stack.Navigator>
+//     // </NavigationContainer>
+//   );
+// };
 
-const PatientDashboardStack = ({navigation}) => {
+// const PatientDashboardStack = ({navigation}) => {
+//   return (
+//     // <NavigationContainer>
+//     <Stack.Navigator initialRouteName="PatientDashboard">
+//       <Stack.Screen
+//         name="PatientDashboard"
+//         component={PatientDashboard}
+//         options={{headerShown: false}}
+//       />
+//       {videoCallAV(navigation)}
+//     </Stack.Navigator>
+//     // </NavigationContainer>
+//   );
+// };
+
+const DashboardStack = ({navigation}) => {
   return (
     // <NavigationContainer>
-    <Stack.Navigator initialRouteName="PatientDashboard">
+    <Stack.Navigator initialRouteName="HomeDashboard">
       <Stack.Screen
-        name="PatientDashboard"
-        component={PatientDashboard}
+        name="HomeDashboard"
+        component={HomeDashboard}
         options={{headerShown: false}}
       />
       {videoCallAV(navigation)}
@@ -161,7 +178,20 @@ const HomeNavigator = () => {
         tabBarActiveTintColor: 'teal',
         tabBarInactiveTintColor: '#89B9AD',
       })}>
-      {type === MENTOR ? (
+      <Tab.Screen
+        name={HOME_ROUTE}
+        component={DashboardStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name="home" size={size} color={color} />
+          ),
+          tabBarLabel: ({focused}) => {
+            return renderTabTitle(focused, HOME);
+          },
+        }}
+      />
+      {/* {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
           component={MentorDashboardStack}
@@ -185,7 +215,7 @@ const HomeNavigator = () => {
       ) : (
         <Tab.Screen
           name={HOME}
-          component={PatientDashboardStack}
+          component={DashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
@@ -196,7 +226,7 @@ const HomeNavigator = () => {
             },
           }}
         />
-      )}
+      )} */}
       {type === MENTOR ? (
         <Tab.Screen
           name={INVOICING}

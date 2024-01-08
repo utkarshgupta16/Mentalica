@@ -1,14 +1,11 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {styles} from './patientDashboardStyle';
 import {View} from 'react-native';
-import convertLang from '../../../utils/Strings';
-import PatientDashboardTabs from '../../PatientDashboardTabs';
+import convertLang from '../../utils/Strings';
+import PatientDashboardTabs from '../../components/PatientDashboardTabs';
 import {useTranslation} from 'react-i18next';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from '../../../utils/Responsive';
 import {useSelector} from 'react-redux';
+import Colors from '../../customs/Colors';
 
 const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
   const {darkMode} = useSelector(state => state.home);
@@ -22,15 +19,14 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'space-around',
-
         paddingTop: 10,
         paddingBottom: 10,
-        backgroundColor: darkMode ? '#000' : '#fff',
+        backgroundColor: darkMode ? Colors.black : Colors.white,
         shadowColor:
-          isShadowVisible && darkMode == false
-            ? '#000'
-            : isShadowVisible && darkMode == true
-            ? '#fff'
+          isShadowVisible && darkMode === false
+            ? Colors.black
+            : isShadowVisible && darkMode === true
+            ? Colors.white
             : null,
         shadowOffset: isShadowVisible
           ? {

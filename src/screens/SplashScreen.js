@@ -9,14 +9,14 @@ const SplashScreen = ({navigation}) => {
     setTimeout(() => {
       navigation.replace('MainRoute');
     }, 3000);
-  }, []);
+  }, [navigation]);
+
   return (
     <View
       style={{
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: Colors.white,
       }}>
       {/* <LottieView

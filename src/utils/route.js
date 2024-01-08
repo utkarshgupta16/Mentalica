@@ -11,10 +11,8 @@ export const MENTOR_SIGN_UP = 'MentorSignUp';
 export const PATIENT_SIGN_UP = 'PatientSignUp';
 export const LOGIN = 'Login';
 export const ASK_CLIENT = '"AskClient"';
-export const AV_CHAT_SCREEN="AVChatScreen"
-export const CHATS_SCREEN="Chats"
+export const AV_CHAT_SCREEN = 'AVChatScreen';
+export const CHATS_SCREEN = 'Chats';
 export const FORGOT_PASSWORD = 'ForgotPasswordScreen';
 export const ADD_SLOTS_SIGNUP_SCREEN = 'AddSlotsSignupScreen';
 export const ADD_SLOTS_PROFILE_SCREEN = 'AddSlotsProfileScreen';
-
-

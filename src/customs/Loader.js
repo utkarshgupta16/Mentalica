@@ -2,11 +2,12 @@ import React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import Colors from './Colors';
 
-const Loader = () => {
+const Loader = props => {
+  const {colors = Colors.white} = props || {};
   return (
     <View style={styles.loaderContainer}>
       <View style={styles.loaderBackground} />
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" color={colors} />
     </View>
   );
 };

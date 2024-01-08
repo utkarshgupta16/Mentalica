@@ -62,6 +62,7 @@ import {PREVIEW_URL} from '@env';
 import {changeLanguage} from 'i18next';
 import axios from 'axios';
 import {profileURL} from '../../utils/utils.js';
+import {doctorURI, patientURI} from '../../icons';
 const Profile = ({navigation, showActionSheetWithOptions}) => {
   const {t} = useTranslation();
   const {
@@ -285,7 +286,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
 
   return (
     <ScrollView
-      style={{flex: 1, backgroundColor: darkMode ? '#000' : '#fff'}}
+      style={{flex: 1, backgroundColor: darkMode ? Colors.black : Colors.white}}
       showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
@@ -305,8 +306,8 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
                           uri: profileURL(uniqueId) + '?time=' + new Date(),
                         }
                       : loginFrom === PATIENT
-                      ? require('../../icons/patient.jpg')
-                      : require('../../icons/doctor.jpg')
+                      ? patientURI
+                      : doctorURI
                   }
                   style={styles.image}
                 />

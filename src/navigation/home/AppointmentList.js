@@ -8,88 +8,40 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {agendaTheme, styles} from './patientDashboardStyle';
+import {agendaTheme, styles} from './homeDashboardStyle';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
-} from '../../../redux/HomeSlice';
-import Colors from '../../../customs/Colors';
-import convertLang, {MENTOR} from '../../../utils/Strings';
-import {AppContext} from '../../../../App';
+} from '../../redux/HomeSlice';
+import Colors from '../../customs/Colors';
+import convertLang, {MENTOR} from '../../utils/Strings';
+import {AppContext} from '../../../App';
 import {Agenda} from 'react-native-calendars';
 import moment from 'moment';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
-import {dateFormatYY_MM_DD, _checkPermissions} from '../../../utils/utils';
-import ScreenLoading from '../../ScreenLoading';
+import {dateFormatYY_MM_DD, _checkPermissions} from '../../utils/utils';
 import {useTranslation} from 'react-i18next';
-import {AV_CHAT_SCREEN} from '../../../utils/route';
+import {AV_CHAT_SCREEN} from '../../utils/route';
 import {useIsFocused} from '@react-navigation/native';
-import View from '../../wrapperComponent/ViewWrapper';
-import Text from '../../wrapperComponent/TextWrapper';
-
-const RenderAgenda = ({
-  darkMode,
-  onRefresh,
-  updateData,
-  refreshing,
-  selectedDay,
-  onDayPress,
-  appointmentList,
-  renderEmptyData,
-  keyExtractor,
-  renderItem,
-}) => {
-  return (
-    <Agenda
-      // hideExtraDays={true}
-      // hideKnob={true}
-      theme={agendaTheme(darkMode).theme}
-      // selected="2024-01-04"
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => {
-            updateData(selectedDay, true);
-          }}
-        />
-      }
-      // key={darkMode}
-      scrollEnabled
-      // showOnlySelectedDayItems
-      // getItemLayout={getItemLayout}
-      onDayPress={onDayPress}
-      items={appointmentList}
-      initialNumToRender={5}
-      keyExtractor={keyExtractor}
-      renderEmptyData={renderEmptyData}
-      renderItem={renderItem}
-    />
-  );
-};
-
-const RenderAgendaMemo = memo(RenderAgenda);
+import View from '../../components/wrapperComponent/ViewWrapper';
+import Text from '../../components/wrapperComponent/TextWrapper';
+import {HomeContentLoading} from '../../components/SkeletonContentLoading';
 
 const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
-  const {
-    APPOINTMENTS,
-    ARE_YOU_JOIN,
-    LINK_EXPIRED,
-    NO,
-    RELOAD,
-    YES,
-    YOU_JOINED_CALL,
-    OKAY,
-  } = convertLang(t);
+  const {ARE_YOU_JOIN, LINK_EXPIRED, NO, RELOAD, YES, YOU_JOINED_CALL, OKAY} =
+    convertLang(t);
   const {props, setProps} = useContext(AppContext);
-  const [selectedTab, setSelectedTab] = useState({tabStr: APPOINTMENTS});
-  const [refreshing, onRefresh] = useState(false);
   const [selectedDay, setDay] = useState(new Date());
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
-  const {email, type = ''} = useSelector(state => state.auth);
-  const [isLoading, setLoading] = useState(false);
-  const agendaLoad = useRef(true);
+  const {type = ''} = useSelector(state => state.auth);
+  const [isLoading, setLoading] = useState({
+    tabLoading: false,
+    refreshing: false,
+    initialLoading: false,
+  });
+
   const dispatch = useDispatch();
   const {
     userToken: {jwtToken},
@@ -138,13 +90,9 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   };
 
   const updateData = useCallback(
-    async (date, isRefresh) => {
+    async (date, type) => {
       try {
-        if (isRefresh) {
-          onRefresh(true);
-        } else {
-          setLoading(true);
-        }
+        setLoading({...isLoading, [type]: true});
         await dispatch(
           getScheduledAppointmentsSlice({
             date: moment(date).format('YYYY-MM-DD'),
@@ -158,18 +106,10 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         //   formattedAppointments,
         //   newDate,
         // });
-        if (isRefresh) {
-          onRefresh(false);
-        } else {
-          setLoading(false);
-        }
+        setLoading({...isLoading, [type]: false});
         // setAppointmentList(formattedAppointments);
       } catch (err) {
-        if (isRefresh) {
-          onRefresh(false);
-        } else {
-          setLoading(false);
-        }
+        setLoading({...isLoading, [type]: false});
       }
     },
     [dispatch],
@@ -235,7 +175,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const updateDataMount = useCallback(async () => {
     try {
       if (scheduledAppointmentsData.length === 0) {
-        await updateData(new Date());
+        await updateData(new Date(), 'initialLoading');
       }
     } catch (err) {}
   }, [updateData]);
@@ -263,38 +203,22 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
           getTwilloTokenSlice({
             jwtToken,
             roomId: data?.roomId,
-            userName: data?.patientEmailId,
+            userName:
+              type === MENTOR ? data?.mentorEmailId : data?.patientEmailId,
           }),
         );
         const token = payload?.accessToken;
         setProps({
           ...props,
           token,
-          userName: data?.patientEmailId,
+          userName:
+            type === MENTOR ? data?.mentorEmailId : data?.patientEmailId,
           roomName: data?.roomId,
         });
         navigation.navigate(AV_CHAT_SCREEN);
       } catch (err) {
         console.log('err----------------------', err);
       }
-      // axios
-      //   .get(
-      //     `https://9ktgqcno0j.execute-api.ap-south-1.amazonaws.com/getTwilloToken?roomId=${data?.roomId}&userName=${data?.patient_email_Id}`,
-      //   )
-      //   .then(response => {
-      //     const token = response.data.token ?? response.data;
-      //     setProps({
-      //       ...props,
-      //       token,
-      //       userName: data?.patient_email_Id,
-      //       roomName: data?.roomId,
-      //     });
-
-      //     navigation.navigate('AVChatScreen');
-      //   })
-      //   .catch(err => {
-      //     console.log('err----------------------', err);
-      //   });
     }, t);
   };
 
@@ -310,11 +234,8 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
     const [hours, minutes] = endTime.split(':');
     const now = new Date();
     now.setHours(hours, minutes, 0, 0);
-    let endDateTime = now.getTime();
     let checkExpired = true;
-    if (isLoading) {
-      return null;
-    }
+
     return (
       <TouchableOpacity
         style={{opacity: checkExpired ? 1 : 0.5}}
@@ -341,7 +262,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         }}>
         <View
           style={{
-            shadowColor: darkMode ? '#fff' : 'gray',
+            shadowColor: darkMode ? Colors.white : 'gray',
             ...styles.appointmentAgenda,
           }}>
           <View style={styles.timeColumn}>
@@ -364,17 +285,21 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
 
   const onDayPress = ({dateString}) => {
     setDay(dateString);
-    updateData(dateString);
+    updateData(dateString, 'tabLoading');
   };
 
   const renderEmptyData = () => {
-    if (isLoading) {
+    if (
+      isLoading.initialLoading ||
+      isLoading.refreshing ||
+      isLoading.tabLoading
+    ) {
       return null;
     }
     return (
       <Pressable
         onPress={() => {
-          updateData(selectedDay);
+          updateData(selectedDay, 'tabLoading');
         }}
         style={styles.reloadButton}>
         <Text style={styles.reloadText}>{RELOAD}</Text>
@@ -387,29 +312,17 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? <ScreenLoading /> : null}
-      <RenderAgendaMemo
-        darkMode={darkMode}
-        onRefresh={onRefresh}
-        updateData={updateData}
-        refreshing={refreshing}
-        selectedDay={selectedDay}
-        onDayPress={onDayPress}
-        appointmentList={formatedData}
-        renderEmptyData={renderEmptyData}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
-      {/* <Agenda
+      {isLoading.initialLoading || isLoading.tabLoading ? (
+        <HomeContentLoading isLoading={isLoading} />
+      ) : null}
+      <Agenda
         theme={agendaTheme(darkMode).theme}
         // selected="2024-01-04"
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={async () => {
-              onRefresh(true);
-              await updateData(selectedDay);
-              onRefresh(false);
+            refreshing={isLoading.refreshing}
+            onRefresh={() => {
+              updateData(selectedDay, 'refreshing');
             }}
           />
         }
@@ -423,7 +336,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         keyExtractor={keyExtractor}
         renderEmptyData={renderEmptyData}
         renderItem={renderItem}
-      /> */}
+      />
     </View>
   );
 };

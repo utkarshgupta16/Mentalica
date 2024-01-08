@@ -355,9 +355,9 @@ const App = () => {
           mainClient.current = client;
 
           client.on('conversationJoined', async conversation => {
-            upsertConversationData(conversation);
             updateUnReadCountMessage(conversation);
             conversationJoinedM(conversation);
+            upsertConversationData(conversation);
             conversation.on('typingStarted', participant => {
               updateTypingIndicator(
                 participant,
