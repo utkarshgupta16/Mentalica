@@ -399,3 +399,16 @@ export const dateFormatYY_MM_DD = date => {
     `0${newDate.getDate() < 10 ? `${newDate.getDate()}` : newDate.getDate()}`
   );
 };
+
+export const doubleDigitConverter = val => {
+  return val > 10 ? val : `0${val}`;
+};
+
+export const currentDayMonthYear = () => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  const currentDay = today.getDate();
+
+  return {currentYear, currentMonth, currentDay, today};
+};

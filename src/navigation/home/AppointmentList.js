@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {Pressable, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import React, {
@@ -17,7 +18,7 @@ import {
 import Colors from '../../customs/Colors';
 import convertLang, {MENTOR} from '../../utils/Strings';
 import {AppContext} from '../../../App';
-import {Agenda} from 'react-native-calendars';
+import {Agenda, Calendar} from 'react-native-calendars';
 import moment from 'moment';
 import AIcon from 'react-native-vector-icons/MaterialIcons';
 import {dateFormatYY_MM_DD, _checkPermissions} from '../../utils/utils';
@@ -27,13 +28,15 @@ import {useIsFocused} from '@react-navigation/native';
 import View from '../../components/wrapperComponent/ViewWrapper';
 import Text from '../../components/wrapperComponent/TextWrapper';
 import {HomeContentLoading} from '../../components/SkeletonContentLoading';
-
+import CustomCalendar from '../../components/CustomCalendar';
 const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {ARE_YOU_JOIN, LINK_EXPIRED, NO, RELOAD, YES, YOU_JOINED_CALL, OKAY} =
     convertLang(t);
+  const today = new Date();
   const {props, setProps} = useContext(AppContext);
   const [selectedDay, setDay] = useState(new Date());
+  const [selectedDayIndex, setDayIndex] = useState(today.getDate());
   const {scheduledAppointmentsData = []} = useSelector(state => state.home);
   const {type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState({
@@ -95,7 +98,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         setLoading({...isLoading, [type]: true});
         await dispatch(
           getScheduledAppointmentsSlice({
-            date: moment(date).format('YYYY-MM-DD'),
+            date: moment(new Date(date)).format('YYYY-MM-DD'),
           }),
         );
         // const appointments = res.payload;
@@ -315,7 +318,56 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
       {isLoading.initialLoading || isLoading.tabLoading ? (
         <HomeContentLoading isLoading={isLoading} />
       ) : null}
-      <Agenda
+      {/* <Calendar
+        markedDates={{
+          '2023-06-25': {selected: true, marked: true},
+          '2023-06-24': {marked: true},
+          '2023-06-26': {
+            marked: true,
+            dotColor: 'red',
+            activeOpacity: 0,
+          },
+        }}
+        theme={{
+          backgroundColor: '#ffffff',
+          calendarBackground: '#ffffff',
+          textSectionTitleColor: '#b6c1cd',
+          selectedDayBackgroundColor: '#00adf5',
+          selectedDayTextColor: '#ffffff',
+          todayTextColor: '#00adf5',
+          dayTextColor: '#2d4150',
+          textDisabledColor: '#d9e1e8',
+          dotColor: '#00adf5',
+          selectedDotColor: '#ffffff',
+          arrowColor: '#00adf5',
+          monthTextColor: '#00adf5',
+          indicatorColor: 'blue',
+          textDayFontFamily: 'monospace',
+          textMonthFontFamily: 'monospace',
+          textDayHeaderFontFamily: 'monospace',
+          textDayFontSize: 16,
+          textMonthFontSize: 16,
+          textDayHeaderFontSize: 16,
+        }}
+      /> */}
+      <CustomCalendar
+        selectedDayIndex={selectedDayIndex}
+        selectedDay={selectedDay}
+        onPress={(day, index) => {
+          onDayPress({dateString: day});
+          setDayIndex(index);
+          console.log('onPress', day);
+        }}
+        data={scheduledAppointmentsData || []}
+        type={type}
+        videoCallAction={videoCallAction}
+        darkMode={darkMode}
+        isLoading={isLoading}
+        updateData={updateData}
+      />
+      {/* <Agenda
+        // hideList={true}
+        key={selectedDayIndex}
         theme={agendaTheme(darkMode).theme}
         // selected="2024-01-04"
         refreshControl={
@@ -326,17 +378,18 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
             }}
           />
         }
+        // hideKnob={true}
         // key={darkMode}
         scrollEnabled
         showOnlySelectedDayItems
         getItemLayout={getItemLayout}
         onDayPress={onDayPress}
-        items={appointmentList}
+        items={formatedData}
         initialNumToRender={5}
         keyExtractor={keyExtractor}
         renderEmptyData={renderEmptyData}
         renderItem={renderItem}
-      />
+      /> */}
     </View>
   );
 };

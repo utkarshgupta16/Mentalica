@@ -220,14 +220,15 @@ const App = () => {
 
   const updateUserOnlineOffline = useCallback(
     client => {
-      client.on('updated', function ({user}) {
-        const {notifiable, identity, isOnline} = user || {};
-        updateIsOnlineStatus({
-          notifiable,
-          identity,
-          isOnline,
+      client &&
+        client.on('updated', function ({user}) {
+          const {notifiable, identity, isOnline} = user || {};
+          updateIsOnlineStatus({
+            notifiable,
+            identity,
+            isOnline,
+          });
         });
-      });
     },
     [updateIsOnlineStatus],
   );
@@ -352,40 +353,45 @@ const App = () => {
         )
         // .then(() => TwilioService.getInstance()?.addTokenListener(updateTokenM))
         ?.then(client => {
-          mainClient.current = client;
+          if (client) {
+            mainClient.current = client;
 
-          client.on('conversationJoined', async conversation => {
-            updateUnReadCountMessage(conversation);
-            conversationJoinedM(conversation);
-            upsertConversationData(conversation);
-            conversation.on('typingStarted', participant => {
-              updateTypingIndicator(
-                participant,
-                conversation?.sid,
-                startTyping,
-              );
+            client.on('conversationJoined', async conversation => {
+              updateUnReadCountMessage(conversation);
+              conversationJoinedM(conversation);
+              upsertConversationData(conversation);
+              conversation.on('typingStarted', participant => {
+                updateTypingIndicator(
+                  participant,
+                  conversation?.sid,
+                  startTyping,
+                );
+              });
+              conversation.on('typingEnded', async participant => {
+                updateTypingIndicator(
+                  participant,
+                  conversation?.sid,
+                  endTyping,
+                );
+              });
             });
-            conversation.on('typingEnded', async participant => {
-              updateTypingIndicator(participant, conversation?.sid, endTyping);
+
+            client.on('messageAdded', async message => {
+              updateUnReadCountMessage(message.conversation, {
+                body: message.body,
+                author: message.author,
+                index: message.index,
+                lastMessageTime: new Date(message?.dateCreated).getTime(),
+              });
             });
-          });
 
-          client.on('messageAdded', async message => {
-            updateUnReadCountMessage(message.conversation, {
-              body: message.body,
-              author: message.author,
-              index: message.index,
-              lastMessageTime: new Date(message?.dateCreated).getTime(),
+            client.on('conversationRemoved', async conversation => {
+              dispatch(updateCurrentConversation(''));
+              dispatch(removeConversation(conversation.sid));
             });
-          });
 
-          client.on('conversationRemoved', async conversation => {
-            dispatch(updateCurrentConversation(''));
-            dispatch(removeConversation(conversation.sid));
-          });
-
-          client.on('messageRemoved', removeMessageListener);
-
+            client.on('messageRemoved', removeMessageListener);
+          }
           // client.user.on('updated', async user => {});
         });
     }
@@ -492,9 +498,9 @@ const App = () => {
 
   useEffect(() => {
     updateTokenBackground();
-    return () => {
-      BackgroundTimer.stopBackgroundTimer();
-    };
+    // return () => {
+    //   BackgroundTimer.stopBackgroundTimer();
+    // };
   }, [updateTokenBackground]);
 
   if (__DEV__) {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {styles} from './homeDashboardStyle';
 import convertLang, {MENTOR} from '../../utils/Strings';
@@ -13,7 +14,6 @@ import {useTranslation} from 'react-i18next';
 import ArticlesList from './ArticlesList.js';
 import {View as ViewComponent} from 'react-native';
 import {TabContentLoading} from '../../components/SkeletonContentLoading';
-import Colors from '../../customs/Colors';
 
 const tabsWidth = {
   0: 50,
@@ -92,7 +92,7 @@ const HomeDashboard = ({navigation}) => {
     <View style={styles.container}>
       <>
         {isMe ? (
-          <ViewComponent style={{flexDirection: 'row', marginVertical: 10}}>
+          <ViewComponent style={styles.homeContentLoading}>
             <TabContentLoading height={20} length={2} tabsWidth={tabsWidth} />
           </ViewComponent>
         ) : (

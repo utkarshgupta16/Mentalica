@@ -208,6 +208,7 @@ export const styles = StyleSheet.create({
     color: Colors.dune,
   },
   notDataFoundContainer: {flex: 1, justifyContent: 'center'},
+  homeContentLoading: {flexDirection: 'row', marginVertical: 10},
 });
 
 export const agendaTheme = darkMode => {

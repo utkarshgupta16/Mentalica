@@ -126,7 +126,7 @@ export const TabContentLoading = ({
 };
 
 export const HomeContentLoading = ({isLoading}) => {
-  const top = isLoading.initialLoading ? 0 : 100;
+  const top = isLoading.initialLoading ? 0 : 110;
   const contentArray = generateArray(9);
   const marginBottom = 0;
   return (
