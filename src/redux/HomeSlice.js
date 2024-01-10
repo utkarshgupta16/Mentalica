@@ -402,6 +402,7 @@ const initialState = {
   profileImageUrl: '',
   loadingProfileImageUrl: false,
   isImageLoading: false,
+  selectedDayIndex: new Date().getDate(),
 };
 const HomeSlice = createSlice({
   name: 'home',
@@ -416,7 +417,9 @@ const HomeSlice = createSlice({
     languageChange: (state, action) => {
       state.currentLanguage = action.payload;
     },
-
+    setSelectedDayIndex: (state, action) => {
+      state.selectedDayIndex = action.payload;
+    },
     updateOnLogout: (state, action) => initialState,
     updateChannels: (state, action) => {
       const {
@@ -617,5 +620,6 @@ export const {
   addSlots,
   languageChange,
   setSelectedProfileImagePath,
+  setSelectedDayIndex,
 } = HomeSlice.actions;
 export default HomeSlice.reducer;

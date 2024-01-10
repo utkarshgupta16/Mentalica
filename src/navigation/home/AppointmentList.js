@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   getScheduledAppointmentsSlice,
   getTwilloTokenSlice,
+  setSelectedDayIndex,
 } from '../../redux/HomeSlice';
 import Colors from '../../customs/Colors';
 import convertLang, {MENTOR} from '../../utils/Strings';
@@ -36,8 +37,10 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const today = new Date();
   const {props, setProps} = useContext(AppContext);
   const [selectedDay, setDay] = useState(new Date());
-  const [selectedDayIndex, setDayIndex] = useState(today.getDate());
-  const {scheduledAppointmentsData = []} = useSelector(state => state.home);
+  // const [selectedDayIndex, setDayIndex] = useState(today.getDate());
+  const {scheduledAppointmentsData = [], selectedDayIndex} = useSelector(
+    state => state.home,
+  );
   const {type = ''} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState({
     tabLoading: false,
@@ -355,7 +358,8 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         selectedDay={selectedDay}
         onPress={(day, index) => {
           onDayPress({dateString: day});
-          setDayIndex(index);
+          // setDayIndex(index);
+          dispatch(setSelectedDayIndex(index));
           console.log('onPress', day);
         }}
         data={scheduledAppointmentsData || []}
