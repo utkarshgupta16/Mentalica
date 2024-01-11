@@ -1,7 +1,7 @@
 import {
   // Text,
   Image,
-  // View,
+  View as ViewComponent,
   StyleSheet,
   FlatList,
   Pressable,
@@ -29,6 +29,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {darkModeColor, profileURL} from '../../utils/utils.js';
 import {doctorURI} from '../../icons/index.js';
 const MentorsList = ({navigation, handleShadowVisible}) => {
+  const {
+    isMentorsDataLoadingSearch,
+    mentorsData = [],
+    darkMode,
+  } = useSelector(state => state.home);
   const {email: username} = useSelector(state => state.auth);
   const profileData = useSelector(state => state.home.profileData);
   const [isMentorsDataLoading, setLoading] = useState(false);
@@ -40,12 +45,6 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const {t} = useTranslation();
   const {CHAT, EXPERTIES, SPEAKS, YEARS_OF_EXPERIENCE, FOR, STARTS, MINS} =
     t && convertLang(t);
-
-  const {
-    // isMentorsDataLoading,
-    mentorsData = [],
-    darkMode,
-  } = useSelector(state => state.home);
 
   useEffect(() => {
     (async () => {
@@ -266,7 +265,10 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
 
   return (
     <View style={styles.container}>
-      {isMentorsDataLoading ? <FacebookContentLoading length={5} /> : null}
+      {isMentorsDataLoadingSearch || isMentorsDataLoading ? (
+        <FacebookContentLoading length={5} />
+      ) : null}
+
       <FlatList
         data={mentorsData}
         renderItem={renderItem}
@@ -276,6 +278,15 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
         onScroll={handleOnScroll}
         refreshing={isRefreshing}
         onRefresh={onRefresh}
+        contentContainerStyle={{flexGrow: 1}}
+        ListEmptyComponent={() => {
+          return (
+            <ViewComponent
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <Text>No Data Found</Text>
+            </ViewComponent>
+          );
+        }}
       />
       {showDetails ? (
         <MentorDetails

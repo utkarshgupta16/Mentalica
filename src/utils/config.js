@@ -24,10 +24,19 @@ export const endPoints = {
   getSlots: `${API_URL}/slots?date=`,
   getUrlToUploadImage: `${API_URL}/userpic`,
   getProfileUrl: `${API_URL}/userpic?type=getImage`,
+  getMentorsByName: `${API_URL}/getMentorList?name=`,
+  getMentorsByExperties: `${API_URL}/getMentorList?expertise=`,
+  getMentorsByExperience: `${API_URL}/getMentorList?exp=`,
+  getMentorsByNameAndExperties: `${API_URL}/getMentorList?`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';
 
+export const searchAPI = {
+  name: endPoints.getMentorsByName,
+  experties: endPoints.getMentorsByExperties,
+  experience: endPoints.getMentorsByExperience,
+};
 // export const axiosInstance = axios.create({
 //   baseURL: API_URL,
 //   headers: {

@@ -209,6 +209,47 @@ export const styles = StyleSheet.create({
   },
   notDataFoundContainer: {flex: 1, justifyContent: 'center'},
   homeContentLoading: {flexDirection: 'row', marginVertical: 10},
+  searchIconCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  searchBar: {
+    borderWidth: 1,
+    borderColor: Colors.dustyGray,
+    paddingLeft: 10,
+    marginRight: 10,
+    flex: 1,
+    // width: wp(75),
+    // height: hp(4),
+    borderRadius: 8,
+  },
+  selectSearch: {
+    position: 'absolute',
+    top: 28,
+    bottom: 0,
+    // left: 0,
+    right: 40,
+    borderRadius: 4,
+    paddingVertical: 8,
+    alignItems: 'center',
+    zIndex: 100,
+    elevation: 2,
+    height: 100,
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  selectSearchItem: {
+    marginVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 export const agendaTheme = darkMode => {

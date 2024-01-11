@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
-import {endPoints} from '../utils/config';
+import {endPoints, searchAPI} from '../utils/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PATIENT} from '../utils/Strings';
 import {FIREBASE_SERVER_KEY} from '@env';
@@ -111,6 +111,18 @@ export const getMentorAllSlots = createAsyncThunk(
       console.log('err', err);
       return Promise.reject(new Error(err));
     }
+  },
+);
+
+export const getMentorSearchData = createAsyncThunk(
+  'home/getMentorSearchData',
+  async ({searchText, type}, {getState}) => {
+    var config = {
+      method: 'get',
+      url: `${searchAPI[type]}${searchText}`,
+      headers: headerApi(getState),
+    };
+    return apiMiddleware(config);
   },
 );
 
@@ -382,6 +394,7 @@ const initialState = {
   articleData: [],
 
   isMentorsDataLoading: false,
+  isMentorsDataLoadingSearch: false,
   mentorsData: [],
   channels: [],
   chatToken: '',
@@ -556,6 +569,16 @@ const HomeSlice = createSlice({
     });
     builder.addCase(getAllMentorList.rejected, (state, action) => {
       state.isMentorsDataLoading = false;
+    });
+    builder.addCase(getMentorSearchData.pending, (state, action) => {
+      state.isMentorsDataLoadingSearch = true;
+    });
+    builder.addCase(getMentorSearchData.fulfilled, (state, action) => {
+      state.isMentorsDataLoadingSearch = false;
+      state.mentorsData = action.payload.Items;
+    });
+    builder.addCase(getMentorSearchData.rejected, (state, action) => {
+      state.isMentorsDataLoadingSearch = false;
     });
 
     builder.addCase(getScheduledAppointmentsSlice.pending, state => {

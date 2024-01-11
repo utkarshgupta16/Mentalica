@@ -299,6 +299,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
                 <ActivityIndicator size={'small'} color="green" />
               ) : (
                 <Image
+                  defaultSource={loginFrom === PATIENT ? patientURI : doctorURI}
                   source={
                     uniqueId
                       ? {

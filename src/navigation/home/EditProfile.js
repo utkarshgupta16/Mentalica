@@ -99,7 +99,7 @@ const EditProfile = ({route, navigation, showActionSheetWithOptions}) => {
       await dispatch(
         editProfileSlice({
           // emailId: email_id,
-          type: type == PATIENT ? 'patient' : 'mentor',
+          type: type === PATIENT ? 'patient' : 'mentor',
           ...fields,
         }),
       );
@@ -217,6 +217,21 @@ const EditProfile = ({route, navigation, showActionSheetWithOptions}) => {
     [dispatch],
   );
 
+  const checkImage = async path => {
+    try {
+      await fetch(path, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      }).then(res => {
+        console.log('checkImage res', res);
+      });
+    } catch (err) {
+      console.log('checkImage err', err);
+    }
+  };
+
   return (
     <View
       style={{
@@ -250,11 +265,13 @@ const EditProfile = ({route, navigation, showActionSheetWithOptions}) => {
             <Pressable
               onPress={() => {
                 fadeIn();
+                // checkImage(profileURL(uniqueId));
                 // navigation.navigate('PreviewImage', {
                 //   url: profileURL(uniqueId),
                 // });
               }}>
               <Image
+                defaultSource={loginFrom === PATIENT ? patientURI : doctorURI}
                 source={
                   uniqueId
                     ? {
@@ -324,6 +341,8 @@ const styles = StyleSheet.create({
     height: 80,
     objectFit: 'cover',
     borderRadius: 40,
+    borderWidth: 1,
+    borderColor: Colors.silver,
   },
   imageContainer: {
     justifyContent: 'center',
