@@ -3,13 +3,15 @@
 import React, {useState, useCallback, useEffect, useRef, useMemo} from 'react';
 import {
   ActivityIndicator,
-  Text,
+  // Text,
   View,
   ImageBackground,
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Platform,
 } from 'react-native';
+import Text from '../../../components/wrapperComponent/TextWrapper';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {TwilioService} from '../ConversationService';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -25,6 +27,7 @@ import Colors from '../../../customs/Colors';
 import {whatsAppBackgroundURI} from '../../../assets/images';
 import {
   createFormData,
+  darkModeColor,
   initialMediaData,
   removeMessage,
 } from '../../../utils/utils';
@@ -40,6 +43,7 @@ const ChatRoomScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
   const {channelId, identity, otherUser = {}} = route.params;
   const typingData = useSelector(state => state?.typingData);
+  const darkMode = useSelector(state => state?.home.darkMode);
   let [messages, setMessages] = useState([]);
   let [medias, selectedMedia] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -323,25 +327,22 @@ const ChatRoomScreen = ({route, navigation}) => {
           <MaterialIcons
             name="arrow-back-ios"
             size={16}
-            color={colors.black}
+            color={darkModeColor(darkMode)}
             style={{padding: 2, paddingRight: 5}}
           />
           <View>
             <Text style={styles.headerChatRoomStyle}>
               {otherUser?.username}
             </Text>
-            {typingInfo.length ? (
-              <Text
-                style={{
-                  fontSize: 14,
-                  paddingVertical: 3,
-                  color: Colors.purple,
-                }}>
-                {'Typing...'}
-              </Text>
-            ) : (
-              <View style={{paddingVertical: 11}} />
-            )}
+            <Text
+              style={{
+                fontSize: 14,
+                paddingVertical: 3,
+                color: Colors.purple,
+                opacity: typingInfo.length ? 1 : 0,
+              }}>
+              {'Typing...'}
+            </Text>
           </View>
         </TouchableOpacity>
       ),
@@ -394,7 +395,7 @@ const ChatRoomScreen = ({route, navigation}) => {
         );
       },
     });
-  }, [navigation, otherUser?.username, selectedMessages, typingInfo]);
+  }, [navigation, otherUser?.username, selectedMessages, typingInfo, darkMode]);
 
   const renderActions = props => (
     <RenderActions actionsProps={props} selectedMedia={selectedMedia} />
@@ -547,7 +548,9 @@ const ChatRoomScreen = ({route, navigation}) => {
         ) : (
           <GiftedChat
             messagesContainerStyle={{paddingBottom: 10}}
-            containerStyle={{paddingVertical: 5}}
+            containerStyle={{
+              paddingVertical: Platform.OS === 'android' ? 0 : 5,
+            }}
             onPress={async (args, currentMessage) => {
               const isMe = currentMessage?.user?._id === identity;
               isMe && selectMessageToDeleteM(currentMessage);

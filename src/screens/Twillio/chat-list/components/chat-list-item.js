@@ -1,9 +1,11 @@
 import moment from 'moment';
 import React, {useEffect} from 'react';
-import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, Image, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import Text from '../../../../components/wrapperComponent/TextWrapper';
+// import View from '../../../../components/wrapperComponent/ViewWrapper';
 import Colors from '../../../../customs/Colors';
-import {getTwilloChatTokenSlice} from '../../../../redux/HomeSlice';
+// import {getTwilloChatTokenSlice} from '../../../../redux/HomeSlice';
 import {dateFormat, profileURL} from '../../../../utils/utils';
 import {colors} from '../../colors';
 import ShowOnlineBatch from './ShowOnlineBatch';
@@ -25,22 +27,18 @@ export function ChatListItem({
       onLongPress={onLongPress}
       style={styles.card}
       onPress={onPress}>
-      <View>
-        {channel?.image ? (
-          <Image style={styles.cardIcon} source={channel?.image} />
-        ) : (
-          <Image
-            source={
-              otherUser?.profileId
-                ? {
-                    cache: 'reload',
-                    uri: profileURL(otherUser?.profileId),
-                  }
-                : require('../../../../icons/patient.jpg')
-            }
-            style={styles.cardIcon}
-          />
-        )}
+      <View style={{position: 'relative'}}>
+        <Image
+          source={
+            otherUser?.profileId
+              ? {
+                  cache: 'reload',
+                  uri: profileURL(otherUser?.profileId),
+                }
+              : require('../../../../icons/patient.jpg')
+          }
+          style={styles.cardIcon}
+        />
         <ShowOnlineBatch
           participantStatus={participantStatus}
           otherUser={otherUser}
@@ -103,6 +101,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
+    objectFit: 'cover',
   },
   cardText: {
     fontSize: 15,

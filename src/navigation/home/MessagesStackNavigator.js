@@ -5,7 +5,7 @@ import {TouchableOpacity, Text, Platform} from 'react-native';
 import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
 import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
 import ChatRoomScreen from '../../screens/Twillio/chat-room/chat-room-screen';
-import VideoPlayer from '../../components/VideoPlayer';
+// import VideoPlayer from '../../components/VideoPlayer';
 import DocViewer from '../../components/DocViewer';
 import Messages from './Messages';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
@@ -23,9 +23,9 @@ const MessagesStackNavigator = ({navigation, route}) => {
         name={MESSAGES}
         component={ChatListScreen}
         options={({navigation}) => ({
-          title: 'Chat Conversation',
+          title: 'Conversation List',
           headerLeft: null,
-          headerShadowVisible: false,
+          headerShadowVisible: true,
         })}
       />
 
@@ -44,7 +44,7 @@ const MessagesStackNavigator = ({navigation, route}) => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{flexDirection: 'row'}}>
-              {currentLanguage == EN ? (
+              {currentLanguage === EN ? (
                 <MaterialIcons
                   name="arrow-back-ios"
                   size={16}
@@ -65,14 +65,14 @@ const MessagesStackNavigator = ({navigation, route}) => {
           headerShadowVisible: false,
         })}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={'VideoPlayer'}
         component={VideoPlayer}
         options={({navigation}) => ({
           title: '',
           headerShadowVisible: false,
         })}
-      />
+      /> */}
       <Stack.Screen
         name={'DocViewer'}
         component={DocViewer}

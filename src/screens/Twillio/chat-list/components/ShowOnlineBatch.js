@@ -21,8 +21,9 @@ const styles = StyleSheet.create({
   containerStyle: {
     marginLeft: 5,
     position: 'absolute',
-    right: 0,
+    right: -5,
     top: 7,
+    zIndex: 100,
   },
   batchStyle: {
     backgroundColor: Colors.emerald,

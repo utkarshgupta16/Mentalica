@@ -62,6 +62,7 @@ import {PREVIEW_URL} from '@env';
 import {changeLanguage} from 'i18next';
 import axios from 'axios';
 import {profileURL} from '../../utils/utils.js';
+import {doctorURI, patientURI} from '../../icons';
 const Profile = ({navigation, showActionSheetWithOptions}) => {
   const {t} = useTranslation();
   const {
@@ -93,13 +94,14 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
     currentLanguage,
     urlForImageUpload,
     selectedProfileImagePath,
+    isImageLoading,
   } = useSelector(state => state.home);
   const {
     profileData = {},
     isProfileLoading,
     profileImageUrl,
   } = useSelector(state => state.home);
-  const [imageLoading, setOnLoadingImage] = useState(false);
+  // const [imageLoading, setOnLoadingImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [slotState, setSlotState] = useState({startTime: '', endTime: ''});
   const [isOpen, setIsOpen] = useState(false);
@@ -118,20 +120,21 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
     expertise = '',
     uniqueId,
   } = profileData || {};
+
   const [slots, addSlots] = useState(profileData ? profileData.slots : []);
   const isProfile = true;
   const DUMMY_ISSUES =
     type === PATIENT ? [feel] : expertise ? expertise?.split(',') : [];
 
   const profileDetailsItems = [
-    {
-      label: 'Edit profile',
-      screen: 'EditProfilePatient',
-      props: profileData || {},
-      onPress: () => {
-        navigation.navigate('EditProfilePatient', {data: profileData});
-      },
-    },
+    // {
+    //   label: 'Edit profile',
+    //   screen: 'EditProfilePatient',
+    //   props: profileData || {},
+    //   onPress: () => {
+    //     navigation.navigate('EditProfilePatient', {data: profileData});
+    //   },
+    // },
 
     {
       label: 'Contact details',
@@ -260,7 +263,7 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
 
   const uploadImageToServer = async (data, signedUrl) => {
     if (signedUrl) {
-      setOnLoadingImage(true);
+      // setOnLoadingImage(true);
       const fileData = await RNFS.readFile(data?.path, 'base64');
       const _data = await decodeBase64(fileData);
 
@@ -272,9 +275,9 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
             'Content-Type': 'image/jpeg',
           },
         });
-        setOnLoadingImage(false);
+        // setOnLoadingImage(false);
       } catch (e) {
-        setOnLoadingImage(false);
+        // setOnLoadingImage(false);
 
         console.log('Error while fetching', e);
       }
@@ -283,25 +286,29 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
 
   return (
     <ScrollView
-      style={{flex: 1, backgroundColor: darkMode ? '#000' : '#fff'}}
+      style={{flex: 1, backgroundColor: darkMode ? Colors.black : Colors.white}}
       showsVerticalScrollIndicator={false}>
       <View style={styles.topPartContainer}>
         <View style={styles.profileDetailsContainer}>
-          <Pressable onPress={handleUploadImage}>
+          <Pressable
+            onPress={() => {
+              navigation.navigate('EditProfilePatient', {data: profileData});
+            }}>
             <View style={styles.imageContainer}>
-              {imageLoading ? (
+              {isImageLoading ? (
                 <ActivityIndicator size={'small'} color="green" />
               ) : (
                 <Image
+                  defaultSource={loginFrom === PATIENT ? patientURI : doctorURI}
                   source={
                     uniqueId
                       ? {
                           cache: 'reload',
-                          uri: profileURL(uniqueId),
+                          uri: profileURL(uniqueId) + '?time=' + new Date(),
                         }
                       : loginFrom === PATIENT
-                      ? require('../../icons/patient.jpg')
-                      : require('../../icons/doctor.jpg')
+                      ? patientURI
+                      : doctorURI
                   }
                   style={styles.image}
                 />
@@ -310,17 +317,13 @@ const Profile = ({navigation, showActionSheetWithOptions}) => {
           </Pressable>
           <View style={styles.details}>
             <Text
-              numberOfLines={1}
+              numberOfLines={2}
               ellipsizeMode="tail"
               style={{
                 ...styles.nameText,
                 width: screenWidth - 100,
-                // borderWidth: 1,
               }}>
-              {/* {firstName + ' ' + lastName} */}
-              {(firstName + ' ' + lastName).length > 10
-                ? (firstName + ' ' + lastName).substring(0, 21 - 3) + '...'
-                : firstName + ' ' + lastName}
+              {firstName + ' ' + lastName}
             </Text>
           </View>
         </View>
@@ -478,6 +481,7 @@ const styles = StyleSheet.create({
   image: {
     width: 56,
     height: 56,
+    objectFit: 'cover',
   },
   details: {
     // justifyContent: 'space-between',

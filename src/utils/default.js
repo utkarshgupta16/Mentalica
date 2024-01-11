@@ -236,3 +236,20 @@ export const DUTY_ITEM = t => {
     {label: STUDENT, value: 'student'},
   ];
 };
+
+export const monthsArray = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+export const dayNameArray = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

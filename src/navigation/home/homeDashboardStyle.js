@@ -2,8 +2,8 @@ import {StyleSheet} from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
-} from '../../../utils/Responsive';
-import Colors from '../../../customs/Colors';
+} from '../../utils/Responsive';
+import Colors from '../../customs/Colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     marginLeft: wp(2),
     color: Colors.black,
   },
+  loadingText: {flexDirection: 'row', justifyContent: 'space-between'},
   dateText: {
     marginBottom: hp(3),
     fontSize: 15,
@@ -70,7 +71,7 @@ export const styles = StyleSheet.create({
     width: wp(52),
     paddingHorizontal: wp(4),
     paddingVertical: hp(2),
-    backgroundColor: '#eab676',
+    backgroundColor: Colors.saffron,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
     borderLeftWidth: 0.3,
@@ -200,7 +201,54 @@ export const styles = StyleSheet.create({
   agendaText: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#33A3DC',
+    color: Colors.blueDarkColor,
+  },
+  notDataFound: {
+    textAlign: 'center',
+    color: Colors.dune,
+  },
+  notDataFoundContainer: {flex: 1, justifyContent: 'center'},
+  homeContentLoading: {flexDirection: 'row', marginVertical: 10},
+  searchIconCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  searchBar: {
+    borderWidth: 1,
+    borderColor: Colors.dustyGray,
+    paddingLeft: 10,
+    marginRight: 10,
+    flex: 1,
+    // width: wp(75),
+    // height: hp(4),
+    borderRadius: 8,
+  },
+  selectSearch: {
+    position: 'absolute',
+    top: 28,
+    bottom: 0,
+    // left: 0,
+    right: 40,
+    borderRadius: 4,
+    paddingVertical: 8,
+    alignItems: 'center',
+    zIndex: 100,
+    elevation: 2,
+    height: 100,
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  selectSearchItem: {
+    marginVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

@@ -1,40 +1,41 @@
 import {StyleSheet, FlatList, Pressable, ActivityIndicator} from 'react-native';
-import View from '../../wrapperComponent/ViewWrapper.js';
-import Text from '../../wrapperComponent/TextWrapper.js';
-import React, {useEffect, useState} from 'react';
+import View from '../../components/wrapperComponent/ViewWrapper.js';
+import Text from '../../components/wrapperComponent/TextWrapper.js';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllArticles, isArticle} from '../../../redux/HomeSlice';
+import {getAllArticles, isArticle} from '../../redux/HomeSlice';
 import Modal from 'react-native-modal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {
-  heightPercentageToDP,
-  widthPercentageToDP,
-} from '../../../utils/Responsive.js';
-import Colors from '../../../customs/Colors.js';
-import ScreenLoading from '../../ScreenLoading.js';
+import Colors from '../../customs/Colors.js';
 import {useTranslation} from 'react-i18next';
+import {ArticleContentLoader} from '../../components/SkeletonContentLoading';
+import {darkModeColor} from '../../utils/utils.js';
 
 const ArticlesList = ({handleShadowVisible}) => {
   const {t} = useTranslation();
 
   const dispatch = useDispatch();
-  const [articlesData = [], setArticlesData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
+  const [isArticleDataLoading, setArticleLoading] = useState(false);
 
-  const {
-    isArticleDataLoading,
-    articleData = [],
-    darkMode,
-  } = useSelector(state => state.home);
+  const {articleData = [], darkMode} = useSelector(state => state.home);
+
+  const getAllArticlesUpdatedData = useCallback(async () => {
+    if (articleData.length === 0) {
+      try {
+        setArticleLoading(true);
+        await dispatch(getAllArticles());
+        setArticleLoading(false);
+      } catch (err) {
+        setArticleLoading(false);
+      }
+    }
+  }, [dispatch]);
 
   useEffect(() => {
-    (async () => {
-      if (articleData.length === 0) {
-        await dispatch(getAllArticles());
-      }
-    })();
-  }, [articleData, dispatch]);
+    getAllArticlesUpdatedData();
+  }, [getAllArticlesUpdatedData]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -43,28 +44,14 @@ const ArticlesList = ({handleShadowVisible}) => {
   };
 
   const renderItem = ({item, index}) => {
+    const shadowColor = darkModeColor(darkMode);
     return (
       <Pressable
         key={index}
         onPress={() => {
           setModalVisible(true);
         }}>
-        <View
-          isCard={true}
-          style={{
-            margin: 10,
-            padding: 10,
-            borderRadius: 8,
-            shadowColor: darkMode ? 'white' : 'gray',
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowOpacity: 0.87,
-            shadowRadius: 4,
-            elevation: 3,
-            backgroundColor: '#fff',
-          }}>
+        <View isCard={true} style={[styles.saveContainer, {shadowColor}]}>
           <View isCard={true} style={styles.titleCont}>
             <Text style={styles.title}>{t(item?.title)}</Text>
             <Pressable onPress={() => {}}>
@@ -97,35 +84,21 @@ const ArticlesList = ({handleShadowVisible}) => {
 
   return (
     <View style={styles.container}>
-      {isArticleDataLoading ? <ScreenLoading /> : null}
+      {isArticleDataLoading ? <ArticleContentLoader /> : null}
       <Modal
         hasBackdrop={true}
         isVisible={isModalVisible}
         // onBackdropPress={() => {
         //   setModalVisible(false);
         // }}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 10,
-          marginVertical: 50,
-          paddingHorizontal: 20,
-        }}>
+        style={styles.titleView}>
         <View style={styles.modalArticleView}>
-          <Text
-            style={{
-              marginBottom: 10,
-              fontWeight: '600',
-              fontSize: 18,
-            }}>
-            {articleData?.title}
-          </Text>
+          <Text style={styles.articleTitle}>{articleData?.title}</Text>
 
           <Text>{articleData?.body}</Text>
           <View style={styles.closeBtn}>
             <Pressable onPress={() => setModalVisible(false)}>
-              <Text style={{fontWeight: '600'}}>Close</Text>
+              <Text style={styles.closeText}>Close</Text>
             </Pressable>
           </View>
         </View>
@@ -169,6 +142,34 @@ export default ArticlesList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  closeText: {fontWeight: '600', color: Colors.dune},
+  saveContainer: {
+    margin: 10,
+    padding: 10,
+    borderRadius: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.87,
+    shadowRadius: 4,
+    elevation: 3,
+    backgroundColor: '#fff',
+  },
+  articleTitle: {
+    marginBottom: 10,
+    fontWeight: '600',
+    fontSize: 18,
+  },
+  titleView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 10,
+    marginVertical: 50,
+    paddingHorizontal: 20,
   },
   flatlistContainer: {
     padding: 10,

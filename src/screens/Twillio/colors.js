@@ -10,6 +10,6 @@ const colors = {
   windsor: '#402583',
   ghost: '#bbbdc5',
   snow: '#FBFBFB',
-  purple:"#753BBD"
+  purple: '#753BBD',
 };
 export {colors};

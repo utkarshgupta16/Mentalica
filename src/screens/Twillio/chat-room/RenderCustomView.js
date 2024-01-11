@@ -41,7 +41,6 @@ const RenderCustomView = ({
     });
     return (
       <View>
-        <Text>{text}</Text>
         <MessageMedia
           key={_id}
           navigation={navigation}
@@ -57,30 +56,31 @@ const RenderCustomView = ({
         />
       </View>
     );
-    return (
-      <Pressable
-        onPress={() => {
-          if (document?.includes('twilio')) {
-            if (Platform.OS === 'android') {
-              Linking.openURL(document);
-            } else {
-              navigation.navigate('DocViewer', {
-                documents: document,
-              });
-            }
-          } else {
-            openFile(document);
-          }
-        }}
-        style={styles.customViewPressStyle}>
-        {fileExtImage[extension] ? (
-          <Image
-            source={{uri: fileExtImage[extension]}}
-            style={styles.customImageStyle}
-          />
-        ) : null}
-      </Pressable>
-    );
+
+    // return (
+    //   <Pressable
+    //     onPress={() => {
+    //       if (document?.includes('twilio')) {
+    //         if (Platform.OS === 'android') {
+    //           Linking.openURL(document);
+    //         } else {
+    //           navigation.navigate('DocViewer', {
+    //             documents: document,
+    //           });
+    //         }
+    //       } else {
+    //         openFile(document);
+    //       }
+    //     }}
+    //     style={styles.customViewPressStyle}>
+    //     {fileExtImage[extension] ? (
+    //       <Image
+    //         source={{uri: fileExtImage[extension]}}
+    //         style={styles.customImageStyle}
+    //       />
+    //     ) : null}
+    //   </Pressable>
+    // );
   }
   return null;
 };

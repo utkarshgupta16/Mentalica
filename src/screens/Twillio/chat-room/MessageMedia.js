@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     resizeMode: 'cover',
     alignItems: 'center',
+    marginTop: 5,
   },
   imageActive: {
     flex: 1,

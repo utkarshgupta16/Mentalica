@@ -20,7 +20,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {login, getType} from '../redux/AuthSlice';
 import {FORGOT_PASSWORD, MENTOR_SIGN_UP} from '../utils/route';
 import {Auth} from 'aws-amplify';
-import {getTwilloChatTokenSlice, setAttributes} from '../redux/HomeSlice';
+import {setAttributes} from '../redux/HomeSlice';
 import {useTranslation} from 'react-i18next';
 import Loader from '../customs/Loader';
 import {confirmSignUp, getCurrentUserInfo} from '../AWS/AWSConfiguration';
@@ -54,9 +54,7 @@ const LoginScreen = ({navigation}) => {
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
   // bhandari.tribhuwan@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState(
-    'bhandari.tribhuwan@thinksys.com',
-  );
+  const [enteredEmail, setEnteredEmail] = useState('bhandari.tribhuwan@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
   // const [enteredEmail, setEnteredEmail] = useState(

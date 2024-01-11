@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -59,8 +59,6 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
     SCHEDULE_APPOINTMENT,
   } = t && convertLang(t);
 
-  console.log('threeDaysSlots ============>>>>>>>>>>>>>>>', threeDaysSlots);
-
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -68,21 +66,22 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
         getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
       setLoading(false);
+      // handleSelectday(TODAY);
     })();
   }, [dispatch, selectedMentorData?.uniqueId]);
 
-  const handleSelectday = day => {
-    if (day == TODAY) {
+  const handleSelectday = useCallback(day => {
+    if (day === TODAY) {
       setSelectedDay({dayStr: TODAY});
       setBookSlots(threeDaysSlots[0]?.slots);
-    } else if (day == TOMORROW) {
+    } else if (day === TOMORROW) {
       setSelectedDay({dayStr: TOMORROW});
       setBookSlots(threeDaysSlots[1]?.slots);
-    } else if (day == DAY_AFTER_TOMORROW) {
+    } else if (day === DAY_AFTER_TOMORROW) {
       setSelectedDay({dayStr: DAY_AFTER_TOMORROW});
       setBookSlots(threeDaysSlots[2]?.slots);
     }
-  };
+  }, []);
 
   const slotsDaysTab = day => {
     return (
@@ -90,16 +89,16 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
         <View
           style={{
             backgroundColor:
-              selectedDay.dayStr == day ? Colors.darkPaleMintColor : null,
+              selectedDay.dayStr === day ? Colors.darkPaleMintColor : null,
             paddingHorizontal: 10,
             paddingVertical: 5,
             borderRadius: 4,
           }}>
           <Text
             style={{
-              color: selectedDay.dayStr == day ? Colors.white : Colors.black,
-              fontWeight: selectedDay.dayStr == day ? '700' : '500',
-              fontSize: selectedDay.dayStr == day ? 16 : 15,
+              color: selectedDay.dayStr === day ? Colors.white : Colors.black,
+              fontWeight: selectedDay.dayStr === day ? '700' : '500',
+              fontSize: selectedDay.dayStr === day ? 16 : 15,
             }}>
             {day}
           </Text>
@@ -214,7 +213,7 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
                         paddingHorizontal: 8,
                         paddingVertical: 3,
                         backgroundColor:
-                          slot == selectedSlot
+                          slot === selectedSlot
                             ? Colors.darkPaleMintColor
                             : 'gray',
                         marginBottom: 10,

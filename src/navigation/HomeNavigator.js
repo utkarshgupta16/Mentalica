@@ -12,10 +12,10 @@ import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
 import Colors from '../customs/Colors';
 import {useTranslation} from 'react-i18next';
-import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
-import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
+// import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
+// import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
-import {Text, Platform} from 'react-native';
+import {Text, Platform, Pressable} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
 import {
   MESSAGES_TAB_ROUTE,
@@ -23,10 +23,12 @@ import {
   CHATS_SCREENS,
   CHAT_ROOM_SCREEN,
   CHATS_SCREEN,
+  HOME as HOME_ROUTE,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import HomeDashboard from './home/HomeDashboard';
 const {createNativeStackNavigator} = require('@react-navigation/native-stack');
 
 const Tab = createBottomTabNavigator();
@@ -77,42 +79,81 @@ const renderTabTitle = (isFocused, tabName) => {
   return title;
 };
 
-const MentorDashboardStack = () => {
+const videoCallAV = navigation => {
+  return (
+    <Stack.Screen
+      name="AVChatScreen"
+      component={AVChatScreen}
+      options={{
+        title: '',
+        headerLeft: () => {
+          return (
+            <Pressable onPress={() => navigation.goBack()}>
+              <MaterialIcons name="arrow-back-ios" size={16} color={'black'} />
+            </Pressable>
+          );
+        },
+      }}
+    />
+  );
+};
+
+// const MentorDashboardStack = ({navigation}) => {
+//   return (
+//     // <NavigationContainer>
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="MentorDashboard"
+//         component={MentorDashboard}
+//         options={{headerShown: false}}
+//       />
+//       {videoCallAV(navigation)}
+//     </Stack.Navigator>
+//     // </NavigationContainer>
+//   );
+// };
+
+// const PatientDashboardStack = ({navigation}) => {
+//   return (
+//     // <NavigationContainer>
+//     <Stack.Navigator initialRouteName="PatientDashboard">
+//       <Stack.Screen
+//         name="PatientDashboard"
+//         component={PatientDashboard}
+//         options={{headerShown: false}}
+//       />
+//       {videoCallAV(navigation)}
+//     </Stack.Navigator>
+//     // </NavigationContainer>
+//   );
+// };
+
+const DashboardStack = ({navigation}) => {
   return (
     // <NavigationContainer>
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="HomeDashboard">
       <Stack.Screen
-        name="MentorDashboard"
-        component={MentorDashboard}
+        name="HomeDashboard"
+        component={HomeDashboard}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="AVChatScreen"
-        component={AVChatScreen}
-        options={{headerShown: false}}
-      />
+      {videoCallAV(navigation)}
     </Stack.Navigator>
     // </NavigationContainer>
   );
 };
 
-const PatientDashboardStack = () => {
-  return (
-    // <NavigationContainer>
-    <Stack.Navigator initialRouteName="PatientDashboard">
-      <Stack.Screen
-        name="PatientDashboard"
-        component={PatientDashboard}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="AVChatScreen"
-        component={AVChatScreen}
-        options={{headerShown: false}}
-      />
-    </Stack.Navigator>
-    // </NavigationContainer>
-  );
+const childRouteName = navigation => {
+  const {index, routes = []} = navigation.getState();
+  const {
+    state: {index: childIndex = undefined, routes: childRoutes = []} = {},
+  } = routes[index];
+  let childName = '';
+  if (childIndex) {
+    const {name} = childRoutes[childIndex];
+    childName = name;
+  }
+  return childName;
 };
 
 const HomeNavigator = () => {
@@ -137,24 +178,44 @@ const HomeNavigator = () => {
         tabBarActiveTintColor: 'teal',
         tabBarInactiveTintColor: '#89B9AD',
       })}>
-      {type === MENTOR ? (
+      <Tab.Screen
+        name={HOME_ROUTE}
+        component={DashboardStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <MaterialIcons name="home" size={size} color={color} />
+          ),
+          tabBarLabel: ({focused}) => {
+            return renderTabTitle(focused, HOME);
+          },
+        }}
+      />
+      {/* {type === MENTOR ? (
         <Tab.Screen
           name={HOME}
           component={MentorDashboardStack}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" size={size} color={color} />
-            ),
-            tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, HOME);
-            },
+          options={({navigation}) => {
+            return {
+              tabBarIcon: ({color, size}) => (
+                <MaterialIcons name="home" size={size} color={color} />
+              ),
+              tabBarLabel: ({focused}) => {
+                return renderTabTitle(focused, HOME);
+              },
+              tabBarStyle: {
+                display:
+                  childRouteName(navigation) === 'AVChatScreen'
+                    ? 'none'
+                    : 'flex',
+              },
+            };
           }}
         />
       ) : (
         <Tab.Screen
           name={HOME}
-          component={PatientDashboardStack}
+          component={DashboardStack}
           options={{
             headerShown: false,
             tabBarIcon: ({color, size}) => (
@@ -165,7 +226,7 @@ const HomeNavigator = () => {
             },
           }}
         />
-      )}
+      )} */}
       {type === MENTOR ? (
         <Tab.Screen
           name={INVOICING}
@@ -198,18 +259,6 @@ const HomeNavigator = () => {
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
         options={({navigation}) => {
-          const {index, routes = []} = navigation.getState();
-          const {
-            state: {
-              index: childIndex = undefined,
-              routes: childRoutes = [],
-            } = {},
-          } = routes[index];
-          let childName = '';
-          if (childIndex) {
-            const {name} = childRoutes[childIndex];
-            childName = name;
-          }
           return {
             headerShown: false,
             tabBarIcon: ({color, size}) => (
@@ -220,7 +269,8 @@ const HomeNavigator = () => {
             },
             tabBarStyle: {
               display:
-                childName === CHAT_ROOM_SCREEN || childName === 'DocViewer'
+                childRouteName(navigation) === CHAT_ROOM_SCREEN ||
+                childRouteName(navigation) === 'DocViewer'
                   ? 'none'
                   : 'flex',
             },

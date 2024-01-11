@@ -1,4 +1,5 @@
 const Colors = {
+  transparent: 'transparent',
   paleMintColor: '#F0F8FF',
   darkPaleMintColor: '#4A9393',
   black: '#000000',
@@ -30,6 +31,12 @@ const Colors = {
   emerald: '#09bd55',
   whatsappColor: '#dcf8c6',
   primaryBlue1: '#283747',
+  shadowColor: '#6f6d6d52',
+  shadowColor1: '#6f6d6d7a',
+  silver: '#CCCCCC',
+  primaryColor: '#f3f3f3',
+  secondaryColor: '#ecebeb',
+  lightBlack: '#45474B',
 };
 
 export default Colors;

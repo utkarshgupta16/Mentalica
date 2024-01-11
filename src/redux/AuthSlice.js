@@ -52,6 +52,9 @@ const Authslice = createSlice({
       state.email = action.payload.email;
       state.userToken = action.payload.userToken;
     },
+    updateToken: (state, action) => {
+      state.userToken = action.payload.userToken;
+    },
     getType: (state, action) => {
       state.type = action.payload;
     },
@@ -64,5 +67,6 @@ const Authslice = createSlice({
   },
 });
 
-export const {login, logout, loginClient, getType} = Authslice.actions;
+export const {login, logout, updateToken, loginClient, getType} =
+  Authslice.actions;
 export default Authslice.reducer;
