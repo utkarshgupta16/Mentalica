@@ -54,8 +54,6 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   } = useSelector(state => state.auth);
 
   const {darkMode} = useSelector(state => state.home);
-  const isFocus = useIsFocused();
-
   const setDateTime = time => {
     const [hours, minutes] = time.split(':');
     const now = new Date();

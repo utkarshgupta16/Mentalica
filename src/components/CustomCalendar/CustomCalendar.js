@@ -17,22 +17,23 @@ const CustomCalendar = props => {
   const {onPress, selectedDayIndex, isLoading, selectedDay, updateData} =
     props || {};
   const [selectedMonth, setMonth] = useState(currentMonth);
-  let heights = [];
+  const [isShowYears, setShowYears] = useState(false);
+  const [selectedYear, setYear] = useState(currentYear);
+  let scrollPosition = 0;
   const listRef = useRef();
+  const yearRef = useRef();
   const lastDayOfMonth = new Date(currentYear, selectedMonth + 1, 0).getDate();
   const selectedMonthNew =
     selectedMonth > 10 ? selectedMonth + 1 : `0${selectedMonth + 1}`;
-  useEffect(() => {
-    if (selectedDayIndex - 7 > 0) {
+
+  const onRowLayoutChange = (index, event) => {
+    if (index <= selectedDayIndex) {
+      scrollPosition = scrollPosition + event.nativeEvent.layout.x + 10;
       listRef?.current?.scrollToOffset({
-        offset: 60 * (selectedDayIndex - 7),
+        offset: scrollPosition,
         animated: true,
       });
     }
-  }, []);
-
-  const onRowLayoutChange = (index, event) => {
-    heights[index] = event.nativeEvent.layout.height;
   };
 
   const arrowButton = ({onPress, opacity, iconName, isDisabled}) => {
@@ -100,6 +101,7 @@ const CustomCalendar = props => {
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index}
+          contentContainerStyle={{zIndex: 1}}
           renderItem={({item, index}) => {
             const day = index + 1 > 10 ? index + 1 : `0${index + 1}`;
             const backgroundColor =
@@ -113,6 +115,7 @@ const CustomCalendar = props => {
 
             return (
               <View
+                key={index}
                 onLayout={e => onRowLayoutChange(index, e)}
                 style={[styles.alignItemsCommon, {marginLeft: 15}]}>
                 <Pressable
@@ -122,7 +125,6 @@ const CustomCalendar = props => {
                       item + 1,
                     );
                   }}
-                  key={index}
                   style={[
                     styles.buttonStyle,
                     {
@@ -154,6 +156,44 @@ const CustomCalendar = props => {
           }}
         />
       </View>
+      {/* <View style={styles.yearStyle}>
+        {isShowYears ? (
+          <View style={{backgroundColor: 'white', paddingHorizontal: 20}}>
+            <FlatList
+              ref={yearRef}
+              showsVerticalScrollIndicator={false}
+              data={Array.from(Array(100).keys()) || []}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => index}
+              renderItem={({item, index}) => {
+                let year = item + 1970;
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setYear(year);
+                      setShowYears(pre => !pre);
+                    }}
+                    style={{
+                      marginTop: 10,
+                      backgroundColor:
+                        selectedYear === year
+                          ? Colors.emerald
+                          : Colors.transparent,
+                    }}>
+                    <Text
+                      style={{
+                        color:
+                          selectedYear === year ? Colors.white : Colors.dune,
+                      }}>
+                      {year}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            />
+          </View>
+        ) : null}
+      </View> */}
       <CalendarList {...props} />
       {/* {props?.data?.length ? (
         <CalendarList {...props} />

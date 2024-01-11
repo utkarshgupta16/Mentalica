@@ -36,6 +36,30 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 5,
   },
+  yearStyle: {
+    position: 'absolute',
+    top: 22,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+    shadowColor: '#cc6600',
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
+    height: 165,
+    backgroundColor: Colors.transparent,
+  },
+  containerYear: {
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+  },
 });
 
 export default styles;

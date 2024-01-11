@@ -54,7 +54,7 @@ const LoginScreen = ({navigation}) => {
   //'gauravatlive+3@gmail.com' //patient
   //'gauravatlive+2@gmail.com' //mentor
   // bhandari.tribhuwan@thinksys.com
-  const [enteredEmail, setEnteredEmail] = useState('gauravatlive+3@gmail.com');
+  const [enteredEmail, setEnteredEmail] = useState('bhandari.tribhuwan@thinksys.com');
   const [enteredPassword, setEnteredPassword] = useState('Password@123');
 
   // const [enteredEmail, setEnteredEmail] = useState(
