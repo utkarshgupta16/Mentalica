@@ -43,6 +43,7 @@ import {
   PROFILE_TAB_ROUTE,
 } from '../../utils/route.js';
 import {validateEmail} from '../../utils/emailValidation.js';
+import FloatingLabelInput from '../../components/FloatingLabelInput.js';
 
 const MentorSignUp = ({navigation}) => {
   const {t} = useTranslation();
@@ -117,8 +118,8 @@ const MentorSignUp = ({navigation}) => {
     temporaryCity: '',
     phoneNumber: '',
     emailId: '',
-    password: 'Password@123',
-    confirmPassword: 'Password@123',
+    password: '',
+    confirmPassword: '',
     age: '',
     // MENTOR:
     // type: MENTOR,
@@ -138,7 +139,7 @@ const MentorSignUp = ({navigation}) => {
     setState(prevState => ({...prevState, [field]: value}));
   };
 
-  const [isShadowVisible, setIsShadowVisible] = useState(false);
+  const [isShadowVisible, setIsShadowVisible] = useState(true);
   const [specialistItems, setSpecialistItems] = useState(specialities);
 
   const handleShadowVisible = isShadowVisible => {
@@ -260,13 +261,11 @@ const MentorSignUp = ({navigation}) => {
 
   const renderInput = ({field, placeholder, keyBoardType, ...props}) => {
     return (
-      <View key={field} style={{marginBottom: 10}}>
+      <View key={field} style={{marginBottom: 5, flex: 1}}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.inputLable}>
-            {' '}
-            {/* {field ? t(convertFieldStringToCapitalized(field)) : ''} */}
+          {/* <Text style={styles.inputLable}>
             {placeholder}
-          </Text>
+          </Text> */}
           <Text style={{color: 'red', fontSize: 17}}>
             {!state[field] && compalsaryField
               ? ' *'
@@ -277,7 +276,19 @@ const MentorSignUp = ({navigation}) => {
               : null}
           </Text>
         </View>
-        <TextInput
+        {/* <TextInput
+          maxLength={
+            placeholder == 'Phone Number' ? 10 : placeholder == 'Age' ? 3 : null
+          }
+          style={styles.input}
+          placeholder={`${ENTER} ${placeholder}`}
+          placeholderTextColor={Colors.grayishBlue}
+          value={state[field]}
+          keyboardType={keyBoardType || 'default'}
+          {...props}
+          onChangeText={text => handleInput({value: text, field})}
+        /> */}
+        <FloatingLabelInput
           maxLength={
             placeholder == 'Phone Number' ? 10 : placeholder == 'Age' ? 3 : null
           }
@@ -391,6 +402,7 @@ const MentorSignUp = ({navigation}) => {
         listMode="SCROLLVIEW"
         autoScroll={true}
         zIndex={2000}
+        closeAfterSelecting={true}
         open={specialityOpen}
         setOpen={setSpecialityOpen}
         value={state?.expertise}
@@ -406,6 +418,11 @@ const MentorSignUp = ({navigation}) => {
         placeholder={SELECT_SPECIALITY}
         style={styles.dropdown}
         multiple={true}
+        dropDownContainerStyle={{
+          marginBottom: 26,
+          borderWidth: 1,
+          borderColor: Colors.shadowColor1,
+        }}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
       <DropDownPicker
@@ -414,6 +431,7 @@ const MentorSignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={1000}
         open={languageOpen}
+        closeAfterSelecting={true}
         setOpen={setLanguageOpen}
         value={state?.language}
         onSelectItem={val => {
@@ -426,7 +444,12 @@ const MentorSignUp = ({navigation}) => {
         items={LANGUAGE_LIST(t)}
         // setItems={setSpecialistItems}
         placeholder={SELECT_LANGUAGE}
-        style={styles.dropdown}
+        style={[styles.dropdown, {marginBottom: 15}]}
+        dropDownContainerStyle={{
+          marginBottom: 18,
+          borderWidth: 1,
+          borderColor: Colors.shadowColor1,
+        }}
         multiple={true}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
@@ -449,6 +472,7 @@ const MentorSignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={3000}
         open={openGender}
+        closeAfterSelecting={true}
         setOpen={setOpenGender}
         value={state.gender}
         setValue={props => {
@@ -460,6 +484,11 @@ const MentorSignUp = ({navigation}) => {
         colo
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
         style={styles.dropdown}
+        dropDownContainerStyle={{
+          marginBottom: 26,
+          borderWidth: 1,
+          borderColor: Colors.shadowColor1,
+        }}
       />
       <DropDownPicker
         listMode="SCROLLVIEW"
@@ -467,6 +496,7 @@ const MentorSignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={4000}
         open={openDuty}
+        closeAfterSelecting={true}
         setOpen={setOpenDuty}
         value={state.duty}
         setValue={props => {
@@ -476,6 +506,11 @@ const MentorSignUp = ({navigation}) => {
         setItems={setDutyItems}
         placeholder={CHOOSE_PROFESSION}
         style={styles.dropdown}
+        dropDownContainerStyle={{
+          marginBottom: 26,
+          borderWidth: 1,
+          borderColor: Colors.shadowColor1,
+        }}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
 
@@ -483,6 +518,7 @@ const MentorSignUp = ({navigation}) => {
         dropDownDirection="TOP"
         listMode="SCROLLVIEW"
         autoScroll={true}
+        closeAfterSelecting={true}
         zIndex={1000}
         open={feelOpen}
         setOpen={setFeelOpen}
@@ -494,6 +530,11 @@ const MentorSignUp = ({navigation}) => {
         setItems={setFeelItems}
         placeholder={CHOOSE_HOW_DO_YOU_FEEL}
         style={styles.dropdown}
+        dropDownContainerStyle={{
+          marginBottom: 26,
+          borderWidth: 1,
+          borderColor: Colors.shadowColor1,
+        }}
         // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
       />
     </>
@@ -536,7 +577,7 @@ const MentorSignUp = ({navigation}) => {
       )}
 
       <KeyboardAwareScrollView
-        onScroll={handleOnScroll}
+        // onScroll={handleOnScroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         style={{flex: 1, backgroundColor: Colors.white}}
@@ -596,7 +637,12 @@ const MentorSignUp = ({navigation}) => {
             items={typeItems}
             setItems={setTypeItems}
             placeholder={SELECTED_TYPE}
-            style={styles.dropdown}
+            style={[styles.dropdown, {marginTop: 10}]}
+            dropDownContainerStyle={{
+              marginBottom: 26,
+              borderWidth: 1,
+              borderColor: Colors.shadowColor1,
+            }}
             // containerStyle={{borderBottomWidth: 1, borderBottomColor: 'gray'}}
           />
 
@@ -728,9 +774,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   mainContainer: {
-    // flex: 1,
+    flex: 1,
     paddingHorizontal: 25,
-    paddingTop: 15,
+    // paddingTop: 15,
     justifyContent: 'center',
     // backgroundColor: Colors.paleMintColor,
     paddingBottom: 10,
@@ -741,10 +787,10 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderRadius: 8,
-    marginBottom: 15,
+    // marginBottom: 15,
     paddingHorizontal: 10,
     fontSize: 16,
-    backgroundColor: '#d3d3d3',
+    // backgroundColor: '#d3d3d3',
   },
   inputLable: {
     color: '#000',
@@ -769,7 +815,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     alignItems: 'center',
-    marginBottom: 7,
+    marginVertical: 7,
     marginHorizontal: 5,
   },
   slotsText: {
@@ -780,6 +826,6 @@ const styles = StyleSheet.create({
   signUpButtonContainer: {
     paddingBottom: 10,
     borderTopWidth: 0.2,
-    borderColor: '#000',
+    borderColor: Colors.shadowColor1,
   },
 });

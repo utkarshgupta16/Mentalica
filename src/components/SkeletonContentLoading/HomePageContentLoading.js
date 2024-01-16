@@ -57,11 +57,11 @@ export const ArticleContentLoader = () => {
   );
 };
 
-export const FacebookContentLoading = ({length}) => {
+export const FacebookContentLoading = ({length, style}) => {
   const contentArray = generateArray(length);
   const paddingHorizontal = 10;
   return (
-    <View style={[styles.container, {paddingHorizontal}]}>
+    <View style={[styles.container, {paddingHorizontal}, style]}>
       {contentArray.map((item, index) => {
         return <Facebook key={index} />;
       })}

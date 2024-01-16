@@ -5,16 +5,24 @@ import {
   StyleSheet,
   FlatList,
   Pressable,
+  Animated,
+  TextInput,
+  Dimensions,
 } from 'react-native';
 import View from '../wrapperComponent/ViewWrapper.js';
 import Text from '../wrapperComponent/TextWrapper.js';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from '../../utils/Responsive';
+import debounce from 'lodash.debounce';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllMentorList, getTwilloChatTokenSlice} from '../../redux/HomeSlice';
+import {
+  getAllMentorList,
+  getMentorSearchData,
+  getTwilloChatTokenSlice,
+} from '../../redux/HomeSlice';
 import Close from '../../icons/icon_close.svg';
 import Modal from 'react-native-modal';
 import MentorDetails from './MentorDetails';
@@ -28,6 +36,11 @@ import {FacebookContentLoading} from '../SkeletonContentLoading';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {darkModeColor, profileURL} from '../../utils/utils.js';
 import {doctorURI} from '../../icons/index.js';
+const dropdownSearchItems = {
+  name: 'Enter name..',
+  experties: 'Enter experties..',
+  experience: 'Enter experience..',
+};
 const MentorsList = ({navigation, handleShadowVisible}) => {
   const {
     isMentorsDataLoadingSearch,
@@ -40,7 +53,15 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const [selectedMentorData, setMentor] = useState({slots: []});
   const [showDetails, setShowDetails] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
+  const [onUpdateImage, setOnUpdateImage] = useState(Math.random());
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState({});
+  const [dropdownitems, setDropdownItems] = useState('name');
+  const [showSearchBar, setSearchBar] = useState(false);
+  const [showDropdown, setDropdown] = useState(false);
+  const startValue = useRef(
+    new Animated.Value(Dimensions.get('window').width),
+  ).current;
 
   const {t} = useTranslation();
   const {CHAT, EXPERTIES, SPEAKS, YEARS_OF_EXPERIENCE, FOR, STARTS, MINS} =
@@ -52,6 +73,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
         try {
           setLoading(true);
           await dispatch(getAllMentorList());
+          setOnUpdateImage(Math.random());
           setLoading(false);
         } catch (err) {
           setLoading(false);
@@ -68,9 +90,9 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const handleOnScroll = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > 0) {
-      handleShadowVisible(true);
+      handleShadowVisible && handleShadowVisible(true);
     } else {
-      handleShadowVisible(false);
+      handleShadowVisible && handleShadowVisible(false);
     }
   };
 
@@ -78,6 +100,30 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
     setRefreshing(true);
     await dispatch(getAllMentorList());
     setRefreshing(false);
+    setOnUpdateImage(Math.random());
+  };
+
+  const handleDropDownItemSelected = item => {
+    setDropdownItems(item);
+    setDropdown(false);
+    if (Object.keys(searchText).length) {
+      debouncedSearch('');
+      setSearchText({});
+    }
+  };
+
+  const debouncedSearch = () => {
+    debounce(searchTerm => {
+      dispatch(
+        getMentorSearchData({
+          searchText:
+            dropdownitems === 'experties'
+              ? searchTerm.toLowerCase()
+              : searchTerm,
+          type: dropdownitems,
+        }),
+      );
+    }, 500);
   };
 
   const addConversation = (client, mentorData) => {
@@ -229,14 +275,15 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
                 uniqueId
                   ? {
                       cache: 'reload',
-                      uri: profileURL(uniqueId) + '?time=' + new Date(),
+                      // uri: profileURL(uniqueId) + '?time=' + index,
+                      uri: profileURL(uniqueId) + '?' + onUpdateImage,
                     }
                   : doctorURI
               }
               style={styles.profilePic}
             />
             {/* <Image style={styles.profilePic} source={{uri: item.imageUrl}} /> */}
-            <View isCard>
+            <View isCard style={{width: '60%'}}>
               <Text style={styles.mentorNameTxt} numberOfLines={1}>
                 {`${t(item?.firstName)} ${t(item?.lastName)}`}
               </Text>
@@ -265,10 +312,105 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchIconCont}>
+        <>
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  translateX: startValue,
+                },
+              ],
+              flex: 1,
+              height: 43,
+            }}>
+            <TextInput
+              placeholder={dropdownSearchItems[dropdownitems]}
+              onChangeText={text => {
+                setSearchText({...searchText, [dropdownitems]: text});
+                debouncedSearch(text);
+              }}
+              value={searchText[dropdownitems]}
+              style={styles.searchBar}
+            />
+          </Animated.View>
+          {showSearchBar ? (
+            <Pressable onPress={() => setDropdown(!showDropdown)}>
+              <MaterialIcons
+                name="keyboard-arrow-down"
+                size={35}
+                color={Colors.darkPaleMintColor}
+                style={styles.icon}
+              />
+            </Pressable>
+          ) : null}
+        </>
+        {showDropdown && showSearchBar ? (
+          <View style={styles.selectSearch}>
+            <View style={{backgroundColor: 'white', paddingHorizontal: 17}}>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={['name', 'experties', 'experience']}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => index}
+                renderItem={({item, index}) => {
+                  return (
+                    <Pressable
+                      onPress={() => handleDropDownItemSelected(item)}
+                      style={styles.selectSearchItem}>
+                      <Text
+                        style={{
+                          color: dropdownitems === item ? 'white' : Colors.dune,
+                        }}>
+                        {item.charAt(0).toUpperCase() + item.slice(1)}
+                      </Text>
+                      {dropdownitems === item ? (
+                        <View style={{paddingLeft: 10}}>
+                          <MaterialIcons
+                            name={'check'}
+                            size={16}
+                            color={Colors.emerald}
+                          />
+                        </View>
+                      ) : null}
+                    </Pressable>
+                  );
+                }}
+              />
+            </View>
+          </View>
+        ) : null}
+        <Pressable
+          style={{padding: 2}}
+          onPress={() => {
+            setSearchBar(pre => {
+              if (pre) {
+                Animated.timing(startValue, {
+                  toValue: Dimensions.get('window').width,
+                  duration: 1000,
+                  useNativeDriver: true,
+                }).start(() => {});
+              } else {
+                Animated.timing(startValue, {
+                  toValue: 10,
+                  duration: 1000,
+                  useNativeDriver: true,
+                }).start(() => {});
+              }
+              return !pre;
+            });
+          }}>
+          <MaterialIcons
+            name="search"
+            size={30}
+            color={Colors.darkPaleMintColor}
+            style={styles.icon}
+          />
+        </Pressable>
+      </View>
       {isMentorsDataLoadingSearch || isMentorsDataLoading ? (
-        <FacebookContentLoading length={5} />
+        <FacebookContentLoading length={5} style={{top: 60}} />
       ) : null}
-
       <FlatList
         data={mentorsData}
         renderItem={renderItem}
@@ -303,6 +445,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
+    backgroundColor: 'white',
   },
   flatListContainer: {
     marginHorizontal: 10,
@@ -312,7 +455,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
     padding: 10,
     borderRadius: 8,
-
     shadowOffset: {
       width: 0,
       height: 1,
@@ -410,6 +552,49 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: wp(50),
     paddingTop: hp(1.5),
+  },
+  searchIconCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 1,
+    paddingVertical: 10,
+    paddingRight: 10,
+  },
+  searchBar: {
+    borderWidth: 1,
+    borderColor: Colors.dustyGray,
+    paddingLeft: 10,
+    marginRight: 10,
+    flex: 1,
+    // width: wp(75),
+    // height: hp(4),
+    borderRadius: 8,
+  },
+  selectSearch: {
+    position: 'absolute',
+    top: 45,
+    bottom: 0,
+    // left: 0,
+    right: 40,
+    borderRadius: 4,
+    paddingVertical: 8,
+    alignItems: 'center',
+    zIndex: 100,
+    elevation: 2,
+    height: 100,
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  selectSearchItem: {
+    marginVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

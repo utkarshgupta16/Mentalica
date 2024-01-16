@@ -10,12 +10,14 @@ import UserIcon from '../icons/user.svg';
 import convertLang, {MENTOR} from '../utils/Strings';
 import Invoicing from '../components/mentorScreens/invoicing/Invoicing';
 import PatientStats from '../components/patientScreens/patientStats/PatientStats';
+import MentorsList from '../components/mentorScreens/MentorsList';
+
 import Colors from '../customs/Colors';
 import {useTranslation} from 'react-i18next';
 // import MentorDashboard from '../components/mentorScreens/mentorDashboard/MentorDashboard';
 // import PatientDashboard from '../components/patientScreens/patientDashboard/PatientDashboard';
 import AVChatScreen from './home/AVChatScreen';
-import {Text, Platform, Pressable} from 'react-native';
+import {Text, Platform, Pressable, View} from 'react-native';
 import {heightPercentageToDP as hp} from '../utils/Responsive';
 import {
   MESSAGES_TAB_ROUTE,
@@ -24,6 +26,7 @@ import {
   CHAT_ROOM_SCREEN,
   CHATS_SCREEN,
   HOME as HOME_ROUTE,
+  MENTOR_SCREEN,
 } from '../utils/route';
 import ProfileStackNavigator from './home/ProfileStackNavigator';
 import MessagesStackNavigator from './home/MessagesStackNavigator';
@@ -156,6 +159,14 @@ const childRouteName = navigation => {
   return childName;
 };
 
+const TabImage = ({size, color, name}) => {
+  return (
+    <View style={{paddingTop: 5}}>
+      <MaterialIcons name={name} size={size} color={color} />
+    </View>
+  );
+};
+
 const HomeNavigator = () => {
   const {t} = useTranslation();
   const {HOME, INVOICING, PROFILE, STATS, INVOICE, MESSAGES} = convertLang(t);
@@ -184,7 +195,7 @@ const HomeNavigator = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name="home" size={size} color={color} />
+            <TabImage name="home" size={size} color={color} />
           ),
           tabBarLabel: ({focused}) => {
             return renderTabTitle(focused, HOME);
@@ -227,53 +238,24 @@ const HomeNavigator = () => {
           }}
         />
       )} */}
-      {type === MENTOR ? (
-        <Tab.Screen
-          name={INVOICING}
-          component={Invoicing}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="analytics" size={26} color={color} />
-            ),
-            tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, INVOICE);
-            },
-          }}
-        />
-      ) : (
-        <Tab.Screen
-          name={STATS}
-          component={PatientStats}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="analytics" size={25} color={color} />
-            ),
-            tabBarLabel: ({focused}) => {
-              return renderTabTitle(focused, STATS);
-            },
-          }}
-        />
-      )}
       <Tab.Screen
         name={MESSAGES_TAB_ROUTE}
         options={({navigation}) => {
           return {
             headerShown: false,
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="message" size={25} color={color} />
+              <TabImage name="message" size={25} color={color} />
             ),
             tabBarLabel: ({focused}) => {
               return renderTabTitle(focused, 'Messages');
             },
-            tabBarStyle: {
-              display:
-                childRouteName(navigation) === CHAT_ROOM_SCREEN ||
-                childRouteName(navigation) === 'DocViewer'
-                  ? 'none'
-                  : 'flex',
-            },
+            // tabBarStyle: {
+            //   display:
+            //     childRouteName(navigation) === CHAT_ROOM_SCREEN ||
+            //     childRouteName(navigation) === 'DocViewer'
+            //       ? 'none'
+            //       : 'flex',
+            // },
           };
         }}
         listeners={({navigation}) => ({
@@ -284,11 +266,41 @@ const HomeNavigator = () => {
         })}
         component={MessagesStackNavigator}
       />
+      {type === MENTOR ? (
+        <Tab.Screen
+          name={INVOICING}
+          component={Invoicing}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({color, size}) => (
+              <TabImage name="analytics" size={25} color={color} />
+            ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, INVOICE);
+            },
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name={MENTOR_SCREEN}
+          component={MentorsList}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({color, size}) => (
+              <TabImage name="analytics" size={25} color={color} />
+            ),
+            tabBarLabel: ({focused}) => {
+              return renderTabTitle(focused, 'Mentors');
+            },
+          }}
+        />
+      )}
+
       <Tab.Screen
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => (
-            <MaterialIcons name={'person'} size={30} color={color} />
+            <TabImage name="person" size={25} color={color} />
           ),
           tabBarLabel: ({focused}) => {
             return renderTabTitle(focused, PROFILE);

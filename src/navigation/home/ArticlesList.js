@@ -18,6 +18,7 @@ const ArticlesList = ({handleShadowVisible}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
   const [isArticleDataLoading, setArticleLoading] = useState(false);
+  const [selectedArtileIndex, selectedArtile] = useState('');
 
   const {articleData = [], darkMode} = useSelector(state => state.home);
 
@@ -50,18 +51,19 @@ const ArticlesList = ({handleShadowVisible}) => {
         key={index}
         onPress={() => {
           setModalVisible(true);
+          selectedArtile(index);
         }}>
         <View isCard={true} style={[styles.saveContainer, {shadowColor}]}>
           <View isCard={true} style={styles.titleCont}>
             <Text style={styles.title}>{t(item?.title)}</Text>
-            <Pressable onPress={() => {}}>
+            {/* <Pressable onPress={() => {}}>
               <MaterialIcons
                 name="save"
                 size={20}
                 color={Colors.grayishBlue}
                 style={styles.icon}
               />
-            </Pressable>
+            </Pressable> */}
           </View>
           <Text>
             {(item?.body).length > 250
@@ -93,9 +95,12 @@ const ArticlesList = ({handleShadowVisible}) => {
         // }}
         style={styles.titleView}>
         <View style={styles.modalArticleView}>
-          <Text style={styles.articleTitle}>{articleData?.title}</Text>
-
-          <Text>{articleData?.body}</Text>
+          <Text style={styles.articleTitle}>
+            {articleData.length && articleData[selectedArtileIndex]?.title}
+          </Text>
+          <Text style={{lineHeight: 21}}>
+            {articleData.length && articleData[selectedArtileIndex]?.body}
+          </Text>
           <View style={styles.closeBtn}>
             <Pressable onPress={() => setModalVisible(false)}>
               <Text style={styles.closeText}>Close</Text>

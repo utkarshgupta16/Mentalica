@@ -16,3 +16,4 @@ export const CHATS_SCREEN = 'Chats';
 export const FORGOT_PASSWORD = 'ForgotPasswordScreen';
 export const ADD_SLOTS_SIGNUP_SCREEN = 'AddSlotsSignupScreen';
 export const ADD_SLOTS_PROFILE_SCREEN = 'AddSlotsProfileScreen';
+export const MENTOR_SCREEN = 'MentorScreen';

@@ -69,9 +69,7 @@ const AddSlotsMentor = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    {
-      isProfile && getSlots();
-    }
+    isProfile && getSlots();
   }, [dateObj]);
 
   let slots1 = [];
@@ -129,6 +127,7 @@ const AddSlotsMentor = ({navigation, route}) => {
   const onChangeDate = (text, field) => {
     let hours = parseInt(JSON.stringify(text).slice(12, 14)) - 6;
     let minutes = parseInt(JSON.stringify(text).slice(15, 17)) - 30;
+    let hoursNew = hours;
 
     if (minutes < 0) {
       hours = hours - 1;
@@ -162,7 +161,11 @@ const AddSlotsMentor = ({navigation, route}) => {
       };
       setTime(time1);
       if (Platform.OS == 'android') {
-        addDateTime(field, time1);
+        addDateTime(field, {
+          [field]: `${hoursNew < 10 ? `0${hoursNew}` : hoursNew}:${
+            minutes < 10 ? `0${minutes}` : minutes
+          }`,
+        });
       }
     } else {
       const h = hours + 12;
@@ -211,12 +214,16 @@ const AddSlotsMentor = ({navigation, route}) => {
     if (isExit) {
       return;
     }
-    if (field == 'startTime') {
-      setShowStartTime(false);
-      setShowEndTime(true);
+    if (field === 'startTime') {
+      if (Platform.OS === 'ios') {
+        setShowStartTime(false);
+        setShowEndTime(true);
+      }
     } else {
       let time1 = `${selectedTime?.startTime}-${selectedTime?.endTime}`;
-      setShowEndTime(false);
+      if (Platform.OS === 'ios') {
+        setShowEndTime(false);
+      }
       dispatch(addSlots([...slots, selectedTime]));
       setSlotsData([
         ...slotsDataState,
@@ -235,9 +242,9 @@ const AddSlotsMentor = ({navigation, route}) => {
     }
   };
 
-  const dateRenderItem = ({field}) => {
+  const dateRenderItem = ({field, isVisible}) => {
     let date = new Date();
-    if (field == 'endTime') {
+    if (field === 'endTime') {
       let timeArr = time['startTime']?.split(':');
       date.setHours(timeArr[0]);
       date.setMinutes(timeArr[1]);
@@ -245,17 +252,32 @@ const AddSlotsMentor = ({navigation, route}) => {
 
     return (
       <DateTimePickerModal
-        date={new Date()}
+        // date={new Date()}
+        date={
+          Platform.OS === 'ios'
+            ? new Date()
+            : field === 'startTime'
+            ? new Date()
+            : date
+        }
         // minuteInterval={30}
         mode="time"
         is24Hour={false}
         locale="en-US"
-        minimumDate={field == 'startTime' ? new Date() : date}
+        // timePickerModeAndroid={'clock'}
+        minimumDate={field === 'startTime' ? new Date() : date}
         is24hourSource="locale"
         onChange={date => onChangeDate(date, field)}
-        isVisible={true}
+        isVisible={isVisible}
         onConfirm={dateVal => {
           if (Platform.OS === 'android') {
+            if (field === 'startTime') {
+              setShowStartTime(false);
+              setShowEndTime(true);
+            }
+            if (field === 'endTime') {
+              setShowEndTime(false);
+            }
             onChangeDate(dateVal, field);
           }
         }}
@@ -276,7 +298,7 @@ const AddSlotsMentor = ({navigation, route}) => {
                   fontWeight: 'bold',
                   fontSize: 16,
                 }}>
-                {`Add ${field == 'startTime' ? 'Start Time' : 'End Time'}`}
+                {`Add ${field === 'startTime' ? 'Start Time' : 'End Time'}`}
               </Text>
             </View>
           </TouchableOpacity>
@@ -392,9 +414,14 @@ const AddSlotsMentor = ({navigation, route}) => {
         </View>
         <MaterialIcons name="access-time" size={22} />
       </Pressable>
-      {showStartTime ? dateRenderItem({field: 'startTime'}) : null}
-      {showEndTime ? dateRenderItem({field: 'endTime'}) : null}
-
+      {/* {showStartTime ? dateRenderItem({field: 'startTime'}) : null}
+      {showEndTime ? dateRenderItem({field: 'endTime'}) : null} */}
+      {showStartTime
+        ? dateRenderItem({field: 'startTime', isVisible: showStartTime})
+        : null}
+      {showEndTime
+        ? dateRenderItem({field: 'endTime', isVisible: showEndTime})
+        : null}
       {slots && slots?.length && !isOpen ? (
         <FlatList
           columnWrapperStyle={{flexWrap: 'wrap'}}
@@ -412,10 +439,12 @@ const AddSlotsMentor = ({navigation, route}) => {
             let [startH, startM] = item?.startTime.split(':');
             let [endH, endM] = item?.endTime.split(':');
             let AM_PM = startH >= 12 ? 'PM' : 'AM';
-            let startTime = `${
-              startH > 12 ? startH - 12 : startH
-            }:${startM} ${AM_PM}`;
-            let endTime = `${endH > 12 ? endH - 12 : endH}:${endM} ${AM_PM}`;
+            let AM_PM_END = endH >= 12 ? 'PM' : 'AM';
+            let startTime = `${startH > 12 ? startH - 12 : startH}:${startM}`;
+            let endTime = `${endH > 12 ? endH - 12 : endH}:${endM}`;
+            //  let endTime = `${
+            //   endH > 12 ? endH - 12 : endH
+            // }:${endM} ${AM_PM_END}`;
             return (
               <Pressable
                 onPress={() => {
@@ -501,9 +530,15 @@ const AddSlotsMentor = ({navigation, route}) => {
           onPress={async () => {
             try {
               setLoading(true);
+              const dateObjNew = {
+                startDate: dateObj.from,
+                endDate: dateObj.to,
+              };
+              const rangeDateValue =
+                Platform.OS === 'android' ? dateObjNew : rangeDate;
               const rangeDateData = {
-                startDate: new Date(rangeDate.startDate),
-                endDate: new Date(rangeDate.endDate),
+                startDate: new Date(rangeDateValue.startDate),
+                endDate: new Date(rangeDateValue.endDate),
                 slots: slots,
               };
               await dispatch(updateSlotsSlice({rangeDate: rangeDateData}));
@@ -601,7 +636,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(3),
     backgroundColor: '#FFFFFFCC',
     borderRadius: 10,
-    backgroundColor: 'white',
   },
   todaySlotsText: {
     color: Colors.black,

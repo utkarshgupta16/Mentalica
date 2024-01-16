@@ -73,17 +73,17 @@ const HomeDashboard = ({navigation}) => {
       />
     ),
 
-    [SAVED]: (
-      <View style={styles.notDataFoundContainer}>
-        <Text style={styles.notDataFound}>{NO_DATA_FOUND}</Text>
-      </View>
-    ),
-    [MENTORS_LIST]: (
-      <MentorsList
-        handleShadowVisible={handleShadowVisible}
-        navigation={navigation}
-      />
-    ),
+    // [SAVED]: (
+    //   <View style={styles.notDataFoundContainer}>
+    //     <Text style={styles.notDataFound}>{NO_DATA_FOUND}</Text>
+    //   </View>
+    // ),
+    // [MENTORS_LIST]: (
+    //   <MentorsList
+    //     handleShadowVisible={handleShadowVisible}
+    //     navigation={navigation}
+    //   />
+    // ),
   };
   const {email, type} = useSelector(state => state.auth);
   const {darkMode, profileData = {}} = useSelector(state => state.home);

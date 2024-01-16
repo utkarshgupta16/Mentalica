@@ -68,7 +68,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         }}
         darkMode={darkMode}
       />
-      <PatientDashboardTabs
+      {/* <PatientDashboardTabs
         selectedTab={selectedTab}
         tab={SAVED}
         title={SAVED}
@@ -76,8 +76,8 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
           setSelectedTab({tabStr: SAVED});
         }}
         darkMode={darkMode}
-      />
-      <PatientDashboardTabs
+      /> */}
+      {/* <PatientDashboardTabs
         selectedTab={selectedTab}
         tab={MENTORS_LIST}
         title={MENTORS_LIST}
@@ -85,7 +85,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
           setSelectedTab({tabStr: MENTORS_LIST});
         }}
         darkMode={darkMode}
-      />
+      /> */}
     </View>
   );
 };

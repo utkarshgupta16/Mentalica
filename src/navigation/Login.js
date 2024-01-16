@@ -32,6 +32,8 @@ import {LANG_OPTION} from '../utils/default';
 import ConvertLang from '../utils/Strings';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {validateEmail} from '../utils/emailValidation';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import FloatingLabelInput from '../components/FloatingLabelInput';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -101,10 +103,12 @@ const LoginScreen = ({navigation}) => {
       );
       dispatch(getType(currentUserInfo?.attributes['custom:type']));
       setLoading(false);
+      setEmailWarning(false);
     } catch (err) {
       setError(err);
       setLoading(false);
       setWrongCredentials(true);
+      setEmailWarning(false);
     }
   };
 
@@ -138,128 +142,175 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      {isLoading ? <Loader /> : null}
-      <View style={styles.imageContainer}>
-        <Image
-          source={require('../icons/logo-no-background.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
-      <Modal
-        avoidKeyboard={false}
-        onRequestClose={() => {
-          setShowEnterCodeModal(false);
-        }}
-        keyboardAvoidingBehavior={
-          Platform.OS === 'android' ? 'height' : 'padding'
-        }
-        animationType="slide"
-        transparent={true}
-        closeOnClick={true}
-        isVisible={showEnterCodeModal}
-        onBackdropPress={() => {
-          setShowEnterCodeModal(false);
-        }}
-        onBackButtonPress={() => {
-          setShowEnterCodeModal(false);
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.codeContainer}>
-            <Text>{`${t('Enter Email')}:`}</Text>
-            <TextInput
-              value={enteredEmail}
-              onChangeText={text => setEnteredEmail(text)}
-              style={styles.modalTextInput}
-            />
-          </View>
-          <View style={styles.codeContainer}>
-            <Text>{`${t('Enter Code')}:`}</Text>
-            <TextInput
-              onChangeText={text => setEnteredCode(text)}
-              style={styles.modalTextInput}
-            />
-          </View>
-          <Button title={t('Submit')} onPress={submitCodeHandler} />
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        enableAutomaticScroll={true}
+        keyboardShouldPersistTaps="always"
+        style={{flex: 1}}
+        contentContainerStyle={{flexGrow: 1}}>
+        {isLoading ? <Loader /> : null}
+        <View style={styles.imageContainer}>
+          <Image
+            source={require('../icons/logo-no-background.png')}
+            style={styles.image}
+            resizeMode="contain"
+          />
         </View>
-      </Modal>
-      <View style={styles.container}>
-        <View>
-          <View style={styles.inputContainer}>
-            <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>{EMAIL}</Text>
-              <Text warning style={styles.emailWarningTxt}>
-                {emailWarning
-                  ? '*Invalid email'
-                  : wrongCredentials
-                  ? '*Invalid credentials'
-                  : null}
-              </Text>
-            </View>
-
-            <View style={styles.inputParentCont}>
+        <Modal
+          avoidKeyboard={false}
+          onRequestClose={() => {
+            setShowEnterCodeModal(false);
+          }}
+          keyboardAvoidingBehavior={
+            Platform.OS === 'android' ? 'height' : 'padding'
+          }
+          animationType="slide"
+          transparent={true}
+          closeOnClick={true}
+          isVisible={showEnterCodeModal}
+          onBackdropPress={() => {
+            setShowEnterCodeModal(false);
+          }}
+          onBackButtonPress={() => {
+            setShowEnterCodeModal(false);
+          }}>
+          <View style={styles.modalContainer}>
+            <View style={styles.codeContainer}>
+              <Text>{`${t('Enter Email')}:`}</Text>
               <TextInput
-                textAlign={i18n.language === 'he' ? 'right' : 'left'}
-                onChangeText={handleEnteredEmail}
-                style={{
-                  height: 40,
-                  width: '100%',
-                  fontSize: 16,
-                  color: Colors.black,
-                  paddingHorizontal: 10,
-                }}
-                placeholder={t('E-mail')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
                 value={enteredEmail}
+                onChangeText={text => setEnteredEmail(text)}
+                style={styles.modalTextInput}
               />
             </View>
-            <View style={styles.inputHeadingCont}>
-              <Text style={styles.inputsLables}>{PASSWORD}</Text>
-            </View>
-            <View style={styles.inputParentCont}>
+            <View style={styles.codeContainer}>
+              <Text>{`${t('Enter Code')}:`}</Text>
               <TextInput
-                textAlign={i18n.language === 'he' ? 'right' : 'left'}
-                onChangeText={handleEnteredPassword}
-                style={styles.input}
-                placeholder={t('Password')}
-                secureTextEntry={!showPassword}
-                value={enteredPassword}
+                onChangeText={text => setEnteredCode(text)}
+                style={styles.modalTextInput}
               />
-              {showPassword ? (
-                <Pressable onPress={() => setShowPassword(!showPassword)}>
-                  <MaterialIcons
-                    name="visibility"
-                    size={21}
-                    color={Colors.black}
-                    style={{
-                      marginRight: 20,
-                    }}
-                  />
-                </Pressable>
-              ) : (
-                <Pressable onPress={() => setShowPassword(!showPassword)}>
-                  <MaterialIcons
-                    name="visibility-off"
-                    size={21}
-                    color={Colors.black}
-                    style={{
-                      marginRight: 20,
-                    }}
-                  />
-                </Pressable>
-              )}
             </View>
+            <Button title={t('Submit')} onPress={submitCodeHandler} />
+          </View>
+        </Modal>
+        <View style={styles.container}>
+          <View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeadingCont}>
+                {/* <Text style={styles.inputsLables}>{EMAIL}</Text> */}
+                {/* <Text warning style={styles.emailWarningTxt}>
+                  {emailWarning
+                    ? '*Invalid email'
+                    : wrongCredentials
+                    ? '*Invalid credentials'
+                    : null}
+                </Text> */}
+              </View>
 
-            <Pressable
-              onPress={handleForgotPassword}
-              style={styles.forgotPassword}>
-              <Text>{FORGOT_PASSWORD}?</Text>
-            </Pressable>
-            <View style={styles.checkBoxSignUpContainer}>
-              {/* <View style={styles.checkboxContainer}>
+              <View style={styles.inputParentCont}>
+                {/* <TextInput
+                  textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                  onChangeText={handleEnteredEmail}
+                  style={{
+                    height: 40,
+                    width: '100%',
+                    fontSize: 16,
+                    color: Colors.black,
+                    paddingHorizontal: 10,
+                  }}
+                  placeholder={t('Enter email')}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="email"
+                  value={enteredEmail}
+                /> */}
+                <View style={{flex: 1}}>
+                  <FloatingLabelInput
+                    textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                    onChangeText={handleEnteredEmail}
+                    placeholder={t('Enter email')}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    style={{
+                      height: 40,
+                      width: '100%',
+                      fontSize: 16,
+                      color: Colors.black,
+                      paddingHorizontal: 10,
+                    }}
+                    autoCorrect={false}
+                    autoComplete="email"
+                    value={enteredEmail}
+                  />
+                  {emailWarning ? (
+                    <Text warning style={styles.emailWarningTxt}>
+                      {emailWarning
+                        ? '*Invalid email'
+                        : wrongCredentials
+                        ? '*Invalid credentials'
+                        : null}
+                    </Text>
+                  ) : null}
+                </View>
+              </View>
+              <View style={styles.inputHeadingCont}>
+                {/* <Text style={styles.inputsLables}>{PASSWORD}</Text> */}
+              </View>
+              <View style={styles.inputParentCont}>
+                {/* <TextInput
+                  textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                  onChangeText={handleEnteredPassword}
+                  style={styles.input}
+                  placeholder={t('Enter password')}
+                  secureTextEntry={!showPassword}
+                  value={enteredPassword}
+                /> */}
+                <View style={{flex: 1}}>
+                  <FloatingLabelInput
+                    textAlign={i18n.language === 'he' ? 'right' : 'left'}
+                    onChangeText={handleEnteredPassword}
+                    style={styles.input}
+                    placeholder={t('Enter password')}
+                    secureTextEntry={!showPassword}
+                    value={enteredPassword}
+                  />
+                  {wrongCredentials ? (
+                    <Text warning style={styles.emailWarningTxt}>
+                      {emailWarning
+                        ? '*Invalid email'
+                        : wrongCredentials
+                        ? '*Invalid credentials'
+                        : null}
+                    </Text>
+                  ) : null}
+                </View>
+                {showPassword ? (
+                  <Pressable onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialIcons
+                      name="visibility"
+                      size={21}
+                      color={Colors.black}
+                    />
+                  </Pressable>
+                ) : (
+                  <Pressable onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialIcons
+                      name="visibility-off"
+                      size={21}
+                      color={Colors.black}
+                    />
+                  </Pressable>
+                )}
+              </View>
+
+              <Pressable
+                onPress={handleForgotPassword}
+                style={styles.forgotPassword}>
+                <Text>{FORGOT_PASSWORD}?</Text>
+              </Pressable>
+              <View style={styles.checkBoxSignUpContainer}>
+                {/* <View style={styles.checkboxContainer}>
               <CheckBox
                 disabled={false}
                 value={rememberMe}
@@ -269,26 +320,30 @@ const LoginScreen = ({navigation}) => {
               />
               <Text style={styles.rememberMeText}>{t('Remember Me')}</Text>
             </View> */}
-              <Button title={t('Login')} onPress={loginHandler} />
+                <Button
+                  disabled={!enteredEmail || !enteredPassword}
+                  title={t('Login')}
+                  onPress={loginHandler}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.buttonContainerView}>
-            <Text style={styles.askSignup}>
-              {t("Don't have an account? Wanna")}
-            </Text>
-            <Pressable
-              style={styles.signUpContainer}
-              title={t('Sign Up')}
-              onPress={signUpClickHandler}>
-              <Text signUpbutton style={styles.signUpText}>
-                {' '}
-                {t('Sign Up')}
+            <View style={styles.buttonContainerView}>
+              <Text style={styles.askSignup}>
+                {t("Don't have an account?")}
               </Text>
-            </Pressable>
-          </View>
+              <Pressable
+                style={styles.signUpContainer}
+                title={t('Sign Up')}
+                onPress={signUpClickHandler}>
+                <Text signUpbutton style={styles.signUpText}>
+                  {' '}
+                  {t('Sign Up')}
+                </Text>
+              </Pressable>
+            </View>
 
-          {/* {error ? (
+            {/* {error ? (
           <View style={styles.buttonContainerView}>
             <Pressable
               style={styles.signUpContainer}
@@ -302,55 +357,56 @@ const LoginScreen = ({navigation}) => {
             </Pressable>
           </View>
         ) : null} */}
-        </View>
-        <DropDownPicker
-          dropDownDirection="TOP"
-          listMode="SCROLLVIEW"
-          autoScroll={true}
-          zIndex={3000}
-          open={isOpen}
-          setOpen={setIsOpen}
-          value={t(selectedLanguage)}
-          setValue={props => {
-            Alert.alert(CHANGE_LANG, RESTART_APP, [
-              {
-                text: 'Cancel',
-                onPress: () => null,
-              },
-              {
-                text: 'OK',
-                onPress: () => {
-                  i18n
-                    .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
-                    .then(() => {
-                      I18nManager.allowRTL(i18n.language === 'he');
-                      I18nManager.forceRTL(i18n.language === 'he');
-                      setLanguage(props());
-                      setTimeout(() => {
-                        RNRestart.Restart();
-                      }, 5);
-                    })
-                    .catch(err => {
-                      console.log(
-                        'something went wrong while applying RTL',
-                        err,
-                      );
-                    });
+          </View>
+          <DropDownPicker
+            dropDownDirection="TOP"
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            zIndex={3000}
+            open={isOpen}
+            setOpen={setIsOpen}
+            value={t(selectedLanguage)}
+            setValue={props => {
+              Alert.alert(CHANGE_LANG, RESTART_APP, [
+                {
+                  text: 'Cancel',
+                  onPress: () => null,
                 },
-              },
-            ]);
-          }}
-          dropDownContainerStyle={
-            {
-              // width: '100%',z
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    i18n
+                      .changeLanguage(i18n.language === 'he' ? 'en' : 'he')
+                      .then(() => {
+                        I18nManager.allowRTL(i18n.language === 'he');
+                        I18nManager.forceRTL(i18n.language === 'he');
+                        setLanguage(props());
+                        setTimeout(() => {
+                          RNRestart.Restart();
+                        }, 5);
+                      })
+                      .catch(err => {
+                        console.log(
+                          'something went wrong while applying RTL',
+                          err,
+                        );
+                      });
+                  },
+                },
+              ]);
+            }}
+            dropDownContainerStyle={
+              {
+                // width: '100%',z
+              }
             }
-          }
-          items={langOptions}
-          placeholder={t('Select Language')}
-          containerStyle={{width: '100%'}}
-          style={styles.dropdown}
-        />
-      </View>
+            items={langOptions}
+            placeholder={t('Select Language')}
+            containerStyle={{width: '100%'}}
+            style={styles.dropdown}
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
@@ -367,7 +423,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 250,
-    height: 300,
+    height: 270,
   },
   modalContainer: {
     backgroundColor: Colors.white,
@@ -410,10 +466,10 @@ const styles = StyleSheet.create({
   inputParentCont: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderColor: Colors.black,
+    // borderBottomWidth: 1,
+    // borderBottomColor: Colors.shadowColor1,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 13,
   },
   inputsLables: {
     fontSize: 16,
@@ -453,7 +509,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+    // marginTop: 16,
     justifyContent: 'center',
   },
   askSignup: {
@@ -484,6 +540,9 @@ const styles = StyleSheet.create({
   emailWarningTxt: {
     fontSize: 12,
     marginLeft: 5,
+    paddingBottom: 5,
+    color: Colors.red,
+    fontWeight: 'bold',
   },
 });
 

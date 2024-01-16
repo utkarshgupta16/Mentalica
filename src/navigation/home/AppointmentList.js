@@ -282,6 +282,30 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
           <View style={styles.appointmentDetails}>
             <Text style={styles.agendaText}>{name}</Text>
           </View>
+          <Pressable
+            onPress={() => {
+              if (checkExpired) {
+                Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+                  {
+                    onPress: () => videoCallAction(item),
+                    text: YES,
+                  },
+                  {
+                    onPress: () => null,
+                    text: NO,
+                  },
+                ]);
+              } else {
+                Alert.alert(LINK_EXPIRED, ``, [
+                  {
+                    onPress: () => null,
+                    text: OKAY,
+                  },
+                ]);
+              }
+            }}>
+            <Text style={{color: 'red'}}>Join</Text>
+          </Pressable>
         </View>
       </TouchableOpacity>
     );

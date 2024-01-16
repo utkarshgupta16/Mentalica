@@ -63,8 +63,8 @@ const convertString = convertLang => {
   const DARK_MODE = convertLang && convertLang('Dark Mode');
   const CHANGE_PASSWORD = convertLang && convertLang('Change Password');
   const SAVE = convertLang && convertLang('Save');
-  const FIRST_NAME = convertLang && convertLang('First Name');
-  const LAST_NAME = convertLang && convertLang('Last Name');
+  const FIRST_NAME = convertLang && convertLang('first name');
+  const LAST_NAME = convertLang && convertLang('last name');
   const PHONE_NO = convertLang && convertLang('Phone Number');
   const OLD_PASSWORD = convertLang && convertLang('Old Password');
   const NEW_PASSWORD = convertLang && convertLang('New Password');

@@ -32,10 +32,19 @@ import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
+  const {t} = useTranslation();
+  const {
+    DAY_AFTER_TOMORROW,
+    TODAY,
+    TOMORROW,
+    AVAILABLE_SLOTS,
+    NO_SLOTS_AVAILABLE_TO_BOOK,
+    SCHEDULE_APPOINTMENT,
+  } = t && convertLang(t);
   const {email} = useSelector(state => state.auth);
-  const {profileData, threeDaysSlots} = useSelector(state => state.home);
+  const {profileData, threeDaysSlots = []} = useSelector(state => state.home);
   const [selectedSlot, setSlot] = useState('');
-  const [bookSlots, setBookSlots] = useState(threeDaysSlots[0]?.slots);
+  const [bookSlots, setBookSlots] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [selectedDay, setSelectedDay] = useState({dayStr: TODAY});
   const dispatch = useDispatch();
@@ -49,39 +58,36 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
       profileData && `${profileData?.firstName} ${profileData?.lastName}`,
   });
 
-  const {t} = useTranslation();
-  const {
-    DAY_AFTER_TOMORROW,
-    TODAY,
-    TOMORROW,
-    AVAILABLE_SLOTS,
-    NO_SLOTS_AVAILABLE_TO_BOOK,
-    SCHEDULE_APPOINTMENT,
-  } = t && convertLang(t);
-
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await dispatch(
+      const {payload} = await dispatch(
         getMentorAllSlots({uniqueId: selectedMentorData?.uniqueId}),
       );
+
+      if (payload.Items.length) {
+        setBookSlots(payload.Items[0]?.slots);
+      }
       setLoading(false);
       // handleSelectday(TODAY);
     })();
   }, [dispatch, selectedMentorData?.uniqueId]);
 
-  const handleSelectday = useCallback(day => {
-    if (day === TODAY) {
-      setSelectedDay({dayStr: TODAY});
-      setBookSlots(threeDaysSlots[0]?.slots);
-    } else if (day === TOMORROW) {
-      setSelectedDay({dayStr: TOMORROW});
-      setBookSlots(threeDaysSlots[1]?.slots);
-    } else if (day === DAY_AFTER_TOMORROW) {
-      setSelectedDay({dayStr: DAY_AFTER_TOMORROW});
-      setBookSlots(threeDaysSlots[2]?.slots);
-    }
-  }, []);
+  const handleSelectday = useCallback(
+    day => {
+      if (day === TODAY) {
+        setSelectedDay({dayStr: TODAY});
+        setBookSlots(threeDaysSlots[0]?.slots);
+      } else if (day === TOMORROW) {
+        setSelectedDay({dayStr: TOMORROW});
+        setBookSlots(threeDaysSlots[1]?.slots);
+      } else if (day === DAY_AFTER_TOMORROW) {
+        setSelectedDay({dayStr: DAY_AFTER_TOMORROW});
+        setBookSlots(threeDaysSlots[2]?.slots);
+      }
+    },
+    [threeDaysSlots, TODAY, TOMORROW, DAY_AFTER_TOMORROW],
+  );
 
   const slotsDaysTab = day => {
     return (
@@ -89,7 +95,9 @@ const MentorDetails = ({showDetails, close, selectedMentorData}) => {
         <View
           style={{
             backgroundColor:
-              selectedDay.dayStr === day ? Colors.darkPaleMintColor : null,
+              selectedDay.dayStr === day
+                ? Colors.darkPaleMintColor
+                : Colors.transparent,
             paddingHorizontal: 10,
             paddingVertical: 5,
             borderRadius: 4,

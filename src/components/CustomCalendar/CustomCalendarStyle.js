@@ -20,12 +20,18 @@ const styles = StyleSheet.create({
   },
   monthContainerStyle: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     // marginTop: 15,
     marginBottom: 12,
     alignItems: 'center',
+    backgroundColor: '#c9e4c96e',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
-  alignItemsCommon: {justifyContent: 'center', alignItems: 'center'},
+  alignItemsCommon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   monthYearText: {
     textAlign: 'center',
     paddingTop: 7,

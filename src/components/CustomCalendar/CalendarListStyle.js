@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timeColumn: {
-    width: 100, // Adjust the width as needed
+    width: 70, // Adjust the width as needed
     marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   appointmentDetails: {
-    flex: 1,
+    flex: 0.8,
   },
   container: {
     flexDirection: 'row',

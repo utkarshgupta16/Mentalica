@@ -2,16 +2,7 @@
 import moment from 'moment';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  FlatList,
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  Pressable,
-  SafeAreaView,
-} from 'react-native';
+import {FlatList, View, Text, Alert, Pressable} from 'react-native';
 import Colors from '../../customs/Colors';
 import {dayNameArray} from '../../utils/default';
 import convertLang, {MENTOR} from '../../utils/Strings';
@@ -38,8 +29,10 @@ const CalendarList = ({
 
   const renderItem = ({item, index}) => {
     let name = type === MENTOR ? item?.patientName : item?.mentorName;
-    let {endTime} = (item.slots && item.slots.length && item.slots[0]) || {};
+    let {endTime, startTime} =
+      (item.slots && item.slots.length && item.slots[0]) || {};
     const [hours, minutes] = endTime?.split(':');
+    const [startH, startM] = startTime?.split(':');
     const now = new Date();
     now.setHours(hours, minutes, 0, 0);
     let checkExpired = true;
@@ -47,34 +40,35 @@ const CalendarList = ({
     const shadowColor = darkMode ? Colors.white : 'gray';
     const today = date && isToday(date) ? styles.today : undefined;
     return (
-      <TouchableOpacity
+      <View
         key={index}
         style={{
           opacity: checkExpired ? 1 : 0.5,
           flexDirection: 'row',
           marginBottom: data.length - 1 === index ? 30 : 0,
         }}
-        onPress={() => {
-          if (checkExpired) {
-            Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
-              {
-                onPress: () => videoCallAction(item),
-                text: YES,
-              },
-              {
-                onPress: () => null,
-                text: NO,
-              },
-            ]);
-          } else {
-            Alert.alert(LINK_EXPIRED, ``, [
-              {
-                onPress: () => null,
-                text: OKAY,
-              },
-            ]);
-          }
-        }}>
+        // onPress={() => {
+        //   if (checkExpired) {
+        //     Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+        //       {
+        //         onPress: () => videoCallAction(item),
+        //         text: YES,
+        //       },
+        //       {
+        //         onPress: () => null,
+        //         text: NO,
+        //       },
+        //     ]);
+        //   } else {
+        //     Alert.alert(LINK_EXPIRED, ``, [
+        //       {
+        //         onPress: () => null,
+        //         text: OKAY,
+        //       },
+        //     ]);
+        //   }
+        // }}
+      >
         <View style={styles.day}>
           <Text allowFontScaling={false} style={[styles.dayNum, today]}>
             {date.getDate()}
@@ -90,19 +84,56 @@ const CalendarList = ({
           }}>
           <View style={styles.timeColumn}>
             <Text style={styles.timeText}>
-              {moment(item?.startTime).format('LT')}
+              {/* {moment(item?.startTime).format('LT')} */}
+              {`${
+                startH > 12
+                  ? `0${startH - 12}:${startM} PM`
+                  : `${startH}:${startM} AM`
+              }`}
             </Text>
             <Text style={styles.timeText}>-</Text>
             <Text style={styles.timeText}>
-              {moment(item?.endTime).format('LT')}
+              {/* {moment(item?.endTime).format('LT')} */}
+              {/* {endTime} */}
+              {`${
+                hours > 12
+                  ? `0${hours - 12}:${minutes} PM`
+                  : `${hours}:${minutes} AM`
+              }`}
             </Text>
           </View>
-
           <View style={styles.appointmentDetails}>
             <Text style={styles.agendaText}>{name}</Text>
           </View>
+          <Pressable
+            style={{paddingRight: 5}}
+            onPress={() => {
+              if (checkExpired) {
+                Alert.alert(YOU_JOINED_CALL, ARE_YOU_JOIN, [
+                  {
+                    onPress: () => videoCallAction(item),
+                    text: YES,
+                  },
+                  {
+                    onPress: () => null,
+                    text: NO,
+                  },
+                ]);
+              } else {
+                Alert.alert(LINK_EXPIRED, ``, [
+                  {
+                    onPress: () => null,
+                    text: OKAY,
+                  },
+                ]);
+              }
+            }}>
+            <Text style={{color: Colors.blueDarkColor, fontWeight: 'bold'}}>
+              Join
+            </Text>
+          </Pressable>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 

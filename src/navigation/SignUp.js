@@ -330,6 +330,7 @@ const SignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={1000}
         open={languageOpen}
+        closeAfterSelecting={true}
         setOpen={setLanguageOpen}
         value={state?.language}
         onSelectItem={val => {
@@ -364,6 +365,7 @@ const SignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={3000}
         open={openGender}
+        closeAfterSelecting={true}
         setOpen={setOpenGender}
         value={state.gender}
         setValue={props => {
@@ -380,6 +382,7 @@ const SignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={2000}
         open={openDuty}
+        closeAfterSelecting={true}
         setOpen={setOpenDuty}
         value={state.duty}
         setValue={props => {
@@ -397,6 +400,7 @@ const SignUp = ({navigation}) => {
         autoScroll={true}
         zIndex={1000}
         open={feelOpen}
+        closeAfterSelecting={true}
         setOpen={setFeelOpen}
         value={state.feel}
         setValue={props => {

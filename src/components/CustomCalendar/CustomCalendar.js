@@ -28,7 +28,7 @@ const CustomCalendar = props => {
 
   const onRowLayoutChange = (index, event) => {
     if (index <= selectedDayIndex) {
-      scrollPosition = scrollPosition + event.nativeEvent.layout.x + 10;
+      scrollPosition = scrollPosition + event.nativeEvent.layout.x + 20;
       listRef?.current?.scrollToOffset({
         offset: scrollPosition,
         animated: true,
@@ -36,17 +36,34 @@ const CustomCalendar = props => {
     }
   };
 
-  const arrowButton = ({onPress, opacity, iconName, isDisabled}) => {
+  const arrowButton = ({
+    onPress,
+    opacity,
+    iconName,
+    isDisabled,
+    style = {},
+  }) => {
     return (
       <Pressable
         disabled={isDisabled}
         onPress={onPress}
-        style={[styles.alignItemsCommon, {opacity}]}>
+        style={[
+          styles.alignItemsCommon,
+          {opacity},
+          {
+            backgroundColor: '#45f445d9',
+            paddingVertical: 8,
+            paddingHorizontal: 8,
+            borderRadius: 6,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          style,
+        ]}>
         <MaterialIcons
           name={iconName}
           size={16}
           color={darkModeColor(darkMode)}
-          style={styles.icon}
         />
       </Pressable>
     );
@@ -65,6 +82,7 @@ const CustomCalendar = props => {
                   isDisabled: index === 0,
                   iconName: 'arrow-back-ios',
                   opacity: opacityBack,
+                  style: {paddingRight: 5},
                   onPress: () => {
                     const day = doubleDigitConverter(selectedDayIndex);
                     const month = doubleDigitConverter(index);

@@ -26,15 +26,16 @@ const Invoicing = () => {
           data={invoiceData}
           keyExtractor={item => item.id}
           renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     </View>
   );
 };
 
-const renderItem = ({item}) => {
+const renderItem = ({item, index}) => {
   return (
-    <View>
+    <View key={index}>
       <View style={{marginTop: 15, flexDirection: 'row', alignItems: 'center'}}>
         <Text style={{fontSize: 13, color: 'gray', marginRight: wp(3)}}>
           {item.date}
@@ -45,15 +46,15 @@ const renderItem = ({item}) => {
             height: 1,
             borderBottomWidth: 1,
             borderColor: 'gray',
-          }}></View>
-      </View>
-      <View>
-        <FlatList
-          data={item.patientDetails}
-          renderItem={renderPatientDetails}
-          showsVerticalScrollIndicator={false}
+          }}
         />
       </View>
+      <FlatList
+        data={item.patientDetails}
+        renderItem={renderPatientDetails}
+        style={{flex: 1}}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
 
     backgroundColor: '#F5F7F8',
+    flex: 1,
     // backgroundColor: 'white',
   },
   heading: {
@@ -124,6 +126,7 @@ const styles = StyleSheet.create({
   },
   invoiceList: {
     marginTop: hp(3),
+    marginBottom: hp(2),
     backgroundColor: '#EEEDED',
     borderRadius: 6,
     paddingHorizontal: wp(3),
@@ -136,6 +139,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.17,
     shadowRadius: 4.65,
     elevation: 3,
+    flex: 1,
   },
 });
 
