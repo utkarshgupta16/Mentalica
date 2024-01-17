@@ -23,6 +23,7 @@ import {TabContentLoading} from '../../components/SkeletonContentLoading';
 import debounce from 'lodash.debounce';
 import Colors from '../../customs/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import SaveArticles from './SaveArticles';
 
 const tabsWidth = {
   0: 50,
@@ -73,11 +74,12 @@ const HomeDashboard = ({navigation}) => {
       />
     ),
 
-    // [SAVED]: (
-    //   <View style={styles.notDataFoundContainer}>
-    //     <Text style={styles.notDataFound}>{NO_DATA_FOUND}</Text>
-    //   </View>
-    // ),
+    [SAVED]: (
+      <SaveArticles
+        handleShadowVisible={handleShadowVisible}
+        navigation={navigation}
+      />
+    ),
     // [MENTORS_LIST]: (
     //   <MentorsList
     //     handleShadowVisible={handleShadowVisible}

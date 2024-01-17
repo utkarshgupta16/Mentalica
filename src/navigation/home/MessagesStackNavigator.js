@@ -1,7 +1,7 @@
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../customs/Colors';
-import {TouchableOpacity, Text, Platform} from 'react-native';
+import {TouchableOpacity, Text, Platform, View} from 'react-native';
 import {CHATS_SCREEN, CHAT_ROOM_SCREEN, MESSAGES} from '../../utils/route';
 import ChatListScreen from '../../screens/Twillio/chat-list/chat-list-screen';
 import ChatRoomScreen from '../../screens/Twillio/chat-room/chat-room-screen';
@@ -23,9 +23,9 @@ const MessagesStackNavigator = ({navigation, route}) => {
         name={MESSAGES}
         component={ChatListScreen}
         options={({navigation}) => ({
-          title: 'Conversation List',
-          headerLeft: null,
-          headerShadowVisible: true,
+          title: '',
+          headerShadowVisible: false,
+          headerShown: false,
         })}
       />
 

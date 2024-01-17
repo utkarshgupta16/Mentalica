@@ -49,9 +49,9 @@ const CustomCalendar = props => {
         onPress={onPress}
         style={[
           styles.alignItemsCommon,
-          {opacity},
+          // {opacity},
           {
-            backgroundColor: '#45f445d9',
+            backgroundColor: Colors.darkPaleMintColor,
             paddingVertical: 8,
             paddingHorizontal: 8,
             borderRadius: 6,
@@ -60,18 +60,14 @@ const CustomCalendar = props => {
           },
           style,
         ]}>
-        <MaterialIcons
-          name={iconName}
-          size={16}
-          color={darkModeColor(darkMode)}
-        />
+        <MaterialIcons name={iconName} size={16} color={'white'} />
       </Pressable>
     );
   };
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={{paddingBottom: 10}}>
         {monthsArray.map((item, index) => {
           if (selectedMonth === index) {
             const opacityBack = index === 0 ? 0.5 : 1;

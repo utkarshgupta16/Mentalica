@@ -41,7 +41,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
   const {scheduledAppointmentsData = [], selectedDayIndex} = useSelector(
     state => state.home,
   );
-  const {type = ''} = useSelector(state => state.auth);
+  const {type = '', loginFrom} = useSelector(state => state.auth);
   const [isLoading, setLoading] = useState({
     tabLoading: false,
     refreshing: false,
@@ -390,6 +390,7 @@ const AppoinmentsList = ({navigation, handleShadowVisible}) => {
         darkMode={darkMode}
         isLoading={isLoading}
         updateData={updateData}
+        loginFrom={loginFrom}
       />
       {/* <Agenda
         // hideList={true}

@@ -12,6 +12,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  View as ViewComponent,
 } from 'react-native';
 import View from '../../../components/wrapperComponent/ViewWrapper';
 import {colors} from '../colors';
@@ -29,6 +30,7 @@ import {setAllParticipant} from '../../../redux/ParticipatSlice';
 import {getOtherParticipant} from '../../../utils/utils';
 import {updateCurrentConversation} from '../../../redux/CurrentConvoReducer';
 import {SkeletonContentLoaderIterate} from '../../../components/SkeletonContentLoading';
+import Colors from '../../../customs/Colors';
 const ChatListScreens = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -102,6 +104,15 @@ const ChatListScreens = ({navigation, route}) => {
 
   return (
     <View style={styles.screen}>
+      <ViewComponent
+        style={{
+          paddingLeft: 20,
+          paddingVertical: 14,
+          borderBottomWidth: 1,
+          borderBottomColor: Colors.shadowColor1,
+        }}>
+        <Text style={styles.helloText}>Messages</Text>
+      </ViewComponent>
       {channels.length === 0 && loading ? (
         <SkeletonContentLoaderIterate length={10} />
       ) : (
@@ -192,5 +203,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 24,
     color: colors.white,
+  },
+  helloText: {
+    fontFamily: 'Montserrat',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.black,
+    paddingBottom: 5,
   },
 });

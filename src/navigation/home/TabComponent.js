@@ -41,7 +41,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         shadowRadius: isShadowVisible ? 1 : 0,
         elevation: isShadowVisible ? 2 : 0,
       }}>
-      <PatientDashboardTabs
+      {/* <PatientDashboardTabs
         selectedTab={selectedTab}
         title={ALL}
         tab={ALL}
@@ -49,7 +49,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
           setSelectedTab({tabStr: ALL});
         }}
         darkMode={darkMode}
-      />
+      /> */}
       <PatientDashboardTabs
         selectedTab={selectedTab}
         title={APPOINTMENTS}
@@ -68,7 +68,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
         }}
         darkMode={darkMode}
       />
-      {/* <PatientDashboardTabs
+      <PatientDashboardTabs
         selectedTab={selectedTab}
         tab={SAVED}
         title={SAVED}
@@ -76,7 +76,7 @@ const TabComponent = ({isShadowVisible, selectedTab, setSelectedTab}) => {
           setSelectedTab({tabStr: SAVED});
         }}
         darkMode={darkMode}
-      /> */}
+      />
       {/* <PatientDashboardTabs
         selectedTab={selectedTab}
         tab={MENTORS_LIST}

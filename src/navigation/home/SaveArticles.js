@@ -1,16 +1,11 @@
-import {
-  StyleSheet,
-  FlatList,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import {StyleSheet, FlatList, Pressable, ActivityIndicator} from 'react-native';
 import View from '../../components/wrapperComponent/ViewWrapper.js';
 import Text from '../../components/wrapperComponent/TextWrapper.js';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getAllArticles,
+  getArticlesSlice,
   isArticle,
   saveArticleSlice,
 } from '../../redux/HomeSlice';
@@ -21,7 +16,7 @@ import {useTranslation} from 'react-i18next';
 import {ArticleContentLoader} from '../../components/SkeletonContentLoading';
 import {darkModeColor} from '../../utils/utils.js';
 
-const ArticlesList = ({handleShadowVisible}) => {
+const SaveArticles = ({handleShadowVisible}) => {
   const {t} = useTranslation();
 
   const dispatch = useDispatch();
@@ -29,14 +24,16 @@ const ArticlesList = ({handleShadowVisible}) => {
   const [isRefreshing, setRefreshing] = useState(false);
   const [isArticleDataLoading, setArticleLoading] = useState(false);
   const [selectedArtileIndex, selectedArtile] = useState('');
+  const [articleData, setArticles] = useState([]);
 
-  const {articleData = [], darkMode} = useSelector(state => state.home);
+  const {darkMode} = useSelector(state => state.home);
 
   const getAllArticlesUpdatedData = useCallback(async () => {
-    if (articleData.length === 0) {
+    if (articleData && articleData.length === 0) {
       try {
         setArticleLoading(true);
-        await dispatch(getAllArticles());
+        const {payload} = await dispatch(getArticlesSlice());
+        setArticles(payload);
         setArticleLoading(false);
       } catch (err) {
         setArticleLoading(false);
@@ -64,30 +61,11 @@ const ArticlesList = ({handleShadowVisible}) => {
           selectedArtile(index);
         }}>
         <View isCard={true} style={[styles.saveContainer, {shadowColor}]}>
-          <View isCard={true} style={styles.titleCont}>
+          {/* <View isCard={true} style={styles.titleCont}>
             <Text style={styles.title}>{t(item?.title)}</Text>
-            <Pressable
-              onPress={async () => {
-                await dispatch(saveArticleSlice({data: item.body}));
-                Alert.alert('Article Saved Successfully', ``, [
-                  {
-                    onPress: () => null,
-                    text: 'OK',
-                  },
-                ]);
-              }}>
-              <MaterialIcons
-                name="save"
-                size={20}
-                color={Colors.grayishBlue}
-                style={styles.icon}
-              />
-            </Pressable>
-          </View>
+          </View> */}
           <Text>
-            {(item?.body).length > 250
-              ? (item?.body).substring(0, 180 - 3) + '...'
-              : item?.body}
+            {item.length > 250 ? item.substring(0, 180 - 3) + '...' : item}
           </Text>
         </View>
       </Pressable>
@@ -114,11 +92,13 @@ const ArticlesList = ({handleShadowVisible}) => {
         // }}
         style={styles.titleView}>
         <View style={styles.modalArticleView}>
-          <Text style={styles.articleTitle}>
+          {/* <Text style={styles.articleTitle}>
             {articleData.length && articleData[selectedArtileIndex]?.title}
-          </Text>
+          </Text> */}
           <Text style={{lineHeight: 21}}>
-            {articleData.length && articleData[selectedArtileIndex]?.body}
+            {articleData &&
+              articleData.length &&
+              articleData[selectedArtileIndex]}
           </Text>
           <View style={styles.closeBtn}>
             <Pressable onPress={() => setModalVisible(false)}>
@@ -150,18 +130,27 @@ const ArticlesList = ({handleShadowVisible}) => {
       <FlatList
         data={articleData}
         renderItem={renderItem}
+        style={{flex: 1}}
+        contentContainerStyle={{flexGrow: 1}}
         keyExtractor={(item, index) => index}
         showsVerticalScrollIndicator={false}
         onScroll={handleOnScroll}
         scrollEventThrottle={16}
         onRefresh={onRefresh}
         refreshing={isRefreshing}
+        ListEmptyComponent={() => {
+          return (
+            <View style={styles.notDataFoundContainer}>
+              <Text style={styles.notDataFound}>{'No Data Found'}</Text>
+            </View>
+          );
+        }}
       />
     </View>
   );
 };
 
-export default ArticlesList;
+export default SaveArticles;
 
 const styles = StyleSheet.create({
   container: {
@@ -269,4 +258,10 @@ const styles = StyleSheet.create({
     elevation: 2, // For Android
     backgroundColor: 'white',
   },
+  notDataFound: {
+    textAlign: 'center',
+    color: Colors.dune,
+  },
+  notDataFoundContainer: {flex: 1, justifyContent: 'center'},
+  homeContentLoading: {flexDirection: 'row', marginVertical: 10},
 });

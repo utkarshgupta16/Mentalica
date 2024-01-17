@@ -28,6 +28,7 @@ export const endPoints = {
   getMentorsByExperties: `${API_URL}/getMentorList?expertise=`,
   getMentorsByExperience: `${API_URL}/getMentorList?exp=`,
   getMentorsByNameAndExperties: `${API_URL}/getMentorList?`,
+  articles: `${API_URL}/article`,
 };
 export const iosPlatform = Platform.OS === 'ios';
 export const androidPlatform = Platform.OS === 'android';

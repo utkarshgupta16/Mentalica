@@ -62,6 +62,7 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   const startValue = useRef(
     new Animated.Value(Dimensions.get('window').width),
   ).current;
+  const opacityValue = useRef(new Animated.Value(1)).current;
 
   const {t} = useTranslation();
   const {CHAT, EXPERTIES, SPEAKS, YEARS_OF_EXPERIENCE, FOR, STARTS, MINS} =
@@ -313,6 +314,28 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
   return (
     <View style={styles.container}>
       <View style={styles.searchIconCont}>
+        {/* {showSearchBar ? null : ( */}
+        <Animated.View
+          style={{
+            paddingLeft: 20,
+            paddingVertical: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            opacity: opacityValue,
+            position: 'absolute',
+          }}>
+          <Text
+            style={{
+              fontFamily: 'Montserrat',
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: Colors.black,
+              paddingBottom: 5,
+            }}>
+            Mentors
+          </Text>
+        </Animated.View>
+        {/* )} */}
         <>
           <Animated.View
             style={{
@@ -385,12 +408,22 @@ const MentorsList = ({navigation, handleShadowVisible}) => {
           onPress={() => {
             setSearchBar(pre => {
               if (pre) {
+                Animated.timing(opacityValue, {
+                  toValue: 1,
+                  duration: 800,
+                  useNativeDriver: true,
+                }).start(() => {});
                 Animated.timing(startValue, {
                   toValue: Dimensions.get('window').width,
                   duration: 1000,
                   useNativeDriver: true,
                 }).start(() => {});
               } else {
+                Animated.timing(opacityValue, {
+                  toValue: 0,
+                  duration: 800,
+                  useNativeDriver: true,
+                }).start(() => {});
                 Animated.timing(startValue, {
                   toValue: 10,
                   duration: 1000,

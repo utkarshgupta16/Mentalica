@@ -32,6 +32,7 @@ import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 
 const MentorDetails = ({showDetails, close, selectedMentorData}) => {
+  console.log('selectedMentorData', selectedMentorData);
   const {t} = useTranslation();
   const {
     DAY_AFTER_TOMORROW,

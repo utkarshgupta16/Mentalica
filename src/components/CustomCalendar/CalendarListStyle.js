@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import Colors from '../../customs/Colors';
 const styles = StyleSheet.create({
   flatlistContainer: {
-    marginTop: 10,
+    // marginTop: 10,
     marginHorizontal: 5,
     flexGrow: 1,
   },
@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   },
   appointmentAgenda: {
     alignItems: 'center',
+    justifyContent: 'space-between',
     flexDirection: 'row',
     padding: 10,
     borderRadius: 8,
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5.65,
     elevation: 3,
     marginHorizontal: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     flex: 1,
   },
   timeColumn: {

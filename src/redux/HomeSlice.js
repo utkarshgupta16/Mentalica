@@ -219,6 +219,42 @@ export const updateConversationSlice = createAsyncThunk(
   },
 );
 
+export const saveArticleSlice = createAsyncThunk(
+  'home/saveArticleSlice',
+  async (data, {getState}) => {
+    var config = {
+      method: 'post',
+      url: endPoints.articles,
+      headers: headerApi(getState),
+      data: data,
+    };
+    return apiMiddleware(config);
+  },
+);
+
+export const getArticlesSlice = createAsyncThunk(
+  'home/getArticlesSlice',
+  async (data, {getState}) => {
+    var config = {
+      method: 'get',
+      url: endPoints.articles,
+      headers: headerApi(getState),
+    };
+    try {
+      const {data, status} = (await axios(config)) || {};
+      console.log('getArticleList', data);
+      if (status === 200) {
+        return Promise.resolve(data);
+      } else {
+        return Promise.reject(new Error('Server Error!'));
+      }
+    } catch (err) {
+      console.log('err', err);
+      return Promise.reject(new Error(err));
+    }
+  },
+);
+
 export const editProfileSlice = createAsyncThunk(
   'home/editProfileSlice',
   async (updateData, {getState}) => {
